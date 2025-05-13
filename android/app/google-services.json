@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "37662081989",
+    "project_id": "teamxperience-dadc6",
+    "storage_bucket": "teamxperience-dadc6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37662081989:android:e4d1102c63c4bbbf3081ac",
+        "android_client_info": {
+          "package_name": "ro.teamxperience.teamxperience"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "37662081989-fcit2hdrl2p8mce6rsfo7sjjga9av7l3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ro.teamxperience.teamxperience",
+            "certificate_hash": "2cee12298ca28592d80e78a6da8222b457da7f02"
+          }
+        },
+        {
+          "client_id": "37662081989-4qji5rtpg9btlvga8svcmq5ceh7ovrk4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqlTRmcU9P97tJMaltzTdH9yRNoHBA1X4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "37662081989-4qji5rtpg9btlvga8svcmq5ceh7ovrk4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "37662081989-fsain3lpudooco3070r15u4glp0kfelq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ro.teamxperience.teamxperience"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
