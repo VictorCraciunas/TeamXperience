@@ -3,13 +3,12 @@ import 'package:teamxperience/model/puzzle.dart';
 
 class Mission{
   final String id;
-  final Map<String, Puzzle> puzzles;
-  bool isDone ;
+  Map<String, Puzzle> puzzles;
+
 
   Mission({
     required this.id,
     Map<String, Puzzle>? puzzles,
-    this.isDone = false,
   }) : puzzles = puzzles ?? {};
 
 
@@ -25,7 +24,6 @@ class Mission{
             (key, value) => MapEntry(key, Puzzle.fromMap(value as Map<String, dynamic>)),
       ) ??
           {},
-      isDone: map['isDone'] as bool? ?? false,
     );
   }
 
@@ -33,7 +31,6 @@ class Mission{
     return {
       'id': id,
       'puzzles': {for (var entry in puzzles.entries) entry.key: entry.value.toJson()},
-      'isDone': isDone,
     };
   }
 }
