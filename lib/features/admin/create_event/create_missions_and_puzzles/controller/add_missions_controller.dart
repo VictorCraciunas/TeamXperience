@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/service/add_missions_service.dart';
+import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/mission_widget.dart';
 import 'package:teamxperience/model/mission.dart';
 
 import '../../../../../model/event.dart';
@@ -9,13 +10,12 @@ class AddMissionsController{
     final AddMissionsService _addMissionsService = AddMissionsService();
 
     int selectedMission = 0;
-    int selectedPuzzle = 0;
 
-    List<Column> missionWidgets = [];
+    List<MissionWidget> missionWidgets = [];
+
     List<Column> puzzleWidgets = [];
-
     Event? event;
-    late List<TextEditingController> puzzlesCountControllers;
+
 
     Widget mission(int index, Function callBack) {
         return GestureDetector(
@@ -44,24 +44,15 @@ class AddMissionsController{
         return _addMissionsService.initializeMissions(event!.nrMissions);
     }
 
-    List<Column> createDefaultWidgetMission(){
+    List<MissionWidget> buildMissionWidgets() {
+        if (event == null) return [];
         return List.generate(
             event!.nrMissions,
-                (index) => Column(
-                children: [
-                    Text('Mission ${index + 1} Details'),
-                    TextFormField(
-                        controller: puzzlesCountControllers[index],
-                        decoration: const InputDecoration(labelText: 'Number of Puzzles for current mission'),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                            if (value!.isEmpty) return 'Please enter the number of missions';
-                            if (int.tryParse(value) == null) return 'Please enter a valid number';
-                            return null;
-                        },
-                    ),
-                    // Placeholder for future puzzle-building widgets
-                ],
+                (index) => MissionWidget(
+                nrMission: index + 1,
+                onSetPuzzles: (count) {
+                    _addMissionsService.initializePuzzleAtMission(count, index);
+                },
             ),
         );
     }

@@ -26,12 +26,8 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
       setState(() {
         _addMissionsController.event =
             ModalRoute.of(context)!.settings.arguments as Event;
-        _addMissionsController.missionWidgets = _addMissionsController.createDefaultWidgetMission();
-        _addMissionsController.puzzlesCountControllers = List.generate(
-          _addMissionsController.event!.nrMissions,
-              (_) => TextEditingController(),
-        );
         _addMissionsController.initializeMissions();
+        _addMissionsController.missionWidgets = _addMissionsController.buildMissionWidgets();
       });
     }
   }
@@ -46,6 +42,7 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
             Container(
               height: 60,
               padding: const EdgeInsets.symmetric(vertical: 8),
+              // list of missions
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: _addMissionsController.event!.nrMissions,
@@ -58,6 +55,7 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                 },
               ),
             ),
+            //missions widget
             IndexedStack(
               index: _addMissionsController.selectedMission,
               children: _addMissionsController.missionWidgets,

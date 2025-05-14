@@ -26,6 +26,7 @@ class AuthUtil {
           Navigator.pushReplacementNamed(context, '/create_event');
       }
         else {
+          print("$appUser.role");
           if (!context.mounted) return;
           Navigator.pushReplacementNamed(context, '/home');
         }
