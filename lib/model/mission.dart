@@ -3,34 +3,33 @@ import 'package:teamxperience/model/puzzle.dart';
 
 class Mission{
   final String id;
-  Map<String, Puzzle> puzzles;
+  List<Puzzle> puzzles;
 
 
   Mission({
     required this.id,
-    Map<String, Puzzle>? puzzles,
-  }) : puzzles = puzzles ?? {};
+    List<Puzzle>? puzzles,
+  }) : puzzles = puzzles ?? [];
 
 
   int get puzzlesCount => puzzles.length;
 
-  void addPuzzle(String puzzleId, Puzzle puzzle) => puzzles[puzzleId] = puzzle;
+  void addPuzzle(Puzzle puzzle) => puzzles.add(puzzle);
 
 
   factory Mission.fromMap(Map<String, dynamic> map) {
+    final rawList = map['puzzles'] as List<dynamic>? ?? [];
+    final puzzles = rawList.map((e) => Puzzle.fromMap(e as Map<String, dynamic>)).toList();
     return Mission(
       id: map['id'] as String? ?? '',
-      puzzles: (map['puzzles'] as Map<String, dynamic>?)?.map(
-            (key, value) => MapEntry(key, Puzzle.fromMap(value as Map<String, dynamic>)),
-      ) ??
-          {},
+      puzzles: puzzles,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'puzzles': {for (var entry in puzzles.entries) entry.key: entry.value.toJson()},
+      'puzzles': puzzles.map((p) => p.toJson()).toList(),
     };
   }
 }

@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/controller/add_missions_controller.dart';
+import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/add_component_widget.dart';
+import 'my_list_component.dart';
 
 class MissionWidget extends StatefulWidget {
-  final int nrMission;
+  final int nrMission;  // 1 indexed ( so we need to make -1 when we use list.add)
   final Function(int) onSetPuzzles; // Callback to notify parent
+  final AddMissionsController addMissionsController;
 
   const MissionWidget({
     super.key,
     required this.nrMission,
     required this.onSetPuzzles,
+    required this.addMissionsController,
   });
 
   @override
@@ -16,9 +21,9 @@ class MissionWidget extends StatefulWidget {
 
 class _MissionWidgetState extends State<MissionWidget> {
   late TextEditingController puzzlesCountController;
-  List<Widget> puzzleWidgets = [];
-  int selectedPuzzle = 0;
-
+  int numberOfPuzzles = 0;
+  int selectedPuzzle = -1; // Start with no selection
+  List<Widget> puzzleComponents = [];
 
   @override
   void initState() {
@@ -31,6 +36,7 @@ class _MissionWidgetState extends State<MissionWidget> {
     puzzlesCountController.dispose();
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -67,16 +73,12 @@ class _MissionWidgetState extends State<MissionWidget> {
             ElevatedButton(
               onPressed: () {
                 final text = puzzlesCountController.text;
-                final count = int.tryParse(text) ?? 0;
-                widget.onSetPuzzles(count); // Notify parent
+                final nrPuzzles = int.tryParse(text) ?? 0;
+                widget.onSetPuzzles(nrPuzzles); // Notify parent
                 setState(() {
-                  puzzleWidgets = List.generate(
-                    count,
-                        (i) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: Text('Puzzle ${i + 1}', style: const TextStyle(fontSize: 14)),
-                    ),
-                  );
+                  numberOfPuzzles = nrPuzzles;
+                  selectedPuzzle =
+                      -1; // Reset selection when setting new puzzles
                 });
               },
               child: const Text('Set Puzzles'),
@@ -84,14 +86,61 @@ class _MissionWidgetState extends State<MissionWidget> {
           ],
         ),
         const SizedBox(height: 10),
-        if (puzzleWidgets.isNotEmpty) ...[
+        if (numberOfPuzzles > 0) ...[
           const Text(
             'Puzzles:',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 5),
-          ...puzzleWidgets,
+          Container(
+            height: 60,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: numberOfPuzzles,
+              itemBuilder: (context, index) {
+                return MyListComponent(
+                  index: index,
+                  type: "Puzzle",
+                  isSelected: selectedPuzzle == index,
+                  onTap: () {
+                    setState(() {
+                      selectedPuzzle = index;
+                    });
+                  },
+                );
+              },
+            ),
+          ),
         ],
+        if (puzzleComponents.isNotEmpty) ...[
+          const SizedBox(height: 10),
+          const Text(
+            'Additional Components:',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 5),
+          ...puzzleComponents,
+        ],
+        const SizedBox(height: 10),
+        ElevatedButton(
+          onPressed: (numberOfPuzzles > 0 && selectedPuzzle != -1)
+              ? () => showModalBottomSheet(
+            context: context,
+            builder: (context) => AddComponentWidget(
+              addMissionsController: widget.addMissionsController,
+              missionSelected: widget.nrMission - 1,
+              puzzleSelected: selectedPuzzle,
+              refreshUI: (Widget componentWidget) {
+                setState(() {
+                  puzzleComponents.add(componentWidget);
+                });
+              },
+            ),
+          )
+              : null, // Disabled if no puzzles or no selection
+          child: const Text("Add component"),
+        ),
       ],
     );
   }

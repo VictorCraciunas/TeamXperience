@@ -11,7 +11,10 @@ class Puzzle {
 
   int get componentsCount => components.length;
 
-  void addComponent(Component component) => components.add(component);
+  Component addComponent(Component component) {
+    components.add(component);
+    return component;
+  }
 
 
   factory Puzzle.fromMap(Map<String, dynamic> data) {

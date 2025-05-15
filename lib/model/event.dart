@@ -6,7 +6,7 @@ import 'mission.dart';
 class Event {
   final String eventId;
   final String? name;
-  Map<String, Mission> missions;
+  List<Mission> missions;
   final DateTime startTime;
   final DateTime deadlineEnrollment;
   final String location;
@@ -20,7 +20,7 @@ class Event {
   Event({
     required this.eventId ,
     required this.name ,
-    Map<String, Mission>? missions,
+    List<Mission>? missions,
     required this.startTime,
     required this.deadlineEnrollment,
     required this.location ,
@@ -30,20 +30,19 @@ class Event {
     required this.landingImageUrl,
     required this.taskBackgroundImageUrl ,
     required this.startCode ,
-  }) : missions = missions ?? {};
+  }) : missions = missions ?? [];
 
 
-  void addMission(String missionId, Mission mission) => missions[missionId] = mission;
+  void addMission(Mission mission) => missions.add(mission);
 
   factory Event.fromMap(Map<String, dynamic> map) {
     final rawType = map['type'] as String;
+    final rawList = map['missions'] as List<dynamic>? ?? [];
+    final missions = rawList.map((e) => Mission.fromMap(e as Map<String, dynamic>)).toList();
     return Event(
       eventId: map['eventId'],
       name: map['name'] as String? ?? '',
-      missions: (map['missions'] as Map<String, dynamic>?)?.map(
-            (key, value) => MapEntry(key, Mission.fromMap(value as Map<String, dynamic>)),
-      ) ??
-          {},
+      missions:missions,
       startTime: (map['startTime'] as Timestamp).toDate(),
       deadlineEnrollment: (map['deadlineEnrollment'] as Timestamp).toDate(),
       location: map['location'] as String? ?? '',
@@ -60,7 +59,7 @@ class Event {
     return {
       'eventId': eventId,
       'name': name,
-      'missions': {for (var entry in missions.entries) entry.key: entry.value.toJson()},
+      'missions': missions.map((m) => m.toJson()).toList(),
       'startTime': startTime,
       'deadlineEnrollment': deadlineEnrollment,
       'location': location,

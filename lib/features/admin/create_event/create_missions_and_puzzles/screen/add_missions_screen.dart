@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/controller/add_missions_controller.dart';
 import 'package:teamxperience/model/event.dart';
 
+import '../widgets/my_list_component.dart';
+
 class AddMissionsPage extends StatefulWidget {
   const AddMissionsPage({super.key});
 
@@ -42,16 +44,20 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
             Container(
               height: 60,
               padding: const EdgeInsets.symmetric(vertical: 8),
-              // list of missions
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: _addMissionsController.event!.nrMissions,
                 itemBuilder: (context, index) {
-                  return _addMissionsController.mission(index, () {
-                    setState(() {
-                      _addMissionsController.selectedMission = index;
-                    });
-                  });
+                  return MyListComponent(
+                    index: index,
+                    type: "Mission",
+                    isSelected: _addMissionsController.selectedMission == index,
+                    onTap: () {
+                      setState(() {
+                        _addMissionsController.selectedMission = index;
+                      });
+                    },
+                  );
                 },
               ),
             ),
