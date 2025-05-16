@@ -20,6 +20,10 @@ class Puzzle {
     components.clear();
   }
 
+  void removeComponent(int index){
+    components.removeAt(index);
+  }
+
 
   factory Puzzle.fromMap(Map<String, dynamic> data) {
     final rawList = data['components'] as List<dynamic>? ?? [];

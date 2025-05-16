@@ -38,11 +38,15 @@ class AddMissionsController{
         return _addMissionsService.addComponentAtPuzzleAtMission(missionSelected, puzzleSelected, type);
     }
 
-    void deleteComponents(int missionSelected, int puzzleSelected){
-        _addMissionsService.deleteComponentsAtPuzzleAtMission(missionSelected, puzzleSelected);
+    void deleteAllComponents(int missionSelected, int puzzleSelected){
+        _addMissionsService.deleteAllComponentsAtPuzzleAtMission(missionSelected, puzzleSelected);
     }
 
     void printMissions(){
         _addMissionsService.printMissions();
+    }
+
+    void deleteComponent(int missionSelected, int puzzleSelected, int componentIndex){
+        _addMissionsService.deleteComponentAtPuzzleAtMission(missionSelected, puzzleSelected, componentIndex);
     }
 }

@@ -15,7 +15,7 @@ class PuzzleWidget extends StatefulWidget {
 
 class _PuzzleWidgetState extends State<PuzzleWidget> {
   List<Widget> puzzleComponents = [];
-
+  int componentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,24 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 5),
-          ...puzzleComponents,
+          Column(
+            children: List.generate(puzzleComponents.length, (index) => ListTile(
+              title: puzzleComponents[index],
+              trailing: IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () {
+                  setState(() {
+                    puzzleComponents.removeAt(index);
+                    widget.addMissionsController.deleteComponent(
+                      widget.nrMission,
+                      widget.selectedPuzzle,
+                      index,
+                    );
+                  });
+                },
+              ),
+            )),
+          ),
         ],
         ElevatedButton(
           onPressed: widget.selectedPuzzle >= 0
@@ -43,6 +60,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
                 refreshUI: (Widget componentWidget) {
                   setState(() {
                     puzzleComponents.add(componentWidget);
+                    componentIndex++;
                   });
                 },
               ),
@@ -54,7 +72,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
         ElevatedButton(onPressed: (){
           setState(() {
             puzzleComponents.clear();
-            widget.addMissionsController.deleteComponents(widget.nrMission , widget.selectedPuzzle);
+            widget.addMissionsController.deleteAllComponents(widget.nrMission , widget.selectedPuzzle);
           });
         }, child: Text("Clear components"))
       ],
