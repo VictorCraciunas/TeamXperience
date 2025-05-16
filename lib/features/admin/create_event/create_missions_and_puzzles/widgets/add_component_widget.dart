@@ -37,6 +37,11 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
   AnimationType? animation = AnimationType.none; // Default to no animation
   double? fontSize;
   String? fontWeight = 'normal'; // Default to normal
+  String? buttonColor = '#FFFFFF'; // Default to white
+  String? buttonColorOnTap = '#CCCCCC'; // Default to grey
+  String? buttonTextColor = '#000000'; // Default to black
+  String? buttonTextColorOnTap = '#FFFFFF'; // Default to white
+  String? borderColor = '#000000'; // New: Default to black
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +69,11 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
               animation = AnimationType.none;
               fontSize = null;
               fontWeight = 'normal';
+              buttonColor = '#FFFFFF';
+              buttonColorOnTap = '#CCCCCC';
+              buttonTextColor = '#000000';
+              buttonTextColorOnTap = '#FFFFFF';
+              borderColor = '#000000';
             });
           },
           validator:
@@ -93,7 +103,17 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
         if (type == ComponentType.button) ...[
           ButtonComponentFieldsWidget(
             buttonLabelController: textEditingController,
+            buttonColor: buttonColor,
+            buttonColorOnTap: buttonColorOnTap,
+            buttonTextColor: buttonTextColor,
+            buttonTextColorOnTap: buttonTextColorOnTap,
+            borderColor: borderColor, // New: Pass border color
             onButtonLabelChanged: (value) => setState(() => text = value),
+            onButtonColorChanged: (value) => setState(() => buttonColor = value),
+            onButtonColorOnTapChanged: (value) => setState(() => buttonColorOnTap = value),
+            onButtonTextColorChanged: (value) => setState(() => buttonTextColor = value),
+            onButtonTextColorOnTapChanged: (value) => setState(() => buttonTextColorOnTap = value),
+            onBorderColorChanged: (value) => setState(() => borderColor = value), // New: Callback for border color
           ),
         ],
         ElevatedButton(
@@ -108,6 +128,11 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
               animation: type == ComponentType.text ? animation : null,
               imageUrl: type == ComponentType.image ? text : null,
               buttonLabel: type == ComponentType.button ? text : null,
+              buttonColor: type == ComponentType.button ? buttonColor : null,
+              buttonColorOnTap: type == ComponentType.button ? buttonColorOnTap : null,
+              buttonTextColor: type == ComponentType.button ? buttonTextColor : null,
+              buttonTextColorOnTap: type == ComponentType.button ? buttonTextColorOnTap : null,
+              borderColor: type == ComponentType.button ? borderColor : null, // New: Pass border color
               fontSize: type == ComponentType.text ? fontSize : null,
               fontWeight: type == ComponentType.text ? fontWeight : null,
             );

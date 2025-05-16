@@ -32,10 +32,20 @@ class ComponentService{
 
   Component createButtonComponent({
     required String buttonLabel,
+    String? buttonColor, // New: Initial button background color
+    String? buttonColorOnTap, // New: Button background color on tap
+    String? buttonTextColor, // New: Initial button text color
+    String? buttonTextColorOnTap, // New: Button text color on tap
+    String? borderColor,
   }) {
     return Component(
       type: ComponentType.button,
       buttonLabel: buttonLabel,
+      buttonColor: buttonColor,
+      buttonColorOnTap: buttonColorOnTap,
+      buttonTextColor: buttonTextColor,
+      buttonTextColorOnTap: buttonTextColorOnTap,
+      borderColor: borderColor
     );
   }
 }

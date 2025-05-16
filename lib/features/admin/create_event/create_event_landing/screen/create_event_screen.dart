@@ -29,8 +29,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
     controller.locationController.dispose();
     controller.descriptionController.dispose();
     controller.nrMissionsController.dispose();
-    controller.landingImageUrlController.dispose();
-    controller.taskBackgroundImageUrlController.dispose();
     controller.startCodeController.dispose();
     super.dispose();
   }

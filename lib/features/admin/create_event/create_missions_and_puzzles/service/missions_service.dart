@@ -34,6 +34,11 @@ class MissionsService {
         AnimationType? animation,
         String? imageUrl,
         String? buttonLabel,
+        String? buttonColor, // New
+        String? buttonColorOnTap, // New
+        String? buttonTextColor, // New
+        String? buttonTextColorOnTap, // New
+        String? borderColor,
         double? fontSize,
         String? fontWeight,
       }) {
@@ -78,6 +83,11 @@ class MissionsService {
         }
         component = componentService.createButtonComponent(
           buttonLabel: buttonLabel,
+          buttonColor: buttonColor,
+          buttonColorOnTap: buttonColorOnTap,
+          buttonTextColor: buttonTextColor,
+          buttonTextColorOnTap: buttonTextColorOnTap,
+          borderColor: borderColor
         );
         break;
     }

@@ -25,6 +25,11 @@ class ComponentToWidget {
       case ComponentType.button:
         return ButtonComponentWidget(
           buttonLabel: component.buttonLabel,
+          buttonColor: component.buttonColor,
+          buttonColorOnTap: component.buttonColorOnTap,
+          buttonTextColor: component.buttonTextColor,
+          buttonTextColorOnTap: component.buttonTextColorOnTap,
+          borderColor: component.borderColor,
         );
     }
   }

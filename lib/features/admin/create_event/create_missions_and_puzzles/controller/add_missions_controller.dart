@@ -44,6 +44,11 @@ class AddMissionsController{
             AnimationType? animation,
             String? imageUrl,
             String? buttonLabel,
+            String? buttonColor, // New
+            String? buttonColorOnTap, // New
+            String? buttonTextColor, // New
+            String? buttonTextColorOnTap, // New
+            String? borderColor,
             double? fontSize,
             String? fontWeight,
         }) {
@@ -56,6 +61,11 @@ class AddMissionsController{
             animation: animation,
             imageUrl: imageUrl,
             buttonLabel: buttonLabel,
+            buttonColor: buttonColor,
+            buttonColorOnTap: buttonColorOnTap,
+            buttonTextColor: buttonTextColor,
+            buttonTextColorOnTap: buttonTextColorOnTap,
+            borderColor: borderColor,
             fontSize: fontSize,
             fontWeight: fontWeight,
         );

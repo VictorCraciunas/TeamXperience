@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 class ImageComponentWidget extends StatelessWidget {
@@ -8,13 +9,44 @@ class ImageComponentWidget extends StatelessWidget {
     this.imageUrl,
   });
 
+  // Helper to determine if the URL is a local file path or a network URL
+  bool _isNetworkUrl(String? url) {
+    if (url == null || url.isEmpty) return false;
+    return url.startsWith('http://') || url.startsWith('https://');
+  }
+
   @override
   Widget build(BuildContext context) {
-    return imageUrl != null && imageUrl!.isNotEmpty
-        ? Image.network(
-      imageUrl!,
-      errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
-    )
-        : const Icon(Icons.image_not_supported);
+    if (imageUrl == null || imageUrl!.isEmpty) {
+      return const Placeholder(
+        fallbackHeight: 150,
+        fallbackWidth: double.infinity,
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: _isNetworkUrl(imageUrl)
+          ? Image.network(
+        imageUrl!,
+        height: 150,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => const Placeholder(
+          fallbackHeight: 150,
+          fallbackWidth: double.infinity,
+        ),
+      )
+          : Image.file(
+        File(imageUrl!),
+        height: 150,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => const Placeholder(
+          fallbackHeight: 150,
+          fallbackWidth: double.infinity,
+        ),
+      ),
+    );
   }
 }

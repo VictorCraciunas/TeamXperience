@@ -15,8 +15,6 @@ class CreateEventController{
   final locationController = TextEditingController();
   final descriptionController = TextEditingController();
   final nrMissionsController = TextEditingController();
-  final landingImageUrlController = TextEditingController();
-  final taskBackgroundImageUrlController = TextEditingController();
   final startCodeController = TextEditingController();
 
   File? landingImageFile;

@@ -6,7 +6,12 @@ class Component {
   final String? text;
   final String? imageUrl;
   final String? buttonLabel;
+  final String? buttonColor; // New: Initial button background color
+  final String? buttonColorOnTap; // New: Button background color on tap
+  final String? buttonTextColor; // New: Initial button text color
+  final String? buttonTextColorOnTap; // New: Button text color on tap
   final String? textColor; // Hex color (e.g., '#FF0000' for red)
+  final String? borderColor; // Already present for border color
   final AnimationType? animation;
   final double? fontSize;
   final String? fontWeight;
@@ -16,6 +21,11 @@ class Component {
     this.text,
     this.imageUrl,
     this.buttonLabel,
+    this.buttonColor,
+    this.buttonColorOnTap,
+    this.buttonTextColor,
+    this.buttonTextColorOnTap,
+    this.borderColor,
     this.textColor,
     this.animation,
     this.fontSize,
@@ -29,6 +39,11 @@ class Component {
       text: map['text'] as String?,
       imageUrl: map['imageUrl'] as String?,
       buttonLabel: map['buttonLabel'] as String?,
+      buttonColor: map['buttonColor'] as String?,
+      buttonColorOnTap: map['buttonColorOnTap'] as String?,
+      buttonTextColor: map['buttonTextColor'] as String?,
+      buttonTextColorOnTap: map['buttonTextColorOnTap'] as String?,
+      borderColor: map['borderColor'] as String?,
       textColor: map['textColor'] as String?,
       animation: map['animation'] != null ? AnimationType.values.byName(map['animation'] as String) : null,
       fontSize: map['fontSize'] as double?,
@@ -50,7 +65,7 @@ class Component {
   }
   @override
   String toString() {
-    return 'Component(type: ${type.name}, text: $text, imageUrl: $imageUrl, buttonLabel: $buttonLabel, textColor: $textColor, animation: ${animation?.name},fontSize: $fontSize, fontWeight: $fontWeight)';
+    return 'Component(type: ${type.name}, text: $text, imageUrl: $imageUrl, buttonLabel: $buttonLabel, textColor: $textColor, animation: ${animation?.name}, buttonColor: $buttonColor, buttonColorOnTap: $buttonColorOnTap, buttonTextColor: $buttonTextColor, buttonTextColorOnTap: $buttonTextColorOnTap, borderColor: $borderColor, fontSize: $fontSize, fontWeight: $fontWeight)';
   }
 
 }
