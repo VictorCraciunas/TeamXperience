@@ -4,27 +4,39 @@ import 'package:teamxperience/features/admin/create_event/create_missions_and_pu
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/puzzle.dart';
 
+import '../../../../../enums/animation_type.dart';
 import '../../../../../model/mission.dart';
 
-class MissionsService{
+class MissionsService {
   PuzzleService addPuzzleService = PuzzleService();
   ComponentService componentService = ComponentService();
   List<Mission> missions = [];
 
-  List<Mission> initializeMissions(int nrMissions){
-    for (int i = 0 ; i < nrMissions; i++){
+  List<Mission> initializeMissions(int nrMissions) {
+    for (int i = 0; i < nrMissions; i++) {
       Mission mission = Mission(id: i.toString());
       missions.add(mission);
     }
     return missions;
   }
 
-  void initializePuzzleAtMission(int nrPuzzles, int selectedMission){
+  void initializePuzzleAtMission(int nrPuzzles, int selectedMission) {
     List<Puzzle> puzzles = addPuzzleService.initializePuzzles(nrPuzzles);
     missions[selectedMission].puzzles = puzzles;
   }
 
-  Component addComponentAtPuzzleAtMission(int missionSelected, int puzzleSelected, ComponentType type) {
+  Component addComponentAtPuzzleAtMission(
+      int missionSelected,
+      int puzzleSelected,
+      ComponentType type, {
+        String? text,
+        String? textColor,
+        AnimationType? animation,
+        String? imageUrl,
+        String? buttonLabel,
+        double? fontSize,
+        String? fontWeight,
+      }) {
     if (missions.isEmpty) {
       throw Exception("No missions initialized");
     }
@@ -37,10 +49,46 @@ class MissionsService{
     if (puzzleSelected < 0 || puzzleSelected >= missions[missionSelected].puzzles.length) {
       throw Exception("Puzzle index out of range: $puzzleSelected");
     }
-    return missions[missionSelected].puzzles[puzzleSelected].addComponent(componentService.createComponent(type));
+
+    Component component;
+    switch (type) {
+      case ComponentType.text:
+        if (text == null || text.isEmpty) {
+          throw Exception("Text is required for text component");
+        }
+        component = componentService.createTextComponent(
+          text: text,
+          textColor: textColor,
+          animation: animation,
+          fontSize: fontSize,
+          fontWeight: fontWeight,
+        );
+        break;
+      case ComponentType.image:
+        if (imageUrl == null || imageUrl.isEmpty) {
+          throw Exception("Image URL is required for image component");
+        }
+        component = componentService.createImageComponent(
+          imageUrl: imageUrl,
+        );
+        break;
+      case ComponentType.button:
+        if (buttonLabel == null || buttonLabel.isEmpty) {
+          throw Exception("Button label is required for button component");
+        }
+        component = componentService.createButtonComponent(
+          buttonLabel: buttonLabel,
+        );
+        break;
+    }
+
+    return missions[missionSelected].puzzles[puzzleSelected].addComponent(component);
   }
 
-  void deleteAllComponentsAtPuzzleAtMission(int missionSelected, int puzzleSelected){
+  void deleteAllComponentsAtPuzzleAtMission(
+    int missionSelected,
+    int puzzleSelected,
+  ) {
     missions[missionSelected].puzzles[puzzleSelected].deleteComponents();
   }
 
@@ -55,30 +103,48 @@ class MissionsService{
     }
   }
 
-  void deleteComponentAtPuzzleAtMission(int missionSelected, int puzzleSelected, int componentIndex) {
+  void deleteComponentAtPuzzleAtMission(
+    int missionSelected,
+    int puzzleSelected,
+    int componentIndex,
+  ) {
     if (missions.isEmpty) {
       print("No missions initialized, skipping component delete");
       return;
     }
     if (missionSelected < 0 || missionSelected >= missions.length) {
-      print("Mission index out of range: $missionSelected, skipping component delete");
+      print(
+        "Mission index out of range: $missionSelected, skipping component delete",
+      );
       return;
     }
     if (missions[missionSelected].puzzles.isEmpty) {
-      print("No puzzles initialized for mission $missionSelected, skipping component delete");
+      print(
+        "No puzzles initialized for mission $missionSelected, skipping component delete",
+      );
       return;
     }
-    if (puzzleSelected < 0 || puzzleSelected >= missions[missionSelected].puzzles.length) {
-      print("Puzzle index out of range: $puzzleSelected, skipping component delete");
+    if (puzzleSelected < 0 ||
+        puzzleSelected >= missions[missionSelected].puzzles.length) {
+      print(
+        "Puzzle index out of range: $puzzleSelected, skipping component delete",
+      );
       return;
     }
-    if (componentIndex < 0 || componentIndex >= missions[missionSelected].puzzles[puzzleSelected].components.length) {
+    if (componentIndex < 0 ||
+        componentIndex >=
+            missions[missionSelected]
+                .puzzles[puzzleSelected]
+                .components
+                .length) {
       print("Component index out of range: $componentIndex, skipping delete");
       return;
     }
-    print("Deleting component at index $componentIndex for mission $missionSelected, puzzle $puzzleSelected");
-    missions[missionSelected].puzzles[puzzleSelected].removeComponent(componentIndex);
+    print(
+      "Deleting component at index $componentIndex for mission $missionSelected, puzzle $puzzleSelected",
+    );
+    missions[missionSelected].puzzles[puzzleSelected].removeComponent(
+      componentIndex,
+    );
   }
-
-
 }

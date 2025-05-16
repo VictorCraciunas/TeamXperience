@@ -1,0 +1,4 @@
+enum AnimationType {
+  none,
+  typewriter,
+}

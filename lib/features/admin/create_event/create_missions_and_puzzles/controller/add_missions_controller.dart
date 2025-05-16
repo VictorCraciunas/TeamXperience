@@ -4,6 +4,7 @@ import 'package:teamxperience/features/admin/create_event/create_missions_and_pu
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/mission.dart';
 
+import '../../../../../enums/animation_type.dart';
 import '../../../../../model/event.dart';
 
 class AddMissionsController{
@@ -34,8 +35,31 @@ class AddMissionsController{
         );
     }
 
-    Component addComponent(int missionSelected, int puzzleSelected, ComponentType type){
-        return _addMissionsService.addComponentAtPuzzleAtMission(missionSelected, puzzleSelected, type);
+    Component addComponent(
+        int missionSelected,
+        int puzzleSelected,
+        ComponentType type, {
+            String? text,
+            String? textColor,
+            AnimationType? animation,
+            String? imageUrl,
+            String? buttonLabel,
+            double? fontSize,
+            String? fontWeight,
+        }) {
+        final component = _addMissionsService.addComponentAtPuzzleAtMission(
+            missionSelected,
+            puzzleSelected,
+            type,
+            text: text,
+            textColor: textColor,
+            animation: animation,
+            imageUrl: imageUrl,
+            buttonLabel: buttonLabel,
+            fontSize: fontSize,
+            fontWeight: fontWeight,
+        );
+        return component;
     }
 
     void deleteAllComponents(int missionSelected, int puzzleSelected){
