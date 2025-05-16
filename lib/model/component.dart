@@ -31,5 +31,9 @@ class Component {
       if (buttonLabel != null) 'buttonLabel': buttonLabel,
     };
   }
+  @override
+  String toString() {
+    return 'Component(type: ${type.name}, text: $text, imageUrl: $imageUrl, buttonLabel: $buttonLabel)';
+  }
 
 }

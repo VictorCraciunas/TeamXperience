@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/controller/add_missions_controller.dart';
-import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/add_component_widget.dart';
+import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/puzzle_widget.dart';
 import 'my_list_component.dart';
 
 class MissionWidget extends StatefulWidget {
-  final int nrMission;  // 1 indexed ( so we need to make -1 when we use list.add)
+  final int nrMission;
   final Function(int) onSetPuzzles; // Callback to notify parent
   final AddMissionsController addMissionsController;
 
@@ -23,7 +23,7 @@ class _MissionWidgetState extends State<MissionWidget> {
   late TextEditingController puzzlesCountController;
   int numberOfPuzzles = 0;
   int selectedPuzzle = -1; // Start with no selection
-  List<Widget> puzzleComponents = [];
+  List<PuzzleWidget> puzzleWidgets = [];
 
   @override
   void initState() {
@@ -44,7 +44,7 @@ class _MissionWidgetState extends State<MissionWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Mission ${widget.nrMission} Details',
+          'Mission ${widget.nrMission + 1} Details',
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
@@ -77,8 +77,9 @@ class _MissionWidgetState extends State<MissionWidget> {
                 widget.onSetPuzzles(nrPuzzles); // Notify parent
                 setState(() {
                   numberOfPuzzles = nrPuzzles;
-                  selectedPuzzle =
-                      -1; // Reset selection when setting new puzzles
+                  selectedPuzzle = -1;
+                  puzzleWidgets.clear();
+                  puzzleWidgets = List.generate(nrPuzzles, (puzzleSelected) => PuzzleWidget(nrMission: widget.nrMission, selectedPuzzle: puzzleSelected, addMissionsController: widget.addMissionsController));
                 });
               },
               child: const Text('Set Puzzles'),
@@ -113,33 +114,9 @@ class _MissionWidgetState extends State<MissionWidget> {
             ),
           ),
         ],
-        if (puzzleComponents.isNotEmpty) ...[
-          const SizedBox(height: 10),
-          const Text(
-            'Additional Components:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 5),
-          ...puzzleComponents,
-        ],
-        const SizedBox(height: 10),
-        ElevatedButton(
-          onPressed: (numberOfPuzzles > 0 && selectedPuzzle != -1)
-              ? () => showModalBottomSheet(
-            context: context,
-            builder: (context) => AddComponentWidget(
-              addMissionsController: widget.addMissionsController,
-              missionSelected: widget.nrMission - 1,
-              puzzleSelected: selectedPuzzle,
-              refreshUI: (Widget componentWidget) {
-                setState(() {
-                  puzzleComponents.add(componentWidget);
-                });
-              },
-            ),
-          )
-              : null, // Disabled if no puzzles or no selection
-          child: const Text("Add component"),
+        IndexedStack(
+          index: selectedPuzzle,
+          children: puzzleWidgets,
         ),
       ],
     );

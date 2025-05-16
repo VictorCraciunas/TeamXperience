@@ -1,11 +1,10 @@
-import 'package:teamxperience/enums/component-type.dart';
-import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/puzzle.dart';
 
 class PuzzleService {
-  List<Puzzle> puzzles = [];
 
   List<Puzzle> initializePuzzles(int nrPuzzles) {
+    List<Puzzle> puzzles = [];
+
     puzzles.clear();
 
     for (int i = 0; i < nrPuzzles; i++) {

@@ -29,7 +29,8 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
         _addMissionsController.event =
             ModalRoute.of(context)!.settings.arguments as Event;
         _addMissionsController.initializeMissions();
-        _addMissionsController.missionWidgets = _addMissionsController.buildMissionWidgets();
+        _addMissionsController.missionWidgets =
+            _addMissionsController.buildMissionWidgets();
       });
     }
   }
@@ -66,6 +67,9 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
               index: _addMissionsController.selectedMission,
               children: _addMissionsController.missionWidgets,
             ),
+            ElevatedButton(onPressed: () {
+                _addMissionsController.printMissions();
+            }, child: Text("print the missions")),
           ],
         ),
       ),

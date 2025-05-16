@@ -33,7 +33,10 @@ class Event {
   }) : missions = missions ?? [];
 
 
-  void addMission(Mission mission) => missions.add(mission);
+  Mission addMission(Mission mission) {
+    missions.add(mission);
+    return mission;
+  }
 
   factory Event.fromMap(Map<String, dynamic> map) {
     final rawType = map['type'] as String;

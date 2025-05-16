@@ -40,6 +40,21 @@ class MissionsService{
     return missions[missionSelected].puzzles[puzzleSelected].addComponent(componentService.createComponent(type));
   }
 
+  void deleteComponentsAtPuzzleAtMission(int missionSelected, int puzzleSelected){
+    missions[missionSelected].puzzles[puzzleSelected].deleteComponents();
+  }
+
+  void printMissions() {
+    if (missions.isEmpty) {
+      print("No missions initialized");
+      return;
+    }
+    print("Missions (${missions.length}):");
+    for (int i = 0; i < missions.length; i++) {
+      print("Mission $i:\n${missions[i]}");
+    }
+  }
+
 
 
 }

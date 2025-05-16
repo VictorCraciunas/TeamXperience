@@ -14,7 +14,10 @@ class Mission{
 
   int get puzzlesCount => puzzles.length;
 
-  void addPuzzle(Puzzle puzzle) => puzzles.add(puzzle);
+  Puzzle addPuzzle(Puzzle puzzle) {
+    puzzles.add(puzzle);
+    return puzzle;
+  }
 
 
   factory Mission.fromMap(Map<String, dynamic> map) {
@@ -31,5 +34,9 @@ class Mission{
       'id': id,
       'puzzles': puzzles.map((p) => p.toJson()).toList(),
     };
+  }
+  @override
+  String toString() {
+    return 'Mission(id: $id, puzzles: [\n  ${puzzles.join(',\n  ')}\n])';
   }
 }

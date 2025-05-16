@@ -16,6 +16,10 @@ class Puzzle {
     return component;
   }
 
+  void deleteComponents(){
+    components.clear();
+  }
+
 
   factory Puzzle.fromMap(Map<String, dynamic> data) {
     final rawList = data['components'] as List<dynamic>? ?? [];
@@ -31,6 +35,10 @@ class Puzzle {
       'id': id,
       'components': components.map((c) => c.toJson()).toList(),
     };
+  }
+  @override
+  String toString() {
+    return 'Puzzle(id: $id, components: [${components.join(', ')}])';
   }
 
 }

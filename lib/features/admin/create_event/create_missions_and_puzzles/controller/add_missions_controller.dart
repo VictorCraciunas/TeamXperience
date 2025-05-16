@@ -25,7 +25,7 @@ class AddMissionsController{
         return List.generate(
             event!.nrMissions,
                 (missionSelected) => MissionWidget(
-                nrMission: missionSelected + 1,
+                nrMission: missionSelected,
                 onSetPuzzles: (nrPuzzles) {
                     _addMissionsService.initializePuzzleAtMission(nrPuzzles, missionSelected);
                 },
@@ -36,5 +36,13 @@ class AddMissionsController{
 
     Component addComponent(int missionSelected, int puzzleSelected, ComponentType type){
         return _addMissionsService.addComponentAtPuzzleAtMission(missionSelected, puzzleSelected, type);
+    }
+
+    void deleteComponents(int missionSelected, int puzzleSelected){
+        _addMissionsService.deleteComponentsAtPuzzleAtMission(missionSelected, puzzleSelected);
+    }
+
+    void printMissions(){
+        _addMissionsService.printMissions();
     }
 }
