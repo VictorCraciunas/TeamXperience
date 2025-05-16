@@ -6,6 +6,7 @@ import '../../../../../enums/animation_type.dart';
 import '../../../../../model/component.dart';
 import '../controller/add_missions_controller.dart';
 import 'create_components/create_button_component.dart';
+import 'create_components/create_code_component.dart';
 import 'create_components/create_image_component.dart';
 import 'create_components/create_text_component.dart';
 
@@ -42,6 +43,7 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
   String? buttonTextColor = '#000000'; // Default to black
   String? buttonTextColorOnTap = '#FFFFFF'; // Default to white
   String? borderColor = '#000000'; // New: Default to black
+  int? codeLength; // New: Store the number of letters for code component
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +76,7 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
               buttonTextColor = '#000000';
               buttonTextColorOnTap = '#FFFFFF';
               borderColor = '#000000';
+              codeLength = null;
             });
           },
           validator:
@@ -116,6 +119,11 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
             onBorderColorChanged: (value) => setState(() => borderColor = value), // New: Callback for border color
           ),
         ],
+        if (type == ComponentType.code) ...[
+          CodeComponentFieldsWidget(
+            onCodeLengthChanged: (value) => setState(() => codeLength = value),
+          ),
+        ],
         ElevatedButton(
           onPressed: () {
             if (type == null) return;
@@ -135,6 +143,7 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
               borderColor: type == ComponentType.button ? borderColor : null, // New: Pass border color
               fontSize: type == ComponentType.text ? fontSize : null,
               fontWeight: type == ComponentType.text ? fontWeight : null,
+              codeLength: type == ComponentType.code ? codeLength : null,
             );
             Widget componentWidget = componentToWidget.convert(component);
             widget.refreshUI(componentWidget);

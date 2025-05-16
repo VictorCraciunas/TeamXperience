@@ -48,4 +48,12 @@ class ComponentService{
       borderColor: borderColor
     );
   }
+  Component createCodeComponent({
+     int? codeLength, // Number of letters/text fields
+  }) {
+    return Component(
+      type: ComponentType.code,
+      codeLength: codeLength,
+    );
+  }
 }

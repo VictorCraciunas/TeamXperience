@@ -41,6 +41,7 @@ class MissionsService {
         String? borderColor,
         double? fontSize,
         String? fontWeight,
+        int? codeLength,
       }) {
     if (missions.isEmpty) {
       throw Exception("No missions initialized");
@@ -89,6 +90,9 @@ class MissionsService {
           buttonTextColorOnTap: buttonTextColorOnTap,
           borderColor: borderColor
         );
+        break;
+      case ComponentType.code:
+        component = componentService.createCodeComponent(codeLength: codeLength);
         break;
     }
 

@@ -1,5 +1,6 @@
 enum ComponentType {
   text,
   image,
-  button
+  button,
+  code
 }

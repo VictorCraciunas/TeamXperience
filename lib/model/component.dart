@@ -15,6 +15,7 @@ class Component {
   final AnimationType? animation;
   final double? fontSize;
   final String? fontWeight;
+  final int? codeLength; // New: Number of letters for the code component
 
   Component({
     required this.type,
@@ -30,6 +31,7 @@ class Component {
     this.animation,
     this.fontSize,
     this.fontWeight,
+    this.codeLength,
   });
 
   factory Component.fromMap(Map<String, dynamic> map) {
@@ -48,6 +50,7 @@ class Component {
       animation: map['animation'] != null ? AnimationType.values.byName(map['animation'] as String) : null,
       fontSize: map['fontSize'] as double?,
       fontWeight: map['fontWeight'] as String?,
+      codeLength: map['codeLength'] as int
     );
   }
 
@@ -61,11 +64,13 @@ class Component {
       if (animation != null) 'animation': animation!.name,
       if(fontSize != null) 'fontSize' : fontSize,
       if(fontWeight != null) 'fontWeight' : fontWeight,
+      if(codeLength != null) 'codeLength' : codeLength,
+
     };
   }
   @override
   String toString() {
-    return 'Component(type: ${type.name}, text: $text, imageUrl: $imageUrl, buttonLabel: $buttonLabel, textColor: $textColor, animation: ${animation?.name}, buttonColor: $buttonColor, buttonColorOnTap: $buttonColorOnTap, buttonTextColor: $buttonTextColor, buttonTextColorOnTap: $buttonTextColorOnTap, borderColor: $borderColor, fontSize: $fontSize, fontWeight: $fontWeight)';
+    return 'Component(type: ${type.name}, text: $text, imageUrl: $imageUrl, buttonLabel: $buttonLabel, textColor: $textColor, animation: ${animation?.name}, buttonColor: $buttonColor, buttonColorOnTap: $buttonColorOnTap, buttonTextColor: $buttonTextColor, buttonTextColorOnTap: $buttonTextColorOnTap, borderColor: $borderColor, fontSize: $fontSize, fontWeight: $fontWeight, codeLength: $codeLength)';
   }
 
 }
