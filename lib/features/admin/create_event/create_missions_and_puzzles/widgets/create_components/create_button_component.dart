@@ -115,74 +115,69 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
     final textOnTap = _hexToColor(widget.buttonTextColorOnTap, defaultColor: Colors.white);
     final borderClr = _hexToColor(widget.borderColor, defaultColor: Colors.black);
 
-    return Expanded(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Preview', style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Preview', style: TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
 
-            // ------------ preview -------------
-            Listener(
-              behavior: HitTestBehavior.opaque,  // ensures even transparent areas catch the touch
-              onPointerDown: (_)  => setState(() => _isTapped = true),
-              onPointerUp:   (_)  => setState(() => _isTapped = false),
-              onPointerCancel: (_) => setState(() => _isTapped = false),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                decoration: BoxDecoration(
-                  color: _isTapped ? bgOnTap : bgColor,
-                  border: Border.all(color: borderClr, width: 3),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  widget.buttonLabelController.text,
-                  style: TextStyle(
-                    color: _isTapped ? textOnTap : textColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2,
-                  ),
-                ),
+        // ------------ preview -------------
+        Listener(
+          behavior: HitTestBehavior.opaque,  // ensures even transparent areas catch the touch
+          onPointerDown: (_)  => setState(() => _isTapped = true),
+          onPointerUp:   (_)  => setState(() => _isTapped = false),
+          onPointerCancel: (_) => setState(() => _isTapped = false),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            decoration: BoxDecoration(
+              color: _isTapped ? bgOnTap : bgColor,
+              border: Border.all(color: borderClr, width: 3),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              widget.buttonLabelController.text,
+              style: TextStyle(
+                color: _isTapped ? textOnTap : textColor,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
               ),
             ),
-            const Divider(height: 32),
-            TextField(
-              controller: widget.buttonLabelController,
-              decoration: const InputDecoration(labelText: 'Button Label'),
-              onChanged: widget.onButtonLabelChanged,
-            ),
-            const SizedBox(height: 16),
-            _buildColorPicker(
-              title: 'Button Color',
-              currentColor: bgColor,
-              onColorChanged: widget.onButtonColorChanged,
-            ),
-            _buildColorPicker(
-              title: 'Button Color (On Tap)',
-              currentColor: bgOnTap,
-              onColorChanged: widget.onButtonColorOnTapChanged,
-            ),
-            _buildColorPicker(
-              title: 'Text Color',
-              currentColor: textColor,
-              onColorChanged: widget.onButtonTextColorChanged,
-            ),
-            _buildColorPicker(
-              title: 'Text Color (On Tap)',
-              currentColor: textOnTap,
-              onColorChanged: widget.onButtonTextColorOnTapChanged,
-            ),
-            _buildColorPicker(
-              title: 'Border Color',
-              currentColor: borderClr,
-              onColorChanged: widget.onBorderColorChanged,
-            ),
-          ],
+          ),
         ),
-      ),
+        const Divider(height: 32),
+        TextField(
+          controller: widget.buttonLabelController,
+          decoration: const InputDecoration(labelText: 'Button Label'),
+          onChanged: widget.onButtonLabelChanged,
+        ),
+        const SizedBox(height: 16),
+        _buildColorPicker(
+          title: 'Button Color',
+          currentColor: bgColor,
+          onColorChanged: widget.onButtonColorChanged,
+        ),
+        _buildColorPicker(
+          title: 'Button Color (On Tap)',
+          currentColor: bgOnTap,
+          onColorChanged: widget.onButtonColorOnTapChanged,
+        ),
+        _buildColorPicker(
+          title: 'Text Color',
+          currentColor: textColor,
+          onColorChanged: widget.onButtonTextColorChanged,
+        ),
+        _buildColorPicker(
+          title: 'Text Color (On Tap)',
+          currentColor: textOnTap,
+          onColorChanged: widget.onButtonTextColorOnTapChanged,
+        ),
+        _buildColorPicker(
+          title: 'Border Color',
+          currentColor: borderClr,
+          onColorChanged: widget.onBorderColorChanged,
+        ),
+      ],
     );
   }
 }

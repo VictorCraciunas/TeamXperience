@@ -60,13 +60,15 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget> {
           border: Border.all(color: currentBorderColor, width: 3),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Text(
-          widget.buttonLabel!,
-          style: TextStyle(
-            color: currentTextColor,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 2,
+        child: Center(
+          child: Text(
+            widget.buttonLabel!,
+            style: TextStyle(
+              color: currentTextColor,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2,
+            ),
           ),
         ),
       ),

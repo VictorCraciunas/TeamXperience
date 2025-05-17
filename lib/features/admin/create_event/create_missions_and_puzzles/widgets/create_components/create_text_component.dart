@@ -52,126 +52,122 @@ class TextComponentFieldsWidget extends StatelessWidget {
     final currentWeight = weightMap[fontWeight ?? 'Regular (400)'] ?? FontWeight.w400;
 
 
-    return Expanded(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 12),
+    return Column(
+      children: [
+        const SizedBox(height: 12),
 
-            // ───── Preview ─────
-            const Text('Preview', style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 6),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                textController.text.isEmpty ? 'Your text here' : textController.text,
-                style: TextStyle(
-                  color: currentColor,
-                  fontSize: currentSize,
-                  fontWeight: currentWeight,
-                ),
-              ),
+        // ───── Preview ─────
+        const Text('Preview', style: TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 6),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            textController.text.isEmpty ? 'Your text here' : textController.text,
+            style: TextStyle(
+              color: currentColor,
+              fontSize: currentSize,
+              fontWeight: currentWeight,
             ),
-            const Divider(height: 32),
+          ),
+        ),
+        const Divider(height: 32),
 
-            // ───── Text Content ─────
-            TextField(
-              controller: textController,
-              decoration: const InputDecoration(labelText: 'Text Content'),
-              onChanged: onTextChanged,
+        // ───── Text Content ─────
+        TextField(
+          controller: textController,
+          decoration: const InputDecoration(labelText: 'Text Content'),
+          onChanged: onTextChanged,
+        ),
+        const SizedBox(height: 10),
+
+        // ───── Color Picker ─────
+        ListTile(
+          title: const Text('Text Color'),
+          trailing: Container(
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+              color: currentColor,
+              border: Border.all(color: Colors.grey),
             ),
-            const SizedBox(height: 10),
-
-            // ───── Color Picker ─────
-            ListTile(
-              title: const Text('Text Color'),
-              trailing: Container(
-                width: 30,
-                height: 30,
-                decoration: BoxDecoration(
-                  color: currentColor,
-                  border: Border.all(color: Colors.grey),
-                ),
-              ),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    Color selectedColor = currentColor;
-                    return AlertDialog(
-                      title: const Text('Pick a color'),
-                      content: SingleChildScrollView(
-                        child: ColorPicker(
-                          pickerColor: selectedColor,
-                          onColorChanged: (color) => selectedColor = color,
-                          labelTypes: const [], // Replace deprecated showLabel
-                          pickerAreaHeightPercent: 0.8,
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            onTextColorChanged(_colorToHex(selectedColor));
-                            Navigator.pop(context);
-                          },
-                          child: const Text('OK'),
-                        ),
-                      ],
-                    );
-                  },
+          ),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                Color selectedColor = currentColor;
+                return AlertDialog(
+                  title: const Text('Pick a color'),
+                  content: SingleChildScrollView(
+                    child: ColorPicker(
+                      pickerColor: selectedColor,
+                      onColorChanged: (color) => selectedColor = color,
+                      labelTypes: const [], // Replace deprecated showLabel
+                      pickerAreaHeightPercent: 0.8,
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        onTextColorChanged(_colorToHex(selectedColor));
+                        Navigator.pop(context);
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
                 );
               },
-            ),
-            const SizedBox(height: 10),
-
-            // ───── Animation Picker ─────
-            DropdownButtonFormField<AnimationType>(
-              decoration: const InputDecoration(labelText: 'Animation'),
-              value: animation,
-              items: AnimationType.values
-                  .map((anim) => DropdownMenuItem(
-                value: anim,
-                child: Text(anim.toString().split('.').last),
-              ))
-                  .toList(),
-              onChanged: onAnimationChanged,
-            ),
-            const SizedBox(height: 10),
-
-            // ───── Font Size Slider ─────
-            Slider(
-              min: 8,
-              max: 72,
-              divisions: 64,
-              value: currentSize,
-              label: currentSize.toStringAsFixed(0),
-              onChanged: onFontSizeChanged,
-            ),
-            const SizedBox(height: 10),
-
-            // ───── Font Weight Dropdown ─────
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(labelText: 'Font Weight'),
-              value: weightMap.entries
-                  .firstWhere((e) => e.value == currentWeight,
-                  orElse: () => MapEntry('Regular (400)', FontWeight.w400))
-                  .key,
-              items: weightMap.keys.map((label) {
-                return DropdownMenuItem(value: label, child: Text(label));
-              }).toList(),
-              onChanged: onFontWeightChanged,
-            ),
-          ],
+            );
+          },
         ),
-      ),
+        const SizedBox(height: 10),
+
+        // ───── Animation Picker ─────
+        DropdownButtonFormField<AnimationType>(
+          decoration: const InputDecoration(labelText: 'Animation'),
+          value: animation,
+          items: AnimationType.values
+              .map((anim) => DropdownMenuItem(
+            value: anim,
+            child: Text(anim.toString().split('.').last),
+          ))
+              .toList(),
+          onChanged: onAnimationChanged,
+        ),
+        const SizedBox(height: 10),
+
+        // ───── Font Size Slider ─────
+        Slider(
+          min: 8,
+          max: 72,
+          divisions: 64,
+          value: currentSize,
+          label: currentSize.toStringAsFixed(0),
+          onChanged: onFontSizeChanged,
+        ),
+        const SizedBox(height: 10),
+
+        // ───── Font Weight Dropdown ─────
+        DropdownButtonFormField<String>(
+          decoration: const InputDecoration(labelText: 'Font Weight'),
+          value: weightMap.entries
+              .firstWhere((e) => e.value == currentWeight,
+              orElse: () => MapEntry('Regular (400)', FontWeight.w400))
+              .key,
+          items: weightMap.keys.map((label) {
+            return DropdownMenuItem(value: label, child: Text(label));
+          }).toList(),
+          onChanged: onFontWeightChanged,
+        ),
+      ],
     );
   }
 }

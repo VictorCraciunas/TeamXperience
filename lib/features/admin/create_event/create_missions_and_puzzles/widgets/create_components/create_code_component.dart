@@ -50,7 +50,7 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: const Color(0xFFF5E8C7), // Parchment-like background
+              color: const Color(0x00f5e8c7), // Parchment-like background
               border: Border.all(color: Colors.black, width: 2),
             ),
 
