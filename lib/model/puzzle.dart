@@ -1,13 +1,19 @@
+import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/model/component.dart';
 
 class Puzzle {
   final String id;
+  PuzzleType type;
   List<Component> components;
+  String? code;
 
   Puzzle({
     required this.id,
     List<Component>? components,
-  }) : components = components ?? []; // if the no list is given, initialize with empty list
+    PuzzleType? type,
+    this.code
+  }) : components = components ?? [],
+        type = type ?? PuzzleType.code;
 
   int get componentsCount => components.length;
 
@@ -28,9 +34,14 @@ class Puzzle {
   factory Puzzle.fromMap(Map<String, dynamic> data) {
     final rawList = data['components'] as List<dynamic>? ?? [];
     final comps = rawList.map((e) => Component.fromMap(e as Map<String, dynamic>)).toList();
+    final rawType = data['type'] as String;
+
     return Puzzle(
       id: data['id'] as String? ?? '',
       components: comps,
+      type: PuzzleType.values.byName(rawType),
+      code: data['code'] as String?,
+
     );
   }
 
@@ -38,11 +49,13 @@ class Puzzle {
     return {
       'id': id,
       'components': components.map((c) => c.toJson()).toList(),
+      'type': type.name,
+       if (code != null) 'text': code,
     };
   }
   @override
   String toString() {
-    return 'Puzzle(id: $id, components: [${components.join(', ')}])';
+    return 'Puzzle(type: ${type.name},id: $id, components: [${components.join(', ')}], code: $code)';
   }
 
 }

@@ -5,6 +5,7 @@ import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/mission.dart';
 
 import '../../../../../enums/animation_type.dart';
+import '../../../../../enums/puzzle_type.dart';
 import '../../../../../model/event.dart';
 
 class AddMissionsController{
@@ -77,6 +78,14 @@ class AddMissionsController{
 
     void deleteAllComponents(int missionSelected, int puzzleSelected){
         _addMissionsService.deleteAllComponentsAtPuzzleAtMission(missionSelected, puzzleSelected);
+    }
+
+    void setPuzzleType(
+        int missionSelected,
+        int puzzleSelected,
+        PuzzleType type,
+        String? code){
+      _addMissionsService.setPuzzleTypeAtPuzzleAtMission(missionSelected, puzzleSelected, type, code);
     }
 
     void printMissions(){

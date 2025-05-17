@@ -35,7 +35,7 @@ class CreateEventService {
       startCode: startCode,
     );
 
-    eventRepo.createEvent(event);
+    //eventRepo.createEvent(event);
     return event;
   }
 

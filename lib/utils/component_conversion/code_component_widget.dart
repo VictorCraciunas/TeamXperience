@@ -56,13 +56,15 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> {
       final rowCells = List<Widget>.generate(countInRow, (_) {
         final index = currentIndex;
         currentIndex++;
-        return _buildCell(index);
+        return Expanded( // Use Expanded to share available space
+          child: _buildCell(index),
+        );
       });
 
       return Padding(
         padding: EdgeInsets.only(bottom: rowIndex == rowCount - 1 ? 0 : 8),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center, // Center the row
           children: rowCells,
         ),
       );
@@ -83,13 +85,13 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> {
 
   Widget _buildCell(int index) {
     return Container(
-      width: 50,
       height: 50,
       decoration: BoxDecoration(
         color: const Color(0x00f5e8c7),
         border: Border.all(color: Colors.black),
         borderRadius: BorderRadius.circular(25),
       ),
+      margin: const EdgeInsets.symmetric(horizontal: 4),
       alignment: Alignment.center,
       child: TextField(
         controller: controllers[index],
@@ -107,6 +109,10 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> {
             FocusScope.of(context).requestFocus(focusNodes[index - 1]);
           }
         },
+        style: const TextStyle(
+          fontSize: 20, // Increase this value to make the text bigger (e.g., 20, 24, 30)
+          fontWeight: FontWeight.bold, // Optional: Makes text bolder
+        ),
       ),
     );
   }

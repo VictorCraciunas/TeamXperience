@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/save_puzzle.dart';
 
 import '../controller/add_missions_controller.dart';
 import 'add_component_widget.dart';
 
 class PuzzleWidget extends StatefulWidget {
-  final int nrMission;  // 1 indexed ( so we need to make -1 when we use list.add)
+  final int nrMission; // 1 indexed ( so we need to make -1 when we use list.add)
   final AddMissionsController addMissionsController;
   final int selectedPuzzle;
-  const PuzzleWidget({super.key, required this.nrMission, required this.selectedPuzzle, required this.addMissionsController});
+
+  const PuzzleWidget({
+    super.key,
+    required this.nrMission,
+    required this.selectedPuzzle,
+    required this.addMissionsController,
+  });
 
   @override
   State<PuzzleWidget> createState() => _PuzzleWidgetState();
@@ -29,52 +36,68 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
           ),
           const SizedBox(height: 5),
           Column(
-            children: List.generate(puzzleComponents.length, (index) => ListTile(
-              title: puzzleComponents[index],
-              trailing: IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () {
-                  setState(() {
-                    puzzleComponents.removeAt(index);
-                    widget.addMissionsController.deleteComponent(
-                      widget.nrMission,
-                      widget.selectedPuzzle,
-                      index,
-                    );
-                  });
-                },
+            children: List.generate(
+              puzzleComponents.length,
+              (index) => ListTile(
+                title: puzzleComponents[index],
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () {
+                    setState(() {
+                      puzzleComponents.removeAt(index);
+                      widget.addMissionsController.deleteComponent(
+                        widget.nrMission,
+                        widget.selectedPuzzle,
+                        index,
+                      );
+                    });
+                  },
+                ),
               ),
-            )),
+            ),
           ),
         ],
         ElevatedButton(
-          onPressed: widget.selectedPuzzle >= 0
-              ? () {
-            print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx Adding component for mission ${widget.nrMission - 1}, puzzle ${widget.selectedPuzzle}");
-            showModalBottomSheet(
-              context: context,
-              builder: (context) => AddComponentWidget(
-                addMissionsController: widget.addMissionsController,
-                missionSelected: widget.nrMission,
-                puzzleSelected: widget.selectedPuzzle,
-                refreshUI: (Widget componentWidget) {
-                  setState(() {
-                    puzzleComponents.add(componentWidget);
-                    componentIndex++;
-                  });
-                },
-              ),
-            );
-          }
-              : null, // Disable button if selectedPuzzle is invalid
+          onPressed:
+              widget.selectedPuzzle >= 0
+                  ? () {
+                    print(
+                      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx Adding component for mission ${widget.nrMission - 1}, puzzle ${widget.selectedPuzzle}",
+                    );
+                    showModalBottomSheet(
+                      context: context,
+                      builder:
+                          (context) => AddComponentWidget(
+                            addMissionsController: widget.addMissionsController,
+                            missionSelected: widget.nrMission,
+                            puzzleSelected: widget.selectedPuzzle,
+                            refreshUI: (Widget componentWidget) {
+                              setState(() {
+                                puzzleComponents.add(componentWidget);
+                                componentIndex++;
+                              });
+                            },
+                          ),
+                    );
+                  }
+                  : null, // Disable button if selectedPuzzle is invalid
           child: const Text("Add component"),
         ),
+        ElevatedButton(
+          onPressed: () {
+            setState(() {
+              puzzleComponents.clear();
+              widget.addMissionsController.deleteAllComponents(
+                widget.nrMission,
+                widget.selectedPuzzle,
+              );
+            });
+          },
+          child: Text("Clear components"),
+        ),
         ElevatedButton(onPressed: (){
-          setState(() {
-            puzzleComponents.clear();
-            widget.addMissionsController.deleteAllComponents(widget.nrMission , widget.selectedPuzzle);
-          });
-        }, child: Text("Clear components"))
+          showModalBottomSheet(context: context, builder: (context) => SavePuzzle(nrMission: widget.nrMission, selectedPuzzle: widget.selectedPuzzle, addMissionsController: widget.addMissionsController));
+        }, child: Text("save the puzzle"),)
       ],
     );
   }

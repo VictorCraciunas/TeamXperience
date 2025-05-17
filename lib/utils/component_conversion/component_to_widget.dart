@@ -12,28 +12,34 @@ class ComponentToWidget {
   Widget convert(Component component) {
     switch (component.type) {
       case ComponentType.text:
-        return TextComponentWidget(
-          text: component.text ?? '',
-          textColor: component.textColor, // Pass hex string directly
-          animation: component.animation,
-          fontSize: component.fontSize,
-          fontWeight: component.fontWeight,
+        return Center(
+          child: TextComponentWidget(
+            text: component.text ?? '',
+            textColor: component.textColor, // Pass hex string directly
+            animation: component.animation,
+            fontSize: component.fontSize,
+            fontWeight: component.fontWeight,
+          ),
         );
       case ComponentType.image:
-        return ImageComponentWidget(
-          imageUrl: component.imageUrl,
+        return Center(
+          child: ImageComponentWidget(
+            imageUrl: component.imageUrl,
+          ),
         );
       case ComponentType.button:
-        return ButtonComponentWidget(
-          buttonLabel: component.buttonLabel,
-          buttonColor: component.buttonColor,
-          buttonColorOnTap: component.buttonColorOnTap,
-          buttonTextColor: component.buttonTextColor,
-          buttonTextColorOnTap: component.buttonTextColorOnTap,
-          borderColor: component.borderColor,
+        return Center(
+          child: ButtonComponentWidget(
+            buttonLabel: component.buttonLabel,
+            buttonColor: component.buttonColor,
+            buttonColorOnTap: component.buttonColorOnTap,
+            buttonTextColor: component.buttonTextColor,
+            buttonTextColorOnTap: component.buttonTextColorOnTap,
+            borderColor: component.borderColor,
+          ),
         );
       case ComponentType.code:
-        return CodeComponentWidget(component: component);
+        return Center(child: CodeComponentWidget(component: component));
     }
   }
 }

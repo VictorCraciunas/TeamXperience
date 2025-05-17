@@ -13,8 +13,8 @@ class Event {
   final String description;
   final int nrMissions;
   final EventType type;
-  final String landingImageUrl;
-  final String taskBackgroundImageUrl;
+   String landingImageUrl;
+   String taskBackgroundImageUrl;
   final String startCode;
 
   Event({

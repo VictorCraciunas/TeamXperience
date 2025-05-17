@@ -27,7 +27,7 @@ class CreateEventController{
   // EventType field
   EventType? selectedType;
 
-  Future<void> createEvent(BuildContext context, Function refreshUI) async {
+  Future<void> createEvent(BuildContext context) async {
     if (formKey.currentState!.validate()) {
       if (startTime == null || deadlineEnrollment == null || selectedType == null) {
         if (!context.mounted) return;
@@ -36,12 +36,12 @@ class CreateEventController{
         );
         return;
       }
-      // if (landingImageFile == null || taskBackgroundImageFile == null) {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     const SnackBar(content: Text('Please select both landing and task background images')),
-      //   );
-      //   return;
-      // }
+      if (landingImageFile == null || taskBackgroundImageFile == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select both landing and task background images')),
+        );
+        return;
+      }
 
       try {
 
@@ -69,8 +69,8 @@ class CreateEventController{
           selectedType!,
               // landingImageUrl,
               // taskBackgroundImageUrl,
-              "test",
-              "test",
+              landingImageFile!.path,
+              taskBackgroundImageFile!.path,
           startCodeController.text,
         );
         if (!context.mounted) return;
@@ -78,8 +78,7 @@ class CreateEventController{
           const SnackBar(content: Text('Event created successfully')),
         );
         // Clear form after success
-        formKey.currentState!.reset();
-        refreshUI();
+        // formKey.currentState!.reset();
         Navigator.pushNamed(context, '/add_missions',arguments: event);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -1,4 +1,5 @@
 import 'package:teamxperience/enums/component-type.dart';
+import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/service/component_service.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/service/puzzle_service.dart';
 import 'package:teamxperience/model/component.dart';
@@ -115,6 +116,16 @@ class MissionsService {
     for (int i = 0; i < missions.length; i++) {
       print("Mission $i:\n${missions[i]}");
     }
+  }
+
+  void setPuzzleTypeAtPuzzleAtMission(
+      int missionSelected,
+      int puzzleSelected,
+      PuzzleType type,
+      String? code
+      ){
+    missions[missionSelected].puzzles[puzzleSelected].type = type;
+    missions[missionSelected].puzzles[puzzleSelected].code = code;
   }
 
   void deleteComponentAtPuzzleAtMission(

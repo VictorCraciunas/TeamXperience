@@ -166,13 +166,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () => controller.createEvent(context, () => {
-                  setState(() {
-                    controller.startTime = null;
-                    controller.deadlineEnrollment = null;
-                    controller.selectedType = null;
-                  })
-                }),
+                onPressed: () => controller.createEvent(context),
                 child: const Text('Create Event'),
               ),
             ],
