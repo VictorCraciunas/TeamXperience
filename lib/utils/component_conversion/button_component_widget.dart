@@ -29,7 +29,13 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget> {
   Color _hexToColor(String? hex, {Color defaultColor = Colors.black}) {
     if (hex == null || hex.isEmpty) return defaultColor;
     final hexColor = hex.replaceFirst('#', '');
-    return Color(int.parse('FF$hexColor', radix: 16));
+    if (hexColor.length == 6) {
+      return Color(int.parse('FF$hexColor', radix: 16)); // Full opacity
+    } else if (hexColor.length == 8) {
+      return Color(int.parse(hexColor, radix: 16)); // With alpha
+    } else {
+      return defaultColor;
+    }
   }
 
   @override
@@ -42,39 +48,25 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget> {
         : _hexToColor(widget.buttonTextColor, defaultColor: Colors.black);
     final currentBorderColor = _hexToColor(widget.borderColor, defaultColor: Colors.black);
 
-    return GestureDetector(
-      onTapDown: (_) {
-        setState(() {
-          _isTapped = true;
-        });
-      },
-      onTapUp: (_) {
-        setState(() {
-          _isTapped = false;
-        });
-      },
-      onTapCancel: () {
-        setState(() {
-          _isTapped = false;
-        });
-      },
+    return Listener(
+      behavior: HitTestBehavior.opaque,  // ensures even transparent areas catch the touch
+      onPointerDown: (_)  => setState(() => _isTapped = true),
+      onPointerUp:   (_)  => setState(() => _isTapped = false),
+      onPointerCancel: (_) => setState(() => _isTapped = false),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         decoration: BoxDecoration(
-          color: currentButtonColor, // Dynamic background color
-          border: Border.all(
-            color: currentBorderColor,
-            width: 3.0,
-          ),
-          borderRadius: BorderRadius.circular(8.0),
+          color: currentButtonColor,
+          border: Border.all(color: currentBorderColor, width: 3),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
-          widget.buttonLabel ?? 'Button',
+          widget.buttonLabel!,
           style: TextStyle(
-            color: currentTextColor, // Dynamic text color
-            fontSize: 16.0,
-            letterSpacing: 2.0,
+            color: currentTextColor,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
+            letterSpacing: 2,
           ),
         ),
       ),

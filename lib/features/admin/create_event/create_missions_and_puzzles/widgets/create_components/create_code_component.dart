@@ -53,6 +53,8 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
               color: const Color(0xFFF5E8C7), // Parchment-like background
               border: Border.all(color: Colors.black, width: 2),
             ),
+
+            // ------- preview --------
             child: component != null
             ? componentToWidget.convert(component!)
             : null,
