@@ -7,7 +7,7 @@ import 'package:teamxperience/model/event.dart';
 import '../../../../../enums/event_type.dart';
 import '../service/create_event_service.dart';
 
-class CreateEventController{
+class CreateEventController {
   final CreateEventService createEventService = CreateEventService();
   final ImageRepo imageRepo = ImageRepo();
   final formKey = GlobalKey<FormState>();
@@ -29,37 +29,35 @@ class CreateEventController{
 
   Future<void> createEvent(BuildContext context) async {
     if (formKey.currentState!.validate()) {
-      if (startTime == null || deadlineEnrollment == null || selectedType == null) {
+      if (startTime == null ||
+          deadlineEnrollment == null ||
+          selectedType == null) {
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select start time, enrollment deadline, and event type')),
+          const SnackBar(
+            content: Text(
+              'Please select start time, enrollment deadline, and event type',
+            ),
+          ),
         );
         return;
       }
       if (landingImageFile == null || taskBackgroundImageFile == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select both landing and task background images')),
+          const SnackBar(
+            content: Text(
+              'Please select both landing and task background images',
+            ),
+          ),
         );
         return;
       }
 
       try {
-
         String eventId = await createEventService.getEventId();
 
-        // String? landingImageUrl = await imageRepo.uploadImage(landingImageFile!, eventId, 'landing');
-        // String? taskBackgroundImageUrl = await imageRepo.uploadImage(taskBackgroundImageFile!, eventId,'task_background');
-
-        // if (landingImageUrl == null || taskBackgroundImageUrl == null) {
-        //   if (!context.mounted) return;
-        //   ScaffoldMessenger.of(context).showSnackBar(
-        //     const SnackBar(content: Text('Failed to upload images')),
-        //   );
-        //   return;
-        // }
-
-            Event event = await createEventService.createEvent(
-              eventId,
+        Event event = await createEventService.createEvent(
+          eventId,
           nameController.text,
           startTime!,
           deadlineEnrollment!,
@@ -67,10 +65,8 @@ class CreateEventController{
           descriptionController.text,
           int.parse(nrMissionsController.text),
           selectedType!,
-              // landingImageUrl,
-              // taskBackgroundImageUrl,
-              landingImageFile!.path,
-              taskBackgroundImageFile!.path,
+          landingImageFile!.path,
+          taskBackgroundImageFile!.path,
           startCodeController.text,
         );
         if (!context.mounted) return;
@@ -79,14 +75,12 @@ class CreateEventController{
         );
         // Clear form after success
         // formKey.currentState!.reset();
-        Navigator.pushNamed(context, '/add_missions',arguments: event);
+        Navigator.pushNamed(context, '/add_missions', arguments: event);
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to create event: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to create event: $e')));
       }
     }
   }
-
-
 }

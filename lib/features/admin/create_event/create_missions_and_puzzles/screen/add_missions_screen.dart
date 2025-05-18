@@ -46,14 +46,17 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
-          image: _addMissionsController.event?.taskBackgroundImageUrl != null
-              ? DecorationImage(
-            image: FileImage(
-              File(_addMissionsController.event!.taskBackgroundImageUrl),
-            ),
-            fit: BoxFit.cover,
-          )
-              : null, // No background if the URL is null
+          image:
+              _addMissionsController.event?.taskBackgroundImageUrl != null
+                  ? DecorationImage(
+                    image: FileImage(
+                      File(
+                        _addMissionsController.event!.taskBackgroundImageUrl,
+                      ),
+                    ),
+                    fit: BoxFit.cover,
+                  )
+                  : null, // No background if the URL is null
         ),
         child: SingleChildScrollView(
           child: Column(
@@ -68,7 +71,8 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                     return MyListComponent(
                       index: index,
                       type: "Mission",
-                      isSelected: _addMissionsController.selectedMission == index,
+                      isSelected:
+                          _addMissionsController.selectedMission == index,
                       onTap: () {
                         setState(() {
                           _addMissionsController.selectedMission = index;
@@ -83,9 +87,18 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                 index: _addMissionsController.selectedMission,
                 children: _addMissionsController.missionWidgets,
               ),
-              ElevatedButton(onPressed: () {
+              ElevatedButton(
+                onPressed: () {
                   _addMissionsController.printMissions();
-              }, child: Text("print the missions")),
+                  _addMissionsController.saveEvent();
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text("Event Created")));
+                  Navigator.pushReplacementNamed(context, '/admin_home');
+
+                },
+                child: Text("Save event"),
+              ),
             ],
           ),
         ),

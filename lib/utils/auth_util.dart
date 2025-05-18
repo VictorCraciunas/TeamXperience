@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/constants/routes.dart';
 
 import '../backend/authentication/AuthenticationRepository.dart';
 import '../backend/repo/user_repo.dart';
@@ -14,7 +15,7 @@ class AuthUtil {
   Future<void> checkUserAndRedirect(BuildContext context) async {
     User? currentUser = authenticationRepository.getCurrentUser();
     if (currentUser == null) {
-      Navigator.pushReplacementNamed(context, '/register_screen');
+      Navigator.pushNamedAndRemoveUntil(context, Routes.login,(Route<dynamic> route) => false);
     } else {
       // User is logged in, fetch their data
       String email = currentUser.email!;
@@ -23,12 +24,12 @@ class AuthUtil {
       if(appUser != null){
         if (appUser.role == Role.ADMIN) {
           if (!context.mounted) return;
-          Navigator.pushReplacementNamed(context, '/create_event');
+          Navigator.pushNamedAndRemoveUntil(context, Routes.adminHome,(Route<dynamic> route) => false);
       }
         else {
           print("$appUser.role");
           if (!context.mounted) return;
-          Navigator.pushReplacementNamed(context, '/home');
+          Navigator.pushNamedAndRemoveUntil(context, Routes.home,(Route<dynamic> route) => false);
         }
       }
     }

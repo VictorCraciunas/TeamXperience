@@ -95,4 +95,8 @@ class AddMissionsController{
     void deleteComponent(int missionSelected, int puzzleSelected, int componentIndex){
         _addMissionsService.deleteComponentAtPuzzleAtMission(missionSelected, puzzleSelected, componentIndex);
     }
+
+    void saveEvent(){
+      _addMissionsService.saveEvent(event!);
+    }
 }

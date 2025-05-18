@@ -4,7 +4,7 @@ import '../enums/component-type.dart';
 class Component {
   final ComponentType type;
   final String? text;
-  final String? imageUrl;
+   String? imageUrl;
   final String? buttonLabel;
   final String? buttonColor; // New: Initial button background color
   final String? buttonColorOnTap; // New: Button background color on tap

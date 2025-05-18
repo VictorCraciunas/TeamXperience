@@ -1,16 +1,24 @@
+import 'dart:io';
+
+import 'package:teamxperience/backend/repo/event_repo.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/service/component_service.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/service/puzzle_service.dart';
 import 'package:teamxperience/model/component.dart';
+import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/puzzle.dart';
 
+import '../../../../../backend/storage/storage_images.dart';
 import '../../../../../enums/animation_type.dart';
 import '../../../../../model/mission.dart';
 
 class MissionsService {
   PuzzleService addPuzzleService = PuzzleService();
   ComponentService componentService = ComponentService();
+  EventRepo eventRepo = EventRepo();
+  final ImageRepo imageRepo = ImageRepo();
+
   List<Mission> missions = [];
 
   List<Mission> initializeMissions(int nrMissions) {
@@ -171,5 +179,34 @@ class MissionsService {
     missions[missionSelected].puzzles[puzzleSelected].removeComponent(
       componentIndex,
     );
+  }
+
+  Future<void> saveEvent(Event event) async{
+    event.missions = missions;
+    // String? landingImageUrl = await imageRepo.uploadImage(File(event.landingImageUrl), event.eventId, 'landing');
+    String? taskBackgroundImageUrl = await imageRepo.uploadImage(File(event.taskBackgroundImageUrl), event.eventId,'task_background');
+
+    if (taskBackgroundImageUrl == null) {
+      throw Exception("Failed to upload the images");
+    }
+
+    // event.landingImageUrl = landingImageUrl;
+    event.taskBackgroundImageUrl =taskBackgroundImageUrl;
+    int im = 1;
+    for (var mission in event.missions) {
+      for(var puzzle in mission.puzzles){
+        for(var component in puzzle.components){
+          if(component.type == ComponentType.image){
+            String? componentImageURl = await imageRepo.uploadImage(File(component.imageUrl!), event.eventId, 'component$im');
+            im++;
+            if (componentImageURl == null) {
+              throw Exception("Failed to upload the images");
+            }
+            component.imageUrl = componentImageURl;
+          }
+        }
+      }
+    }
+    eventRepo.createEvent(event);
   }
 }

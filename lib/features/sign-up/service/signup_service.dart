@@ -11,21 +11,19 @@ class SignUpService {
   UserRepo userRepo = UserRepo();
 
   Future<void> register(
-      String name, String email, String password, BuildContext context) async {
+      String email, String password, BuildContext context) async {
     UserCredential userCredential =
         await authenticationRepository.register(email, password);
     AppUser appUser =
-        AppUser(name: name, email: email, uid: userCredential.user!.uid);
+        AppUser(email: email, uid: userCredential.user!.uid);
     userRepo.saveUser(appUser);
   }
 
   Future<void> logInGoogle() async {
     UserCredential userCredential =
         await authenticationRepository.signInWithGoogle();
-
     if (await userRepo.findByEmail(userCredential.user!.email!) == null) {
       AppUser appUser = AppUser(
-          name: "test",
           email: userCredential.user!.email!,
           uid: userCredential.user!.uid);
       userRepo.saveUser(appUser);
