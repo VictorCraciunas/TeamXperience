@@ -12,6 +12,8 @@ class AuthUtil {
   final AuthenticationRepository authenticationRepository;
   AuthUtil(this.userRepo, this.authenticationRepository);
 
+
+  // -------- role based redirect -----------
   Future<void> checkUserAndRedirect(BuildContext context) async {
     User? currentUser = authenticationRepository.getCurrentUser();
     if (currentUser == null) {
@@ -27,7 +29,6 @@ class AuthUtil {
           Navigator.pushNamedAndRemoveUntil(context, Routes.adminHome,(Route<dynamic> route) => false);
       }
         else {
-          print("$appUser.role");
           if (!context.mounted) return;
           Navigator.pushNamedAndRemoveUntil(context, Routes.home,(Route<dynamic> route) => false);
         }

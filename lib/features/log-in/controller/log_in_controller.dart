@@ -7,7 +7,13 @@ class LogInController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  bool isLoading = false;
+
+
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+  }
+
 
   Future<void> login(BuildContext context) async {
     if (formKey.currentState!.validate()) {
@@ -15,7 +21,10 @@ class LogInController {
       try {
         await logInService.logIn(
             emailController.text.trim(), passwordController.text.trim());
+
+
         if (!context.mounted) return;
+        dispose();
         Navigator.pushReplacementNamed(context, Routes.redirect);
       }
        catch (e) {
@@ -32,6 +41,8 @@ class LogInController {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Log in successfully!')),
         );
+
+        dispose();
         Navigator.pushReplacementNamed(context, Routes.redirect);
       }
       catch(e){
@@ -41,7 +52,7 @@ class LogInController {
   }
 
   void goToSignUp(BuildContext context){
-    Navigator.pushReplacementNamed(context, Routes.register);
+    Navigator.pushNamed(context, Routes.register);
   }
 
 

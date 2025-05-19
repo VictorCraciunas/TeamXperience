@@ -17,11 +17,13 @@ class _LandingPageState extends State<LandingPage> {
   void initState() {
     super.initState();
     // Call the method after the first frame is rendered to ensure context is available
+    // role based redirect
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.authUtil.checkUserAndRedirect(context);
     });
   }
 
+  // -------- loader -------------
   @override
   Widget build(BuildContext context) {
     return  Scaffold(

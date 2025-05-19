@@ -90,11 +90,11 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
               ElevatedButton(
                 onPressed: () {
                   _addMissionsController.printMissions();
-                  _addMissionsController.saveEvent();
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text("Event Created")));
-                  Navigator.pushReplacementNamed(context, '/admin_home');
+                  // _addMissionsController.saveEvent();
+                  // ScaffoldMessenger.of(
+                  //   context,
+                  // ).showSnackBar(SnackBar(content: Text("Event Created")));
+                  // Navigator.pushReplacementNamed(context, '/admin_home');
 
                 },
                 child: Text("Save event"),

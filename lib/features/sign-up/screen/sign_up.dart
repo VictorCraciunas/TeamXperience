@@ -7,6 +7,7 @@ import '../../../widgets/my_text_field.dart';
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
 
+
   @override
   Widget build(BuildContext context) {
     SignUpController signUpController = SignUpController();

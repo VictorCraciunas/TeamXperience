@@ -8,7 +8,11 @@ class SignUpController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   SignUpService signUpService = SignUpService();
 
-  bool isLoading = false;
+
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+  }
 
   Future<void> register(BuildContext context) async {
     if (formKey.currentState!.validate()) {
@@ -18,6 +22,8 @@ class SignUpController {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Account created successfully!')),
         );
+
+        dispose();
         Navigator.pushReplacementNamed(context, Routes.redirect);
       }
       catch(e){
@@ -34,6 +40,8 @@ class SignUpController {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Log in successfully!')),
         );
+
+        dispose();
         Navigator.pushReplacementNamed(context, Routes.redirect);
       }
       catch(e){

@@ -10,10 +10,11 @@ class SignUpService {
       AuthenticationRepository();
   UserRepo userRepo = UserRepo();
 
-  Future<void> register(
-      String email, String password, BuildContext context) async {
-    UserCredential userCredential =
-        await authenticationRepository.register(email, password);
+  Future<void> register(String email, String password, BuildContext context) async {
+
+    UserCredential userCredential = await authenticationRepository.register(email, password);
+
+    //save the user into database
     AppUser appUser =
         AppUser(email: email, uid: userCredential.user!.uid);
     userRepo.saveUser(appUser);
@@ -23,6 +24,8 @@ class SignUpService {
     UserCredential userCredential =
         await authenticationRepository.signInWithGoogle();
     if (await userRepo.findByEmail(userCredential.user!.email!) == null) {
+
+      //save the user into database
       AppUser appUser = AppUser(
           email: userCredential.user!.email!,
           uid: userCredential.user!.uid);

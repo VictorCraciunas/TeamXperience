@@ -22,6 +22,7 @@ class MissionsService {
   List<Mission> missions = [];
 
   List<Mission> initializeMissions(int nrMissions) {
+    missions.clear();
     for (int i = 0; i < nrMissions; i++) {
       Mission mission = Mission(id: i.toString());
       missions.add(mission);

@@ -74,12 +74,12 @@ class _MissionWidgetState extends State<MissionWidget> {
               onPressed: () {
                 final text = puzzlesCountController.text;
                 final nrPuzzles = int.tryParse(text) ?? 0;
-                widget.onSetPuzzles(nrPuzzles); // Notify parent
+                widget.onSetPuzzles(nrPuzzles); // initialize puzzles
                 setState(() {
                   numberOfPuzzles = nrPuzzles;
                   selectedPuzzle = -1;
                   puzzleWidgets.clear();
-                  puzzleWidgets = List.generate(nrPuzzles, (puzzleSelected) => PuzzleWidget(nrMission: widget.nrMission, selectedPuzzle: puzzleSelected, addMissionsController: widget.addMissionsController));
+                  puzzleWidgets = List.generate(nrPuzzles, (puzzleSelected) => PuzzleWidget(key:UniqueKey(),nrMission: widget.nrMission, selectedPuzzle: puzzleSelected, addMissionsController: widget.addMissionsController));
                 });
               },
               child: const Text('Set Puzzles'),
