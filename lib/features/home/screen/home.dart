@@ -22,7 +22,7 @@ class Home extends StatelessWidget {
               child: ElevatedButton(onPressed: () {
                 authenticationRepository.logout();
                 Navigator.pushNamedAndRemoveUntil(
-                  context, Routes.login, (Route<dynamic> route) => false);
+                  context, Routes.splash, (Route<dynamic> route) => false);
               }, child: Text("Log Out")),
             )
           ],

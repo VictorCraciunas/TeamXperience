@@ -23,7 +23,7 @@ class SignUpController {
           const SnackBar(content: Text('Account created successfully!')),
         );
 
-        dispose();
+        // dispose();
         Navigator.pushReplacementNamed(context, Routes.redirect);
       }
       catch(e){

@@ -17,7 +17,7 @@ class AuthUtil {
   Future<void> checkUserAndRedirect(BuildContext context) async {
     User? currentUser = authenticationRepository.getCurrentUser();
     if (currentUser == null) {
-      Navigator.pushNamedAndRemoveUntil(context, Routes.login,(Route<dynamic> route) => false);
+      Navigator.pushNamedAndRemoveUntil(context, Routes.splash,(Route<dynamic> route) => false);
     } else {
       // User is logged in, fetch their data
       String email = currentUser.email!;
@@ -27,7 +27,7 @@ class AuthUtil {
         if (appUser.role == Role.ADMIN) {
           if (!context.mounted) return;
           Navigator.pushNamedAndRemoveUntil(context, Routes.adminHome,(Route<dynamic> route) => false);
-      }
+        }
         else {
           if (!context.mounted) return;
           Navigator.pushNamedAndRemoveUntil(context, Routes.home,(Route<dynamic> route) => false);

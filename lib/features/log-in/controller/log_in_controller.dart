@@ -24,7 +24,7 @@ class LogInController {
 
 
         if (!context.mounted) return;
-        dispose();
+        // dispose();
         Navigator.pushReplacementNamed(context, Routes.redirect);
       }
        catch (e) {

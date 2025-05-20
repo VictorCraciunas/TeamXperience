@@ -84,8 +84,6 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
                   pickerColor: tempColor,
                   onColorChanged: (color) => setState(() => tempColor = color),
                   enableAlpha: true,
-                  labelTypes: const [],
-                  pickerAreaHeightPercent: 0.8,
                 ),
               ),
               actions: [

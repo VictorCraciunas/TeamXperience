@@ -24,7 +24,7 @@ class AdminHome extends StatelessWidget {
             child:ElevatedButton(
                 onPressed: () {
                   authenticationRepository.logout();
-                  Navigator.pushNamedAndRemoveUntil(context, Routes.login,(Route<dynamic> route) => false, );
+                  Navigator.pushNamedAndRemoveUntil(context, Routes.splash,(Route<dynamic> route) => false, );
                 },
                 child: const Text("Log out")),
           ),

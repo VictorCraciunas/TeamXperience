@@ -65,6 +65,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
                       "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx Adding component for mission ${widget.nrMission - 1}, puzzle ${widget.selectedPuzzle}",
                     );
                     showModalBottomSheet(
+                      isScrollControlled: true,
                       context: context,
                       builder:
                           (context) => AddComponentWidget(

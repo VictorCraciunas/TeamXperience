@@ -6,4 +6,6 @@ abstract class Routes {
   static const createEvent  = '/create_event';
   static const addMissions  = '/add_missions';
   static const adminHome    = '/admin_home';
+  static const splash    = '/splash';
+
 }
