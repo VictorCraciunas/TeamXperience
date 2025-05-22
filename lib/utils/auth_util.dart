@@ -24,6 +24,7 @@ class AuthUtil {
       AppUser? appUser = await userRepo.findByEmail(email);
 
       if(appUser != null){
+        print("a merssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
         if (appUser.role == Role.ADMIN) {
           if (!context.mounted) return;
           Navigator.pushNamedAndRemoveUntil(context, Routes.adminHome,(Route<dynamic> route) => false);
@@ -32,6 +33,10 @@ class AuthUtil {
           if (!context.mounted) return;
           Navigator.pushNamedAndRemoveUntil(context, Routes.home,(Route<dynamic> route) => false);
         }
+      }
+      else{
+        print("ceva nu mergeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+
       }
     }
   }

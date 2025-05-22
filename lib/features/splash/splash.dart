@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:teamxperience/constants/colors.dart';
@@ -36,39 +35,70 @@ class SplashScreen extends StatelessWidget {
               ),
               Container(
                 width: double.infinity,
-                margin: EdgeInsets.symmetric(horizontal:  20.0),
+                margin: EdgeInsets.symmetric(horizontal: 20.0),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))
+                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
                 ),
                 child: Column(
                   children: [
                     SizedBox(height: 20.0),
-                    Text("Bine ai venit!",style: TextStyle(fontSize: 24,fontFamily: 'Poppins',fontWeight: FontWeight.w600,color: Color(0xFF001833))),
+                    Text(
+                      "Bine ai venit!",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF001833),
+                      ),
+                    ),
                     SizedBox(height: 10.0),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: MyButton(buttonText: "Loghează-te", buttonOnTap: (){
-                        Navigator.pushNamed(context, Routes.login);
-                      },gradient: MyColors.myGradient),
+                      child: MyButton(
+                        buttonText: "Loghează-te",
+                        buttonOnTap: () {
+                          Navigator.pushNamed(context, Routes.login);
+                        },
+                        gradient: MyColors.myGradient,
+                        textColor: Colors.white,
+                        withBorder: false,
+                      ),
                     ),
                     SizedBox(height: 5.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Nu ai cont?",style: TextStyle(fontSize: 14,fontFamily: 'Poppins'),),
+                        Text(
+                          "Nu ai cont?",
+                          style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
+                        ),
                         SizedBox(width: 5.0),
-                        GestureDetector(onTap: (){
-                          Navigator.pushReplacementNamed(context, Routes.register);
-                        },child: Text("Inregistrează-te",style: TextStyle(fontSize: 14,fontFamily: 'Poppins',color: MyColors.lightBlue, fontWeight: FontWeight.w600),))
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              Routes.register,
+                            );
+                          },
+                          child: Text(
+                            "Inregistrează-te",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'Poppins',
+                              color: MyColors.lightBlue,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
-                    SizedBox(height: 25.0,)
+                    SizedBox(height: 25.0),
                   ],
                 ),
-              )
+              ),
             ],
-          )
+          ),
         ],
       ),
     );

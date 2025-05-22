@@ -51,9 +51,5 @@ class LogInController {
       }
   }
 
-  void goToSignUp(BuildContext context){
-    Navigator.pushNamed(context, Routes.register);
-  }
-
 
 }

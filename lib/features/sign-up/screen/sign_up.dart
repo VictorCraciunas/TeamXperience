@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/features/sign-up/controller/signup_controller.dart';
 
+import '../../../constants/colors.dart';
+import '../../../constants/routes.dart';
+import '../../../widgets/my_appbar.dart';
+import '../../../widgets/my_button.dart';
 import '../../../widgets/my_text_field.dart';
+import '../../../widgets/terms_text.dart';
 
 
 class RegisterScreen extends StatelessWidget {
@@ -10,58 +16,168 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SignUpController signUpController = SignUpController();
+    SignUpController controller = SignUpController();
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: MyAppBar(appBarText: "Inregistrare"),
       body: SingleChildScrollView(
-        child:Form(
-          key:signUpController.formKey,
-          child: Column(
-            children: [
-              /// Title
-              const Text(
-                "Sign Up",
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-
-              /// Email Field
-              myTextField(signUpController.emailController, "Email", Icons.email,
-                  false, TextInputType.emailAddress),
-              const SizedBox(height: 16),
-
-              /// Password Field
-              myTextField(signUpController.passwordController, "Password",
-                  Icons.lock, true),
-              const SizedBox(height: 30),
-
-              /// Sign Up Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => signUpController.register(context),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+        child:Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: Form(
+            key: controller.formKey,
+            child: Column(
+              children: [
+                SizedBox(height: 20),
+                MyTextField(
+                  controller: controller.emailController,
+                  labelText: "Adresa de email",
+                  labelFontSize: 14,
+                  borderColor: Color(0xFFE6E6E6),
+                  hintText: 'exemplu@gmail.com',
+                  leading: SvgPicture.asset(
+                    'assets/images/email.svg',
+                    height: 24,
+                    width: 24,
                   ),
-                  child: const Text("Sign Up", style: TextStyle(fontSize: 18)),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Te rugăm să introduci adresa de email';
+                    }
+                    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+                    if (!emailRegex.hasMatch(value)) {
+                      return 'Te rugăm să introduci un email valid';
+                    }
+                    return null;
+                  },
                 ),
-              ),
-
-              ElevatedButton(
-                  onPressed: () {
-                    signUpController.logInGoogle(context);
+                const SizedBox(height: 20),
+                MyTextField(
+                  controller: controller.firstNameController,
+                  labelText: "Prenume",
+                  labelFontSize: 14,
+                  borderColor: Color(0xFFE6E6E6),
+                  hintText: 'Prenume',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Te rugăm să introduci prenumele';
+                    }
+                    return null;
                   },
-                  child: const Text("Sign in with google")),
-              ElevatedButton(
-                  onPressed: () {
-
+                ),
+                const SizedBox(height: 20),
+                MyTextField(
+                  controller: controller.lastNameController,
+                  labelText: "Nume de familie",
+                  labelFontSize: 14,
+                  borderColor: Color(0xFFE6E6E6),
+                  hintText: 'Nume de familie',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Te rugăm să introduci numele de familie';
+                    }
+                    return null;
                   },
-                  child: const Text("Sign in with facebook")),
-            ],
+                ),
+                const SizedBox(height: 20),
+                MyTextField(
+                  controller: controller.passwordController,
+                  labelText: "Parola",
+                  labelFontSize: 14,
+                  borderColor: Color(0xFFE6E6E6),
+                  hintText: 'Parola ta',
+                  leading: SvgPicture.asset(
+                    'assets/images/pass.svg',
+                    height: 24,
+                    width: 24,
+                  ),
+                  obscureText: true,
+                  trailing: SvgPicture.asset(
+                    'assets/images/show_pass.svg',
+                    height: 24,
+                    width: 24,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Te rugăm să introduci parola';
+                    }
+                    if (value.length < 6) {
+                      return 'Parola trebuie să aibă cel puțin 6 caractere';
+                    }
+                    if (value != controller.confirmPasswordController.text) {
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                MyTextField(
+                  controller: controller.confirmPasswordController,
+                  labelText: "Confirma parola",
+                  labelFontSize: 14,
+                  borderColor: Color(0xFFE6E6E6),
+                  hintText: 'Confirma parola',
+                  leading: SvgPicture.asset(
+                    'assets/images/pass.svg',
+                    height: 24,
+                    width: 24,
+                  ),
+                  obscureText: true,
+                  trailing: SvgPicture.asset(
+                    'assets/images/show_pass.svg',
+                    height: 24,
+                    width: 24,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Te rugăm să confirmi parola';
+                    }
+                    if (value != controller.passwordController.text) {
+                      return 'Parolele nu se potrivesc';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+
+                MyButton(
+                  buttonText: "Crează cont",
+                  textColor: Colors.white,
+                  buttonOnTap: () async {
+                    await controller.register(context);
+                  },
+                  withBorder: false,
+                  buttonColor: MyColors.yellow,
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Ai deja un cont?",
+                      style: TextStyle(fontSize: 14, fontFamily: 'Poppins', color: MyColors.greyText),
+                    ),
+                    SizedBox(width: 5.0),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          Routes.login,
+                        );
+                      },
+                      child: Text(
+                        "Loghează-te",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Poppins',
+                          color: MyColors.yellow,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                TermsText()
+              ],
+            ),
           ),
         ),
       ),

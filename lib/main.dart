@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/screen/add_missions_screen.dart';
 import 'package:teamxperience/features/admin/home/screen/admin_home.dart';
+import 'package:teamxperience/features/forgot-password/screen/forgot_password_screen.dart';
+import 'package:teamxperience/features/sign-up/screen/register.dart';
 import 'package:teamxperience/features/splash/splash.dart';
 import 'package:teamxperience/utils/auth_util.dart';
 import 'package:teamxperience/constants/routes.dart';
@@ -34,16 +36,18 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Treasure Hunt',
-      initialRoute: Routes.redirect,
+      initialRoute: Routes.splash,
       routes: {
         Routes.redirect:     (_) => LandingPage(authUtil: authUtil),
-        Routes.register:    (_) => const RegisterScreen(),
+        Routes.register:    (_) => const Register(),
+        Routes.signup: (_) => const RegisterScreen(),
         Routes.login:       (_) => const LogInScreen(),
         Routes.home:        (_) => const Home(),
         Routes.createEvent: (_) => const CreateEventPage(),
         Routes.addMissions: (_) => const AddMissionsPage(),
         Routes.adminHome:   (_) => const AdminHome(),
-        Routes.splash: (_) => const SplashScreen()
+        Routes.splash: (_) => const SplashScreen(),
+        Routes.forgotPassword: (_) => ForgotPasswordScreen()
 
       },
     );

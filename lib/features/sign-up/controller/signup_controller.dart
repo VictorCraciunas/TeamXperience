@@ -4,7 +4,11 @@ import '../service/signup_service.dart';
 
 class SignUpController {
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   SignUpService signUpService = SignUpService();
 
@@ -17,7 +21,7 @@ class SignUpController {
   Future<void> register(BuildContext context) async {
     if (formKey.currentState!.validate()) {
       try{
-        await signUpService.register(emailController.text.trim(), passwordController.text.trim(), context);
+        await signUpService.register(emailController.text.trim(), firstNameController.text.trim(), lastNameController.text.trim(),passwordController.text.trim(), context);
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Account created successfully!')),
@@ -33,12 +37,12 @@ class SignUpController {
     }
   }
 
-  Future<void> logInGoogle(BuildContext context) async {
+  Future<void> signInGoogle(BuildContext context) async {
       try{
-        await signUpService.logInGoogle();
+        await signUpService.signInGoogle();
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Log in successfully!')),
+          const SnackBar(content: Text('Sign in successfully!')),
         );
 
         dispose();

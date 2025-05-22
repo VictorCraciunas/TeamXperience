@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/log-in/controller/log_in_controller.dart';
 import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/widgets/terms_text.dart';
 
+import '../../../widgets/my_appbar.dart';
 import '../../../widgets/my_text_field.dart';
 
 class LogInScreen extends StatelessWidget {
@@ -9,61 +14,137 @@ class LogInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LogInController logInController = LogInController();
+    LogInController controller = LogInController();
 
     return Scaffold(
-      appBar: AppBar(title: const Text(
-        "Logare",
-        style: TextStyle(fontSize: 24, fontFamily: 'Poppins', fontWeight: FontWeight.w500),
-      ), centerTitle: true),
+      appBar: MyAppBar(appBarText: "Logare"),
       body: SingleChildScrollView(
-        child: Form(
-          key: logInController.formKey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: Form(
+            key: controller.formKey,
             child: Column(
               children: [
-                myTextField(
-                  logInController.emailController,
-                  "Email",
-                  Icons.email,
-                  false,
-                  TextInputType.emailAddress,
+                SizedBox(height: 50),
+                MyButton(
+                  buttonText: "Logare cu Google",
+                  textColor: Color(0xFF0C092A),
+                  buttonOnTap: () => controller.logInGoogle(context),
+                  leading: SvgPicture.asset(
+                    'assets/images/google.svg',
+                    width: 24,
+                    height: 24,
+                  ),
+                  withBorder: true,
                 ),
-                const SizedBox(height: 16),
-
-                /// Password Field
-                myTextField(
-                  logInController.passwordController,
-                  "Password",
-                  Icons.lock,
-                  true,
-                ),
-                const SizedBox(height: 30),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => logInController.login(context),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: const Text("Log In", style: TextStyle(fontSize: 18)),
+                SizedBox(height: 15),
+                MyButton(
+                  buttonText: "Logare cu Facebook",
+                  textColor: Colors.white,
+                  buttonOnTap: () {},
+                  withBorder: false,
+                  buttonColor: Color(0xFF0056B2),
+                  leading: SvgPicture.asset(
+                    'assets/images/facebook.svg',
+                    width: 24,
+                    height: 24,
                   ),
                 ),
-                ElevatedButton(
-                    onPressed: () {
-                      logInController.logInGoogle(context);
-                    },
-                    child: const Text("Sign in with google")),
-                ElevatedButton(
-                  onPressed: () {
-                    logInController.goToSignUp(context);
-                  },
-                  child: Text("Create account"),
+                SizedBox(height: 30),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Divider(color: Colors.grey.shade300, thickness: 1),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Text(
+                        'SAU',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          color: MyColors.greyText,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+
+                    Expanded(
+                      child: Divider(color: Colors.grey.shade300, thickness: 1),
+                    ),
+                  ],
                 ),
+                SizedBox(height: 30),
+
+                MyTextField(
+                  controller: controller.emailController,
+                  labelText: "Adresa de email",
+                  labelFontSize: 14,
+                  borderColor: Color(0xFFE6E6E6),
+                  hintText: 'exemplu@gmail.com',
+                  leading: SvgPicture.asset(
+                    'assets/images/email.svg',
+                    height: 24,
+                    width: 24,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Te rugăm să introduci adresa de email';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                MyTextField(
+                  controller: controller.passwordController,
+                  labelText: "Parola",
+                  labelFontSize: 14,
+                  borderColor: Color(0xFFE6E6E6),
+                  hintText: 'Parola ta',
+                  leading: SvgPicture.asset(
+                    'assets/images/pass.svg',
+                    height: 24,
+                    width: 24,
+                  ),
+                  obscureText: true,
+                  trailing: SvgPicture.asset(
+                    'assets/images/show_pass.svg',
+                    height: 24,
+                    width: 24,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Te rugam sa introduci parola';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                MyButton(
+                  buttonText: "Logheaza-te",
+                  textColor: Colors.white,
+                  buttonOnTap: () async {
+                    await controller.login(context);
+                  },
+                  withBorder: false,
+                  buttonColor: MyColors.yellow,
+                ),
+                SizedBox(height: 20),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.forgotPassword);
+                  },
+                  child: Text(
+                    "Ai uitat parola?",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500,
+                      color: MyColors.yellow,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+                TermsText(),
               ],
             ),
           ),
@@ -72,3 +153,5 @@ class LogInScreen extends StatelessWidget {
     );
   }
 }
+
+

@@ -10,25 +10,44 @@ class SignUpService {
       AuthenticationRepository();
   UserRepo userRepo = UserRepo();
 
-  Future<void> register(String email, String password, BuildContext context) async {
-
-    UserCredential userCredential = await authenticationRepository.register(email, password);
-
+  Future<void> register(
+    String email,
+    String firstName,
+    String lastName,
+    password,
+    BuildContext context,
+  ) async {
+    UserCredential userCredential = await authenticationRepository.register(
+      email,
+      password,
+    );
+    String normalizedEmail = userCredential.user!.email!.toLowerCase();
     //save the user into database
-    AppUser appUser =
-        AppUser(email: email, uid: userCredential.user!.uid);
+    AppUser appUser = AppUser(
+      email: normalizedEmail,
+      firstName: firstName,
+      lastName: lastName,
+      uid: userCredential.user!.uid,
+    );
     userRepo.saveUser(appUser);
   }
 
-  Future<void> logInGoogle() async {
+  Future<void> signInGoogle() async {
     UserCredential userCredential =
         await authenticationRepository.signInWithGoogle();
-    if (await userRepo.findByEmail(userCredential.user!.email!) == null) {
+    final profile = userCredential.additionalUserInfo?.profile;
 
+    final firstName = profile?['given_name'];
+    final lastName = profile?['family_name'];
+
+    if (await userRepo.findByEmail(userCredential.user!.email!) == null) {
       //save the user into database
       AppUser appUser = AppUser(
-          email: userCredential.user!.email!,
-          uid: userCredential.user!.uid);
+        email: userCredential.user!.email!,
+        firstName: firstName,
+        lastName: lastName,
+        uid: userCredential.user!.uid,
+      );
       userRepo.saveUser(appUser);
     }
   }

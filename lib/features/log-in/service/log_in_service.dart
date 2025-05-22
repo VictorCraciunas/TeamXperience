@@ -14,17 +14,22 @@ class LogInService {
   }
 
   Future<void> logInGoogle() async {
-    //log in with google
     UserCredential userCredential =
-        await authenticationRepository.signInWithGoogle();
+    await authenticationRepository.signInWithGoogle();
+    final profile = userCredential.additionalUserInfo?.profile;
 
-    // if it is the first log in with google, save to db
+    final firstName = profile?['given_name'];
+    final lastName = profile?['family_name'];
+
     if (await userRepo.findByEmail(userCredential.user!.email!) == null) {
+      //save the user into database
       AppUser appUser = AppUser(
         email: userCredential.user!.email!,
+        firstName: firstName,
+        lastName: lastName,
         uid: userCredential.user!.uid,
       );
-      userRepo.saveUser(appUser);
+      await userRepo.saveUser(appUser);
     }
   }
 }
