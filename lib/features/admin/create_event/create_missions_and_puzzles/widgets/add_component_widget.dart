@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/utils/component_conversion/component_to_widget.dart';
+import 'package:teamxperience/widgets/my_button.dart';
 
+import '../../../../../constants/colors.dart';
+import '../../../../../constants/padding.dart';
 import '../../../../../enums/animation_type.dart';
 import '../../../../../model/component.dart';
+import '../../../../../widgets/my_dropdown.dart';
 import '../controller/add_missions_controller.dart';
 import 'create_components/create_button_component.dart';
 import 'create_components/create_code_component.dart';
@@ -29,7 +33,6 @@ class AddComponentWidget extends StatefulWidget {
 }
 
 class _AddComponentWidgetState extends State<AddComponentWidget> {
-
   ComponentType? type;
   ComponentToWidget componentToWidget = ComponentToWidget();
   TextEditingController textEditingController = TextEditingController();
@@ -47,112 +50,183 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Text("Add Components"),
-          DropdownButtonFormField<ComponentType>(
-            decoration: const InputDecoration(labelText: 'Component Type'),
-            value: type,
-            items:
-                ComponentType.values
-                    .map(
-                      (type) => DropdownMenuItem(
-                        value: type,
-                        child: Text(type.toString().split('.').last),
-                      ),
-                    )
-                    .toList(),
-            onChanged: (value) {
-              setState(() {
-                type = value;
-                textEditingController.clear();
-                text = null;
-                textColor = '#000000';
-                animation = AnimationType.none;
-                fontSize = null;
-                fontWeight = 'normal';
-                buttonColor = '#FFFFFF';
-                buttonColorOnTap = '#CCCCCC';
-                buttonTextColor = '#000000';
-                buttonTextColorOnTap = '#FFFFFF';
-                borderColor = '#000000';
-                codeLength = null;
-              });
-            },
-            validator:
-                (value) =>
-                    value == null ? 'Please select a component type' : null,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: MyPaddings.appHorizontalPadding,
           ),
-          if (type == ComponentType.text) ...[
-            TextComponentFieldsWidget(
-              textController: textEditingController,
-              textColor: textColor,
-              animation: animation,
-              fontSize: fontSize,
-              fontWeight: fontWeight,
-              onTextChanged: (value) => setState(() => text = value),
-              onTextColorChanged: (value) => setState(() => textColor = value),
-              onAnimationChanged: (value) => setState(() => animation = value),
-              onFontSizeChanged: (value) => setState(() => fontSize = value),
-              onFontWeightChanged: (value) => setState(() => fontWeight = value),
-            ),
-          ],
-          if (type == ComponentType.image) ...[
-            ImageComponentFieldsWidget(
-              imageUrlController: textEditingController,
-              onImageUrlChanged: (value) => setState(() => text = value),
-            ),
-          ],
-          if (type == ComponentType.button) ...[
-            ButtonComponentFieldsWidget(
-              buttonLabelController: textEditingController,
-              buttonColor: buttonColor,
-              buttonColorOnTap: buttonColorOnTap,
-              buttonTextColor: buttonTextColor,
-              buttonTextColorOnTap: buttonTextColorOnTap,
-              borderColor: borderColor, // New: Pass border color
-              onButtonLabelChanged: (value) => setState(() => text = value),
-              onButtonColorChanged: (value) => setState(() => buttonColor = value),
-              onButtonColorOnTapChanged: (value) => setState(() => buttonColorOnTap = value),
-              onButtonTextColorChanged: (value) => setState(() => buttonTextColor = value),
-              onButtonTextColorOnTapChanged: (value) => setState(() => buttonTextColorOnTap = value),
-              onBorderColorChanged: (value) => setState(() => borderColor = value), // New: Callback for border color
-            ),
-          ],
-          if (type == ComponentType.code) ...[
-            CodeComponentFieldsWidget(
-              onCodeLengthChanged: (value) => setState(() => codeLength = value),
-            ),
-          ],
-          ElevatedButton(
-            onPressed: () {
-              if (type == null) return;
-              Component component = widget.addMissionsController.addComponent(
-                widget.missionSelected,
-                widget.puzzleSelected,
-                type!,
-                text: type == ComponentType.text ? text : type == ComponentType.image ? null : type == ComponentType.button ? null : null,
-                textColor: type == ComponentType.text ? textColor : null,
-                animation: type == ComponentType.text ? animation : null,
-                imageUrl: type == ComponentType.image ? text : null,
-                buttonLabel: type == ComponentType.button ? text : null,
-                buttonColor: type == ComponentType.button ? buttonColor : null,
-                buttonColorOnTap: type == ComponentType.button ? buttonColorOnTap : null,
-                buttonTextColor: type == ComponentType.button ? buttonTextColor : null,
-                buttonTextColorOnTap: type == ComponentType.button ? buttonTextColorOnTap : null,
-                borderColor: type == ComponentType.button ? borderColor : null, // New: Pass border color
-                fontSize: type == ComponentType.text ? fontSize : null,
-                fontWeight: type == ComponentType.text ? fontWeight : null,
-                codeLength: type == ComponentType.code ? codeLength : null,
-              );
-              Widget componentWidget = componentToWidget.convert(component);
-              widget.refreshUI(componentWidget);
-              Navigator.pop(context);
-            },
-            child: Text("save component"),
+          child: Column(
+            children: [
+              const SizedBox(height: 60),
+              MyDropdownField<ComponentType>(
+                labelText: 'Tip de componenta',
+                items:
+                    ComponentType.values
+                        .map(
+                          (type) => DropdownMenuItem(
+                            value: type,
+                            child: Text(
+                              type.toString().split('.').last,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'Poppins',
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                value: type,
+                onChanged: (value) {
+                  setState(() {
+                    type = value;
+                    textEditingController.clear();
+                    text = null;
+                    textColor = '#000000';
+                    animation = AnimationType.none;
+                    fontSize = null;
+                    fontWeight = 'normal';
+                    buttonColor = '#FFFFFF';
+                    buttonColorOnTap = '#CCCCCC';
+                    buttonTextColor = '#000000';
+                    buttonTextColorOnTap = '#FFFFFF';
+                    borderColor = '#000000';
+                    codeLength = null;
+                  });
+                },
+                validator:
+                    (value) =>
+                        value == null ? 'Please select a component type' : null,
+                hint: const Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    "Selecteaza tipul de componenta",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins',
+                      color: MyColors.greyText,
+                    ),
+                  ),
+                ),
+                selectedItemStyle: const TextStyle(
+                  fontSize: 14,
+                  fontFamily: 'Poppins',
+                  color: Colors.black,
+                ),
+                borderColor: MyColors.lightBlue,
+                borderWidth: 1.5,
+                radius: 20,
+                isExpanded: true,
+              ),
+              if (type == ComponentType.text) ...[
+                TextComponentFieldsWidget(
+                  textController: textEditingController,
+                  textColor: textColor,
+                  animation: animation,
+                  fontSize: fontSize,
+                  fontWeight: fontWeight,
+                  onTextChanged: (value) => setState(() => text = value),
+                  onTextColorChanged:
+                      (value) => setState(() => textColor = value),
+                  onAnimationChanged:
+                      (value) => setState(() => animation = value),
+                  onFontSizeChanged:
+                      (value) => setState(() => fontSize = value),
+                  onFontWeightChanged:
+                      (value) => setState(() => fontWeight = value),
+                ),
+              ],
+              if (type == ComponentType.image) ...[
+                ImageComponentFieldsWidget(
+                  imageUrlController: textEditingController,
+                  onImageUrlChanged: (value) => setState(() => text = value),
+                ),
+              ],
+              if (type == ComponentType.button) ...[
+                ButtonComponentFieldsWidget(
+                  buttonLabelController: textEditingController,
+                  buttonColor: buttonColor,
+                  buttonColorOnTap: buttonColorOnTap,
+                  buttonTextColor: buttonTextColor,
+                  buttonTextColorOnTap: buttonTextColorOnTap,
+                  borderColor: borderColor,
+                  // New: Pass border color
+                  onButtonLabelChanged: (value) => setState(() => text = value),
+                  onButtonColorChanged:
+                      (value) => setState(() => buttonColor = value),
+                  onButtonColorOnTapChanged:
+                      (value) => setState(() => buttonColorOnTap = value),
+                  onButtonTextColorChanged:
+                      (value) => setState(() => buttonTextColor = value),
+                  onButtonTextColorOnTapChanged:
+                      (value) => setState(() => buttonTextColorOnTap = value),
+                  onBorderColorChanged:
+                      (value) => setState(
+                        () => borderColor = value,
+                      ), // New: Callback for border color
+                ),
+              ],
+              if (type == ComponentType.code) ...[
+                CodeComponentFieldsWidget(
+                  onCodeLengthChanged:
+                      (value) => setState(() => codeLength = value),
+                ),
+              ],
+              const SizedBox(height: 20),
+              MyButton(
+                buttonText: 'Salveaza Componenta',
+                textColor: Colors.white,
+                buttonOnTap: () {
+                  if (type == null) return;
+                  Component
+                  component = widget.addMissionsController.addComponent(
+                    widget.missionSelected,
+                    widget.puzzleSelected,
+                    type!,
+                    text:
+                        type == ComponentType.text
+                            ? text
+                            : type == ComponentType.image
+                            ? null
+                            : type == ComponentType.button
+                            ? null
+                            : null,
+                    textColor: type == ComponentType.text ? textColor : null,
+                    animation: type == ComponentType.text ? animation : null,
+                    imageUrl: type == ComponentType.image ? text : null,
+                    buttonLabel: type == ComponentType.button ? text : null,
+                    buttonColor:
+                        type == ComponentType.button ? buttonColor : null,
+                    buttonColorOnTap:
+                        type == ComponentType.button ? buttonColorOnTap : null,
+                    buttonTextColor:
+                        type == ComponentType.button ? buttonTextColor : null,
+                    buttonTextColorOnTap:
+                        type == ComponentType.button
+                            ? buttonTextColorOnTap
+                            : null,
+                    borderColor:
+                        type == ComponentType.button ? borderColor : null,
+                    // New: Pass border color
+                    fontSize: type == ComponentType.text ? fontSize : null,
+                    fontWeight: type == ComponentType.text ? fontWeight : null,
+                    codeLength: type == ComponentType.code ? codeLength : null,
+                  );
+                  Widget componentWidget = componentToWidget.convert(component);
+                  widget.refreshUI(componentWidget);
+                  Navigator.pop(context);
+                },
+                withBorder: false,
+                buttonColor: MyColors.lightBlue,
+                fontWeight: FontWeight.w500,
+                buttonTextSize: 14,
+                buttonWidth: 270,
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

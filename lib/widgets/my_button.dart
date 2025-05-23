@@ -9,6 +9,9 @@ class MyButton extends StatefulWidget {
   final Widget? leading;
   final bool withBorder;
   final FontWeight fontWeight;
+  final double radius;
+  final double buttonWidth;
+  final double buttonTextSize;
 
   const MyButton({
     super.key,
@@ -19,7 +22,10 @@ class MyButton extends StatefulWidget {
     this.buttonColor,
     this.gradient,
     this.leading,
-    this.fontWeight = FontWeight.w500
+    this.fontWeight = FontWeight.w500,
+    final this.radius = 50,
+    this.buttonWidth = double.infinity,
+    this.buttonTextSize = 16,
   });
 
   @override
@@ -41,7 +47,6 @@ class _MyButtonState extends State<MyButton> {
         setState(() {
           isPressed = false;
         });
-        widget.buttonOnTap();
       },
       onTapCancel: () {
         setState(() {
@@ -52,10 +57,10 @@ class _MyButtonState extends State<MyButton> {
       child: Opacity(
         opacity: isPressed ? 0.6 : 1.0,
         child: Container(
-          width: double.infinity,
+          width: widget.buttonWidth,
           height: 57,
           decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(50)),
+            borderRadius:  BorderRadius.all(Radius.circular(widget.radius)),
             color: widget.buttonColor,
             gradient: widget.gradient,
             border: widget.withBorder
@@ -73,7 +78,7 @@ class _MyButtonState extends State<MyButton> {
                 widget.buttonText,
                 style: TextStyle(
                   color: widget.textColor,
-                  fontSize: 16,
+                  fontSize: widget.buttonTextSize,
                   fontFamily: 'Poppins',
                   fontWeight: widget.fontWeight,
                 ),

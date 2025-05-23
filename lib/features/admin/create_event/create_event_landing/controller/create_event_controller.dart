@@ -34,16 +34,16 @@ class CreateEventController {
 
   Future<void> createEvent(BuildContext context) async {
     if (formKey.currentState!.validate()) {
-      if (landingImageFile == null || taskBackgroundImageFile == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Please select both landing and task background images',
-            ),
-          ),
-        );
-        return;
-      }
+      // if (landingImageFile == null || taskBackgroundImageFile == null) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(
+      //       content: Text(
+      //         'Please select both landing and task background images',
+      //       ),
+      //     ),
+      //   );
+      //   return;
+      // }
 
       try {
         String eventId = await createEventService.getEventId();
@@ -58,8 +58,10 @@ class CreateEventController {
           descriptionController.text,
           int.parse(nrMissionsController.text),
           selectedType!,
-          landingImageFile!.path,
-          taskBackgroundImageFile!.path,
+          // landingImageFile!.path,
+          // taskBackgroundImageFile!.path,
+          'test',
+          'test',
           startCodeController.text,
         );
         if (!context.mounted) return;

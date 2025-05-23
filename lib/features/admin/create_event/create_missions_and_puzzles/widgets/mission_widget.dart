@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/controller/add_missions_controller.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/puzzle_widget.dart';
+import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/widgets/my_text_field.dart';
 import 'my_list_component.dart';
 
 class MissionWidget extends StatefulWidget {
@@ -37,65 +40,81 @@ class _MissionWidgetState extends State<MissionWidget> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 20),
         Text(
-          'Mission ${widget.nrMission + 1} Details',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          'Detalii Misunea ${widget.nrMission + 1}',
+          style: const TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 22,
+            color: MyColors.blackColor,
+            fontWeight: FontWeight.w500,
+          ),
         ),
-        const SizedBox(height: 10),
+
+        // set nr puzzles
+        const SizedBox(height: 35),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Expanded(
-              child: TextFormField(
+              flex: 2,
+              child: MyTextField(
                 controller: puzzlesCountController,
-                decoration: const InputDecoration(
-                  labelText: 'Number of Puzzles for this mission',
-                  border: OutlineInputBorder(),
-                ),
+                labelText: 'Număr de puzzle-uri',
+                labelFontWeight: FontWeight.w500,
+                labelFontSize: 15,
+                hintText: 'Introdu nr de puzzleuri',
+                borderWidth: 1.5,
+                borderColor: MyColors.lightBlue,
                 keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the number of puzzles';
-                  }
-                  if (int.tryParse(value) == null) {
-                    return 'Please enter a valid number';
-                  }
-                  return null;
-                },
+                radius: 15,
               ),
             ),
-            const SizedBox(width: 10),
-            ElevatedButton(
-              onPressed: () {
-                final text = puzzlesCountController.text;
-                final nrPuzzles = int.tryParse(text) ?? 0;
-                widget.onSetPuzzles(nrPuzzles); // initialize puzzles
-                setState(() {
-                  numberOfPuzzles = nrPuzzles;
-                  selectedPuzzle = -1;
-                  puzzleWidgets.clear();
-                  puzzleWidgets = List.generate(nrPuzzles, (puzzleSelected) => PuzzleWidget(key:UniqueKey(),nrMission: widget.nrMission, selectedPuzzle: puzzleSelected, addMissionsController: widget.addMissionsController));
-                });
-              },
-              child: const Text('Set Puzzles'),
+            const SizedBox(width: 15),
+            Expanded(
+              flex: 1,
+              child: MyButton(
+                radius: 46,
+                buttonText: 'Seteaza',
+                textColor: Colors.white,
+                buttonOnTap: () {
+                  final text = puzzlesCountController.text;
+                  final nrPuzzles = int.tryParse(text) ?? 0;
+                  widget.onSetPuzzles(nrPuzzles); // initialize puzzles
+                  setState(() {
+                    numberOfPuzzles = nrPuzzles;
+                    selectedPuzzle = -1;
+                    puzzleWidgets.clear();
+                    puzzleWidgets = List.generate(
+                      nrPuzzles,
+                      (puzzleSelected) => PuzzleWidget(
+                        key: UniqueKey(),
+                        nrMission: widget.nrMission,
+                        selectedPuzzle: puzzleSelected,
+                        addMissionsController: widget.addMissionsController,
+                      ),
+                    );
+                  });
+                },
+                withBorder: false,
+                buttonColor: MyColors.lightBlue,
+                fontWeight: FontWeight.w400,
+                buttonTextSize: 15,
+              ),
             ),
           ],
         ),
-        const SizedBox(height: 10),
+
+        // puzzle list
         if (numberOfPuzzles > 0) ...[
-          const Text(
-            'Puzzles:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 5),
-          Container(
-            height: 60,
-            padding: const EdgeInsets.symmetric(vertical: 8),
+          const SizedBox(height: 20),
+          SizedBox(
+            height: 40,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: numberOfPuzzles,
@@ -114,10 +133,7 @@ class _MissionWidgetState extends State<MissionWidget> {
             ),
           ),
         ],
-        IndexedStack(
-          index: selectedPuzzle,
-          children: puzzleWidgets,
-        ),
+        IndexedStack(index: selectedPuzzle, children: puzzleWidgets),
       ],
     );
   }

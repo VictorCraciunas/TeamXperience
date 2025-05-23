@@ -7,6 +7,7 @@ import 'package:teamxperience/widgets/my_appbar.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 import '../../../../../constants/padding.dart';
 import '../../../../../enums/event_type.dart';
+import '../../../../../widgets/my_dropdown.dart';
 import '../../../../../widgets/my_text_field.dart';
 import '../controller/create_event_controller.dart';
 
@@ -214,95 +215,49 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 const SizedBox(height: 20),
 
                 // Tip de eveniment
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Label styled like MyTextField
-                    const Text(
-                      'Tip de eveniment',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    DropdownButtonFormField<EventType>(
-                      hint: const Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Text(
-                          "Selecteaza tipul de eveniment",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Poppins',
-                            color: MyColors.greyText,
-                          ),
+                MyDropdownField<EventType>(
+                  labelText: 'Tipul de eveniment',
+                  items: EventType.values
+                      .map(
+                        (type) => DropdownMenuItem(
+                      value: type,
+                      child: Text(
+                        type.toString().split('.').last,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Poppins',
+                          color: Colors.black,
                         ),
                       ),
-                      value: controller.selectedType,
-                      items:
-                          EventType.values
-                              .map(
-                                (type) => DropdownMenuItem(
-                                  value: type,
-                                  child: Text(
-                                    type.toString().split('.').last,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'Poppins',
-                                      color:
-                                          Colors.black, // Adjust color as needed
-                                    ),
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          controller.selectedType = value;
-                        });
-                      },
-                      validator:
-                          (value) =>
-                              value == null
-                                  ? 'Selecteaza tipul de eveniment'
-                                  : null,
-                      // Style for the selected item
-                      style: const TextStyle(
+                    ),
+                  )
+                      .toList(),
+                  value: controller.selectedType,
+                  onChanged: (value) {
+                    setState(() {
+                      controller.selectedType = value;
+                    });
+                  },
+                  hint: const Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Text(
+                      "Selecteaza tipul de eveniment",
+                      style: TextStyle(
                         fontSize: 14,
                         fontFamily: 'Poppins',
-                        color: Colors.black, // Adjust color as needed
-                      ),
-                      decoration: InputDecoration(
-                        // Border styling to match MyTextField
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: const BorderSide(
-                            color: MyColors.lightBlue,
-                            width: 1.5,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: const BorderSide(
-                            color: MyColors.lightBlue,
-                            width: 1.5,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: const BorderSide(
-                            color: MyColors.lightBlue,
-                            width: 3,
-                          ),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 16,
-                          horizontal: 12,
-                        ),
+                        color: MyColors.greyText,
                       ),
                     ),
-                  ],
+                  ),
+                  validator: (value) => value == null ? 'Selecteaza tipul de eveniment' : null,
+                  selectedItemStyle: const TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins',
+                    color: Colors.black,
+                  ),
+                  borderColor: MyColors.lightBlue,
+                  borderWidth: 1.5,
+                  radius: 20,
                 ),
                 const SizedBox(height: 20),
 

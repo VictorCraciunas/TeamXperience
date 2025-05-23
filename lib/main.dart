@@ -35,6 +35,10 @@ class MyApp extends StatelessWidget {
     final AuthUtil authUtil = AuthUtil(userRepo,authenticationRepository);
 
     return MaterialApp(
+      theme: ThemeData(
+        primaryColor: Colors.white,
+        fontFamily: 'Poppins',
+      ),
       title: 'Treasure Hunt',
       initialRoute: Routes.redirect,
       routes: {

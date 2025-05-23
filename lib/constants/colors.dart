@@ -6,6 +6,7 @@ class MyColors{
   static const yellow = Color(0xFFF6AF1A);
   static const greyText = Color(0xFF858494);
   static const backgroundColor = Colors.white;
+  static const blackColor = Color(0xFF0C092A);
 
   static const myGradient =  LinearGradient(
     begin: Alignment.centerLeft,

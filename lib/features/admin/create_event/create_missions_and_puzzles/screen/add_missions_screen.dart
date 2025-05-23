@@ -1,9 +1,11 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/controller/add_missions_controller.dart';
 import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/widgets/my_button.dart';
 
+import '../../../../../constants/padding.dart';
 import '../widgets/my_list_component.dart';
 
 class AddMissionsPage extends StatefulWidget {
@@ -40,66 +42,55 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Add missions"), centerTitle: true),
-      resizeToAvoidBottomInset: false,
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          image:
-              _addMissionsController.event?.taskBackgroundImageUrl != null
-                  ? DecorationImage(
-                    image: FileImage(
-                      File(
-                        _addMissionsController.event!.taskBackgroundImageUrl,
-                      ),
-                    ),
-                    fit: BoxFit.cover,
-                  )
-                  : null, // No background if the URL is null
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                height: 60,
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _addMissionsController.event!.nrMissions,
-                  itemBuilder: (context, index) {
-                    return MyListComponent(
-                      index: index,
-                      type: "Mission",
-                      isSelected:
-                          _addMissionsController.selectedMission == index,
-                      onTap: () {
-                        setState(() {
-                          _addMissionsController.selectedMission = index;
-                        });
-                      },
-                    );
-                  },
+      backgroundColor: Colors.white,
+      // resizeToAvoidBottomInset: false,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: MyPaddings.appHorizontalPadding,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                SizedBox(
+                  height: 40,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _addMissionsController.event!.nrMissions,
+                    itemBuilder: (context, index) {
+                      return MyListComponent(
+                        index: index,
+                        type: "Misiunea",
+                        isSelected:
+                            _addMissionsController.selectedMission == index,
+                        onTap: () {
+                          setState(() {
+                            _addMissionsController.selectedMission = index;
+                          });
+                        },
+                      );
+                    },
+                  ),
                 ),
-              ),
-              //missions widget
-              IndexedStack(
-                index: _addMissionsController.selectedMission,
-                children: _addMissionsController.missionWidgets,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  _addMissionsController.printMissions();
-                  // _addMissionsController.saveEvent();
-                  // ScaffoldMessenger.of(
-                  //   context,
-                  // ).showSnackBar(SnackBar(content: Text("Event Created")));
-                  // Navigator.pushReplacementNamed(context, '/admin_home');
 
-                },
-                child: Text("Save event"),
-              ),
-            ],
+                //missions widget
+                IndexedStack(
+                  index: _addMissionsController.selectedMission,
+                  children: _addMissionsController.missionWidgets,
+                ),
+
+                const SizedBox(height: 20,),
+                MyButton(
+                  buttonText: 'Creeza eveniment',
+                  textColor: Colors.white,
+                  buttonOnTap: () => _addMissionsController.printMissions(),
+                  withBorder: false,
+                  gradient: MyColors.myGradient,
+                  fontWeight: FontWeight.w600,
+                ),
+              ],
+            ),
           ),
         ),
       ),

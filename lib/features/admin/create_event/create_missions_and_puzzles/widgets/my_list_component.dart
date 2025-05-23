@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/constants/colors.dart';
 
 
 class MyListComponent extends StatelessWidget {
@@ -20,15 +21,23 @@ class MyListComponent extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(12),
+        width: 103,
         margin: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.blue[100] : Colors.red[200],
-          borderRadius: BorderRadius.circular(8),
+          color: isSelected ? MyColors.lightBlue : Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          border: isSelected == false
+              ? Border.all(
+            width: 1.5,
+            color: MyColors.lightBlue,
+          )
+              : null,
         ),
-        child: Text(
-          '$type ${index + 1}',
-          style: const TextStyle(fontSize: 16),
+        child: Center(
+          child: Text(
+            '$type ${index + 1}',
+            style: TextStyle(fontSize: 15, fontFamily: 'Poppins', color: isSelected ? Colors.white : MyColors.greyText)
+          ),
         ),
       ),
     );
