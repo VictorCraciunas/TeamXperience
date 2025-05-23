@@ -3,13 +3,20 @@ import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/model/component.dart';
 
 import '../../../../../../utils/component_conversion/component_to_widget.dart';
+import '../../controller/add_missions_controller.dart';
 
 class CodeComponentFieldsWidget extends StatefulWidget {
-  final ValueChanged<int?> onCodeLengthChanged; // Callback to notify parent of code length
+  final AddMissionsController addMissionsController;
+  final int missionSelected;
+  final int puzzleSelected;
+  final Function(Widget) refreshUI;
 
   const CodeComponentFieldsWidget({
     super.key,
-    required this.onCodeLengthChanged,
+    required this.addMissionsController,
+    required this.missionSelected,
+    required this.puzzleSelected,
+    required this.refreshUI,
   });
 
   @override
@@ -18,8 +25,27 @@ class CodeComponentFieldsWidget extends StatefulWidget {
 
 class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
   int? _codeLength;
-  Component? component ;
+  Component? component;
   ComponentToWidget componentToWidget = ComponentToWidget();
+
+  void _saveComponent() {
+    if (_codeLength == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select the number of letters')),
+      );
+      return;
+    }
+
+    Component component = widget.addMissionsController.addComponent(
+      widget.missionSelected,
+      widget.puzzleSelected,
+      ComponentType.code,
+      codeLength: _codeLength,
+    );
+    Widget componentWidget = componentToWidget.convert(component);
+    widget.refreshUI(componentWidget);
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +65,8 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
           onChanged: (value) {
             setState(() {
               _codeLength = value;
-              component = Component(type: ComponentType.code,codeLength: value);
+              component = Component(type: ComponentType.code, codeLength: value);
             });
-            widget.onCodeLengthChanged(value); // Notify parent
           },
           validator: (value) => value == null ? 'Please select the number of letters' : null,
         ),
@@ -53,13 +78,15 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
               color: const Color(0x00f5e8c7), // Parchment-like background
               border: Border.all(color: Colors.black, width: 2),
             ),
-
             // ------- preview --------
-            child: component != null
-            ? componentToWidget.convert(component!)
-            : null,
+            child: component != null ? componentToWidget.convert(component!) : null,
           ),
         ],
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: _saveComponent,
+          child: const Text('Save Component'),
+        ),
       ],
     );
   }

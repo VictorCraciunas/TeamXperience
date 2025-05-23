@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:teamxperience/enums/animation_type.dart';
+import 'package:teamxperience/model/component.dart';
 
-class TextComponentFieldsWidget extends StatelessWidget {
+import '../../../../../../enums/component-type.dart';
+import '../../../../../../utils/component_conversion/component_to_widget.dart';
+import '../../controller/add_missions_controller.dart';
+
+class TextComponentFieldsWidget extends StatefulWidget {
   final TextEditingController textController;
   final String? textColor;
   final AnimationType? animation;
   final double? fontSize;
   final String? fontWeight;
-  final ValueChanged<String?> onTextChanged;
-  final ValueChanged<String?> onTextColorChanged;
-  final ValueChanged<AnimationType?> onAnimationChanged;
-  final ValueChanged<double?> onFontSizeChanged;
-  final ValueChanged<String?> onFontWeightChanged;
+  final AddMissionsController addMissionsController;
+  final int missionSelected;
+  final int puzzleSelected;
+  final Function(Widget) refreshUI;
 
   const TextComponentFieldsWidget({
     super.key,
@@ -21,26 +25,28 @@ class TextComponentFieldsWidget extends StatelessWidget {
     this.animation,
     this.fontSize,
     this.fontWeight,
-    required this.onTextChanged,
-    required this.onTextColorChanged,
-    required this.onAnimationChanged,
-    required this.onFontSizeChanged,
-    required this.onFontWeightChanged,
+    required this.addMissionsController,
+    required this.missionSelected,
+    required this.puzzleSelected,
+    required this.refreshUI,
   });
-  Color _hexToColor(String? hex) {
-    if (hex == null || hex.isEmpty) return Colors.black;
-    final hexColor = hex.replaceFirst('#', '');
-    return Color(int.parse('FF$hexColor', radix: 16));
-  }
-  String _colorToHex(Color color) {
-    final argb = color.toARGB32().toRadixString(16).padLeft(8, '0');
-    return '#${argb.substring(2)}';
-  }
 
   @override
-  Widget build(BuildContext context) {
-    final currentColor = _hexToColor(textColor);
-    final currentSize = fontSize ?? 16.0;
+  State<TextComponentFieldsWidget> createState() => _TextComponentFieldsWidgetState();
+}
+
+class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
+  late String textColor;
+  late AnimationType? animation;
+  late double fontSize;
+  late String fontWeight;
+
+  @override
+  void initState() {
+    super.initState();
+    textColor = widget.textColor ?? '#000000';
+    animation = widget.animation ?? AnimationType.none;
+    fontSize = widget.fontSize ?? 16.0;
     final weightMap = <String, FontWeight>{
       'Thin (100)': FontWeight.w100,
       'Light (300)': FontWeight.w300,
@@ -49,8 +55,55 @@ class TextComponentFieldsWidget extends StatelessWidget {
       'Bold (700)': FontWeight.w700,
       'Black (900)': FontWeight.w900,
     };
-    final currentWeight = weightMap[fontWeight ?? 'Regular (400)'] ?? FontWeight.w400;
+    fontWeight = widget.fontWeight ?? 'Regular (400)';
+    if (!weightMap.containsKey(fontWeight)) {
+      fontWeight = 'Regular (400)';
+    }
+  }
 
+  Color _hexToColor(String hex) {
+    if (hex.isEmpty) return Colors.black;
+    final hexColor = hex.replaceFirst('#', '');
+    return Color(int.parse('FF$hexColor', radix: 16));
+  }
+
+  String _colorToHex(Color color) {
+    final argb = color.toARGB32().toRadixString(16).padLeft(8, '0');
+    return '#${argb.substring(2)}';
+  }
+  ComponentToWidget componentToWidget = ComponentToWidget();
+
+  void _saveComponent() {
+    Component component = widget.addMissionsController.addComponent(
+      widget.missionSelected,
+      widget.puzzleSelected,
+      ComponentType.text,
+      text: widget.textController.text,
+      textColor: textColor,
+      animation: animation,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+    );
+    Widget componentWidget = componentToWidget.convert(component); // Assuming ComponentToWidget is accessible
+    widget.refreshUI(componentWidget);
+    Navigator.pop(context); // Close the widget or screen
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    final currentColor = _hexToColor(textColor);
+    final currentSize = fontSize;
+    final weightMap = <String, FontWeight>{
+      'Thin (100)': FontWeight.w100,
+      'Light (300)': FontWeight.w300,
+      'Regular (400)': FontWeight.w400,
+      'Medium (500)': FontWeight.w500,
+      'Bold (700)': FontWeight.w700,
+      'Black (900)': FontWeight.w900,
+    };
+    final currentWeight = weightMap[fontWeight] ?? FontWeight.w400;
 
     return Column(
       children: [
@@ -66,7 +119,7 @@ class TextComponentFieldsWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
-            textController.text.isEmpty ? 'Your text here' : textController.text,
+            widget.textController.text.isEmpty ? 'Your text here' : widget.textController.text,
             style: TextStyle(
               color: currentColor,
               fontSize: currentSize,
@@ -78,9 +131,11 @@ class TextComponentFieldsWidget extends StatelessWidget {
 
         // ───── Text Content ─────
         TextField(
-          controller: textController,
+          controller: widget.textController,
           decoration: const InputDecoration(labelText: 'Text Content'),
-          onChanged: onTextChanged,
+          onChanged: (value) {
+            setState(() {});
+          },
         ),
         const SizedBox(height: 10),
 
@@ -106,7 +161,7 @@ class TextComponentFieldsWidget extends StatelessWidget {
                     child: ColorPicker(
                       pickerColor: selectedColor,
                       onColorChanged: (color) => selectedColor = color,
-                      labelTypes: const [], // Replace deprecated showLabel
+                      labelTypes: const [],
                       pickerAreaHeightPercent: 0.8,
                     ),
                   ),
@@ -117,7 +172,9 @@ class TextComponentFieldsWidget extends StatelessWidget {
                     ),
                     TextButton(
                       onPressed: () {
-                        onTextColorChanged(_colorToHex(selectedColor));
+                        setState(() {
+                          textColor = _colorToHex(selectedColor);
+                        });
                         Navigator.pop(context);
                       },
                       child: const Text('OK'),
@@ -140,7 +197,11 @@ class TextComponentFieldsWidget extends StatelessWidget {
             child: Text(anim.toString().split('.').last),
           ))
               .toList(),
-          onChanged: onAnimationChanged,
+          onChanged: (value) {
+            setState(() {
+              animation = value;
+            });
+          },
         ),
         const SizedBox(height: 10),
 
@@ -151,21 +212,33 @@ class TextComponentFieldsWidget extends StatelessWidget {
           divisions: 64,
           value: currentSize,
           label: currentSize.toStringAsFixed(0),
-          onChanged: onFontSizeChanged,
+          onChanged: (value) {
+            setState(() {
+              fontSize = value;
+            });
+          },
         ),
         const SizedBox(height: 10),
 
         // ───── Font Weight Dropdown ─────
         DropdownButtonFormField<String>(
           decoration: const InputDecoration(labelText: 'Font Weight'),
-          value: weightMap.entries
-              .firstWhere((e) => e.value == currentWeight,
-              orElse: () => MapEntry('Regular (400)', FontWeight.w400))
-              .key,
+          value: fontWeight,
           items: weightMap.keys.map((label) {
             return DropdownMenuItem(value: label, child: Text(label));
           }).toList(),
-          onChanged: onFontWeightChanged,
+          onChanged: (value) {
+            setState(() {
+              fontWeight = value ?? 'Regular (400)';
+            });
+          },
+        ),
+        const SizedBox(height: 20),
+
+        // ───── Save Button ─────
+        ElevatedButton(
+          onPressed: _saveComponent,
+          child: const Text('Save Component'),
         ),
       ],
     );

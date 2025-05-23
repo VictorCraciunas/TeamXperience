@@ -123,107 +123,93 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
               if (type == ComponentType.text) ...[
                 TextComponentFieldsWidget(
                   textController: textEditingController,
-                  textColor: textColor,
-                  animation: animation,
-                  fontSize: fontSize,
-                  fontWeight: fontWeight,
-                  onTextChanged: (value) => setState(() => text = value),
-                  onTextColorChanged:
-                      (value) => setState(() => textColor = value),
-                  onAnimationChanged:
-                      (value) => setState(() => animation = value),
-                  onFontSizeChanged:
-                      (value) => setState(() => fontSize = value),
-                  onFontWeightChanged:
-                      (value) => setState(() => fontWeight = value),
+                  addMissionsController: widget.addMissionsController,
+                  missionSelected: widget.missionSelected,
+                  puzzleSelected: widget.puzzleSelected,
+                  refreshUI: widget.refreshUI,
                 ),
               ],
               if (type == ComponentType.image) ...[
                 ImageComponentFieldsWidget(
                   imageUrlController: textEditingController,
-                  onImageUrlChanged: (value) => setState(() => text = value),
+                  addMissionsController: widget.addMissionsController,
+                  missionSelected: widget.missionSelected,
+                  puzzleSelected: widget.puzzleSelected,
+                  refreshUI: widget.refreshUI,
                 ),
               ],
               if (type == ComponentType.button) ...[
                 ButtonComponentFieldsWidget(
                   buttonLabelController: textEditingController,
-                  buttonColor: buttonColor,
-                  buttonColorOnTap: buttonColorOnTap,
-                  buttonTextColor: buttonTextColor,
-                  buttonTextColorOnTap: buttonTextColorOnTap,
-                  borderColor: borderColor,
-                  // New: Pass border color
-                  onButtonLabelChanged: (value) => setState(() => text = value),
-                  onButtonColorChanged:
-                      (value) => setState(() => buttonColor = value),
-                  onButtonColorOnTapChanged:
-                      (value) => setState(() => buttonColorOnTap = value),
-                  onButtonTextColorChanged:
-                      (value) => setState(() => buttonTextColor = value),
-                  onButtonTextColorOnTapChanged:
-                      (value) => setState(() => buttonTextColorOnTap = value),
-                  onBorderColorChanged:
-                      (value) => setState(
-                        () => borderColor = value,
-                      ), // New: Callback for border color
+                  buttonColor: '#FFFFFF',
+                  buttonColorOnTap: '#CCCCCC',
+                  buttonTextColor: '#000000',
+                  buttonTextColorOnTap: '#FFFFFF',
+                  borderColor: '#000000',
+                  addMissionsController: widget.addMissionsController,
+                  missionSelected: widget.missionSelected,
+                  puzzleSelected: widget.puzzleSelected,
+                  refreshUI: widget.refreshUI,
                 ),
               ],
               if (type == ComponentType.code) ...[
                 CodeComponentFieldsWidget(
-                  onCodeLengthChanged:
-                      (value) => setState(() => codeLength = value),
+                  addMissionsController: widget.addMissionsController,
+                  missionSelected: widget.missionSelected,
+                  puzzleSelected: widget.puzzleSelected,
+                  refreshUI: widget.refreshUI,
                 ),
               ],
               const SizedBox(height: 20),
-              MyButton(
-                buttonText: 'Salveaza Componenta',
-                textColor: Colors.white,
-                buttonOnTap: () {
-                  if (type == null) return;
-                  Component
-                  component = widget.addMissionsController.addComponent(
-                    widget.missionSelected,
-                    widget.puzzleSelected,
-                    type!,
-                    text:
-                        type == ComponentType.text
-                            ? text
-                            : type == ComponentType.image
-                            ? null
-                            : type == ComponentType.button
-                            ? null
-                            : null,
-                    textColor: type == ComponentType.text ? textColor : null,
-                    animation: type == ComponentType.text ? animation : null,
-                    imageUrl: type == ComponentType.image ? text : null,
-                    buttonLabel: type == ComponentType.button ? text : null,
-                    buttonColor:
-                        type == ComponentType.button ? buttonColor : null,
-                    buttonColorOnTap:
-                        type == ComponentType.button ? buttonColorOnTap : null,
-                    buttonTextColor:
-                        type == ComponentType.button ? buttonTextColor : null,
-                    buttonTextColorOnTap:
-                        type == ComponentType.button
-                            ? buttonTextColorOnTap
-                            : null,
-                    borderColor:
-                        type == ComponentType.button ? borderColor : null,
-                    // New: Pass border color
-                    fontSize: type == ComponentType.text ? fontSize : null,
-                    fontWeight: type == ComponentType.text ? fontWeight : null,
-                    codeLength: type == ComponentType.code ? codeLength : null,
-                  );
-                  Widget componentWidget = componentToWidget.convert(component);
-                  widget.refreshUI(componentWidget);
-                  Navigator.pop(context);
-                },
-                withBorder: false,
-                buttonColor: MyColors.lightBlue,
-                fontWeight: FontWeight.w500,
-                buttonTextSize: 14,
-                buttonWidth: 270,
-              ),
+              // MyButton(
+              //   buttonText: 'Salveaza Componenta',
+              //   textColor: Colors.white,
+              //   buttonOnTap: () {
+              //     if (type == null) return;
+              //     Component
+              //     component = widget.addMissionsController.addComponent(
+              //       widget.missionSelected,
+              //       widget.puzzleSelected,
+              //       type!,
+              //       text:
+              //           type == ComponentType.text
+              //               ? text
+              //               : type == ComponentType.image
+              //               ? null
+              //               : type == ComponentType.button
+              //               ? null
+              //               : null,
+              //       textColor: type == ComponentType.text ? textColor : null,
+              //       animation: type == ComponentType.text ? animation : null,
+              //       imageUrl: type == ComponentType.image ? text : null,
+              //       buttonLabel: type == ComponentType.button ? text : null,
+              //       buttonColor:
+              //           type == ComponentType.button ? buttonColor : null,
+              //       buttonColorOnTap:
+              //           type == ComponentType.button ? buttonColorOnTap : null,
+              //       buttonTextColor:
+              //           type == ComponentType.button ? buttonTextColor : null,
+              //       buttonTextColorOnTap:
+              //           type == ComponentType.button
+              //               ? buttonTextColorOnTap
+              //               : null,
+              //       borderColor:
+              //           type == ComponentType.button ? borderColor : null,
+              //       // New: Pass border color
+              //       fontSize: type == ComponentType.text ? fontSize : null,
+              //       fontWeight: type == ComponentType.text ? fontWeight : null,
+              //       codeLength: type == ComponentType.code ? codeLength : null,
+              //     );
+              //     Widget componentWidget = componentToWidget.convert(component);
+              //     widget.refreshUI(componentWidget);
+              //     Navigator.pop(context);
+              //   },
+              //   withBorder: false,
+              //   buttonColor: MyColors.lightBlue,
+              //   fontWeight: FontWeight.w500,
+              //   buttonTextSize: 14,
+              //   buttonWidth: 270,
+              // ),
             ],
           ),
         ),
