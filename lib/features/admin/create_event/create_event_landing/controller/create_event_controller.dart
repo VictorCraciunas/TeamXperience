@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:teamxperience/backend/storage/storage_images.dart';
 import 'package:teamxperience/model/event.dart';
 
@@ -16,32 +17,23 @@ class CreateEventController {
   final descriptionController = TextEditingController();
   final nrMissionsController = TextEditingController();
   final startCodeController = TextEditingController();
+  final dateEventController = TextEditingController(); // Controller for start time
+  final dateDeadlineRegistrationController = TextEditingController();
+  final dateStartRegistrationController = TextEditingController();
 
   File? landingImageFile;
   File? taskBackgroundImageFile;
 
   // Date fields
-  DateTime? startTime;
+  DateTime? dateEvent;
   DateTime? deadlineEnrollment;
+  DateTime? dateStartEnrollemnt;
 
   // EventType field
   EventType? selectedType;
 
   Future<void> createEvent(BuildContext context) async {
     if (formKey.currentState!.validate()) {
-      if (startTime == null ||
-          deadlineEnrollment == null ||
-          selectedType == null) {
-        if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Please select start time, enrollment deadline, and event type',
-            ),
-          ),
-        );
-        return;
-      }
       if (landingImageFile == null || taskBackgroundImageFile == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -59,8 +51,9 @@ class CreateEventController {
         Event event = await createEventService.createEvent(
           eventId,
           nameController.text,
-          startTime!,
+          dateEvent!,
           deadlineEnrollment!,
+          dateStartEnrollemnt!,
           locationController.text,
           descriptionController.text,
           int.parse(nrMissionsController.text),
@@ -119,4 +112,12 @@ class CreateEventController {
     );
   }
 
+  Future<File?> pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      return File(pickedFile.path);
+    }
+    return null;
+  }
 }

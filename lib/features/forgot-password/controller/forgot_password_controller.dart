@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:teamxperience/features/forgot-password/forgot_password_service/forgot_password_service.dart';
+
+import '../service/forgot_password_service.dart';
 
 class ForgotPasswordController {
   final TextEditingController emailController = TextEditingController();

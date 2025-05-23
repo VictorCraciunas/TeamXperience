@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/features/sign-up/controller/signup_controller.dart';
 
 import '../../../constants/colors.dart';
+import '../../../constants/padding.dart';
 import '../../../constants/routes.dart';
 import '../../../widgets/my_appbar.dart';
 import '../../../widgets/my_button.dart';
@@ -19,20 +20,21 @@ class RegisterScreen extends StatelessWidget {
     SignUpController controller = SignUpController();
 
     return Scaffold(
-      appBar: MyAppBar(appBarText: "Inregistrare"),
+      backgroundColor: MyColors.backgroundColor,
+      appBar: const MyAppBar(appBarText: "Inregistrare"),
       body: SingleChildScrollView(
         child:Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25),
+          padding: const EdgeInsets.symmetric(horizontal: MyPaddings.appHorizontalPadding),
           child: Form(
             key: controller.formKey,
             child: Column(
               children: [
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 MyTextField(
                   controller: controller.emailController,
                   labelText: "Adresa de email",
                   labelFontSize: 14,
-                  borderColor: Color(0xFFE6E6E6),
+                  borderColor: const Color(0xFFE6E6E6),
                   hintText: 'exemplu@gmail.com',
                   leading: SvgPicture.asset(
                     'assets/images/email.svg',
@@ -55,7 +57,7 @@ class RegisterScreen extends StatelessWidget {
                   controller: controller.firstNameController,
                   labelText: "Prenume",
                   labelFontSize: 14,
-                  borderColor: Color(0xFFE6E6E6),
+                  borderColor: const Color(0xFFE6E6E6),
                   hintText: 'Prenume',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -69,7 +71,7 @@ class RegisterScreen extends StatelessWidget {
                   controller: controller.lastNameController,
                   labelText: "Nume de familie",
                   labelFontSize: 14,
-                  borderColor: Color(0xFFE6E6E6),
+                  borderColor: const Color(0xFFE6E6E6),
                   hintText: 'Nume de familie',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -83,7 +85,7 @@ class RegisterScreen extends StatelessWidget {
                   controller: controller.passwordController,
                   labelText: "Parola",
                   labelFontSize: 14,
-                  borderColor: Color(0xFFE6E6E6),
+                  borderColor: const Color(0xFFE6E6E6),
                   hintText: 'Parola ta',
                   leading: SvgPicture.asset(
                     'assets/images/pass.svg',
@@ -113,7 +115,7 @@ class RegisterScreen extends StatelessWidget {
                   controller: controller.confirmPasswordController,
                   labelText: "Confirma parola",
                   labelFontSize: 14,
-                  borderColor: Color(0xFFE6E6E6),
+                  borderColor: const Color(0xFFE6E6E6),
                   hintText: 'Confirma parola',
                   leading: SvgPicture.asset(
                     'assets/images/pass.svg',
@@ -147,15 +149,15 @@ class RegisterScreen extends StatelessWidget {
                   withBorder: false,
                   buttonColor: MyColors.yellow,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       "Ai deja un cont?",
                       style: TextStyle(fontSize: 14, fontFamily: 'Poppins', color: MyColors.greyText),
                     ),
-                    SizedBox(width: 5.0),
+                    const SizedBox(width: 5.0),
                     GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(
@@ -163,7 +165,7 @@ class RegisterScreen extends StatelessWidget {
                           Routes.login,
                         );
                       },
-                      child: Text(
+                      child: const Text(
                         "Loghează-te",
                         style: TextStyle(
                           fontSize: 14,
@@ -175,7 +177,7 @@ class RegisterScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                TermsText()
+                const TermsText()
               ],
             ),
           ),

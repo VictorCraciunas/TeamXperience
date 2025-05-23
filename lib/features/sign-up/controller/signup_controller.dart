@@ -13,10 +13,7 @@ class SignUpController {
   SignUpService signUpService = SignUpService();
 
 
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-  }
+
 
   Future<void> register(BuildContext context) async {
     if (formKey.currentState!.validate()) {
@@ -45,7 +42,6 @@ class SignUpController {
           const SnackBar(content: Text('Sign in successfully!')),
         );
 
-        dispose();
         Navigator.pushReplacementNamed(context, Routes.redirect);
       }
       catch(e){

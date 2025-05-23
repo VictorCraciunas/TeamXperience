@@ -13,6 +13,7 @@ class SplashScreen extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: MyColors.backgroundColor,
       body: Stack(
         children: [
           Positioned.fill(
@@ -35,15 +36,15 @@ class SplashScreen extends StatelessWidget {
               ),
               Container(
                 width: double.infinity,
-                margin: EdgeInsets.symmetric(horizontal: 20.0),
-                decoration: BoxDecoration(
+                margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.all(Radius.circular(20.0)),
                 ),
                 child: Column(
                   children: [
-                    SizedBox(height: 20.0),
-                    Text(
+                    const SizedBox(height: 20.0),
+                    const Text(
                       "Bine ai venit!",
                       style: TextStyle(
                         fontSize: 24,
@@ -52,7 +53,7 @@ class SplashScreen extends StatelessWidget {
                         color: Color(0xFF001833),
                       ),
                     ),
-                    SizedBox(height: 10.0),
+                    const SizedBox(height: 10.0),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: MyButton(
@@ -65,23 +66,23 @@ class SplashScreen extends StatelessWidget {
                         withBorder: false,
                       ),
                     ),
-                    SizedBox(height: 5.0),
+                    const SizedBox(height: 5.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           "Nu ai cont?",
                           style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
                         ),
-                        SizedBox(width: 5.0),
+                        const SizedBox(width: 5.0),
                         GestureDetector(
                           onTap: () {
-                            Navigator.pushReplacementNamed(
+                            Navigator.pushNamed(
                               context,
                               Routes.register,
                             );
                           },
-                          child: Text(
+                          child: const Text(
                             "Inregistrează-te",
                             style: TextStyle(
                               fontSize: 14,
@@ -93,7 +94,7 @@ class SplashScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 25.0),
+                    const SizedBox(height: 25.0),
                   ],
                 ),
               ),

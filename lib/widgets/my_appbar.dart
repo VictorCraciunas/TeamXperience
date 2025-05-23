@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/constants/colors.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String appBarText;
@@ -11,6 +12,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      backgroundColor: MyColors.backgroundColor,
       title: Text(
         appBarText,
         style: const TextStyle(

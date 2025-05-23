@@ -9,11 +9,6 @@ class LogInController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
 
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-  }
-
 
   Future<void> login(BuildContext context) async {
     if (formKey.currentState!.validate()) {
@@ -42,7 +37,6 @@ class LogInController {
           const SnackBar(content: Text('Log in successfully!')),
         );
 
-        dispose();
         Navigator.pushReplacementNamed(context, Routes.redirect);
       }
       catch(e){

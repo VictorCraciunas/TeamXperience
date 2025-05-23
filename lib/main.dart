@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Treasure Hunt',
-      initialRoute: Routes.splash,
+      initialRoute: Routes.redirect,
       routes: {
         Routes.redirect:     (_) => LandingPage(authUtil: authUtil),
         Routes.register:    (_) => const Register(),
@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
         Routes.addMissions: (_) => const AddMissionsPage(),
         Routes.adminHome:   (_) => const AdminHome(),
         Routes.splash: (_) => const SplashScreen(),
-        Routes.forgotPassword: (_) => ForgotPasswordScreen()
+        Routes.forgotPassword: (_) => const ForgotPasswordScreen()
 
       },
     );

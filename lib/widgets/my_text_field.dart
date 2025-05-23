@@ -37,6 +37,16 @@ class MyTextField extends StatefulWidget {
   /// Optional custom validator; if null, defaults to checking non-empty
   final String? Function(String?)? validator;
 
+  final double borderWidth;
+
+  final double radius;
+
+  final bool readOnly;
+  final int? maxLines;
+
+  /// Optional callback when the field is tapped (e.g., for date pickers)
+  final VoidCallback? onTap;
+
   const MyTextField({
     super.key,
     required this.controller,
@@ -50,6 +60,11 @@ class MyTextField extends StatefulWidget {
     this.trailing,
     this.hintText,
     this.validator,
+    this.borderWidth = 2,
+    this.radius = 50,
+    this.readOnly = false,
+    this.onTap,
+    this.maxLines = 1
   });
 
   @override
@@ -75,6 +90,7 @@ class _MyTextFieldState extends State<MyTextField> {
   Widget build(BuildContext context) {
     Widget? suffix;
     if (widget.obscureText && widget.trailing != null) {
+      // For password fields, trailing icon toggles obscure
       suffix = GestureDetector(
         onTap: _toggleObscure,
         child: Padding(
@@ -82,9 +98,19 @@ class _MyTextFieldState extends State<MyTextField> {
           child: widget.trailing,
         ),
       );
+    } else if (widget.readOnly && widget.trailing != null) {
+      // For read-only fields (e.g., date fields), trailing icon triggers onTap
+      suffix = GestureDetector(
+        onTap: widget.onTap,
+        child: Padding(
+          padding: const EdgeInsets.only(right: 15),
+          child: widget.trailing,
+        ),
+      );
     } else if (widget.trailing != null) {
+      // Non-interactive trailing icon
       suffix = Padding(
-        padding: const EdgeInsets.only(right: 10),
+        padding: const EdgeInsets.only(right: 15),
         child: widget.trailing,
       );
     }
@@ -102,16 +128,18 @@ class _MyTextFieldState extends State<MyTextField> {
         ),
         const SizedBox(height: 8),
         TextFormField(
+          onTap: widget.onTap,
+          readOnly: widget.readOnly,
           controller: widget.controller,
           keyboardType: widget.keyboardType,
+          maxLines: widget.maxLines,
           obscureText: _obscure,
-          validator:
-              widget.validator ??
-              (value) =>
-                  (value ?? '').isEmpty ? 'Enter ${widget.labelText}' : null,
+          validator: widget.validator ??
+                  (value) =>
+              (value ?? '').isEmpty ? 'Enter ${widget.labelText}' : null,
           decoration: InputDecoration(
             hintText: widget.hintText,
-            hintStyle: TextStyle(
+            hintStyle: const TextStyle(
               fontSize: 14,
               fontFamily: 'Poppins',
               color: MyColors.greyText,
@@ -124,10 +152,7 @@ class _MyTextFieldState extends State<MyTextField> {
               minWidth: 0,
               minHeight: 0,
             ),
-            suffixIcon: Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: suffix,
-            ),
+            suffixIcon: suffix,
             suffixIconConstraints: const BoxConstraints(
               minWidth: 0,
               minHeight: 0,
@@ -137,15 +162,16 @@ class _MyTextFieldState extends State<MyTextField> {
               horizontal: 12,
             ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(50),
+              borderRadius: BorderRadius.circular(widget.radius),
               borderSide: BorderSide(color: widget.borderColor),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(50),
-              borderSide: BorderSide(color: widget.borderColor),
+              borderRadius: BorderRadius.circular(widget.radius),
+              borderSide: BorderSide(
+                  color: widget.borderColor, width: widget.borderWidth),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(50),
+              borderRadius: BorderRadius.circular(widget.radius),
               borderSide: BorderSide(color: widget.borderColor, width: 3),
             ),
           ),

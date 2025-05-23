@@ -5,6 +5,7 @@ class MyColors{
   static const facebookBlue = Color(0xFF0056B2);
   static const yellow = Color(0xFFF6AF1A);
   static const greyText = Color(0xFF858494);
+  static const backgroundColor = Colors.white;
 
   static const myGradient =  LinearGradient(
     begin: Alignment.centerLeft,

@@ -7,8 +7,9 @@ class Event {
   final String eventId;
   final String? name;
   List<Mission> missions;
-  final DateTime startTime;
-  final DateTime deadlineEnrollment;
+  final DateTime dateEvent;
+  final DateTime dateDeadlineEnrollment;
+  final DateTime dateStartEnrollment;
   final String location;
   final String description;
   final int nrMissions;
@@ -21,8 +22,9 @@ class Event {
     required this.eventId ,
     required this.name ,
     List<Mission>? missions,
-    required this.startTime,
-    required this.deadlineEnrollment,
+    required this.dateEvent,
+    required this.dateDeadlineEnrollment,
+    required this.dateStartEnrollment,
     required this.location ,
     required this.description,
     required this.nrMissions ,
@@ -46,8 +48,9 @@ class Event {
       eventId: map['eventId'],
       name: map['name'] as String? ?? '',
       missions:missions,
-      startTime: (map['startTime'] as Timestamp).toDate(),
-      deadlineEnrollment: (map['deadlineEnrollment'] as Timestamp).toDate(),
+      dateEvent: (map['dateEvent'] as Timestamp).toDate(),
+      dateDeadlineEnrollment: (map['dateDeadlineEnrollment'] as Timestamp).toDate(),
+      dateStartEnrollment: (map['dateStartEnrollment'] as Timestamp).toDate(),
       location: map['location'] as String? ?? '',
       description: map['description'] as String? ?? '',
       nrMissions: map['nrMissions'] as int? ?? 0,
@@ -63,8 +66,9 @@ class Event {
       'eventId': eventId,
       'name': name,
       'missions': missions.map((m) => m.toJson()).toList(),
-      'startTime': startTime,
-      'deadlineEnrollment': deadlineEnrollment,
+      'dateEvent': dateEvent,
+      'dateDeadlineEnrollment': dateDeadlineEnrollment,
+      'dateStartEnrollment': dateStartEnrollment,
       'location': location,
       'description': description,
       'nrMissions': nrMissions,

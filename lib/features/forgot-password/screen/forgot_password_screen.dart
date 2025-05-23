@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/forgot-password/controller/forgot_password_controller.dart';
 
+import '../../../constants/padding.dart';
 import '../../../widgets/my_appbar.dart';
 import '../../../widgets/my_button.dart';
 import '../../../widgets/my_text_field.dart';
@@ -15,14 +16,15 @@ class ForgotPasswordScreen extends StatelessWidget {
     ForgotPasswordController controller = ForgotPasswordController();
 
     return Scaffold(
-      appBar: MyAppBar(appBarText: "Resetare parola"),
+      backgroundColor: MyColors.backgroundColor,
+      appBar: const MyAppBar(appBarText: "Resetare parola"),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(25.0),
+          padding: const EdgeInsets.symmetric(horizontal: MyPaddings.appHorizontalPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 'Introdu email-ul si noi iti vom trimite un link pentru resetarea parolei',
                 style: TextStyle(
                   fontSize: 16,
@@ -30,12 +32,12 @@ class ForgotPasswordScreen extends StatelessWidget {
                   color: MyColors.greyText,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               MyTextField(
                 controller: controller.emailController,
                 labelText: "Adresa de email",
                 labelFontSize: 14,
-                borderColor: Color(0xFFE6E6E6),
+                borderColor: const Color(0xFFE6E6E6),
                 hintText: 'exemplu@gmail.com',
                 leading: SvgPicture.asset(
                   'assets/images/email.svg',

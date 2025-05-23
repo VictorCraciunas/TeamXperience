@@ -6,6 +6,7 @@ import 'package:teamxperience/features/log-in/controller/log_in_controller.dart'
 import 'package:teamxperience/widgets/my_button.dart';
 import 'package:teamxperience/widgets/terms_text.dart';
 
+import '../../../constants/padding.dart';
 import '../../../widgets/my_appbar.dart';
 import '../../../widgets/my_text_field.dart';
 
@@ -17,18 +18,19 @@ class LogInScreen extends StatelessWidget {
     LogInController controller = LogInController();
 
     return Scaffold(
-      appBar: MyAppBar(appBarText: "Logare"),
+      backgroundColor: MyColors.backgroundColor,
+      appBar: const MyAppBar(appBarText: "Logare"),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25),
+          padding: const EdgeInsets.symmetric(horizontal: MyPaddings.appHorizontalPadding),
           child: Form(
             key: controller.formKey,
             child: Column(
               children: [
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
                 MyButton(
                   buttonText: "Logare cu Google",
-                  textColor: Color(0xFF0C092A),
+                  textColor: const Color(0xFF0C092A),
                   buttonOnTap: () => controller.logInGoogle(context),
                   leading: SvgPicture.asset(
                     'assets/images/google.svg',
@@ -37,27 +39,27 @@ class LogInScreen extends StatelessWidget {
                   ),
                   withBorder: true,
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 MyButton(
                   buttonText: "Logare cu Facebook",
                   textColor: Colors.white,
                   buttonOnTap: () {},
                   withBorder: false,
-                  buttonColor: Color(0xFF0056B2),
+                  buttonColor: const Color(0xFF0056B2),
                   leading: SvgPicture.asset(
                     'assets/images/facebook.svg',
                     width: 24,
                     height: 24,
                   ),
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 Row(
                   children: [
                     Expanded(
                       child: Divider(color: Colors.grey.shade300, thickness: 1),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12.0),
                       child: Text(
                         'SAU',
                         style: TextStyle(
@@ -73,13 +75,13 @@ class LogInScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
 
                 MyTextField(
                   controller: controller.emailController,
                   labelText: "Adresa de email",
                   labelFontSize: 14,
-                  borderColor: Color(0xFFE6E6E6),
+                  borderColor: const Color(0xFFE6E6E6),
                   hintText: 'exemplu@gmail.com',
                   leading: SvgPicture.asset(
                     'assets/images/email.svg',
@@ -98,7 +100,7 @@ class LogInScreen extends StatelessWidget {
                   controller: controller.passwordController,
                   labelText: "Parola",
                   labelFontSize: 14,
-                  borderColor: Color(0xFFE6E6E6),
+                  borderColor: const Color(0xFFE6E6E6),
                   hintText: 'Parola ta',
                   leading: SvgPicture.asset(
                     'assets/images/pass.svg',
@@ -128,12 +130,12 @@ class LogInScreen extends StatelessWidget {
                   withBorder: false,
                   buttonColor: MyColors.yellow,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(context, Routes.forgotPassword);
                   },
-                  child: Text(
+                  child: const Text(
                     "Ai uitat parola?",
                     style: TextStyle(
                       fontSize: 16,
@@ -143,8 +145,8 @@ class LogInScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 30),
-                TermsText(),
+                const SizedBox(height: 30),
+                const TermsText(),
               ],
             ),
           ),

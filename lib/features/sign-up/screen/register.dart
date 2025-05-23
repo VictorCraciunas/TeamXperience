@@ -6,6 +6,7 @@ import 'package:teamxperience/features/sign-up/controller/signup_controller.dart
 import 'package:teamxperience/widgets/my_button.dart';
 import 'package:teamxperience/widgets/terms_text.dart';
 
+import '../../../constants/padding.dart';
 import '../../../widgets/my_appbar.dart';
 
 class Register extends StatelessWidget {
@@ -16,14 +17,15 @@ class Register extends StatelessWidget {
     SignUpController controller = SignUpController();
 
     return Scaffold(
-      appBar: MyAppBar(appBarText: "Inregistrare"),
+      backgroundColor: MyColors.backgroundColor,
+      appBar: const MyAppBar(appBarText: "Inregistrare"),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25),
+          padding: const EdgeInsets.symmetric(horizontal: MyPaddings.appHorizontalPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               MyButton(
                 buttonText: 'Inregistrare cu Email',
                 textColor: Colors.white,
@@ -36,10 +38,10 @@ class Register extends StatelessWidget {
                   height: 24,
                 ),
               ),
-              SizedBox(height: 15,),
+              const SizedBox(height: 15,),
               MyButton(
                 buttonText: "Inregistrare cu Google",
-                textColor: Color(0xFF0C092A),
+                textColor: const Color(0xFF0C092A),
                 buttonOnTap: () => controller.signInGoogle(context),
                 leading: SvgPicture.asset(
                   'assets/images/google.svg',
@@ -48,13 +50,13 @@ class Register extends StatelessWidget {
                 ),
                 withBorder: true,
               ),
-              SizedBox(height: 15,),
+              const SizedBox(height: 15,),
               MyButton(
                 buttonText: "Inregistrare cu Facebook",
                 textColor: Colors.white,
                 buttonOnTap: () {},
                 withBorder: false,
-                buttonColor: Color(0xFF0056B2),
+                buttonColor: const Color(0xFF0056B2),
                 leading: SvgPicture.asset(
                   'assets/images/facebook.svg',
                   width: 24,
@@ -66,11 +68,11 @@ class Register extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       "Ai deja un cont?",
                       style: TextStyle(fontSize: 14, fontFamily: 'Poppins', color: MyColors.greyText),
                     ),
-                    SizedBox(width: 5.0),
+                    const SizedBox(width: 5.0),
                     GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(
@@ -78,7 +80,7 @@ class Register extends StatelessWidget {
                           Routes.login,
                         );
                       },
-                      child: Text(
+                      child: const Text(
                         "Logheaza-te",
                         style: TextStyle(
                           fontSize: 14,
@@ -91,7 +93,7 @@ class Register extends StatelessWidget {
                   ],
                 ),
               ),
-              TermsText()
+              const TermsText()
             ],
           ),
         ),
