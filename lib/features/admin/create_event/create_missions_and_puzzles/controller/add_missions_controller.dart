@@ -54,6 +54,10 @@ class AddMissionsController{
             String? fontWeight,
             String? fontFamily,
             int? codeLength,
+          double? cornerRadius, // New
+          bool? enableFlicker, // New
+          bool? enableGlow, // New
+          String? glowColor, // New
         }) {
         final component = _addMissionsService.addComponentAtPuzzleAtMission(
             missionSelected,
@@ -72,7 +76,11 @@ class AddMissionsController{
             fontSize: fontSize,
             fontWeight: fontWeight,
             fontFamily: fontFamily,
-            codeLength: codeLength
+            codeLength: codeLength,
+          cornerRadius: cornerRadius, // New
+          enableFlicker: enableFlicker, // New
+          enableGlow: enableGlow, // New
+          glowColor: glowColor, // New
 
         );
         return component;

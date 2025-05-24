@@ -53,6 +53,10 @@ class MissionsService {
         String? fontWeight,
         String? fontFamily,
         int? codeLength,
+        double? cornerRadius, // New
+        bool? enableFlicker, // New
+        bool? enableGlow, // New
+        String? glowColor, // New
       }) {
     if (missions.isEmpty) {
       throw Exception("No missions initialized");
@@ -100,7 +104,13 @@ class MissionsService {
           buttonColorOnTap: buttonColorOnTap,
           buttonTextColor: buttonTextColor,
           buttonTextColorOnTap: buttonTextColorOnTap,
-          borderColor: borderColor
+          borderColor: borderColor,
+          cornerRadius: cornerRadius, // New
+          enableFlicker: enableFlicker, // New
+          enableGlow: enableGlow, // New
+          glowColor: glowColor, // New
+          fontFamily: fontFamily,
+          fontWeight: fontWeight
         );
         break;
       case ComponentType.code:

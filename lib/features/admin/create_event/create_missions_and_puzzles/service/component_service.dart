@@ -34,11 +34,17 @@ class ComponentService{
 
   Component createButtonComponent({
     required String buttonLabel,
-    String? buttonColor, // New: Initial button background color
-    String? buttonColorOnTap, // New: Button background color on tap
-    String? buttonTextColor, // New: Initial button text color
-    String? buttonTextColorOnTap, // New: Button text color on tap
+    String? buttonColor, // Initial button background color
+    String? buttonColorOnTap, // Button background color on tap
+    String? buttonTextColor, // Initial button text color
+    String? buttonTextColorOnTap, // Button text color on tap
     String? borderColor,
+    String? fontFamily,
+    String? fontWeight,
+    double? cornerRadius, // New
+    bool? enableFlicker, // New
+    bool? enableGlow, // New
+    String? glowColor, // New
   }) {
     return Component(
       type: ComponentType.button,
@@ -47,7 +53,13 @@ class ComponentService{
       buttonColorOnTap: buttonColorOnTap,
       buttonTextColor: buttonTextColor,
       buttonTextColorOnTap: buttonTextColorOnTap,
-      borderColor: borderColor
+      borderColor: borderColor,
+      cornerRadius: cornerRadius, // New
+      enableFlicker: enableFlicker, // New
+      enableGlow: enableGlow, // New
+      glowColor: glowColor, // New
+      fontFamily: fontFamily,
+      fontWeight: fontWeight
     );
   }
   Component createCodeComponent({

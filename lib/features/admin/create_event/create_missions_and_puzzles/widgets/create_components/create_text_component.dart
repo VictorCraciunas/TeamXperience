@@ -12,7 +12,6 @@ import '../../../../../../utils/component_conversion/component_to_widget.dart';
 import '../../controller/add_missions_controller.dart';
 
 class TextComponentFieldsWidget extends StatefulWidget {
-  final TextEditingController textController;
   final AddMissionsController addMissionsController;
   final int missionSelected;
   final int puzzleSelected;
@@ -20,7 +19,6 @@ class TextComponentFieldsWidget extends StatefulWidget {
 
   const TextComponentFieldsWidget({
     super.key,
-    required this.textController,
     required this.addMissionsController,
     required this.missionSelected,
     required this.puzzleSelected,
@@ -40,6 +38,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
   late String? fontFamily; // New state for font family
   TextEditingController textColorController = TextEditingController();
   TextEditingController fontController = TextEditingController();
+  TextEditingController textController = TextEditingController();
 
   @override
   void initState() {
@@ -65,7 +64,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
   ComponentToWidget componentToWidget = ComponentToWidget();
 
   void _saveComponent() {
-    if (widget.textController.text.isEmpty) {
+    if (textController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter text content')),
       );
@@ -82,7 +81,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
       widget.missionSelected,
       widget.puzzleSelected,
       ComponentType.text,
-      text: widget.textController.text,
+      text: textController.text,
       textColor: textColor,
       animation: animation,
       fontSize: fontSize,
@@ -134,9 +133,9 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
           padding: const EdgeInsets.all(12), // Added padding for better appearance
           child: Center(
             child: Text(
-              widget.textController.text.isEmpty
+              textController.text.isEmpty
                   ? 'Your text here'
-                  : widget.textController.text,
+                  : textController.text,
               style: TextStyle(
                 color: currentColor,
                 fontSize: currentSize,
@@ -153,7 +152,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
 
         // ───── Text Content ─────
         MyTextField(
-          controller: widget.textController,
+          controller: textController,
           labelText: 'Continut Text',
           borderColor: MyColors.lightBlue,
           borderWidth: 1.5,

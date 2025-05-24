@@ -95,7 +95,6 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
               ),
               if (type == ComponentType.text) ...[
                 TextComponentFieldsWidget(
-                  textController: textEditingController,
                   addMissionsController: widget.addMissionsController,
                   missionSelected: widget.missionSelected,
                   puzzleSelected: widget.puzzleSelected,
@@ -104,7 +103,6 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
               ],
               if (type == ComponentType.image) ...[
                 ImageComponentFieldsWidget(
-                  imageUrlController: textEditingController,
                   addMissionsController: widget.addMissionsController,
                   missionSelected: widget.missionSelected,
                   puzzleSelected: widget.puzzleSelected,
@@ -113,12 +111,6 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
               ],
               if (type == ComponentType.button) ...[
                 ButtonComponentFieldsWidget(
-                  buttonLabelController: textEditingController,
-                  buttonColor: '#FFFFFF',
-                  buttonColorOnTap: '#CCCCCC',
-                  buttonTextColor: '#000000',
-                  buttonTextColorOnTap: '#FFFFFF',
-                  borderColor: '#000000',
                   addMissionsController: widget.addMissionsController,
                   missionSelected: widget.missionSelected,
                   puzzleSelected: widget.puzzleSelected,

@@ -12,6 +12,10 @@ class Component {
   final String? buttonTextColorOnTap; // New: Button text color on tap
   final String? textColor; // Hex color (e.g., '#FF0000' for red)
   final String? borderColor; // Already present for border color
+  final double? cornerRadius; // New: Corner radius for button
+  final bool? enableFlicker; // New: Enable flicker animation
+  final bool? enableGlow; // New: Enable glow effect
+  final String? glowColor;
   final AnimationType? animation;
   final double? fontSize;
   final String? fontWeight;
@@ -34,6 +38,10 @@ class Component {
     this.fontWeight,
     this.fontFamily,
     this.codeLength,
+    this.cornerRadius, // New
+    this.enableFlicker, // New
+    this.enableGlow, // New
+    this.glowColor,
   });
 
   factory Component.fromMap(Map<String, dynamic> map) {
@@ -57,6 +65,10 @@ class Component {
       fontWeight: map['fontWeight'] as String?,
       fontFamily: map['fontFamily'] as String?,
       codeLength: map['codeLength'] as int,
+      cornerRadius: map['cornerRadius'] as double?, // New
+      enableFlicker: map['enableFlicker'] as bool?, // New
+      enableGlow: map['enableGlow'] as bool?, // New
+      glowColor: map['glowColor'] as String?, // New
     );
   }
 
@@ -71,13 +83,16 @@ class Component {
       if (fontSize != null) 'fontSize': fontSize,
       if (fontWeight != null) 'fontWeight': fontWeight,
       if (fontFamily != null) 'fontFamily': fontFamily,
-
       if (codeLength != null) 'codeLength': codeLength,
+      if (cornerRadius != null) 'cornerRadius': cornerRadius, // New
+      if (enableFlicker != null) 'enableFlicker': enableFlicker, // New
+      if (enableGlow != null) 'enableGlow': enableGlow, // New
+      if (glowColor != null) 'glowColor': glowColor, // New
     };
   }
 
   @override
   String toString() {
-    return 'Component(type: ${type.name}, text: $text, imageUrl: $imageUrl, buttonLabel: $buttonLabel, textColor: $textColor, animation: ${animation?.name}, buttonColor: $buttonColor, buttonColorOnTap: $buttonColorOnTap, buttonTextColor: $buttonTextColor, buttonTextColorOnTap: $buttonTextColorOnTap, borderColor: $borderColor, fontSize: $fontSize, fontWeight: $fontWeight,fontFamilty: $fontFamily, codeLength: $codeLength)';
+    return 'Component(type: ${type.name}, text: $text, imageUrl: $imageUrl, buttonLabel: $buttonLabel, textColor: $textColor, animation: ${animation?.name}, buttonColor: $buttonColor, buttonColorOnTap: $buttonColorOnTap, buttonTextColor: $buttonTextColor, buttonTextColorOnTap: $buttonTextColorOnTap, borderColor: $borderColor, fontSize: $fontSize, fontWeight: $fontWeight, fontFamily: $fontFamily, codeLength: $codeLength, cornerRadius: $cornerRadius, enableFlicker: $enableFlicker, enableGlow: $enableGlow, glowColor: $glowColor)';
   }
 }

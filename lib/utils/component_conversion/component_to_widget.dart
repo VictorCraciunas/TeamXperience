@@ -30,14 +30,19 @@ class ComponentToWidget {
         );
       case ComponentType.button:
         return Center(
-          child: ButtonComponentWidget(
-            buttonLabel: component.buttonLabel,
-            buttonColor: component.buttonColor,
-            buttonColorOnTap: component.buttonColorOnTap,
-            buttonTextColor: component.buttonTextColor,
-            buttonTextColorOnTap: component.buttonTextColorOnTap,
-            borderColor: component.borderColor,
-          ),
+            child: ButtonComponentWidget(
+              buttonLabel: component.buttonLabel,
+              buttonColor: component.buttonColor,
+              buttonColorOnTap: component.buttonColorOnTap,
+              buttonTextColor: component.buttonTextColor,
+              buttonTextColorOnTap: component.buttonTextColorOnTap,
+              borderColor: component.borderColor,
+              enableGlow: component.enableGlow, // New: Enable glow effect
+              glowColor: component.glowColor, // New: Glow color
+              enableFlicker: component.enableFlicker, // New: Enable flicker animation
+              fontFamily: component.fontFamily, // New: Font family
+              fontWeight: component.fontWeight, // New: Font weight
+            )
         );
       case ComponentType.code:
         return Center(child: CodeComponentWidget(component: component));

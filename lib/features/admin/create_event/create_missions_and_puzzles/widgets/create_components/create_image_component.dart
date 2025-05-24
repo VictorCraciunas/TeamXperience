@@ -4,11 +4,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/utils/component_conversion/component_to_widget.dart';
 
+import '../../../../../../constants/colors.dart';
 import '../../../../../../model/component.dart';
+import '../../../../../../widgets/my_button.dart';
+import '../../../common_widgets/upload_image.dart';
 import '../../controller/add_missions_controller.dart';
 
 class ImageComponentFieldsWidget extends StatefulWidget {
-  final TextEditingController imageUrlController;
   final AddMissionsController addMissionsController;
   final int missionSelected;
   final int puzzleSelected;
@@ -16,7 +18,6 @@ class ImageComponentFieldsWidget extends StatefulWidget {
 
   const ImageComponentFieldsWidget({
     super.key,
-    required this.imageUrlController,
     required this.addMissionsController,
     required this.missionSelected,
     required this.puzzleSelected,
@@ -29,6 +30,7 @@ class ImageComponentFieldsWidget extends StatefulWidget {
 
 class _ImageComponentFieldsWidgetState extends State<ImageComponentFieldsWidget> {
   File? _image;
+  ComponentToWidget componentToWidget =ComponentToWidget();
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -36,28 +38,26 @@ class _ImageComponentFieldsWidgetState extends State<ImageComponentFieldsWidget>
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
-        widget.imageUrlController.text = pickedFile.path;
       });
     }
   }
 
   void _saveComponent() {
-    if (widget.imageUrlController.text.isEmpty) {
+    if (_image != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please select an image')),
       );
+      Component component = widget.addMissionsController.addComponent(
+        widget.missionSelected,
+        widget.puzzleSelected,
+        ComponentType.image,
+        imageUrl: _image!.path
+      );
+      Widget componentWidget = componentToWidget.convert(component);
+      widget.refreshUI(componentWidget);
+      Navigator.pop(context);
       return;
     }
-
-    Component component = widget.addMissionsController.addComponent(
-      widget.missionSelected,
-      widget.puzzleSelected,
-      ComponentType.image,
-      imageUrl: widget.imageUrlController.text,
-    );
-    Widget componentWidget = ComponentToWidget().convert(component);
-    widget.refreshUI(componentWidget);
-    Navigator.pop(context);
   }
 
   @override
@@ -66,29 +66,37 @@ class _ImageComponentFieldsWidgetState extends State<ImageComponentFieldsWidget>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 10),
-        ListTile(
-          title: Text(
-            _image == null
-                ? 'Select Task Background Image'
-                : 'Task Background: ${_image!.path.split('/').last}',
+        GestureDetector(
+          onTap: () async {
+            await _pickImage();
+          },
+          child: UploadImage(
+            labelText: 'Adauga imagine',
+            imageFile: _image,
           ),
-          trailing: const Icon(Icons.image),
-          onTap: _pickImage,
         ),
-        if (_image != null)
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Image.file(
-              _image!,
-              height: 150,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
+        // if (_image != null)
+        //   Padding(
+        //     padding: const EdgeInsets.all(10),
+        //     child: Image.file(
+        //       _image!,
+        //       height: 150,
+        //       width: double.infinity,
+        //       fit: BoxFit.cover,
+        //     ),
+        //   ),
         const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: _saveComponent,
-          child: const Text('Save Component'),
+        Center(
+          child: MyButton(
+            buttonText: 'Salveaza componenta',
+            textColor: Colors.white,
+            buttonOnTap: _saveComponent,
+            withBorder: false,
+            buttonColor: MyColors.lightBlue,
+            fontWeight: FontWeight.w500,
+            buttonTextSize: 14,
+            buttonWidth: 270,
+          ),
         ),
       ],
     );
