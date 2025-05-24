@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/component-type.dart';
-import 'package:teamxperience/utils/component_conversion/component_to_widget.dart';
-import 'package:teamxperience/widgets/my_button.dart';
 
 import '../../../../../constants/colors.dart';
 import '../../../../../constants/padding.dart';
-import '../../../../../enums/animation_type.dart';
-import '../../../../../model/component.dart';
 import '../../../../../widgets/my_dropdown.dart';
 import '../controller/add_missions_controller.dart';
 import 'create_components/create_button_component.dart';
@@ -34,19 +30,7 @@ class AddComponentWidget extends StatefulWidget {
 
 class _AddComponentWidgetState extends State<AddComponentWidget> {
   ComponentType? type;
-  ComponentToWidget componentToWidget = ComponentToWidget();
   TextEditingController textEditingController = TextEditingController();
-  String? text;
-  String? textColor = '#000000'; // Default to black
-  AnimationType? animation = AnimationType.none; // Default to no animation
-  double? fontSize;
-  String? fontWeight = 'normal'; // Default to normal
-  String? buttonColor = '#FFFFFF'; // Default to white
-  String? buttonColorOnTap = '#CCCCCC'; // Default to grey
-  String? buttonTextColor = '#000000'; // Default to black
-  String? buttonTextColorOnTap = '#FFFFFF'; // Default to white
-  String? borderColor = '#000000'; // New: Default to black
-  int? codeLength; // New: Store the number of letters for code component
 
   @override
   Widget build(BuildContext context) {
@@ -83,17 +67,6 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
                   setState(() {
                     type = value;
                     textEditingController.clear();
-                    text = null;
-                    textColor = '#000000';
-                    animation = AnimationType.none;
-                    fontSize = null;
-                    fontWeight = 'normal';
-                    buttonColor = '#FFFFFF';
-                    buttonColorOnTap = '#CCCCCC';
-                    buttonTextColor = '#000000';
-                    buttonTextColorOnTap = '#FFFFFF';
-                    borderColor = '#000000';
-                    codeLength = null;
                   });
                 },
                 validator:

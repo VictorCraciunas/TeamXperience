@@ -10,6 +10,7 @@ class ComponentService{
     AnimationType? animation,
     double? fontSize,
     String? fontWeight,
+    String? fontFamily
   }) {
     return Component(
       type: ComponentType.text,
@@ -18,6 +19,7 @@ class ComponentService{
       animation: animation ?? AnimationType.none,
       fontSize: fontSize,
       fontWeight: fontWeight,
+      fontFamily: fontFamily
     );
   }
 

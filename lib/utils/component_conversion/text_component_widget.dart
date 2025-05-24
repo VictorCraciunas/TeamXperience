@@ -7,6 +7,8 @@ class TextComponentWidget extends StatelessWidget {
   final AnimationType? animation;
   final double? fontSize;
   final String? fontWeight; // String like "Black (900)"
+  final String? fontFamily;
+
 
   const TextComponentWidget({
     super.key,
@@ -15,6 +17,7 @@ class TextComponentWidget extends StatelessWidget {
     this.animation,
     this.fontSize,
     this.fontWeight,
+    this.fontFamily
   });
   // Helper to convert hex string to Color
   Color _hexToColor(String? hex) {
@@ -48,6 +51,7 @@ class TextComponentWidget extends StatelessWidget {
         textColor: currentColor,
         fontSize: fontSize,
         fontWeight: currentFontWeight,
+        fontFamily: fontFamily,
       );
     }
     return Text(
@@ -56,6 +60,7 @@ class TextComponentWidget extends StatelessWidget {
         color: currentColor,
         fontSize: fontSize,
         fontWeight: currentFontWeight,
+        fontFamily: fontFamily
       ),
     );
   }
@@ -66,6 +71,8 @@ class TypewriterText extends StatefulWidget {
   final Color textColor;
   final double? fontSize;
   final FontWeight fontWeight;
+  final String? fontFamily;
+
 
   const TypewriterText({
     super.key,
@@ -73,6 +80,7 @@ class TypewriterText extends StatefulWidget {
     required this.textColor,
     this.fontSize,
     required this.fontWeight,
+    this.fontFamily,
   });
 
   @override
@@ -111,6 +119,7 @@ class _TypewriterTextState extends State<TypewriterText> with SingleTickerProvid
             color: widget.textColor,
             fontSize: widget.fontSize,
             fontWeight: widget.fontWeight,
+            fontFamily: widget.fontFamily
           ),
         );
       },

@@ -52,6 +52,7 @@ class AddMissionsController{
             String? borderColor,
             double? fontSize,
             String? fontWeight,
+            String? fontFamily,
             int? codeLength,
         }) {
         final component = _addMissionsService.addComponentAtPuzzleAtMission(
@@ -70,6 +71,7 @@ class AddMissionsController{
             borderColor: borderColor,
             fontSize: fontSize,
             fontWeight: fontWeight,
+            fontFamily: fontFamily,
             codeLength: codeLength
 
         );

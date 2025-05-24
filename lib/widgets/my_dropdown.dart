@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants/colors.dart';
+
 /// A reusable labeled dropdown field that displays a label above
 /// a dropdown button, with customizable styling and behavior.
 class MyDropdownField<T> extends StatelessWidget {
@@ -82,6 +84,7 @@ class MyDropdownField<T> extends StatelessWidget {
             fontFamily: 'Poppins',
             fontSize: labelFontSize,
             fontWeight: labelFontWeight,
+              color: MyColors.blackColor
           ),
         ),
         const SizedBox(height: 8),

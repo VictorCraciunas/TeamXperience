@@ -51,6 +51,7 @@ class MissionsService {
         String? borderColor,
         double? fontSize,
         String? fontWeight,
+        String? fontFamily,
         int? codeLength,
       }) {
     if (missions.isEmpty) {
@@ -78,6 +79,7 @@ class MissionsService {
           animation: animation,
           fontSize: fontSize,
           fontWeight: fontWeight,
+          fontFamily: fontFamily
         );
         break;
       case ComponentType.image:

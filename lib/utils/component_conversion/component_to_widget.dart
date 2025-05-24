@@ -19,6 +19,7 @@ class ComponentToWidget {
             animation: component.animation,
             fontSize: component.fontSize,
             fontWeight: component.fontWeight,
+            fontFamily: component.fontFamily,
           ),
         );
       case ComponentType.image:

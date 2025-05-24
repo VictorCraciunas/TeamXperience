@@ -89,6 +89,7 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                   gradient: MyColors.myGradient,
                   fontWeight: FontWeight.w600,
                 ),
+                const SizedBox(height: 30,)
               ],
             ),
           ),

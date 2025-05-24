@@ -8,7 +8,7 @@ class MyTextField extends StatefulWidget {
   final TextEditingController controller;
 
   /// The text label displayed above the field
-  final String labelText;
+  final String? labelText;
 
   /// Font size of the label
   final double labelFontSize;
@@ -43,6 +43,9 @@ class MyTextField extends StatefulWidget {
 
   final bool readOnly;
   final int? maxLines;
+  final Color hintTextColor;
+  final double hintTextSize;
+  final FontWeight hinttextWeight;
 
   /// Optional callback when the field is tapped (e.g., for date pickers)
   final VoidCallback? onTap;
@@ -50,7 +53,7 @@ class MyTextField extends StatefulWidget {
   const MyTextField({
     super.key,
     required this.controller,
-    required this.labelText,
+    this.labelText,
     this.labelFontSize = 16,
     this.labelFontWeight = FontWeight.w500,
     this.borderColor = const Color(0xFFE6E6E6),
@@ -64,7 +67,10 @@ class MyTextField extends StatefulWidget {
     this.radius = 50,
     this.readOnly = false,
     this.onTap,
-    this.maxLines = 1
+    this.maxLines = 1,
+    this.hintTextColor = MyColors.greyText,
+    this.hintTextSize = 14,
+    this.hinttextWeight = FontWeight.w400
   });
 
   @override
@@ -115,67 +121,76 @@ class _MyTextFieldState extends State<MyTextField> {
       );
     }
 
+    final textField = TextFormField(
+      onTap: widget.onTap,
+      readOnly: widget.readOnly,
+      controller: widget.controller,
+      keyboardType: widget.keyboardType,
+      maxLines: widget.maxLines,
+      obscureText: _obscure,
+      validator: widget.validator ??
+              (value) => (value ?? '').isEmpty
+              ? 'Enter ${widget.labelText ?? 'a value'}'
+              : null,
+      decoration: InputDecoration(
+        hintText: widget.hintText,
+        hintStyle: TextStyle(
+          fontSize: widget.hintTextSize,
+          fontFamily: 'Poppins',
+          color: widget.hintTextColor,
+          fontWeight: widget.hinttextWeight
+        ),
+        prefixIcon: Padding(
+          padding: const EdgeInsets.only(left: 10.0, right: 10),
+          child: widget.leading,
+        ),
+        prefixIconConstraints: const BoxConstraints(
+          minWidth: 0,
+          minHeight: 0,
+        ),
+        suffixIcon: suffix,
+        suffixIconConstraints: const BoxConstraints(
+          minWidth: 0,
+          minHeight: 0,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 12,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(widget.radius),
+          borderSide: BorderSide(color: widget.borderColor),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(widget.radius),
+          borderSide: BorderSide(
+              color: widget.borderColor, width: widget.borderWidth),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(widget.radius),
+          borderSide: BorderSide(color: widget.borderColor, width: 3),
+        ),
+      ),
+    );
+
+    if (widget.labelText == null) {
+      return textField;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          widget.labelText,
-          style: TextStyle(
+          widget.labelText!,
+          style: const TextStyle(
             fontFamily: 'Poppins',
-            fontSize: widget.labelFontSize,
-            fontWeight: widget.labelFontWeight,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: MyColors.blackColor,
           ),
         ),
         const SizedBox(height: 8),
-        TextFormField(
-          onTap: widget.onTap,
-          readOnly: widget.readOnly,
-          controller: widget.controller,
-          keyboardType: widget.keyboardType,
-          maxLines: widget.maxLines,
-          obscureText: _obscure,
-          validator: widget.validator ??
-                  (value) =>
-              (value ?? '').isEmpty ? 'Enter ${widget.labelText}' : null,
-          decoration: InputDecoration(
-            hintText: widget.hintText,
-            hintStyle: const TextStyle(
-              fontSize: 14,
-              fontFamily: 'Poppins',
-              color: MyColors.greyText,
-            ),
-            prefixIcon: Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 10),
-              child: widget.leading,
-            ),
-            prefixIconConstraints: const BoxConstraints(
-              minWidth: 0,
-              minHeight: 0,
-            ),
-            suffixIcon: suffix,
-            suffixIconConstraints: const BoxConstraints(
-              minWidth: 0,
-              minHeight: 0,
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 16,
-              horizontal: 12,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(widget.radius),
-              borderSide: BorderSide(color: widget.borderColor),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(widget.radius),
-              borderSide: BorderSide(
-                  color: widget.borderColor, width: widget.borderWidth),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(widget.radius),
-              borderSide: BorderSide(color: widget.borderColor, width: 3),
-            ),
-          ),
-        ),
+        textField,
       ],
     );
   }

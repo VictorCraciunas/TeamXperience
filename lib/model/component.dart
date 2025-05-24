@@ -4,7 +4,7 @@ import '../enums/component-type.dart';
 class Component {
   final ComponentType type;
   final String? text;
-   String? imageUrl;
+  String? imageUrl;
   final String? buttonLabel;
   final String? buttonColor; // New: Initial button background color
   final String? buttonColorOnTap; // New: Button background color on tap
@@ -15,7 +15,8 @@ class Component {
   final AnimationType? animation;
   final double? fontSize;
   final String? fontWeight;
-  final int? codeLength; // New: Number of letters for the code component
+  final String? fontFamily;
+  final int? codeLength;
 
   Component({
     required this.type,
@@ -31,6 +32,7 @@ class Component {
     this.animation,
     this.fontSize,
     this.fontWeight,
+    this.fontFamily,
     this.codeLength,
   });
 
@@ -47,10 +49,14 @@ class Component {
       buttonTextColorOnTap: map['buttonTextColorOnTap'] as String?,
       borderColor: map['borderColor'] as String?,
       textColor: map['textColor'] as String?,
-      animation: map['animation'] != null ? AnimationType.values.byName(map['animation'] as String) : null,
+      animation:
+          map['animation'] != null
+              ? AnimationType.values.byName(map['animation'] as String)
+              : null,
       fontSize: map['fontSize'] as double?,
       fontWeight: map['fontWeight'] as String?,
-      codeLength: map['codeLength'] as int
+      fontFamily: map['fontFamily'] as String?,
+      codeLength: map['codeLength'] as int,
     );
   }
 
@@ -62,15 +68,16 @@ class Component {
       if (buttonLabel != null) 'buttonLabel': buttonLabel,
       if (textColor != null) 'textColor': textColor,
       if (animation != null) 'animation': animation!.name,
-      if(fontSize != null) 'fontSize' : fontSize,
-      if(fontWeight != null) 'fontWeight' : fontWeight,
-      if(codeLength != null) 'codeLength' : codeLength,
+      if (fontSize != null) 'fontSize': fontSize,
+      if (fontWeight != null) 'fontWeight': fontWeight,
+      if (fontFamily != null) 'fontFamily': fontFamily,
 
+      if (codeLength != null) 'codeLength': codeLength,
     };
   }
+
   @override
   String toString() {
-    return 'Component(type: ${type.name}, text: $text, imageUrl: $imageUrl, buttonLabel: $buttonLabel, textColor: $textColor, animation: ${animation?.name}, buttonColor: $buttonColor, buttonColorOnTap: $buttonColorOnTap, buttonTextColor: $buttonTextColor, buttonTextColorOnTap: $buttonTextColorOnTap, borderColor: $borderColor, fontSize: $fontSize, fontWeight: $fontWeight, codeLength: $codeLength)';
+    return 'Component(type: ${type.name}, text: $text, imageUrl: $imageUrl, buttonLabel: $buttonLabel, textColor: $textColor, animation: ${animation?.name}, buttonColor: $buttonColor, buttonColorOnTap: $buttonColorOnTap, buttonTextColor: $buttonTextColor, buttonTextColorOnTap: $buttonTextColorOnTap, borderColor: $borderColor, fontSize: $fontSize, fontWeight: $fontWeight,fontFamilty: $fontFamily, codeLength: $codeLength)';
   }
-
 }
