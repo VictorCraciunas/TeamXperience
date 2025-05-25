@@ -1,14 +1,10 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:teamxperience/enums/component-type.dart';
-import 'package:teamxperience/utils/component_conversion/component_to_widget.dart';
 
-import '../../../../../../constants/colors.dart';
-import '../../../../../../model/component.dart';
-import '../../../../../../widgets/my_button.dart';
-import '../../../common_widgets/upload_image.dart';
-import '../../controller/add_missions_controller.dart';
+import '../../../../../../../constants/colors.dart';
+import '../../../../../../../widgets/my_button.dart';
+import '../../../../common_widgets/upload_image.dart';
+import '../../../controller/add_missions_controller.dart';
+import 'create_image_controller.dart';
 
 class ImageComponentFieldsWidget extends StatefulWidget {
   final AddMissionsController addMissionsController;
@@ -29,35 +25,12 @@ class ImageComponentFieldsWidget extends StatefulWidget {
 }
 
 class _ImageComponentFieldsWidgetState extends State<ImageComponentFieldsWidget> {
-  File? _image;
-  ComponentToWidget componentToWidget =ComponentToWidget();
+  late final ImageComponentController controller;
 
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-    }
-  }
-
-  void _saveComponent() {
-    if (_image != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select an image')),
-      );
-      Component component = widget.addMissionsController.addComponent(
-        widget.missionSelected,
-        widget.puzzleSelected,
-        ComponentType.image,
-        imageUrl: _image!.path
-      );
-      Widget componentWidget = componentToWidget.convert(component);
-      widget.refreshUI(componentWidget);
-      Navigator.pop(context);
-      return;
-    }
+  @override
+  void initState() {
+    super.initState();
+    controller = ImageComponentController();
   }
 
   @override
@@ -68,18 +41,20 @@ class _ImageComponentFieldsWidgetState extends State<ImageComponentFieldsWidget>
         const SizedBox(height: 10),
         GestureDetector(
           onTap: () async {
-            await _pickImage();
+            await controller.pickImage();
+            setState(() {}); // Update the UI after picking an image
           },
           child: UploadImage(
             labelText: 'Adauga imagine',
-            imageFile: _image,
+            imageFile: controller.image,
           ),
         ),
-        // if (_image != null)
+        // Uncomment if you want to show the image preview
+        // if (controller.image != null)
         //   Padding(
         //     padding: const EdgeInsets.all(10),
         //     child: Image.file(
-        //       _image!,
+        //       controller.image!,
         //       height: 150,
         //       width: double.infinity,
         //       fit: BoxFit.cover,
@@ -90,7 +65,13 @@ class _ImageComponentFieldsWidgetState extends State<ImageComponentFieldsWidget>
           child: MyButton(
             buttonText: 'Salveaza componenta',
             textColor: Colors.white,
-            buttonOnTap: _saveComponent,
+            buttonOnTap: () => controller.saveComponent(
+              context,
+              widget.missionSelected,
+              widget.puzzleSelected,
+              widget.addMissionsController,
+              widget.refreshUI,
+            ),
             withBorder: false,
             buttonColor: MyColors.lightBlue,
             fontWeight: FontWeight.w500,

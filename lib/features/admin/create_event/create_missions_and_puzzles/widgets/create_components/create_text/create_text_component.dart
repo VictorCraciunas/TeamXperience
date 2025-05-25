@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:teamxperience/enums/animation_type.dart';
-import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/widgets/my_text_field.dart';
 import 'package:teamxperience/widgets/my_dropdown.dart';
 import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/widgets/color_picker_dialog.dart';
+import 'package:teamxperience/widgets/slider_widget.dart';
 
-import '../../../../../../enums/component-type.dart';
-import '../../../../../../utils/component_conversion/component_to_widget.dart';
-import '../../controller/add_missions_controller.dart';
+import '../../../controller/add_missions_controller.dart';
+import 'create_text_controller.dart';
+
 
 class TextComponentFieldsWidget extends StatefulWidget {
   final AddMissionsController addMissionsController;
@@ -26,87 +26,32 @@ class TextComponentFieldsWidget extends StatefulWidget {
   });
 
   @override
-  State<TextComponentFieldsWidget> createState() =>
-      _TextComponentFieldsWidgetState();
+  State<TextComponentFieldsWidget> createState() => _TextComponentFieldsWidgetState();
 }
 
 class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
-  late String textColor;
-  late AnimationType? animation;
-  late double fontSize;
-  late String? fontWeight;
-  late String? fontFamily; // New state for font family
-  TextEditingController textColorController = TextEditingController();
-  TextEditingController fontController = TextEditingController();
-  TextEditingController textController = TextEditingController();
+  late final TextComponentController controller;
+  final Map<String, FontWeight> weightMap = {
+    'Thin (100)': FontWeight.w100,
+    'Light (300)': FontWeight.w300,
+    'Regular (400)': FontWeight.w400,
+    'Medium (500)': FontWeight.w500,
+    'Bold (700)': FontWeight.w700,
+    'Black (900)': FontWeight.w900,
+  };
 
   @override
   void initState() {
     super.initState();
-    textColor = '#000000';
-    animation = null; // Set to null to show hint
-    fontSize = 16.0;
-    fontWeight = null; // Set to null to show hint
-    fontFamily = null; // Set to null to show hint
-  }
-
-  Color _hexToColor(String hex) {
-    if (hex.isEmpty) return Colors.black;
-    final hexColor = hex.replaceFirst('#', '');
-    return Color(int.parse('FF$hexColor', radix: 16));
-  }
-
-  String _colorToHex(Color color) {
-    final argb = color.toARGB32().toRadixString(16).padLeft(8, '0');
-    return '#${argb.substring(2)}';
-  }
-
-  ComponentToWidget componentToWidget = ComponentToWidget();
-
-  void _saveComponent() {
-    if (textController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter text content')),
-      );
-      return;
-    }
-    if (animation == null || fontWeight == null || fontFamily == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select all required fields')),
-      );
-      return;
-    }
-
-    Component component = widget.addMissionsController.addComponent(
-      widget.missionSelected,
-      widget.puzzleSelected,
-      ComponentType.text,
-      text: textController.text,
-      textColor: textColor,
-      animation: animation,
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      fontFamily: fontFamily,
-    );
-    Widget componentWidget = componentToWidget.convert(component);
-    widget.refreshUI(componentWidget);
-    Navigator.pop(context);
+    controller = TextComponentController();
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentColor = _hexToColor(textColor);
-    final currentSize = fontSize;
-    final weightMap = <String, FontWeight>{
-      'Thin (100)': FontWeight.w100,
-      'Light (300)': FontWeight.w300,
-      'Regular (400)': FontWeight.w400,
-      'Medium (500)': FontWeight.w500,
-      'Bold (700)': FontWeight.w700,
-      'Black (900)': FontWeight.w900,
-    };
-    final currentWeight = fontWeight != null ? weightMap[fontWeight] ?? FontWeight.w400 : FontWeight.w400;
-    final currentFontFamily = fontFamily ?? 'Poppins'; // Default for preview
+    final currentColor = controller.hexToColor(controller.textColor);
+    final currentSize = controller.fontSize;
+    final currentWeight = controller.fontWeight != null ? weightMap[controller.fontWeight] ?? FontWeight.w400 : FontWeight.w400;
+    final currentFontFamily = controller.fontFamily ?? 'Poppins'; // Default for preview
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,21 +75,21 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
             border: Border.all(color: MyColors.lightBlue, width: 1.5),
             borderRadius: BorderRadius.circular(15),
           ),
-          padding: const EdgeInsets.all(12), // Added padding for better appearance
+          padding: const EdgeInsets.all(12),
           child: Center(
             child: Text(
-              textController.text.isEmpty
+              controller.textController.text.isEmpty
                   ? 'Your text here'
-                  : textController.text,
+                  : controller.textController.text,
               style: TextStyle(
                 color: currentColor,
                 fontSize: currentSize,
                 fontWeight: currentWeight,
                 fontFamily: currentFontFamily,
               ),
-              textAlign: TextAlign.center, // Optional: centers the text horizontally
-              maxLines: null, // Allows text to wrap to multiple lines
-              overflow: TextOverflow.visible, // Ensures text wraps naturally
+              textAlign: TextAlign.center,
+              maxLines: null,
+              overflow: TextOverflow.visible,
             ),
           ),
         ),
@@ -152,7 +97,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
 
         // ───── Text Content ─────
         MyTextField(
-          controller: textController,
+          controller: controller.textController,
           labelText: 'Continut Text',
           borderColor: MyColors.lightBlue,
           borderWidth: 1.5,
@@ -181,10 +126,10 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
             ),
           )
               .toList(),
-          value: animation,
+          value: controller.animation,
           onChanged: (value) {
             setState(() {
-              animation = value;
+              controller.animation = value;
             });
           },
           validator: (value) => value == null ? 'Selecteaza animatia' : null,
@@ -234,10 +179,10 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
               ),
             ),
           ],
-          value: fontFamily,
+          value: controller.fontFamily,
           onChanged: (value) {
             setState(() {
-              fontFamily = value;
+              controller.fontFamily = value;
             });
           },
           validator: (value) => value == null ? 'Selecteaza tipul de font' : null,
@@ -276,10 +221,10 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
             ),
           ))
               .toList(),
-          value: fontWeight,
+          value: controller.fontWeight,
           onChanged: (value) {
             setState(() {
-              fontWeight = value;
+              controller.fontWeight = value;
             });
           },
           validator: (value) => value == null ? 'Selecteaza grosimea fontului' : null,
@@ -303,42 +248,18 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
         const SizedBox(height: 16),
 
         // ───── Font Size Slider ─────
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Dimensiune Text',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              width: double.infinity,
-              height: 50,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: MyColors.lightBlue, width: 1.5),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Slider(
-                min: 8,
-                max: 72,
-                divisions: 64,
-                value: currentSize,
-                label: currentSize.toStringAsFixed(0),
-                activeColor: MyColors.lightBlue,
-                inactiveColor: MyColors.greyText.withValues(alpha: 0.3),
-                onChanged: (value) {
-                  setState(() {
-                    fontSize = value;
-                  });
-                },
-              ),
-            ),
-          ],
+        SliderWidget(
+          title: 'Dimensiune Text',
+          min: 8,
+          max: 72,
+          divisions: 64,
+          value: controller.fontSize,
+          label: controller.fontSize.toStringAsFixed(0),
+          onChanged: (value) {
+            setState(() {
+              controller.fontSize = value;
+            });
+          },
         ),
         const SizedBox(height: 16),
 
@@ -347,42 +268,20 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
           hinttextWeight: FontWeight.w500,
           hintTextSize: 15,
           hintTextColor: MyColors.blackColor,
-          controller: textColorController,
+          controller: controller.textColorController,
           hintText: 'Culoare Text',
           borderColor: MyColors.lightBlue,
           radius: 15,
           readOnly: true,
           onTap: () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                Color selectedColor = currentColor;
-                return AlertDialog(
-                  title: const Text('Pick a color'),
-                  content: SingleChildScrollView(
-                    child: ColorPicker(
-                      pickerColor: selectedColor,
-                      onColorChanged: (color) => selectedColor = color,
-                      labelTypes: const [],
-                      pickerAreaHeightPercent: 0.8,
-                    ),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          textColor = _colorToHex(selectedColor);
-                        });
-                        Navigator.pop(context);
-                      },
-                      child: const Text('OK'),
-                    ),
-                  ],
-                );
+            ColorPickerDialog.show(
+              context,
+              'Pick a color',
+              controller.hexToColor(controller.textColor),
+                  (color) {
+                setState(() {
+                  controller.textColor = color;
+                });
               },
             );
           },
@@ -390,7 +289,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
             width: 25,
             height: 25,
             decoration: BoxDecoration(
-              color: currentColor,
+              color: controller.hexToColor(controller.textColor),
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(5),
             ),
@@ -404,7 +303,13 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
           child: MyButton(
             buttonText: 'Salveaza componenta',
             textColor: Colors.white,
-            buttonOnTap: _saveComponent,
+            buttonOnTap: () => controller.saveComponent(
+              context,
+              widget.missionSelected,
+              widget.puzzleSelected,
+              widget.addMissionsController,
+              widget.refreshUI,
+            ),
             withBorder: false,
             buttonColor: MyColors.lightBlue,
             fontWeight: FontWeight.w500,
