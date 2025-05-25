@@ -43,12 +43,13 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
           const SizedBox(height: 20),
           // **Title for the preview section**
           // Displays "Previzualizare" with a font size of 15
-          const Text(
+           const Text(
             'Previzualizare',
             style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 15,
               fontWeight: FontWeight.w500,
+              color: MyColors.blackColor
             ),
           ),
           const SizedBox(height: 15),

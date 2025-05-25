@@ -9,6 +9,8 @@ import '../../../controller/add_missions_controller.dart';
 
 
 class ImageComponentController {
+  double radius = 15.0;
+  double height = 150;
   File? image;
   final ComponentToWidget componentToWidget = ComponentToWidget();
 
@@ -40,6 +42,8 @@ class ImageComponentController {
       puzzleSelected,
       ComponentType.image,
       imageUrl: image!.path,
+      cornerRadius: radius,
+      height: height
     );
     Widget componentWidget = componentToWidget.convert(component);
     refreshUI(componentWidget);

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/component-type.dart';
 
-import '../../../../../constants/colors.dart';
-import '../../../../../constants/padding.dart';
-import '../../../../../widgets/my_dropdown.dart';
-import '../controller/add_missions_controller.dart';
-import 'create_components/create_button/create_button_component.dart';
-import 'create_components/create_code/create_code_component.dart';
-import 'create_components/create_image/create_image_component.dart';
-import 'create_components/create_text/create_text_component.dart';
+import '../../../../../../constants/colors.dart';
+import '../../../../../../constants/padding.dart';
+import '../../../../../../widgets/my_dropdown.dart';
+import '../../controller/add_missions_controller.dart';
+import 'create_button/create_button_component.dart';
+import 'create_code/create_code_component.dart';
+import 'create_image/create_image_component.dart';
+import 'create_text/create_text_component.dart';
 
 class AddComponentWidget extends StatefulWidget {
   final AddMissionsController addMissionsController;

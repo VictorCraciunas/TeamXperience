@@ -13,9 +13,12 @@ class CodeComponentWidget extends StatefulWidget {
   CodeComponentWidgetState createState() => CodeComponentWidgetState();
 }
 
-class CodeComponentWidgetState extends State<CodeComponentWidget> {
+class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTickerProviderStateMixin {
   late List<TextEditingController> controllers;
   late List<FocusNode> focusNodes;
+
+  late AnimationController glowController;
+  late Animation<double> glowAnimation;
 
   @override
   void initState() {
@@ -23,6 +26,23 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> {
     final int codeLength = widget.component.codeLength ?? 5;
     controllers = List.generate(codeLength, (_) => TextEditingController());
     focusNodes = List.generate(codeLength, (_) => FocusNode());
+
+    glowController = AnimationController(vsync: this,duration: const Duration(milliseconds: 1000));
+    glowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: glowController,
+        curve: Curves.easeInOut,
+      ),
+    )..addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        glowController.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        glowController.forward();
+      }
+    });
+    if (widget.component.enableGlow == true) {
+      glowController.forward();
+    }
   }
 
   @override
@@ -107,30 +127,34 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> {
     } else {
       // Single input for Free mode
       content = _buildFreeCell(heightInput, widthInput, inputCornerRadius, inputBackgroundColor,
-          colorBorderInput, fontSize!,fontFamily!,textColor, capsLock);
+          colorBorderInput, fontSize,fontFamily!,textColor, capsLock);
     }
 
     // Wrap in outer Container only for Separated mode
     return inputType == 'Separated'
-        ? Container(
-      padding: const EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: frameBackgroundColor,
-        borderRadius: BorderRadius.circular(frameCornerRadius),
-        border: Border.all(color: colorBorderContainer, width: 2),
-        boxShadow: enableGlow
-            ? [
-          BoxShadow(
-            color: glowColor.withValues(alpha: 0.6),
-            blurRadius: 10,
-            spreadRadius: 2,
-            offset: const Offset(0, 0),
-          ),
-        ]
-            : null,
-      ),
-      child: content,
-    )
+        ? AnimatedBuilder(
+          animation: glowAnimation,
+          builder: (context,child)=>
+           Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+          color: frameBackgroundColor,
+          borderRadius: BorderRadius.circular(frameCornerRadius),
+          border: Border.all(color: colorBorderContainer, width: 2),
+          boxShadow: enableGlow == true
+              ? [
+            BoxShadow(
+              color: glowColor.withValues(alpha: (0.6 +glowAnimation.value * 0.2)),
+              blurRadius: 10.0,
+              spreadRadius: 2.0 + (glowAnimation.value * 3.0),
+              offset: const Offset(0, 0),
+            ),
+          ]
+              : null,
+                ),
+                child: content,
+              ),
+        )
         : content;
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../../constants/colors.dart';
 import '../../../../../../../widgets/my_button.dart';
+import '../../../../../../../widgets/slider_widget.dart';
 import '../../../../common_widgets/upload_image.dart';
 import '../../../controller/add_missions_controller.dart';
 import 'create_image_controller.dart';
@@ -49,18 +50,51 @@ class _ImageComponentFieldsWidgetState extends State<ImageComponentFieldsWidget>
             imageFile: controller.image,
           ),
         ),
-        // Uncomment if you want to show the image preview
-        // if (controller.image != null)
-        //   Padding(
-        //     padding: const EdgeInsets.all(10),
-        //     child: Image.file(
-        //       controller.image!,
-        //       height: 150,
-        //       width: double.infinity,
-        //       fit: BoxFit.cover,
-        //     ),
-        //   ),
         const SizedBox(height: 20),
+
+        if (controller.image != null)
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Container(
+              height: controller.height,
+              width: double.infinity,
+              decoration: BoxDecoration(
+
+                borderRadius: BorderRadius.circular(controller.radius),
+
+                image: DecorationImage(
+                  image: FileImage(controller.image!),
+                  fit: BoxFit.cover,   // fill the entire box so you really see the corners
+                ),
+              ),
+            ),
+          ),
+
+
+
+        const SizedBox(height: 20),
+        SliderWidget(
+          title: 'Rotunjire imagine',
+          min: 0,
+          max: 50,
+          divisions: 50,
+          value: controller.radius,
+          label: controller.radius.toStringAsFixed(0),
+          onChanged: (value) => setState(() => controller.radius = value),
+        ),
+        const SizedBox(height: 20),
+
+        SliderWidget(
+          title: 'Inaltime imagine',
+          min: 150,
+          max: 500,
+          divisions: 500,
+          value: controller.height,
+          label: controller.height.toStringAsFixed(0),
+          onChanged: (value) => setState(() => controller.height = value),
+        ),
+        const SizedBox(height: 20),
+
         Center(
           child: MyButton(
             buttonText: 'Salveaza componenta',

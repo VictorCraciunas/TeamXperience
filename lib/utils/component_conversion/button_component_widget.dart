@@ -56,12 +56,12 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
     super.initState();
     _flickerController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000), // Half-second cycle
+      duration: const Duration(milliseconds: 2000), // Half-second cycle
     );
     _flickerAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _flickerController,
-        curve: Curves.easeInOut,
+        curve: Curves.bounceIn,
       ),
     )..addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -122,29 +122,26 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
               boxShadow: widget.enableGlow == true
                   ? [
                 BoxShadow(
-                  color: currentGlowColor.withValues(alpha:
-                    widget.enableFlicker == true
-                        ? 0.6 + (_flickerAnimation.value * 0.2) // From 0.6 to 0.8
-                        : 0.6, // Default opacity
-                  ),
-                  blurRadius: 10.0,
-                  spreadRadius: widget.enableFlicker == true
-                      ? 2.0 + (_flickerAnimation.value * 3.0) // From 2.0 to 4.0
-                      : 2.0, // Default spread
+                  color: currentGlowColor.withValues(alpha: 0.6),
+                  blurRadius: 10,
+                  spreadRadius: 2,
                   offset: const Offset(0, 0),
                 ),
               ]
                   : null,
             ),
             child: Center(
-              child: Text(
-                widget.buttonLabel!,
-                style: TextStyle(
-                  color: currentTextColor,
-                  fontSize: 16,
-                  fontWeight: currentFontWeight,
-                  fontFamily: widget.fontFamily ?? 'Poppins',
-                  letterSpacing: 2,
+              child: Opacity(
+                opacity:_flickerAnimation.value,
+                child: Text(
+                  widget.buttonLabel!,
+                  style: TextStyle(
+                    color: currentTextColor,
+                    fontSize: 16,
+                    fontWeight: currentFontWeight,
+                    fontFamily: widget.fontFamily ?? 'Poppins',
+                    letterSpacing: 2,
+                  ),
                 ),
               ),
             ),

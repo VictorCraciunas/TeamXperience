@@ -79,7 +79,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
           child: Center(
             child: Text(
               controller.textController.text.isEmpty
-                  ? 'Your text here'
+                  ? 'Textul tau aici'
                   : controller.textController.text,
               style: TextStyle(
                 color: currentColor,
@@ -98,7 +98,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
         // ───── Text Content ─────
         MyTextField(
           controller: controller.textController,
-          labelText: 'Continut Text',
+          labelText: 'Conținut Text',
           borderColor: MyColors.lightBlue,
           borderWidth: 1.5,
           radius: 20,
@@ -132,7 +132,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
               controller.animation = value;
             });
           },
-          validator: (value) => value == null ? 'Selecteaza animatia' : null,
+          validator: (value) => value == null ? 'Selecteaza animația' : null,
           borderColor: MyColors.lightBlue,
           borderWidth: 1.5,
           radius: 20,
@@ -142,7 +142,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
             color: Colors.black,
           ),
           hint: const Text(
-            'Selecteaza animatia',
+            'Selectează animația',
             style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14,
@@ -185,7 +185,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
               controller.fontFamily = value;
             });
           },
-          validator: (value) => value == null ? 'Selecteaza tipul de font' : null,
+          validator: (value) => value == null ? 'Selectează tipul de font' : null,
           borderColor: MyColors.lightBlue,
           borderWidth: 1.5,
           radius: 20,
@@ -195,7 +195,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
             color: Colors.black,
           ),
           hint: const Text(
-            'Selecteaza tipul de font',
+            'Selectează tipul de font',
             style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14,
@@ -227,7 +227,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
               controller.fontWeight = value;
             });
           },
-          validator: (value) => value == null ? 'Selecteaza grosimea fontului' : null,
+          validator: (value) => value == null ? 'Selectează grosimea fontului' : null,
           borderColor: MyColors.lightBlue,
           borderWidth: 1.5,
           radius: 20,
@@ -237,7 +237,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
             color: Colors.black,
           ),
           hint: const Text(
-            'Selecteaza grosimea fontului',
+            'Selectează grosimea fontului',
             style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14,

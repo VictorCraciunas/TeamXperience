@@ -102,6 +102,8 @@ class MissionsService {
         }
         component = componentService.createImageComponent(
           imageUrl: imageUrl,
+          radius: cornerRadius,
+          height: height
         );
         break;
       case ComponentType.button:
@@ -169,10 +171,15 @@ class MissionsService {
       int missionSelected,
       int puzzleSelected,
       PuzzleType type,
-      String? code
+      String? code,
+      String? coordinates,
+      String? indiciu,
       ){
     missions[missionSelected].puzzles[puzzleSelected].type = type;
     missions[missionSelected].puzzles[puzzleSelected].code = code;
+    missions[missionSelected].puzzles[puzzleSelected].coordinates = coordinates;
+    missions[missionSelected].puzzles[puzzleSelected].indiciu = indiciu;
+
   }
 
   void deleteComponentAtPuzzleAtMission(

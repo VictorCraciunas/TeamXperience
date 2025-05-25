@@ -26,6 +26,8 @@ class ComponentToWidget {
         return Center(
           child: ImageComponentWidget(
             imageUrl: component.imageUrl,
+            radius: component.cornerRadius ?? 10,
+            height: component.height ?? 150,
           ),
         );
       case ComponentType.button:

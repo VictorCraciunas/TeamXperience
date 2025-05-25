@@ -54,7 +54,7 @@ class MyTextField extends StatefulWidget {
     super.key,
     required this.controller,
     this.labelText,
-    this.labelFontSize = 16,
+    this.labelFontSize = 15,
     this.labelFontWeight = FontWeight.w500,
     this.borderColor = const Color(0xFFE6E6E6),
     this.obscureText = false,

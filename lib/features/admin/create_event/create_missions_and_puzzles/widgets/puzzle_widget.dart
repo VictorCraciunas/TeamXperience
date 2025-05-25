@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/colors.dart';
-import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/save_puzzle.dart';
+import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/save_puzzle/save_puzzle.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 
 import '../controller/add_missions_controller.dart';
-import 'add_component_widget.dart';
+import 'create_components/add_component_widget.dart';
 
 class PuzzleWidget extends StatefulWidget {
   final int
@@ -145,6 +145,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
           textColor: Colors.white,
           buttonOnTap: () {
             showModalBottomSheet(
+              isScrollControlled: true,
               context: context,
               builder:
                   (context) => SavePuzzle(

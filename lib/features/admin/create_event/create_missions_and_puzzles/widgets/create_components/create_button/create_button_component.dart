@@ -103,7 +103,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
                 ),
                 child: Text(
                   controller.labelController.text.isEmpty
-                      ? 'Button Label'
+                      ? 'Text'
                       : controller.labelController.text,
                   style: TextStyle(
                     color: controller.isTapped
@@ -124,12 +124,12 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
         // Button Label Input
         MyTextField(
           controller: controller.labelController,
-          labelText: 'Button Label',
+          labelText: 'Text',
           borderColor: MyColors.lightBlue,
           borderWidth: 1.5,
           radius: 20,
           validator: (value) =>
-          value == null || value.isEmpty ? 'Please enter a button label' : null,
+          value == null || value.isEmpty ? 'Introdu un text la buton' : null,
         ),
         const SizedBox(height: 20),
 
@@ -166,7 +166,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
               controller.fontFamily = value;
             });
           },
-          validator: (value) => value == null ? 'Selecteaza tipul de font' : null,
+          validator: (value) => value == null ? 'Selectează tipul de font' : null,
           borderColor: MyColors.lightBlue,
           borderWidth: 1.5,
           radius: 20,
@@ -176,7 +176,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
             color: Colors.black,
           ),
           hint: const Text(
-            'Selecteaza tipul de font',
+            'Selectează tipul de font',
             style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14,
@@ -208,7 +208,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
               controller.fontWeight = value;
             });
           },
-          validator: (value) => value == null ? 'Selecteaza grosimea fontului' : null,
+          validator: (value) => value == null ? 'Selectează grosimea fontului' : null,
           borderColor: MyColors.lightBlue,
           borderWidth: 1.5,
           radius: 20,
@@ -218,7 +218,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
             color: Colors.black,
           ),
           hint: const Text(
-            'Selecteaza grosimea fontului',
+            'Selectează grosimea fontului',
             style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14,
@@ -230,7 +230,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
 
         // Color Pickers
         controller.buildColorPickerField(
-          title: 'Button Color',
+          title: 'Culoare fundal',
           colorHex: controller.buttonColor,
           onColorChanged: (color) => setState(() => controller.buttonColor = color),
           context: context,
@@ -238,7 +238,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
         const SizedBox(height: 20),
 
         controller.buildColorPickerField(
-          title: 'Button Color (On Tap)',
+          title: 'Culoare fundal apăsat',
           colorHex: controller.buttonColorOnTap,
           onColorChanged: (color) => setState(() => controller.buttonColorOnTap = color),
           context: context,
@@ -246,7 +246,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
         const SizedBox(height: 20),
 
         controller.buildColorPickerField(
-          title: 'Text Color',
+          title: 'Culoare text',
           colorHex: controller.buttonTextColor,
           onColorChanged: (color) => setState(() => controller.buttonTextColor = color),
           context: context,
@@ -254,7 +254,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
         const SizedBox(height: 20),
 
         controller.buildColorPickerField(
-          title: 'Text Color (On Tap)',
+          title: 'Culoare text apăsat',
           colorHex: controller.buttonTextColorOnTap,
           onColorChanged: (color) => setState(() => controller.buttonTextColorOnTap = color),
           context: context,
@@ -262,7 +262,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
         const SizedBox(height: 20),
 
         controller.buildColorPickerField(
-          title: 'Border Color',
+          title: 'Culoare chenar',
           colorHex: controller.borderColor,
           onColorChanged: (color) => setState(() => controller.borderColor = color),
           context: context,
@@ -271,7 +271,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
 
         // ───── Corner Radius Slider ─────
         SliderWidget(
-          title: 'Colțuri Rotunjite',
+          title: 'Rotunjire chenar',
           min: 0,
           max: 50,
           divisions: 50,
@@ -309,7 +309,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
             ),
             const SizedBox(width: 16),
             const Text(
-              'Flicker Animation',
+              'Animatie Flicker',
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 16,
@@ -341,7 +341,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
             ),
             const SizedBox(width: 16),
             const Text(
-              'Glow Button',
+              'Glow buton',
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 16,

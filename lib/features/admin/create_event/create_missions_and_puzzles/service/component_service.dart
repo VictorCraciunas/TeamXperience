@@ -25,10 +25,14 @@ class ComponentService{
 
   Component createImageComponent({
     required String imageUrl,
+    double? radius,
+    double? height,
   }) {
     return Component(
       type: ComponentType.image,
       imageUrl: imageUrl,
+      cornerRadius: radius,
+      height: height
     );
   }
 
