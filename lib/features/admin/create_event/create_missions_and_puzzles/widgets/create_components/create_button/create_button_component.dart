@@ -3,6 +3,9 @@ import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 import 'package:teamxperience/widgets/my_text_field.dart';
 import 'package:teamxperience/widgets/slider_widget.dart';
+import '../../../../../../../enums/component-type.dart';
+import '../../../../../../../model/component.dart';
+import '../../../../../../../utils/component_conversion/component_to_widget.dart';
 import '../../../../../../../widgets/my_dropdown.dart';
 import '../../../controller/add_missions_controller.dart';
 import 'create_button_controller.dart';
@@ -12,6 +15,7 @@ class ButtonComponentFieldsWidget extends StatefulWidget {
   final int missionSelected;
   final int puzzleSelected;
   final Function(Widget) refreshUI;
+  final Component? componentToEdit;
 
   const ButtonComponentFieldsWidget({
     super.key,
@@ -19,6 +23,7 @@ class ButtonComponentFieldsWidget extends StatefulWidget {
     required this.missionSelected,
     required this.puzzleSelected,
     required this.refreshUI,
+    this.componentToEdit,
   });
 
   @override
@@ -40,6 +45,20 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
   void initState() {
     super.initState();
     controller = ButtonComponentController();
+    if (widget.componentToEdit != null && widget.componentToEdit!.type == ComponentType.button) {
+      controller.labelController.text = widget.componentToEdit!.buttonLabel ?? '';
+      controller.buttonColor = widget.componentToEdit!.buttonColor ?? '#FFFFFF';
+      controller.buttonColorOnTap = widget.componentToEdit!.buttonColorOnTap ?? '#CCCCCC';
+      controller.buttonTextColor = widget.componentToEdit!.buttonTextColor ?? '#000000';
+      controller.buttonTextColorOnTap = widget.componentToEdit!.buttonTextColorOnTap ?? '#FFFFFF';
+      controller.borderColor = widget.componentToEdit!.borderColor ?? '#000000';
+      controller.glowColor = widget.componentToEdit!.glowColor ?? '#000000';
+      controller.fontWeight = widget.componentToEdit!.fontWeight;
+      controller.fontFamily = widget.componentToEdit!.fontFamily;
+      controller.cornerRadius = widget.componentToEdit!.cornerRadius ?? 15.0;
+      controller.enableFlicker = widget.componentToEdit!.enableFlicker ?? false;
+      controller.enableGlow = widget.componentToEdit!.enableGlow ?? false;
+    }
   }
 
   @override
@@ -365,13 +384,36 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
           child: MyButton(
             buttonText: 'Salveaza componenta',
             textColor: Colors.white,
-            buttonOnTap: () => controller.saveComponent(
-              context,
-              widget.missionSelected,
-              widget.puzzleSelected,
-              widget.addMissionsController,
-              widget.refreshUI,
-            ),
+            buttonOnTap: () {
+              if (widget.componentToEdit != null) {
+                // Update existing component
+                widget.componentToEdit!.buttonLabel = controller.labelController.text;
+                widget.componentToEdit!.buttonColor = controller.buttonColor;
+                widget.componentToEdit!.buttonColorOnTap = controller.buttonColorOnTap;
+                widget.componentToEdit!.buttonTextColor = controller.buttonTextColor;
+                widget.componentToEdit!.buttonTextColorOnTap = controller.buttonTextColorOnTap;
+                widget.componentToEdit!.borderColor = controller.borderColor;
+                widget.componentToEdit!.fontWeight = controller.fontWeight;
+                widget.componentToEdit!.fontFamily = controller.fontFamily;
+                widget.componentToEdit!.cornerRadius = controller.cornerRadius;
+                widget.componentToEdit!.enableFlicker = controller.enableFlicker;
+                widget.componentToEdit!.enableGlow = controller.enableGlow;
+                widget.componentToEdit!.glowColor = controller.glowColor;
+                Widget componentWidget = ComponentToWidget().convert(widget.componentToEdit!);
+                widget.refreshUI(componentWidget);
+                Navigator.pop(context);
+
+              } else {
+                // Create new component
+                controller.saveComponent(
+                  context,
+                  widget.missionSelected,
+                  widget.puzzleSelected,
+                  widget.addMissionsController,
+                  widget.refreshUI,
+                );
+              }
+            },
             withBorder: false,
             buttonColor: MyColors.lightBlue,
             fontWeight: FontWeight.w500,

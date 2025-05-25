@@ -252,6 +252,5 @@ class CodeComponentController {
     );
     Widget componentWidget = ComponentToWidget().convert(component);
     refreshUI(componentWidget);
-    Navigator.pop(context);
   }
 }

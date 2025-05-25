@@ -20,6 +20,27 @@ class AddMissionsController {
   List<Mission> initializeMissions() {
     return _addMissionsService.initializeMissions(event!.nrMissions);
   }
+  void addNewMission() {
+    if (event != null) {
+      event!.nrMissions += 1; // Increment the count
+      _addMissionsService.addMission(); // Append a new mission
+      missionWidgets.add(MissionWidget(
+        nrMission: missionWidgets.length,
+        onSetPuzzles: (nrPuzzles) {
+          _addMissionsService.initializePuzzleAtMission(nrPuzzles, missionWidgets.length - 1);
+        },
+        addMissionsController: this,
+      ));
+    }
+  }
+
+  Component getComponent(int nrMission, int nrPuzzle, int indexComponent){
+    return _addMissionsService.missions[nrMission].puzzles[nrPuzzle].components[indexComponent];
+  }
+
+  void addPuzzleAtMission(int missionIndex) {
+    _addMissionsService.addPuzzleAtMission(missionIndex);
+  }
 
   List<MissionWidget> buildMissionWidgets() {
     if (event == null) return [];

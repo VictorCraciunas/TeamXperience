@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/component-type.dart';
+import 'package:teamxperience/model/component.dart';
 
 import '../../../../../../constants/colors.dart';
 import '../../../../../../constants/padding.dart';
@@ -14,14 +15,16 @@ class AddComponentWidget extends StatefulWidget {
   final AddMissionsController addMissionsController;
   final int missionSelected;
   final int puzzleSelected;
-  final Function(Widget) refreshUI; // callback to notify parent
+  final Function(Widget) refreshUI;// callback to notify parent
+  final Component? componentToEdit;
 
-  const AddComponentWidget({
+   const AddComponentWidget({
     super.key,
     required this.addMissionsController,
     required this.missionSelected,
     required this.puzzleSelected,
     required this.refreshUI,
+    this.componentToEdit
   });
 
   @override
@@ -29,8 +32,16 @@ class AddComponentWidget extends StatefulWidget {
 }
 
 class _AddComponentWidgetState extends State<AddComponentWidget> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.componentToEdit != null) {
+      type = widget.componentToEdit!.type;
+    }
+  }
+
   ComponentType? type;
-  TextEditingController textEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +77,6 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
                 onChanged: (value) {
                   setState(() {
                     type = value;
-                    textEditingController.clear();
                   });
                 },
                 validator:
@@ -115,6 +125,7 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
                   missionSelected: widget.missionSelected,
                   puzzleSelected: widget.puzzleSelected,
                   refreshUI: widget.refreshUI,
+                  componentToEdit: widget.componentToEdit,
                 ),
               ],
               if (type == ComponentType.code) ...[
@@ -126,55 +137,6 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
                 ),
               ],
               const SizedBox(height: 20),
-              // MyButton(
-              //   buttonText: 'Salveaza Componenta',
-              //   textColor: Colors.white,
-              //   buttonOnTap: () {
-              //     if (type == null) return;
-              //     Component
-              //     component = widget.addMissionsController.addComponent(
-              //       widget.missionSelected,
-              //       widget.puzzleSelected,
-              //       type!,
-              //       text:
-              //           type == ComponentType.text
-              //               ? text
-              //               : type == ComponentType.image
-              //               ? null
-              //               : type == ComponentType.button
-              //               ? null
-              //               : null,
-              //       textColor: type == ComponentType.text ? textColor : null,
-              //       animation: type == ComponentType.text ? animation : null,
-              //       imageUrl: type == ComponentType.image ? text : null,
-              //       buttonLabel: type == ComponentType.button ? text : null,
-              //       buttonColor:
-              //           type == ComponentType.button ? buttonColor : null,
-              //       buttonColorOnTap:
-              //           type == ComponentType.button ? buttonColorOnTap : null,
-              //       buttonTextColor:
-              //           type == ComponentType.button ? buttonTextColor : null,
-              //       buttonTextColorOnTap:
-              //           type == ComponentType.button
-              //               ? buttonTextColorOnTap
-              //               : null,
-              //       borderColor:
-              //           type == ComponentType.button ? borderColor : null,
-              //       // New: Pass border color
-              //       fontSize: type == ComponentType.text ? fontSize : null,
-              //       fontWeight: type == ComponentType.text ? fontWeight : null,
-              //       codeLength: type == ComponentType.code ? codeLength : null,
-              //     );
-              //     Widget componentWidget = componentToWidget.convert(component);
-              //     widget.refreshUI(componentWidget);
-              //     Navigator.pop(context);
-              //   },
-              //   withBorder: false,
-              //   buttonColor: MyColors.lightBlue,
-              //   fontWeight: FontWeight.w500,
-              //   buttonTextSize: 14,
-              //   buttonWidth: 270,
-              // ),
             ],
           ),
         ),

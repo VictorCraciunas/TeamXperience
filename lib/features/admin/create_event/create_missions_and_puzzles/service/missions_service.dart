@@ -30,9 +30,23 @@ class MissionsService {
     return missions;
   }
 
+  void addMission() {
+    missions.add(Mission(id: missions.length.toString()));
+  }
+
+
+
   void initializePuzzleAtMission(int nrPuzzles, int selectedMission) {
     List<Puzzle> puzzles = addPuzzleService.initializePuzzles(nrPuzzles);
     missions[selectedMission].puzzles = puzzles;
+  }
+
+  void addPuzzleAtMission(int missionIndex) {
+    if (missionIndex < missions.length) {
+      final id = String.fromCharCode('a'.codeUnitAt(0) + missions[missionIndex].puzzles.length);
+      final puzzle = Puzzle(id: id);
+      missions[missionIndex].addPuzzle(puzzle); // Use Mission.addPuzzle
+    }
   }
 
   Component addComponentAtPuzzleAtMission(

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/save_puzzle/save_puzzle.dart';
+import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 
 import '../controller/add_missions_controller.dart';
@@ -28,6 +29,29 @@ class PuzzleWidget extends StatefulWidget {
 class _PuzzleWidgetState extends State<PuzzleWidget> {
   List<Widget> puzzleComponents = [];
   int componentIndex = 0;
+
+  void _editComponent(int puzzleIndex) {
+    Component componentToEdit = widget.addMissionsController
+        .getComponent(widget.nrMission, widget.selectedPuzzle, puzzleIndex);
+    // Hypothetical method
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AddComponentWidget(
+            addMissionsController: widget.addMissionsController,
+            missionSelected: widget.nrMission,
+            puzzleSelected: puzzleIndex,
+            refreshUI: (Widget componentWidget) {
+              setState(() {
+                puzzleComponents[puzzleIndex] = componentWidget;
+              });
+              Navigator.pop(context);
+            },
+            componentToEdit: componentToEdit, // Pass the component to edit
+          ),
+        ),
+      );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,20 +86,45 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
               child: Column(
                 children: List.generate(
                   puzzleComponents.length,
-                  (index) => ListTile(
-                    title: puzzleComponents[index],
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () {
-                        setState(() {
-                          puzzleComponents.removeAt(index);
-                          widget.addMissionsController.deleteComponent(
-                            widget.nrMission,
-                            widget.selectedPuzzle,
-                            index,
+                      (index) => GestureDetector(
+                    onLongPress: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            content: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                    _editComponent(index);
+                                  },
+                                  child: const Text('Edit'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      puzzleComponents.removeAt(index);
+                                      widget.addMissionsController.deleteComponent(
+                                        widget.nrMission,
+                                        widget.selectedPuzzle,
+                                        index,
+                                      );
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            ),
                           );
-                        });
-                      },
+                        },
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: puzzleComponents[index], // Direct use of the component
                     ),
                   ),
                 ),

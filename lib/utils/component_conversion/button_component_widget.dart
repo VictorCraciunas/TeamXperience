@@ -132,7 +132,7 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
             ),
             child: Center(
               child: Opacity(
-                opacity:_flickerAnimation.value,
+                opacity:widget.enableFlicker == true ? _flickerAnimation.value : 1,
                 child: Text(
                   widget.buttonLabel!,
                   style: TextStyle(

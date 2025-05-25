@@ -12,7 +12,7 @@ class Event {
   final DateTime dateStartEnrollment;
   final String location;
   final String description;
-  final int nrMissions;
+   int nrMissions;
   final EventType type;
    String landingImageUrl;
    String taskBackgroundImageUrl;

@@ -3,34 +3,34 @@ import '../enums/component-type.dart';
 
 class Component {
   final ComponentType type;
-  final String? text;
+   String? text;
   String? imageUrl;
-  final String? buttonLabel;
-  final String? buttonColor; // New: Initial button background color
-  final String? buttonColorOnTap; // New: Button background color on tap
-  final String? buttonTextColor; // New: Initial button text color
-  final String? buttonTextColorOnTap; // New: Button text color on tap
-  final String? textColor; // Hex color (e.g., '#FF0000' for red)
-  final String? borderColor; // Already present for border color
-  final double? cornerRadius; // New: Corner radius for button
-  final bool? enableFlicker; // New: Enable flicker animation
-  final bool? enableGlow; // New: Enable glow effect
-  final String? glowColor;
-  final AnimationType? animation;
-  final double? fontSize;
-  final String? fontWeight;
-  final String? fontFamily;
-  final int? codeLength;
-  final String? inputType; // "Separated" or "Free"
-  final String? capsLock; // "CapsLock" or "Fără"
-  final double? frameCornerRadius; // Corner radius for the frame
-  final double? inputCornerRadius; // Corner radius for input fields
-  final String? frameBackgroundColor; // Background color for the frame
-  final String? inputBackgroundColor; // Background color for input fields
-  final String? colorBorderInput; // Border color for input fields
-  final String? colorBorderContainer; // Border color for the container
-  final double? width;
-  final double? height;
+   String? buttonLabel;
+   String? buttonColor; // New: Initial button background color
+   String? buttonColorOnTap; // New: Button background color on tap
+   String? buttonTextColor; // New: Initial button text color
+   String? buttonTextColorOnTap; // New: Button text color on tap
+   String? textColor; // Hex color (e.g., '#FF0000' for red)
+   String? borderColor; // Already present for border color
+   double? cornerRadius; // New: Corner radius for button
+   bool? enableFlicker; // New: Enable flicker animation
+   bool? enableGlow; // New: Enable glow effect
+   String? glowColor;
+   AnimationType? animation;
+   double? fontSize;
+   String? fontWeight;
+   String? fontFamily;
+   int? codeLength;
+   String? inputType; // "Separated" or "Free"
+   String? capsLock; // "CapsLock" or "Fără"
+   double? frameCornerRadius; // Corner radius for the frame
+   double? inputCornerRadius; // Corner radius for input fields
+   String? frameBackgroundColor; // Background color for the frame
+   String? inputBackgroundColor; // Background color for input fields
+   String? colorBorderInput; // Border color for input fields
+   String? colorBorderContainer; // Border color for the container
+   double? width;
+   double? height;
 
   Component({
     required this.type,

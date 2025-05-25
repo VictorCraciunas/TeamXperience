@@ -47,6 +47,7 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
 
   @override
   void dispose() {
+    glowController.dispose();
     for (var controller in controllers) {
       controller.dispose();
     }

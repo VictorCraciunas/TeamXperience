@@ -40,6 +40,21 @@ class _MissionWidgetState extends State<MissionWidget> {
     super.dispose();
   }
 
+  void _addNewPuzzle() {
+    setState(() {
+      numberOfPuzzles += 1; // Increment the count
+      widget.addMissionsController.addPuzzleAtMission(widget.nrMission); // Add puzzle to the model
+      puzzleWidgets.add(PuzzleWidget(
+        key: UniqueKey(),
+        nrMission: widget.nrMission,
+        selectedPuzzle: numberOfPuzzles - 1, // Index of the new puzzle
+        addMissionsController: widget.addMissionsController,
+      ));
+      selectedPuzzle = numberOfPuzzles - 1; // Select the newly added puzzle
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -111,24 +126,43 @@ class _MissionWidgetState extends State<MissionWidget> {
         ),
 
         // puzzle list
-        if (numberOfPuzzles > 0) ...[
+        if (numberOfPuzzles >= 0) ...[
           const SizedBox(height: 20),
           SizedBox(
             height: 40,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: numberOfPuzzles,
+              itemCount: numberOfPuzzles + 1, // +1 for the "Add Puzzle" button
               itemBuilder: (context, index) {
-                return MyListComponent(
-                  index: index,
-                  type: "Puzzle",
-                  isSelected: selectedPuzzle == index,
-                  onTap: () {
-                    setState(() {
-                      selectedPuzzle = index;
-                    });
-                  },
-                );
+                if (index < numberOfPuzzles) {
+                  return MyListComponent(
+                    index: index,
+                    type: "Puzzle",
+                    isSelected: selectedPuzzle == index,
+                    onTap: () {
+                      setState(() {
+                        selectedPuzzle = index;
+                      });
+                    },
+                  );
+                } else {
+                  return GestureDetector(
+                    onTap: _addNewPuzzle, // Call the method to add a new puzzle
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: MyColors.lightBlue, width: 2),
+                      ),
+                      child: const Icon(
+                        Icons.add,
+                        color: MyColors.lightBlue,
+                        size: 24,
+                      ),
+                    ),
+                  );
+                }
               },
             ),
           ),

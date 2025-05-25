@@ -57,19 +57,40 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                   height: 40,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: _addMissionsController.event!.nrMissions,
+                    itemCount: _addMissionsController.event!.nrMissions + 1,
                     itemBuilder: (context, index) {
-                      return MyListComponent(
-                        index: index,
-                        type: "Misiunea",
-                        isSelected:
-                            _addMissionsController.selectedMission == index,
-                        onTap: () {
-                          setState(() {
-                            _addMissionsController.selectedMission = index;
-                          });
-                        },
-                      );
+                      if (index < _addMissionsController.event!.nrMissions) {
+                        return MyListComponent(
+                          index: index,
+                          type: "Misiunea",
+                          isSelected: _addMissionsController.selectedMission == index,
+                          onTap: () {
+                            setState(() {
+                              _addMissionsController.selectedMission = index;
+                            });
+                          },
+                        );
+                      } else {
+                        return GestureDetector(
+                          onTap: () {
+                            _addMissionsController.addNewMission();
+                            setState(() {});
+                          },
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: MyColors.lightBlue, width: 2),
+                            ),
+                            child: const Icon(
+                              Icons.add,
+                              color: MyColors.lightBlue,
+                              size: 24,
+                            ),
+                          ),
+                        );
+                      }
                     },
                   ),
                 ),

@@ -26,6 +26,7 @@ class Puzzle {
     return component;
   }
 
+
   void deleteComponents(){
     components.clear();
   }
