@@ -58,6 +58,16 @@ class AddMissionsController{
           bool? enableFlicker, // New
           bool? enableGlow, // New
           String? glowColor, // New
+          String? inputType,
+          String? capsLock,
+          double? frameCornerRadius,
+          double? inputCornerRadius,
+          String? frameBackgroundColor,
+          String? inputBackgroundColor,
+          String? colorBorderInput,
+          String? colorBorderContainer,
+          double? width,
+          double? height,
         }) {
         final component = _addMissionsService.addComponentAtPuzzleAtMission(
             missionSelected,
@@ -81,6 +91,16 @@ class AddMissionsController{
           enableFlicker: enableFlicker, // New
           enableGlow: enableGlow, // New
           glowColor: glowColor, // New
+          inputType: inputType,
+          capsLock: capsLock,
+          frameCornerRadius: frameCornerRadius,
+          inputCornerRadius: inputCornerRadius,
+          frameBackgroundColor: frameBackgroundColor,
+          inputBackgroundColor: inputBackgroundColor,
+          colorBorderInput: colorBorderInput,
+          colorBorderContainer: colorBorderContainer,
+          width: width,
+          height: height
 
         );
         return component;

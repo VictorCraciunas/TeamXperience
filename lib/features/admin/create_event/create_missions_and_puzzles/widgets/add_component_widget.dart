@@ -6,7 +6,7 @@ import '../../../../../constants/padding.dart';
 import '../../../../../widgets/my_dropdown.dart';
 import '../controller/add_missions_controller.dart';
 import 'create_components/create_button_component.dart';
-import 'create_components/create_code_component.dart';
+import 'create_components/create_code/create_code_component.dart';
 import 'create_components/create_image_component.dart';
 import 'create_components/create_text_component.dart';
 

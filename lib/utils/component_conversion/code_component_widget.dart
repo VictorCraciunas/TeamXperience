@@ -36,9 +36,37 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> {
     super.dispose();
   }
 
+  Color _hexToColor(String? hex, {Color defaultColor = Colors.black}) {
+    if (hex == null || hex.isEmpty) return defaultColor;
+    final hexColor = hex.replaceFirst('#', '');
+    if (hexColor.length == 6) {
+      return Color(int.parse('FF$hexColor', radix: 16)); // Full opacity
+    } else if (hexColor.length == 8) {
+      return Color(int.parse(hexColor, radix: 16)); // With alpha
+    } else {
+      return defaultColor;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final int codeLength = widget.component.codeLength ?? 5;
+    final String? inputType = widget.component.inputType;
+    final double frameCornerRadius = widget.component.frameCornerRadius ?? 15.0;
+    final double inputCornerRadius = widget.component.inputCornerRadius ?? 15.0;
+    final Color frameBackgroundColor = _hexToColor(widget.component.frameBackgroundColor, defaultColor: const Color(0x00f5e8c7));
+    final Color inputBackgroundColor = _hexToColor(widget.component.inputBackgroundColor, defaultColor: const Color(0x00f5e8c7));
+    final Color colorBorderContainer = _hexToColor(widget.component.colorBorderContainer, defaultColor: Colors.black);
+    final Color colorBorderInput = _hexToColor(widget.component.colorBorderInput, defaultColor: Colors.black);
+    final bool enableGlow = widget.component.enableGlow ?? false;
+    final Color glowColor = _hexToColor(widget.component.glowColor, defaultColor: Colors.black);
+    final double widthInput = widget.component.width ?? 50;
+    final double fontSize = widget.component.fontSize ?? 16.0;
+    final double heightInput = fontSize * 1.5;
+    final fontFamily = widget.component.fontFamily;
+    final textColor = _hexToColor(widget.component.textColor);
+    final capsLock = widget.component.capsLock ?? "Fără";
+
     const int maxPerRow = 5;
 
     // Determine how many rows we need (ceil)
@@ -48,48 +76,72 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> {
     final int basePerRow = codeLength ~/ rowCount;
     final int extra = codeLength % rowCount;
 
-    // Build rows with evenly distributed cell counts
-    int currentIndex = 0;
-    final rows = List<Widget>.generate(rowCount, (rowIndex) {
-      // Each of the first 'extra' rows gets one additional cell
-      final countInRow = basePerRow + (rowIndex < extra ? 1 : 0);
-      final rowCells = List<Widget>.generate(countInRow, (_) {
-        final index = currentIndex;
-        currentIndex++;
-        return Expanded( // Use Expanded to share available space
-          child: _buildCell(index),
+    Widget content;
+    if (inputType == 'Separated') {
+      // Build rows with evenly distributed cell counts for Separated mode
+      int currentIndex = 0;
+      final rows = List<Widget>.generate(rowCount, (rowIndex) {
+        final countInRow = basePerRow + (rowIndex < extra ? 1 : 0);
+        final rowCells = List<Widget>.generate(countInRow, (_) {
+          final index = currentIndex;
+          currentIndex++;
+          return Expanded(
+            child: _buildCell(index, heightInput, widthInput, inputCornerRadius, inputBackgroundColor,
+                colorBorderInput,fontSize,fontFamily!,textColor, capsLock),
+          );
+        });
+
+        return Padding(
+          padding: EdgeInsets.only(bottom: rowIndex == rowCount - 1 ? 0 : 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: rowCells,
+          ),
         );
       });
 
-      return Padding(
-        padding: EdgeInsets.only(bottom: rowIndex == rowCount - 1 ? 0 : 8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center, // Center the row
-          children: rowCells,
-        ),
-      );
-    });
-
-    return Container(
-      padding: const EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: const Color(0x00f5e8c7),
-        border: Border.all(color: Colors.black, width: 2),
-      ),
-      child: Column(
+      content = Column(
         mainAxisSize: MainAxisSize.min,
         children: rows,
+      );
+    } else {
+      // Single input for Free mode
+      content = _buildFreeCell(heightInput, widthInput, inputCornerRadius, inputBackgroundColor,
+          colorBorderInput, fontSize!,fontFamily!,textColor, capsLock);
+    }
+
+    // Wrap in outer Container only for Separated mode
+    return inputType == 'Separated'
+        ? Container(
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: frameBackgroundColor,
+        borderRadius: BorderRadius.circular(frameCornerRadius),
+        border: Border.all(color: colorBorderContainer, width: 2),
+        boxShadow: enableGlow
+            ? [
+          BoxShadow(
+            color: glowColor.withValues(alpha: 0.6),
+            blurRadius: 10,
+            spreadRadius: 2,
+            offset: const Offset(0, 0),
+          ),
+        ]
+            : null,
       ),
-    );
+      child: content,
+    )
+        : content;
   }
 
-  Widget _buildCell(int index) {
+  Widget _buildCell(int index, double heightInput, double widthInput, double? inputCornerRadius,
+      Color inputBackgroundColor, Color colorBorderInput,double fontSize, String fontFamily, Color textColor, String capsLock) {
     return Container(
-      height: 50,
+      height: heightInput,
+      width: widthInput,
       decoration: BoxDecoration(
-        color: const Color(0x00f5e8c7),
-        border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.circular(25),
+        color: inputBackgroundColor,
+        borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
       ),
       margin: const EdgeInsets.symmetric(horizontal: 4),
       alignment: Alignment.center,
@@ -97,10 +149,26 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> {
         controller: controllers[index],
         focusNode: focusNodes[index],
         textAlign: TextAlign.center,
+        textAlignVertical: TextAlignVertical.center,
+        textCapitalization: capsLock == 'Fără' ? TextCapitalization.none : TextCapitalization.characters,
         maxLength: 1,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: inputBackgroundColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
+            borderSide: BorderSide(color: colorBorderInput, width: 1),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
+            borderSide: BorderSide(color: colorBorderInput, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
+            borderSide: BorderSide(color: colorBorderInput, width: 1),
+          ),
+          contentPadding: EdgeInsets.zero,
           counterText: '',
-          border: InputBorder.none,
         ),
         onChanged: (value) {
           if (value.length == 1 && index < controllers.length - 1) {
@@ -109,9 +177,54 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> {
             FocusScope.of(context).requestFocus(focusNodes[index - 1]);
           }
         },
-        style: const TextStyle(
-          fontSize: 20, // Increase this value to make the text bigger (e.g., 20, 24, 30)
-          fontWeight: FontWeight.bold, // Optional: Makes text bolder
+        style:  TextStyle(
+            fontSize: fontSize,
+            fontWeight: FontWeight.bold,
+            fontFamily: fontFamily,
+            color: textColor
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFreeCell(double heightInput, double widthInput, double? inputCornerRadius,
+      Color inputBackgroundColor, Color colorBorderInput, double fontSize, String fontFamily, Color textColor, String capsLock) {
+    return Container(
+      height: heightInput,
+      width: widthInput,
+      decoration: BoxDecoration(
+        color: inputBackgroundColor,
+        borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
+      ),
+      alignment: Alignment.center,
+      child: TextField(
+        controller: controllers.isNotEmpty ? controllers[0] : TextEditingController(),
+        textAlign: TextAlign.center,
+        textAlignVertical: TextAlignVertical.center,
+        textCapitalization: capsLock == 'Fără' ? TextCapitalization.none : TextCapitalization.characters,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: inputBackgroundColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
+            borderSide: BorderSide(color: colorBorderInput, width: 1),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
+            borderSide: BorderSide(color: colorBorderInput, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
+            borderSide: BorderSide(color: colorBorderInput, width: 1),
+          ),
+          contentPadding: EdgeInsets.zero,
+          counterText: '',
+        ),
+        style:  TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+          fontFamily: fontFamily,
+          color: textColor
         ),
       ),
     );

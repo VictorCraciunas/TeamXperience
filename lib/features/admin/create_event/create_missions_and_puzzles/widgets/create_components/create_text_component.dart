@@ -344,6 +344,9 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
 
         // ───── Text Color ─────
         MyTextField(
+          hinttextWeight: FontWeight.w500,
+          hintTextSize: 15,
+          hintTextColor: MyColors.blackColor,
           controller: textColorController,
           hintText: 'Culoare Text',
           borderColor: MyColors.lightBlue,

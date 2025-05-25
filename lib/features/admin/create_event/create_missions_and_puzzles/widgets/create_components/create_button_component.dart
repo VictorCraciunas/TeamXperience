@@ -112,6 +112,9 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
   Widget _buildColorPickerField(String title, String colorHex, Function(String) onColorChanged) {
     Color currentColor = _hexToColor(colorHex);
     return MyTextField(
+      hinttextWeight: FontWeight.w500,
+      hintTextSize: 15,
+      hintTextColor: MyColors.blackColor,
       controller: controller,
       hintText: title,
       borderColor: MyColors.lightBlue,
@@ -338,6 +341,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
           validator: (value) =>
           value == null || value.isEmpty ? 'Please enter a button label' : null,
         ),
+        const SizedBox(height: 20),
 
         // ───── Font Family Dropdown ─────
         MyDropdownField<String>(
@@ -390,7 +394,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
 
         // ───── Font Weight Dropdown ─────
         MyDropdownField<String>(
@@ -432,21 +436,27 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
+
 
         // Color Pickers
         _buildColorPickerField('Button Color', buttonColor, (color) => buttonColor = color),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
+
         _buildColorPickerField('Button Color (On Tap)', buttonColorOnTap,
                 (color) => buttonColorOnTap = color),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
+
         _buildColorPickerField('Text Color', buttonTextColor, (color) => buttonTextColor = color),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
+
         _buildColorPickerField('Text Color (On Tap)', buttonTextColorOnTap,
                 (color) => buttonTextColorOnTap = color),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
+
         _buildColorPickerField('Border Color', borderColor, (color) => borderColor = color),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
+
 
         // ───── Corner Radius Slider ─────
         Column(
@@ -486,7 +496,8 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
+
 
         // ───── Flicker Animation Checkbox ─────
         Row(
@@ -522,7 +533,8 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
+
 
         // ───── Glow Button Checkbox ─────
         Row(
@@ -557,7 +569,8 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
+
 
         _buildColorPickerField('Culoare Glow', glowColor, (color) => glowColor = color),
         const SizedBox(height: 20),

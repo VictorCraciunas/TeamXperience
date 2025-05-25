@@ -57,6 +57,16 @@ class MissionsService {
         bool? enableFlicker, // New
         bool? enableGlow, // New
         String? glowColor, // New
+        String? inputType,
+        String? capsLock,
+        double? frameCornerRadius,
+        double? inputCornerRadius,
+        String? frameBackgroundColor,
+        String? inputBackgroundColor,
+        String? colorBorderInput,
+        String? colorBorderContainer,
+        double? width,
+        double? height,
       }) {
     if (missions.isEmpty) {
       throw Exception("No missions initialized");
@@ -114,7 +124,23 @@ class MissionsService {
         );
         break;
       case ComponentType.code:
-        component = componentService.createCodeComponent(codeLength: codeLength);
+        component = componentService.createCodeComponent(
+          codeLength: codeLength,
+          inputType: inputType,
+          capsLock: capsLock,
+          frameCornerRadius: frameCornerRadius,
+          inputCornerRadius: inputCornerRadius,
+          frameBackgroundColor: frameBackgroundColor,
+          inputBackgroundColor: inputBackgroundColor,
+          colorBorderInput: colorBorderInput,
+          colorBorderContainer: colorBorderContainer,
+          enableGlow: enableGlow,
+          glowColor: glowColor,
+          width: width,
+            fontSize: fontSize,
+            textColor: textColor,
+            fontFamily: fontFamily
+        );
         break;
     }
 

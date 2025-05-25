@@ -63,11 +63,39 @@ class ComponentService{
     );
   }
   Component createCodeComponent({
-     int? codeLength, // Number of letters/text fields
+    int? codeLength,
+    String? inputType, // "Separated" or "Free"
+    String? capsLock, // "CapsLock" or "Fără"
+    double? frameCornerRadius,
+    double? inputCornerRadius,
+    String? frameBackgroundColor,
+    String? inputBackgroundColor,
+    String? colorBorderInput,
+    String? colorBorderContainer,
+    bool? enableGlow,
+    String? glowColor,
+    double? width,
+    double? fontSize,
+    String? textColor,
+    String? fontFamily
   }) {
     return Component(
       type: ComponentType.code,
       codeLength: codeLength,
+      inputType: inputType,
+      capsLock: capsLock,
+      frameCornerRadius: frameCornerRadius,
+      inputCornerRadius: inputCornerRadius,
+      frameBackgroundColor: frameBackgroundColor,
+      inputBackgroundColor: inputBackgroundColor,
+      colorBorderInput: colorBorderInput,
+      colorBorderContainer: colorBorderContainer,
+      enableGlow: enableGlow,
+      glowColor: glowColor,
+      width: width,
+        fontSize: fontSize,
+        textColor: textColor,
+        fontFamily: fontFamily
     );
   }
 }

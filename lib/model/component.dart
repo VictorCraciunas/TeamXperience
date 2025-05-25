@@ -21,6 +21,16 @@ class Component {
   final String? fontWeight;
   final String? fontFamily;
   final int? codeLength;
+  final String? inputType; // "Separated" or "Free"
+  final String? capsLock; // "CapsLock" or "Fără"
+  final double? frameCornerRadius; // Corner radius for the frame
+  final double? inputCornerRadius; // Corner radius for input fields
+  final String? frameBackgroundColor; // Background color for the frame
+  final String? inputBackgroundColor; // Background color for input fields
+  final String? colorBorderInput; // Border color for input fields
+  final String? colorBorderContainer; // Border color for the container
+  final double? width;
+  final double? height;
 
   Component({
     required this.type,
@@ -42,6 +52,16 @@ class Component {
     this.enableFlicker, // New
     this.enableGlow, // New
     this.glowColor,
+    this.inputType,
+    this.capsLock,
+    this.frameCornerRadius,
+    this.inputCornerRadius,
+    this.frameBackgroundColor,
+    this.inputBackgroundColor,
+    this.colorBorderInput,
+    this.colorBorderContainer,
+    this.height,
+    this.width
   });
 
   factory Component.fromMap(Map<String, dynamic> map) {
@@ -69,6 +89,16 @@ class Component {
       enableFlicker: map['enableFlicker'] as bool?, // New
       enableGlow: map['enableGlow'] as bool?, // New
       glowColor: map['glowColor'] as String?, // New
+      inputType: map['inputType'] as String?,
+      capsLock: map['capsLock'] as String?,
+      frameCornerRadius: map['frameCornerRadius'] as double?,
+      inputCornerRadius: map['inputCornerRadius'] as double?,
+      frameBackgroundColor: map['frameBackgroundColor'] as String?,
+      inputBackgroundColor: map['inputBackgroundColor'] as String?,
+      colorBorderInput: map['colorBorderInput'] as String?,
+      colorBorderContainer: map['colorBorderContainer'] as String?,
+      width: map['width'] as double?,
+      height: map['height'] as double?,
     );
   }
 
@@ -88,11 +118,21 @@ class Component {
       if (enableFlicker != null) 'enableFlicker': enableFlicker, // New
       if (enableGlow != null) 'enableGlow': enableGlow, // New
       if (glowColor != null) 'glowColor': glowColor, // New
+      if (inputType != null) 'inputType': inputType,
+      if (capsLock != null) 'capsLock': capsLock,
+      if (frameCornerRadius != null) 'frameCornerRadius': frameCornerRadius,
+      if (inputCornerRadius != null) 'inputCornerRadius': inputCornerRadius,
+      if (frameBackgroundColor != null) 'frameBackgroundColor': frameBackgroundColor,
+      if (inputBackgroundColor != null) 'inputBackgroundColor': inputBackgroundColor,
+      if (colorBorderInput != null) 'colorBorderInput': colorBorderInput,
+      if (colorBorderContainer != null) 'colorBorderContainer': colorBorderContainer,
+      if (width != null) 'width': width,
+      if (height != null) 'height': height,
     };
   }
 
   @override
   String toString() {
-    return 'Component(type: ${type.name}, text: $text, imageUrl: $imageUrl, buttonLabel: $buttonLabel, textColor: $textColor, animation: ${animation?.name}, buttonColor: $buttonColor, buttonColorOnTap: $buttonColorOnTap, buttonTextColor: $buttonTextColor, buttonTextColorOnTap: $buttonTextColorOnTap, borderColor: $borderColor, fontSize: $fontSize, fontWeight: $fontWeight, fontFamily: $fontFamily, codeLength: $codeLength, cornerRadius: $cornerRadius, enableFlicker: $enableFlicker, enableGlow: $enableGlow, glowColor: $glowColor)';
+    return 'Component(type: ${type.name}, text: $text, imageUrl: $imageUrl, buttonLabel: $buttonLabel, textColor: $textColor, animation: ${animation?.name}, buttonColor: $buttonColor, buttonColorOnTap: $buttonColorOnTap, buttonTextColor: $buttonTextColor, buttonTextColorOnTap: $buttonTextColorOnTap, borderColor: $borderColor, fontSize: $fontSize, fontWeight: $fontWeight, fontFamily: $fontFamily, codeLength: $codeLength, cornerRadius: $cornerRadius, enableFlicker: $enableFlicker, enableGlow: $enableGlow, glowColor: $glowColor, inputType: $inputType, capsLock: $capsLock, frameCornerRadius: $frameCornerRadius, inputCornerRadius: $inputCornerRadius, frameBackgroundColor: $frameBackgroundColor, inputBackgroundColor: $inputBackgroundColor, colorBorderInput: $colorBorderInput, colorBorderContainer: $colorBorderContainer, width: $width, height: $height)';
   }
 }
