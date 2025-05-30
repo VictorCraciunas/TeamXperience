@@ -71,11 +71,6 @@ class _SavePuzzleState extends State<SavePuzzle> {
               borderColor: MyColors.lightBlue,
               borderWidth: 1.5,
               radius: 20,
-              selectedItemStyle: const TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 14,
-                color: Colors.black,
-              ),
               hint: const Text(
                 'Selectează tipul de puzzle',
                 style: TextStyle(

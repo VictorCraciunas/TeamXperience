@@ -44,24 +44,26 @@ class CodeComponentController {
 
     // Only wrap in the outer Container if inputType is "Separated"
     if (inputType == 'Separated') {
-      return Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: frameColor,
-          borderRadius: BorderRadius.circular(radiusChenar),
-          border: Border.all(color: hexToColor(colorBorderContainer), width: 1.5),
-          boxShadow: enableGlow
-              ? [
-            BoxShadow(
-              color: glow.withValues(alpha: 0.6),
-              blurRadius: 10,
-              spreadRadius: 2,
-              offset: const Offset(0, 0),
-            ),
-          ]
-              : null,
+      return IntrinsicWidth(
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: frameColor,
+            borderRadius: BorderRadius.circular(radiusChenar),
+            border: Border.all(color: hexToColor(colorBorderContainer), width: 1.5),
+            boxShadow: enableGlow
+                ? [
+              BoxShadow(
+                color: glow.withValues(alpha: 0.6),
+                blurRadius: 10,
+                spreadRadius: 2,
+                offset: const Offset(0, 0),
+              ),
+            ]
+                : null,
+          ),
+          child: _buildSeparatedPreview(context),
         ),
-        child: _buildSeparatedPreview(context),
       );
     } else {
       // For "Free" inputType, return the free preview directly without the outer container
@@ -191,7 +193,7 @@ class CodeComponentController {
           textAlign: TextAlign.center,
           textCapitalization: capsLock == 'Fără' ? TextCapitalization.none : TextCapitalization.characters,
           textAlignVertical: TextAlignVertical.center,
-          maxLength: 1,
+          maxLength: codeLength,
           decoration: InputDecoration(
             filled: true,
             fillColor: hexToColor(inputBackgroundColor),
@@ -252,5 +254,7 @@ class CodeComponentController {
     );
     Widget componentWidget = ComponentToWidget().convert(component);
     refreshUI(componentWidget);
+    Navigator.pop(context);
+
   }
 }

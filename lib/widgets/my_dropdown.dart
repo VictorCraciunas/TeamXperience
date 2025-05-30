@@ -47,12 +47,6 @@ class MyDropdownField<T> extends StatelessWidget {
   /// Padding inside the dropdown field.
   final EdgeInsets? contentPadding;
 
-  /// Text style for the selected item.
-  final TextStyle? selectedItemStyle;
-
-  /// Whether the dropdown menu expands to the field's width.
-  final bool isExpanded;
-
   const MyDropdownField({
     super.key,
     required this.items,
@@ -68,9 +62,10 @@ class MyDropdownField<T> extends StatelessWidget {
     this.validator,
     this.leading,
     this.dropdownIcon,
-    this.contentPadding = const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-    this.selectedItemStyle,
-    this.isExpanded = true,
+    this.contentPadding = const EdgeInsets.symmetric(
+      vertical: 16,
+      horizontal: 12,
+    ),
   });
 
   @override
@@ -84,29 +79,73 @@ class MyDropdownField<T> extends StatelessWidget {
             fontFamily: 'Poppins',
             fontSize: labelFontSize,
             fontWeight: labelFontWeight,
-              color: MyColors.blackColor
+            color: MyColors.blackColor,
           ),
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<T>(
+          borderRadius: BorderRadius.circular(15),
+          dropdownColor: Colors.white,
+          elevation: 4,
           value: value,
-          items: items,
+          items:
+              items.asMap().entries.map((e) {
+                final idx = e.key;
+                final item = e.value;
+                return DropdownMenuItem<T>(
+                  value: item.value,
+                  alignment: Alignment.center,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: idx < items.length - 1
+                          ? const Border(
+                        bottom: BorderSide(
+                          color: Color(0xFFE7F7F7), // divider color
+                          width: 1,                  // thickness
+                        ),
+                      )
+                          : null,
+                    ),
+                    child: Center(
+                      child: Text(
+                        (item.child as Text).data!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontFamily: 'Poppins',
+                          color: MyColors.blackColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
           onChanged: onChanged,
           hint: hint,
           validator: validator,
-          style: selectedItemStyle,
+          style: const TextStyle(
+            fontSize: 14,
+            fontFamily: 'Poppins',
+            color: MyColors.blackColor,
+            fontWeight: FontWeight.w500,
+          ),
           icon: dropdownIcon,
-          isExpanded: isExpanded,
+          isExpanded: true,
           decoration: InputDecoration(
-            prefixIcon: leading != null
-                ? Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 10),
-              child: leading,
-            )
-                : null,
-            prefixIconConstraints: leading != null
-                ? const BoxConstraints(minWidth: 0, minHeight: 0)
-                : null,
+            prefixIcon:
+                leading != null
+                    ? Padding(
+                      padding: const EdgeInsets.only(left: 10.0, right: 10),
+                      child: leading,
+                    )
+                    : null,
+            prefixIconConstraints:
+                leading != null
+                    ? const BoxConstraints(minWidth: 0, minHeight: 0)
+                    : null,
             contentPadding: contentPadding,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(radius),
@@ -118,7 +157,10 @@ class MyDropdownField<T> extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(radius),
-              borderSide: BorderSide(color: borderColor, width: borderWidth + 1),
+              borderSide: BorderSide(
+                color: borderColor,
+                width: borderWidth + 1,
+              ),
             ),
           ),
         ),

@@ -44,6 +44,8 @@ class ComponentToWidget {
               enableFlicker: component.enableFlicker, // New: Enable flicker animation
               fontFamily: component.fontFamily, // New: Font family
               fontWeight: component.fontWeight, // New: Font weight
+              fontSize: component.fontSize,
+              radius: component.cornerRadius,
             )
         );
       case ComponentType.code:

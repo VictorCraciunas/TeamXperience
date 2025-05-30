@@ -23,6 +23,7 @@ class ButtonComponentController {
   double cornerRadius = 15.0;
   bool enableFlicker = false;
   bool enableGlow = false;
+  double fontSize =15;
 
   final TextEditingController labelController = TextEditingController();
   final TextEditingController controller = TextEditingController();
@@ -104,6 +105,7 @@ class ButtonComponentController {
       enableFlicker: enableFlicker,
       enableGlow: enableGlow,
       glowColor: glowColor,
+      fontSize: fontSize,
     );
     Widget componentWidget = ComponentToWidget().convert(component);
     refreshUI(componentWidget);

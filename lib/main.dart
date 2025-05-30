@@ -36,8 +36,11 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       theme: ThemeData(
+        useMaterial3: true,
         primaryColor: Colors.white,
         fontFamily: 'Poppins',
+        scaffoldBackgroundColor: Colors.white,      // makes Scaffold background white
+        canvasColor: Colors.white,
       ),
       title: 'Treasure Hunt',
       initialRoute: Routes.redirect,

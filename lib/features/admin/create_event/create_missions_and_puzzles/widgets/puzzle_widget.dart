@@ -31,26 +31,30 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
   int componentIndex = 0;
 
   void _editComponent(int puzzleIndex) {
-    Component componentToEdit = widget.addMissionsController
-        .getComponent(widget.nrMission, widget.selectedPuzzle, puzzleIndex);
+    Component componentToEdit = widget.addMissionsController.getComponent(
+      widget.nrMission,
+      widget.selectedPuzzle,
+      puzzleIndex,
+    );
     // Hypothetical method
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AddComponentWidget(
-            addMissionsController: widget.addMissionsController,
-            missionSelected: widget.nrMission,
-            puzzleSelected: puzzleIndex,
-            refreshUI: (Widget componentWidget) {
-              setState(() {
-                puzzleComponents[puzzleIndex] = componentWidget;
-              });
-              Navigator.pop(context);
-            },
-            componentToEdit: componentToEdit, // Pass the component to edit
-          ),
-        ),
-      );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => AddComponentWidget(
+              addMissionsController: widget.addMissionsController,
+              missionSelected: widget.nrMission,
+              puzzleSelected: puzzleIndex,
+              refreshUI: (Widget componentWidget) {
+                setState(() {
+                  puzzleComponents[puzzleIndex] = componentWidget;
+                });
+                Navigator.pop(context);
+              },
+              componentToEdit: componentToEdit, // Pass the component to edit
+            ),
+      ),
+    );
   }
 
   @override
@@ -86,7 +90,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
               child: Column(
                 children: List.generate(
                   puzzleComponents.length,
-                      (index) => GestureDetector(
+                  (index) => GestureDetector(
                     onLongPress: () {
                       showDialog(
                         context: context,
@@ -106,11 +110,12 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
                                   onPressed: () {
                                     setState(() {
                                       puzzleComponents.removeAt(index);
-                                      widget.addMissionsController.deleteComponent(
-                                        widget.nrMission,
-                                        widget.selectedPuzzle,
-                                        index,
-                                      );
+                                      widget.addMissionsController
+                                          .deleteComponent(
+                                            widget.nrMission,
+                                            widget.selectedPuzzle,
+                                            index,
+                                          );
                                     });
                                     Navigator.pop(context);
                                   },
@@ -124,7 +129,8 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: puzzleComponents[index], // Direct use of the component
+                      child:
+                          puzzleComponents[index], // Direct use of the component
                     ),
                   ),
                 ),
@@ -134,6 +140,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
         ],
 
         const SizedBox(height: 20),
+
 
         // adauga componenta
         Center(
@@ -148,16 +155,16 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
                 context: context,
                 builder:
                     (context) => AddComponentWidget(
-                  addMissionsController: widget.addMissionsController,
-                  missionSelected: widget.nrMission,
-                  puzzleSelected: widget.selectedPuzzle,
-                  refreshUI: (Widget componentWidget) {
-                    setState(() {
-                      puzzleComponents.add(componentWidget);
-                      componentIndex++;
-                    });
-                  },
-                )
+                      addMissionsController: widget.addMissionsController,
+                      missionSelected: widget.nrMission,
+                      puzzleSelected: widget.selectedPuzzle,
+                      refreshUI: (Widget componentWidget) {
+                        setState(() {
+                          puzzleComponents.add(componentWidget);
+                          componentIndex++;
+                        });
+                      },
+                    ),
               );
             },
             withBorder: false,
@@ -165,7 +172,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
             buttonWidth: 263,
           ),
         ),
-        const SizedBox(height: 15,),
+        const SizedBox(height: 15),
 
         MyButton(
           fontWeight: FontWeight.w500,
@@ -185,7 +192,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
           buttonColor: MyColors.lightBlue,
           buttonWidth: 304,
         ),
-        const SizedBox(height: 150,),
+        const SizedBox(height: 150),
 
         MyButton(
           fontWeight: FontWeight.w500,
@@ -198,10 +205,10 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
               context: context,
               builder:
                   (context) => SavePuzzle(
-                nrMission: widget.nrMission,
-                selectedPuzzle: widget.selectedPuzzle,
-                addMissionsController: widget.addMissionsController,
-              ),
+                    nrMission: widget.nrMission,
+                    selectedPuzzle: widget.selectedPuzzle,
+                    addMissionsController: widget.addMissionsController,
+                  ),
             );
           },
           withBorder: false,

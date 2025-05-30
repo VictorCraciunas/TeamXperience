@@ -250,11 +250,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     ),
                   ),
                   validator: (value) => value == null ? 'Selecteaza tipul de eveniment' : null,
-                  selectedItemStyle: const TextStyle(
-                    fontSize: 14,
-                    fontFamily: 'Poppins',
-                    color: Colors.black,
-                  ),
                   borderColor: MyColors.lightBlue,
                   borderWidth: 1.5,
                   radius: 20,

@@ -20,13 +20,15 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
   late AnimationController glowController;
   late Animation<double> glowAnimation;
 
+
+  // Keep track of the length we last built for
+  late int _lastLength;
+
   @override
   void initState() {
     super.initState();
-    final int codeLength = widget.component.codeLength ?? 5;
-    controllers = List.generate(codeLength, (_) => TextEditingController());
-    focusNodes = List.generate(codeLength, (_) => FocusNode());
-
+    _lastLength = widget.component.codeLength ?? 5;
+    _initControllers(_lastLength);
     glowController = AnimationController(vsync: this,duration: const Duration(milliseconds: 1000));
     glowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -48,12 +50,7 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
   @override
   void dispose() {
     glowController.dispose();
-    for (var controller in controllers) {
-      controller.dispose();
-    }
-    for (var focusNode in focusNodes) {
-      focusNode.dispose();
-    }
+    _disposeControllers();
     super.dispose();
   }
 
@@ -66,6 +63,20 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
       return Color(int.parse(hexColor, radix: 16)); // With alpha
     } else {
       return defaultColor;
+    }
+  }
+
+  void _initControllers(int length) {
+    controllers = List.generate(length, (_) => TextEditingController());
+    focusNodes  = List.generate(length, (_) => FocusNode());
+  }
+
+  void _disposeControllers() {
+    for (final c in controllers) {
+      c.dispose();
+    }
+    for (final f in focusNodes) {
+      f.dispose();
     }
   }
 
@@ -87,6 +98,11 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
     final fontFamily = widget.component.fontFamily;
     final textColor = _hexToColor(widget.component.textColor);
     final capsLock = widget.component.capsLock ?? "Fără";
+    if (codeLength != _lastLength) {
+      _disposeControllers();
+      _initControllers(codeLength);
+      _lastLength = codeLength;
+    }
 
     const int maxPerRow = 5;
 
@@ -96,6 +112,7 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
     // Distribute items as evenly as possible across rows
     final int basePerRow = codeLength ~/ rowCount;
     final int extra = codeLength % rowCount;
+
 
     Widget content;
     if (inputType == 'Separated') {
@@ -136,25 +153,27 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
         ? AnimatedBuilder(
           animation: glowAnimation,
           builder: (context,child)=>
-           Container(
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-          color: frameBackgroundColor,
-          borderRadius: BorderRadius.circular(frameCornerRadius),
-          border: Border.all(color: colorBorderContainer, width: 2),
-          boxShadow: enableGlow == true
-              ? [
-            BoxShadow(
-              color: glowColor.withValues(alpha: (0.6 +glowAnimation.value * 0.2)),
-              blurRadius: 10.0,
-              spreadRadius: 2.0 + (glowAnimation.value * 3.0),
-              offset: const Offset(0, 0),
-            ),
-          ]
-              : null,
-                ),
-                child: content,
+           IntrinsicWidth(
+             child: Container(
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                       color: frameBackgroundColor,
+                       borderRadius: BorderRadius.circular(frameCornerRadius),
+                       border: Border.all(color: colorBorderContainer, width: 1.5),
+                       boxShadow: enableGlow == true
+                ? [
+              BoxShadow(
+                color: glowColor.withValues(alpha: (0.6 +glowAnimation.value * 0.2)),
+                blurRadius: 10.0,
+                spreadRadius: 2.0 + (glowAnimation.value * 3.0),
+                offset: const Offset(0, 0),
               ),
+                       ]
+                : null,
+                  ),
+                  child: content,
+                ),
+           ),
         )
         : content;
   }

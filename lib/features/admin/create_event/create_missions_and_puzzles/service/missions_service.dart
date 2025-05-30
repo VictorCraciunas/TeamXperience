@@ -136,7 +136,8 @@ class MissionsService {
           enableGlow: enableGlow, // New
           glowColor: glowColor, // New
           fontFamily: fontFamily,
-          fontWeight: fontWeight
+          fontWeight: fontWeight,
+          fontSize: fontSize,
         );
         break;
       case ComponentType.code:

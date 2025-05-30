@@ -49,6 +49,7 @@ class ComponentService{
     bool? enableFlicker, // New
     bool? enableGlow, // New
     String? glowColor, // New
+    double? fontSize,
   }) {
     return Component(
       type: ComponentType.button,
@@ -63,7 +64,8 @@ class ComponentService{
       enableGlow: enableGlow, // New
       glowColor: glowColor, // New
       fontFamily: fontFamily,
-      fontWeight: fontWeight
+      fontWeight: fontWeight,
+        fontSize: fontSize,
     );
   }
   Component createCodeComponent({

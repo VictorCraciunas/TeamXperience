@@ -93,15 +93,9 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
                     ),
                   ),
                 ),
-                selectedItemStyle: const TextStyle(
-                  fontSize: 14,
-                  fontFamily: 'Poppins',
-                  color: Colors.black,
-                ),
                 borderColor: MyColors.lightBlue,
                 borderWidth: 1.5,
                 radius: 20,
-                isExpanded: true,
               ),
               if (type == ComponentType.text) ...[
                 TextComponentFieldsWidget(
@@ -109,6 +103,7 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
                   missionSelected: widget.missionSelected,
                   puzzleSelected: widget.puzzleSelected,
                   refreshUI: widget.refreshUI,
+                  componentToEdit:widget.componentToEdit,
                 ),
               ],
               if (type == ComponentType.image) ...[
@@ -117,6 +112,8 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
                   missionSelected: widget.missionSelected,
                   puzzleSelected: widget.puzzleSelected,
                   refreshUI: widget.refreshUI,
+                  componentToEdit:widget.componentToEdit,
+
                 ),
               ],
               if (type == ComponentType.button) ...[
@@ -134,6 +131,8 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
                   missionSelected: widget.missionSelected,
                   puzzleSelected: widget.puzzleSelected,
                   refreshUI: widget.refreshUI,
+                  componentToEdit:widget.componentToEdit,
+
                 ),
               ],
               const SizedBox(height: 20),

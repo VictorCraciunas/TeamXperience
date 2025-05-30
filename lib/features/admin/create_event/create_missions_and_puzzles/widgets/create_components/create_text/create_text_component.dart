@@ -7,6 +7,9 @@ import 'package:teamxperience/widgets/my_button.dart';
 import 'package:teamxperience/widgets/color_picker_dialog.dart';
 import 'package:teamxperience/widgets/slider_widget.dart';
 
+import '../../../../../../../enums/component-type.dart';
+import '../../../../../../../model/component.dart';
+import '../../../../../../../utils/component_conversion/component_to_widget.dart';
 import '../../../controller/add_missions_controller.dart';
 import 'create_text_controller.dart';
 
@@ -16,6 +19,8 @@ class TextComponentFieldsWidget extends StatefulWidget {
   final int missionSelected;
   final int puzzleSelected;
   final Function(Widget) refreshUI;
+  final Component? componentToEdit;
+
 
   const TextComponentFieldsWidget({
     super.key,
@@ -23,6 +28,7 @@ class TextComponentFieldsWidget extends StatefulWidget {
     required this.missionSelected,
     required this.puzzleSelected,
     required this.refreshUI,
+    this.componentToEdit
   });
 
   @override
@@ -44,6 +50,19 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
   void initState() {
     super.initState();
     controller = TextComponentController();
+
+    final c = widget.componentToEdit;
+    if (c != null && c.type == ComponentType.text) {
+      // 1) Seed the text content
+      controller.textController.text = c.text ?? '';
+
+      // 2) Seed styling fields
+      controller.textColor    = c.textColor    ?? controller.textColor;
+      controller.animation    = c.animation;
+      controller.fontSize     = c.fontSize     ?? controller.fontSize;
+      controller.fontWeight   = c.fontWeight;
+      controller.fontFamily   = c.fontFamily;
+    }
   }
 
   @override
@@ -136,11 +155,6 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
           borderColor: MyColors.lightBlue,
           borderWidth: 1.5,
           radius: 20,
-          selectedItemStyle: const TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            color: Colors.black,
-          ),
           hint: const Text(
             'Selectează animația',
             style: TextStyle(
@@ -189,11 +203,6 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
           borderColor: MyColors.lightBlue,
           borderWidth: 1.5,
           radius: 20,
-          selectedItemStyle: const TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            color: Colors.black,
-          ),
           hint: const Text(
             'Selectează tipul de font',
             style: TextStyle(
@@ -231,11 +240,6 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
           borderColor: MyColors.lightBlue,
           borderWidth: 1.5,
           radius: 20,
-          selectedItemStyle: const TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            color: Colors.black,
-          ),
           hint: const Text(
             'Selectează grosimea fontului',
             style: TextStyle(
@@ -303,13 +307,50 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
           child: MyButton(
             buttonText: 'Salveaza componenta',
             textColor: Colors.white,
-            buttonOnTap: () => controller.saveComponent(
-              context,
-              widget.missionSelected,
-              widget.puzzleSelected,
-              widget.addMissionsController,
-              widget.refreshUI,
-            ),
+            buttonOnTap: () {
+              // Validate text
+              if (controller.textController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please enter text content')),
+                );
+                return;
+              }
+              // Validate required styling fields
+              if (controller.animation == null
+                  || controller.fontWeight == null
+                  || controller.fontFamily == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please select all required fields')),
+                );
+                return;
+              }
+
+              final c = widget.componentToEdit;
+              if (c != null && c.type == ComponentType.text) {
+                // —— EDIT FLOW ——
+                c.text       = controller.textController.text;
+                c.textColor  = controller.textColor;
+                c.animation  = controller.animation;
+                c.fontSize   = controller.fontSize;
+                c.fontWeight = controller.fontWeight;
+                c.fontFamily = controller.fontFamily;
+
+                // rebuild the widget and pop
+                final updatedWidget = ComponentToWidget().convert(c);
+                widget.refreshUI(updatedWidget);
+                Navigator.pop(context);
+
+              } else {
+                // —— CREATE FLOW ——
+                controller.saveComponent(
+                  context,
+                  widget.missionSelected,
+                  widget.puzzleSelected,
+                  widget.addMissionsController,
+                  widget.refreshUI,
+                );
+              }
+            },
             withBorder: false,
             buttonColor: MyColors.lightBlue,
             fontWeight: FontWeight.w500,
@@ -317,6 +358,8 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
             buttonWidth: 270,
           ),
         ),
+        const SizedBox(height: 60),
+
       ],
     );
   }

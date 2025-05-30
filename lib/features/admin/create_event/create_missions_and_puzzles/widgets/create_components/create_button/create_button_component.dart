@@ -58,6 +58,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
       controller.cornerRadius = widget.componentToEdit!.cornerRadius ?? 15.0;
       controller.enableFlicker = widget.componentToEdit!.enableFlicker ?? false;
       controller.enableGlow = widget.componentToEdit!.enableGlow ?? false;
+      controller.fontSize = widget.componentToEdit!.fontSize ?? 15;
     }
   }
 
@@ -87,52 +88,51 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
         Container(
           width: double.infinity,
           height: 100,
+          alignment: Alignment.center,
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(color: MyColors.lightBlue, width: 1.5),
             borderRadius: BorderRadius.circular(15),
           ),
-          child: Center(
-            child: Listener(
-              behavior: HitTestBehavior.opaque,
-              onPointerDown: (_) => setState(() => controller.isTapped = true),
-              onPointerUp: (_) => setState(() => controller.isTapped = false),
-              onPointerCancel: (_) => setState(() => controller.isTapped = false),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                decoration: BoxDecoration(
-                  color: controller.isTapped
-                      ? controller.hexToColor(controller.buttonColorOnTap)
-                      : controller.hexToColor(controller.buttonColor),
-                  border: Border.all(
-                      color: controller.hexToColor(controller.borderColor), width: 1.5),
-                  borderRadius: BorderRadius.circular(controller.cornerRadius),
-                  boxShadow: controller.enableGlow
-                      ? [
-                    BoxShadow(
-                      color: controller
-                          .hexToColor(controller.glowColor)
-                          .withValues(alpha: 0.6),
-                      blurRadius: 10.0,
-                      spreadRadius: 2.0,
-                      offset: const Offset(0, 0),
-                    ),
-                  ]
-                      : null,
-                ),
-                child: Text(
-                  controller.labelController.text.isEmpty
-                      ? 'Text'
-                      : controller.labelController.text,
-                  style: TextStyle(
-                    color: controller.isTapped
-                        ? controller.hexToColor(controller.buttonTextColorOnTap)
-                        : controller.hexToColor(controller.buttonTextColor),
-                    fontSize: 16,
-                    fontWeight: currentWeight,
-                    fontFamily: currentFontFamily,
-                    letterSpacing: 2,
+          child: Listener(
+            behavior: HitTestBehavior.opaque,
+            onPointerDown: (_) => setState(() => controller.isTapped = true),
+            onPointerUp: (_) => setState(() => controller.isTapped = false),
+            onPointerCancel: (_) => setState(() => controller.isTapped = false),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 5.0,horizontal: 30),
+              decoration: BoxDecoration(
+                color: controller.isTapped
+                    ? controller.hexToColor(controller.buttonColorOnTap)
+                    : controller.hexToColor(controller.buttonColor),
+                border: Border.all(
+                    color: controller.hexToColor(controller.borderColor), width: 1.5),
+                borderRadius: BorderRadius.circular(controller.cornerRadius),
+                boxShadow: controller.enableGlow
+                    ? [
+                  BoxShadow(
+                    color: controller
+                        .hexToColor(controller.glowColor)
+                        .withValues(alpha: 0.6),
+                    blurRadius: 10.0,
+                    spreadRadius: 2.0,
+                    offset: const Offset(0, 0),
                   ),
+                ]
+                    : null,
+              ),
+              child: Text(
+                controller.labelController.text.isEmpty
+                    ? 'Text'
+                    : controller.labelController.text,
+                style: TextStyle(
+                  color: controller.isTapped
+                      ? controller.hexToColor(controller.buttonTextColorOnTap)
+                      : controller.hexToColor(controller.buttonTextColor),
+                  fontSize: controller.fontSize,
+                  fontWeight: currentWeight,
+                  fontFamily: currentFontFamily,
+                  letterSpacing: 8,
                 ),
               ),
             ),
@@ -189,11 +189,6 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
           borderColor: MyColors.lightBlue,
           borderWidth: 1.5,
           radius: 20,
-          selectedItemStyle: const TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            color: Colors.black,
-          ),
           hint: const Text(
             'Selectează tipul de font',
             style: TextStyle(
@@ -231,11 +226,6 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
           borderColor: MyColors.lightBlue,
           borderWidth: 1.5,
           radius: 20,
-          selectedItemStyle: const TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            color: Colors.black,
-          ),
           hint: const Text(
             'Selectează grosimea fontului',
             style: TextStyle(
@@ -378,6 +368,17 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
           context: context,
         ),
         const SizedBox(height: 20),
+        SliderWidget(
+          title: 'Dimensiune Text',
+          min: 8,
+          max: 72,
+          divisions: 64,
+          value: controller.fontSize,
+          label: controller.fontSize.toStringAsFixed(0),
+          onChanged: (value) => setState(() => controller.fontSize = value),
+        ),
+        const SizedBox(height: 20),
+
 
         // Save Button
         Center(
@@ -421,6 +422,9 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
             buttonWidth: 270,
           ),
         ),
+        const SizedBox(height: 60),
+        
+
       ],
     );
   }
