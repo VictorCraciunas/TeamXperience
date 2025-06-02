@@ -59,13 +59,9 @@ class MissionController {
         puzzle: puzzle,
         mode: puzzleMode,
         onSave: () {
-          print('Puzzle saved at index: ${int.parse(puzzle.id)}');
           togglePuzzle(int.parse(puzzle.id));
-          print('Puzzle states after toggle: $isPuzzleDone');
           bool isDone = areAllPuzzlessDone();
-          print('Are all puzzles done? $isDone');
           missionDone(isDone);
-          print('missionDone called successfully');
         },
         addMissionsController: addMissionsController,
       ),

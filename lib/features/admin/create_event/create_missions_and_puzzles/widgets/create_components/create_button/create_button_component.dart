@@ -6,6 +6,7 @@ import 'package:teamxperience/widgets/slider_widget.dart';
 import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';
+import '../../../../../../../utils/component_conversion/component_to_widget.dart';
 import '../../../../../../../widgets/my_dropdown.dart';
 import '../../../controller/add_missions_controller.dart';
 import 'create_button_controller.dart';
@@ -84,10 +85,14 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
   }
 
   Widget _buildPreviewSection() {
-    final currentWeight = controller.fontWeight != null
-        ? weightMap[controller.fontWeight] ?? FontWeight.w400
-        : FontWeight.w400;
-    final currentFontFamily = controller.fontFamily ?? 'Poppins';
+    // Create a temporary Component for preview
+    final previewComponent = Component();
+    controller.updateComponentFields(previewComponent);
+    previewComponent.buttonLabel = controller.labelController.text.isEmpty
+        ? 'Text'
+        : controller.labelController.text;
+
+    final previewWidget = ComponentToWidget().convert(previewComponent);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,49 +115,7 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
             border: Border.all(color: MyColors.lightBlue, width: 1.5),
             borderRadius: BorderRadius.circular(15),
           ),
-          child: Listener(
-            behavior: HitTestBehavior.opaque,
-            onPointerDown: (_) => setState(() => controller.isTapped = true),
-            onPointerUp: (_) => setState(() => controller.isTapped = false),
-            onPointerCancel: (_) => setState(() => controller.isTapped = false),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 30),
-              decoration: BoxDecoration(
-                color: controller.isTapped
-                    ? controller.hexToColor(controller.buttonColorOnTap)
-                    : controller.hexToColor(controller.buttonColor),
-                border: Border.all(
-                    color: controller.hexToColor(controller.borderColor), width: 1.5),
-                borderRadius: BorderRadius.circular(controller.cornerRadius),
-                boxShadow: controller.enableGlow
-                    ? [
-                  BoxShadow(
-                    color: controller
-                        .hexToColor(controller.glowColor)
-                        .withValues(alpha: 0.6),
-                    blurRadius: 10.0,
-                    spreadRadius: 2.0,
-                    offset: const Offset(0, 0),
-                  ),
-                ]
-                    : null,
-              ),
-              child: Text(
-                controller.labelController.text.isEmpty
-                    ? 'Text'
-                    : controller.labelController.text,
-                style: TextStyle(
-                  color: controller.isTapped
-                      ? controller.hexToColor(controller.buttonTextColorOnTap)
-                      : controller.hexToColor(controller.buttonTextColor),
-                  fontSize: controller.fontSize,
-                  fontWeight: currentWeight,
-                  fontFamily: currentFontFamily,
-                  letterSpacing: 8,
-                ),
-              ),
-            ),
-          ),
+          child: previewWidget,
         ),
       ],
     );

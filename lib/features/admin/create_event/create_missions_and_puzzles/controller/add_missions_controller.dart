@@ -39,8 +39,6 @@ class AddMissionsController {
       mode: missionMode,
       addMissionsController: this,
       missionDone: (bool isDone) {
-        print('=== MISSION CALLBACK RECEIVED ===');
-        // Find the index of this mission and update its done status
         int missionIndex = int.parse(missionAdded.id);
         isMissionDone[missionIndex] = isDone;
         print (isMissionDone[missionIndex]) ;

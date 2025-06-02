@@ -21,8 +21,6 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
-    print("didChangeDependencies called - nameController texttttttttttttttttttttttttttttttttttttttttttttttttttt");
-
     super.didChangeDependencies();
     if (!_initialized) {
       final args =
@@ -66,7 +64,6 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                     itemCount: _addMissionsController.event.nrMissions + 1,
                     itemBuilder: (context, index) {
                       if (index < _addMissionsController.event.nrMissions) {
-                        print('Building MyListComponent for index $index, isDone: ${_addMissionsController.isMissionDone[index]}');
                         return MyListComponent(
                           index: index,
                           type: "Misiunea",

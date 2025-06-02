@@ -5,6 +5,7 @@ import 'package:teamxperience/widgets/my_dropdown.dart';
 import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';
+import '../../../../../../../utils/component_conversion/component_to_widget.dart';
 import '../../../controller/add_missions_controller.dart';
 import 'code_component_controller.dart';
 import '../../../../../../../widgets/slider_widget.dart';
@@ -66,6 +67,34 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
   }
 
   Widget _buildPreviewSection() {
+    if (!controller.canShowPreview) {
+      return const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Previzualizare',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: MyColors.blackColor,
+            ),
+          ),
+          SizedBox(height: 15),
+          Center(
+            child: Text('Select number of characters, input type and colors of the fields'),
+          ),
+        ],
+      );
+    }
+
+    // Create a temporary Component for preview
+    final previewComponent = Component();
+    controller.updateComponent(previewComponent);
+
+    // Use ComponentToWidget to convert to widget
+    final previewWidget = ComponentToWidget().convert(previewComponent);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -79,11 +108,7 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
           ),
         ),
         const SizedBox(height: 15),
-        Center(
-          child: controller.canShowPreview
-              ? controller.buildCodePreview(context)
-              : const Text('Select number of characters and input type to preview'),
-        ),
+        Center(child: previewWidget),
       ],
     );
   }

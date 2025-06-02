@@ -10,7 +10,7 @@ import 'package:teamxperience/widgets/slider_widget.dart';
 import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';
-import '../../../controller/add_missions_controller.dart';
+import '../../../../../../../utils/component_conversion/component_to_widget.dart';
 import 'create_text_controller.dart';
 
 class TextComponentFieldsWidget extends StatefulWidget {
@@ -87,12 +87,11 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
   }
 
   Widget _buildPreviewSection() {
-    final currentColor = controller.hexToColor(controller.textColor);
-    final currentSize = controller.fontSize;
-    final currentWeight = controller.fontWeight != null
-        ? weightMap[controller.fontWeight] ?? FontWeight.w400
-        : FontWeight.w400;
-    final currentFontFamily = controller.fontFamily ?? 'Poppins';
+
+
+    final previewComponent = Component();
+    controller.updateComponentFields(previewComponent);
+    final previewWidget = ComponentToWidget().convert(previewComponent);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,22 +113,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
             borderRadius: BorderRadius.circular(15),
           ),
           padding: const EdgeInsets.all(12),
-          child: Center(
-            child: Text(
-              controller.textController.text.isEmpty
-                  ? 'Textul tau aici'
-                  : controller.textController.text,
-              style: TextStyle(
-                color: currentColor,
-                fontSize: currentSize,
-                fontWeight: currentWeight,
-                fontFamily: currentFontFamily,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: null,
-              overflow: TextOverflow.visible,
-            ),
-          ),
+          child: previewWidget,
         ),
       ],
     );

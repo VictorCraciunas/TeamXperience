@@ -3,6 +3,7 @@ import '../../../../../../../constants/colors.dart';
 import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';
+import '../../../../../../../utils/component_conversion/component_to_widget.dart';
 import '../../../../../../../widgets/my_button.dart';
 import '../../../../../../../widgets/slider_widget.dart';
 import '../../../../common_widgets/upload_image.dart';
@@ -78,19 +79,16 @@ class _ImageComponentFieldsWidgetState extends State<ImageComponentFieldsWidget>
       return const SizedBox.shrink();
     }
 
+    // Create a temporary Component for preview
+    final previewComponent = Component();
+    controller.updateComponentFields(previewComponent);
+
+    // Use ComponentToWidget to convert to widget
+    final previewWidget = ComponentToWidget().convert(previewComponent);
+
     return Padding(
       padding: const EdgeInsets.all(10),
-      child: Container(
-        height: controller.height,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(controller.radius),
-          image: DecorationImage(
-            image: FileImage(controller.image!),
-            fit: BoxFit.cover, // fill the entire box so you really see the corners
-          ),
-        ),
-      ),
+      child: previewWidget,
     );
   }
 
