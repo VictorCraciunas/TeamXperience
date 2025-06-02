@@ -2,10 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:teamxperience/backend/storage/storage_images.dart';
+import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/model/event.dart';
 
 import '../../../../../enums/event_type.dart';
+import '../../../../../model/mission.dart';
 import '../service/create_event_service.dart';
 
 class CreateEventController {
@@ -27,12 +30,42 @@ class CreateEventController {
   // Date fields
   DateTime? dateEvent;
   DateTime? deadlineEnrollment;
-  DateTime? dateStartEnrollemnt;
+  DateTime? dateStartEnrollement;
 
   // EventType field
   EventType? selectedType;
 
-  Future<void> createEvent(BuildContext context) async {
+  Event? originalEvent;
+
+  CreateEventController(Event? event) {
+    if (event != null) {
+      originalEvent = event;
+      nameController.text = event.name!;
+      locationController.text = event.location ?? "";
+      descriptionController.text = event.description ?? "";
+      startCodeController.text = event.startCode ?? "";
+      selectedType = event.type;
+      dateEvent = event.dateEvent;
+      deadlineEnrollment = event.dateDeadlineEnrollment;
+      dateStartEnrollement = event.dateStartEnrollment;
+      if (dateEvent != null) {
+        dateEventController.text = DateFormat('yyyy-MM-dd HH:mm').format(dateEvent!);
+      }
+      if (deadlineEnrollment != null) {
+        dateDeadlineRegistrationController.text = DateFormat('yyyy-MM-dd HH:mm').format(deadlineEnrollment!);
+      }
+      if (dateStartEnrollement != null) {
+        dateStartRegistrationController.text = DateFormat('yyyy-MM-dd HH:mm').format(dateStartEnrollement!);
+      }
+      // Assuming image paths are local for simplicity; adjust if URLs
+      if (event.landingImageUrl != null) landingImageFile = File(event.landingImageUrl!);
+      if (event.taskBackgroundImageUrl != null) taskBackgroundImageFile = File(event.taskBackgroundImageUrl!);
+    }
+  }
+
+
+
+  Future<void> createEvent(BuildContext context, String mode) async {
     if (formKey.currentState!.validate()) {
       if (landingImageFile == null || taskBackgroundImageFile == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -45,38 +78,60 @@ class CreateEventController {
         return;
       }
 
-      try {
-        String eventId = await createEventService.getEventId();
+      if (mode == "create" || mode == "blueprint"){
+        try {
+          String eventId = await createEventService.getEventId();
 
-        Event event = await createEventService.createEvent(
-          eventId,
-          nameController.text,
-          dateEvent!,
-          deadlineEnrollment!,
-          dateStartEnrollemnt!,
-          locationController.text,
-          descriptionController.text,
-          int.parse(nrMissionsController.text),
-          selectedType!,
-          landingImageFile!.path,
-          taskBackgroundImageFile!.path,
-          // 'test',
-          // 'test',
-          startCodeController.text,
-        );
-        if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Event created successfully')),
-        );
-        // Clear form after success
-        // formKey.currentState!.reset();
-        Navigator.pushNamed(context, '/add_missions', arguments: event);
-      } catch (e) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Failed to create event: $e')));
+          Event event =  createEventService.createEvent(
+            eventId,
+            nameController.text,
+            dateEvent!,
+            deadlineEnrollment!,
+            dateStartEnrollement!,
+            locationController.text,
+            descriptionController.text,
+           // int.parse(nrMissionsController.text),
+            selectedType!,
+            landingImageFile!.path,
+            taskBackgroundImageFile!.path,
+            // 'test',
+            // 'test',
+            startCodeController.text,
+          );
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Event created successfully')),
+          );
+          // initialize with one mission
+          event.nrMissions = 1;
+          event.missions.add(Mission(id: "0"));
+          Navigator.pushNamed(context, Routes.addMissions, arguments: {'event': event, 'mode': mode},);
+        } catch (e) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Failed to create event: $e')));
+        }
       }
+      else{
+            updateCurrentOriginalEvent();
+            Navigator.pushNamed(context, Routes.addMissions, arguments: {'event': originalEvent, 'mode': mode},);
+
+      }
+
     }
+  }
+
+  void updateCurrentOriginalEvent(){
+    originalEvent!.name = nameController.text;
+    originalEvent!.location = locationController.text;
+    originalEvent!.description = descriptionController.text;
+    originalEvent!.startCode = startCodeController.text;
+    originalEvent!.type = selectedType!;
+    originalEvent!.dateEvent = dateEvent!;
+    originalEvent!.dateDeadlineEnrollment = deadlineEnrollment!;
+    originalEvent!.dateStartEnrollment = dateStartEnrollement!;
+    originalEvent!.landingImageUrl = landingImageFile!.path;
+    originalEvent!.taskBackgroundImageUrl = taskBackgroundImageFile!.path;
   }
 
   Future<DateTime?> selectDate(BuildContext context) async {

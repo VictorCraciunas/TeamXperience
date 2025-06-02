@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/model/component.dart';
+import 'package:teamxperience/model/puzzle.dart';
 
 import '../../../../../../constants/colors.dart';
 import '../../../../../../constants/padding.dart';
@@ -12,19 +13,17 @@ import 'create_image/create_image_component.dart';
 import 'create_text/create_text_component.dart';
 
 class AddComponentWidget extends StatefulWidget {
-  final AddMissionsController addMissionsController;
-  final int missionSelected;
-  final int puzzleSelected;
+  final Puzzle puzzle;
   final Function(Widget) refreshUI;// callback to notify parent
-  final Component? componentToEdit;
+  final Component component;
+  final bool edit;
 
    const AddComponentWidget({
     super.key,
-    required this.addMissionsController,
-    required this.missionSelected,
-    required this.puzzleSelected,
+     required this.puzzle,
     required this.refreshUI,
-    this.componentToEdit
+    required this.component,
+     required this.edit
   });
 
   @override
@@ -36,8 +35,8 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (widget.componentToEdit != null) {
-      type = widget.componentToEdit!.type;
+    if (widget.edit) {
+      type = widget.component.type;
     }
   }
 
@@ -99,40 +98,37 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
               ),
               if (type == ComponentType.text) ...[
                 TextComponentFieldsWidget(
-                  addMissionsController: widget.addMissionsController,
-                  missionSelected: widget.missionSelected,
-                  puzzleSelected: widget.puzzleSelected,
                   refreshUI: widget.refreshUI,
-                  componentToEdit:widget.componentToEdit,
+                  component:widget.component,
+                  edit: widget.edit,
+                  puzzle: widget.puzzle,
                 ),
               ],
               if (type == ComponentType.image) ...[
                 ImageComponentFieldsWidget(
-                  addMissionsController: widget.addMissionsController,
-                  missionSelected: widget.missionSelected,
-                  puzzleSelected: widget.puzzleSelected,
                   refreshUI: widget.refreshUI,
-                  componentToEdit:widget.componentToEdit,
+                  component:widget.component,
+                  edit: widget.edit,
+                  puzzle: widget.puzzle,
+
 
                 ),
               ],
               if (type == ComponentType.button) ...[
                 ButtonComponentFieldsWidget(
-                  addMissionsController: widget.addMissionsController,
-                  missionSelected: widget.missionSelected,
-                  puzzleSelected: widget.puzzleSelected,
                   refreshUI: widget.refreshUI,
-                  componentToEdit: widget.componentToEdit,
+                  component: widget.component,
+                  edit: widget.edit,
+                  puzzle: widget.puzzle,
+
                 ),
               ],
               if (type == ComponentType.code) ...[
                 CodeComponentFieldsWidget(
-                  addMissionsController: widget.addMissionsController,
-                  missionSelected: widget.missionSelected,
-                  puzzleSelected: widget.puzzleSelected,
                   refreshUI: widget.refreshUI,
-                  componentToEdit:widget.componentToEdit,
-
+                  component:widget.component,
+                  edit: widget.edit,
+                  puzzle: widget.puzzle,
                 ),
               ],
               const SizedBox(height: 20),

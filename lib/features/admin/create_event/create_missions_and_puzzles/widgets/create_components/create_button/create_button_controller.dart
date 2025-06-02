@@ -1,34 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/model/component.dart';
-
 import 'package:teamxperience/utils/color_conversion.dart';
-
 import '../../../../../../../constants/colors.dart';
 import '../../../../../../../enums/component-type.dart';
+import '../../../../../../../model/puzzle.dart';
 import '../../../../../../../utils/component_conversion/component_to_widget.dart';
 import '../../../../../../../widgets/color_picker_dialog.dart';
 import '../../../../../../../widgets/my_text_field.dart';
-import '../../../controller/add_missions_controller.dart';
 
 class ButtonComponentController {
+  // UI State
   bool isTapped = false;
-  String buttonColor = '#FFFFFF'; // Default white
-  String buttonColorOnTap = '#CCCCCC'; // Default gray
-  String buttonTextColor = '#000000'; // Default black
-  String buttonTextColorOnTap = '#FFFFFF'; // Default white
-  String borderColor = '#000000'; // Default black
+
+  // Button Properties
+  String buttonColor = '#FFFFFF';
+  String buttonColorOnTap = '#CCCCCC';
+  String buttonTextColor = '#000000';
+  String buttonTextColorOnTap = '#FFFFFF';
+  String borderColor = '#000000';
   String glowColor = '#000000';
   String? fontWeight;
   String? fontFamily;
   double cornerRadius = 15.0;
   bool enableFlicker = false;
   bool enableGlow = false;
-  double fontSize =15;
+  double fontSize = 15;
 
+  // Controllers
   final TextEditingController labelController = TextEditingController();
   final TextEditingController controller = TextEditingController();
-
   final ColorConversion colorConversion = ColorConversion();
+  final ComponentToWidget componentToWidget = ComponentToWidget();
 
   // Convert hex string to Color
   Color hexToColor(String? hex) {
@@ -40,6 +42,7 @@ class ButtonComponentController {
     return colorConversion.colorToHex(color);
   }
 
+  // Build color picker field widget
   Widget buildColorPickerField({
     required String title,
     required String colorHex,
@@ -47,6 +50,7 @@ class ButtonComponentController {
     required BuildContext context,
   }) {
     Color currentColor = hexToColor(colorHex);
+
     return MyTextField(
       hinttextWeight: FontWeight.w500,
       hintTextSize: 15,
@@ -75,40 +79,80 @@ class ButtonComponentController {
       ),
     );
   }
-  // Save the component
-  void saveComponent(
-      BuildContext context,
-      int missionSelected,
-      int puzzleSelected,
-      AddMissionsController addMissionsController,
-      Function(Widget) refreshUI) {
+
+  // Validation method
+  String? validateComponent() {
     if (labelController.text.isEmpty) {
+      return 'Please enter a button label';
+    }
+    return null;
+  }
+
+  // Update component with current field values
+  void updateComponentFields(Component component) {
+    component.type = ComponentType.button;
+    component.buttonLabel = labelController.text;
+    component.buttonColor = buttonColor;
+    component.buttonColorOnTap = buttonColorOnTap;
+    component.buttonTextColor = buttonTextColor;
+    component.buttonTextColorOnTap = buttonTextColorOnTap;
+    component.borderColor = borderColor;
+    component.glowColor = glowColor;
+    component.fontWeight = fontWeight;
+    component.fontFamily = fontFamily;
+    component.cornerRadius = cornerRadius;
+    component.enableFlicker = enableFlicker;
+    component.enableGlow = enableGlow;
+    component.fontSize = fontSize;
+  }
+
+  // Save component (handles both create and edit modes)
+  void saveComponent({
+    required BuildContext context,
+    required Puzzle puzzle,
+    required Component component,
+    required Function(Widget) refreshUI,
+    required bool isEditMode,
+  }) {
+    // Validate first
+    final validationError = validateComponent();
+    if (validationError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a button label')),
+        SnackBar(content: Text(validationError)),
       );
       return;
     }
 
-    Component component = addMissionsController.addComponent(
-      missionSelected,
-      puzzleSelected,
-      ComponentType.button,
-      buttonLabel: labelController.text,
-      buttonColor: buttonColor,
-      buttonColorOnTap: buttonColorOnTap,
-      buttonTextColor: buttonTextColor,
-      buttonTextColorOnTap: buttonTextColorOnTap,
-      borderColor: borderColor,
-      fontWeight: fontWeight,
-      fontFamily: fontFamily,
-      cornerRadius: cornerRadius,
-      enableFlicker: enableFlicker,
-      enableGlow: enableGlow,
-      glowColor: glowColor,
-      fontSize: fontSize,
-    );
-    Widget componentWidget = ComponentToWidget().convert(component);
+    // Update component fields
+    updateComponentFields(component);
+
+    // Add to puzzle if it's create mode (not edit mode)
+    if (!isEditMode) {
+      puzzle.addComponent(component);
+    }
+
+    // Convert to widget and refresh UI
+    final componentWidget = componentToWidget.convert(component);
     refreshUI(componentWidget);
     Navigator.pop(context);
+  }
+
+  // Initialize controller with existing component data (for edit mode)
+  void initializeFromComponent(Component component) {
+    if (component.type == ComponentType.button) {
+      labelController.text = component.buttonLabel ?? '';
+      buttonColor = component.buttonColor ?? '#FFFFFF';
+      buttonColorOnTap = component.buttonColorOnTap ?? '#CCCCCC';
+      buttonTextColor = component.buttonTextColor ?? '#000000';
+      buttonTextColorOnTap = component.buttonTextColorOnTap ?? '#FFFFFF';
+      borderColor = component.borderColor ?? '#000000';
+      glowColor = component.glowColor ?? '#000000';
+      fontWeight = component.fontWeight;
+      fontFamily = component.fontFamily;
+      cornerRadius = component.cornerRadius ?? 15.0;
+      enableFlicker = component.enableFlicker ?? false;
+      enableGlow = component.enableGlow ?? false;
+      fontSize = component.fontSize ?? 15;
+    }
   }
 }

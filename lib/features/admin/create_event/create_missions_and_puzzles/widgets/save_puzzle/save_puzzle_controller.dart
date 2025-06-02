@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/controller/add_missions_controller.dart';
+import 'package:teamxperience/model/puzzle.dart';
 
 import '../../../../../../enums/puzzle_type.dart';
 
@@ -8,20 +8,17 @@ class SavePuzzleController{
   final TextEditingController textColorController = TextEditingController();
   final TextEditingController indiciuController = TextEditingController();
 
-  void savePuzzle(AddMissionsController addMissionsController, int nrMission, int selectedPuzzle, BuildContext context){
+  void savePuzzle(Puzzle puzzle,BuildContext context){
     if (type != null) {
-      addMissionsController.setPuzzleType(
-        nrMission,
-        selectedPuzzle,
-        type!,
-        type == PuzzleType.code ? textColorController.text : null,
-        type == PuzzleType.geolocation ? textColorController.text : null,
-        indiciuController.text
-      );
+      puzzle.type = type;
+      type == PuzzleType.code ? puzzle.code = textColorController.text : null;
+      type == PuzzleType.geolocation ? puzzle.coordinates = textColorController.text : null;
+      puzzle.indiciu = indiciuController.text;
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Puzzle salvat cu succes')),
       );
-      Navigator.pop(context);
+
     }
   }
 }

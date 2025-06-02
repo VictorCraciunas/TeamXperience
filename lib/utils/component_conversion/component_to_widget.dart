@@ -10,7 +10,7 @@ import 'image_component_widget.dart';
 
 class ComponentToWidget {
   Widget convert(Component component) {
-    switch (component.type) {
+    switch (component.type!) {
       case ComponentType.text:
         return Center(
           child: TextComponentWidget(

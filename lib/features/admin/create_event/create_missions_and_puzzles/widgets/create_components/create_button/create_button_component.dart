@@ -5,33 +5,32 @@ import 'package:teamxperience/widgets/my_text_field.dart';
 import 'package:teamxperience/widgets/slider_widget.dart';
 import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
-import '../../../../../../../utils/component_conversion/component_to_widget.dart';
+import '../../../../../../../model/puzzle.dart';
 import '../../../../../../../widgets/my_dropdown.dart';
 import '../../../controller/add_missions_controller.dart';
 import 'create_button_controller.dart';
 
 class ButtonComponentFieldsWidget extends StatefulWidget {
-  final AddMissionsController addMissionsController;
-  final int missionSelected;
-  final int puzzleSelected;
   final Function(Widget) refreshUI;
-  final Component? componentToEdit;
+  final Component component;
+  final bool edit;
+  final Puzzle puzzle;
 
   const ButtonComponentFieldsWidget({
     super.key,
-    required this.addMissionsController,
-    required this.missionSelected,
-    required this.puzzleSelected,
     required this.refreshUI,
-    this.componentToEdit,
+    required this.component,
+    required this.edit,
+    required this.puzzle,
   });
 
   @override
-  ButtonComponentFieldsWidgetState createState() => ButtonComponentFieldsWidgetState();
+  State<ButtonComponentFieldsWidget> createState() => _ButtonComponentFieldsWidgetState();
 }
 
-class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget> {
+class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget> {
   late final ButtonComponentController controller;
+
   final weightMap = <String, FontWeight>{
     'Thin (100)': FontWeight.w100,
     'Light (300)': FontWeight.w300,
@@ -45,25 +44,46 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
   void initState() {
     super.initState();
     controller = ButtonComponentController();
-    if (widget.componentToEdit != null && widget.componentToEdit!.type == ComponentType.button) {
-      controller.labelController.text = widget.componentToEdit!.buttonLabel ?? '';
-      controller.buttonColor = widget.componentToEdit!.buttonColor ?? '#FFFFFF';
-      controller.buttonColorOnTap = widget.componentToEdit!.buttonColorOnTap ?? '#CCCCCC';
-      controller.buttonTextColor = widget.componentToEdit!.buttonTextColor ?? '#000000';
-      controller.buttonTextColorOnTap = widget.componentToEdit!.buttonTextColorOnTap ?? '#FFFFFF';
-      controller.borderColor = widget.componentToEdit!.borderColor ?? '#000000';
-      controller.glowColor = widget.componentToEdit!.glowColor ?? '#000000';
-      controller.fontWeight = widget.componentToEdit!.fontWeight;
-      controller.fontFamily = widget.componentToEdit!.fontFamily;
-      controller.cornerRadius = widget.componentToEdit!.cornerRadius ?? 15.0;
-      controller.enableFlicker = widget.componentToEdit!.enableFlicker ?? false;
-      controller.enableGlow = widget.componentToEdit!.enableGlow ?? false;
-      controller.fontSize = widget.componentToEdit!.fontSize ?? 15;
+
+    // Initialize controller with existing data if in edit mode
+    if (widget.edit && widget.component.type == ComponentType.button) {
+      controller.initializeFromComponent(widget.component);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        _buildPreviewSection(),
+        const SizedBox(height: 30),
+        _buildButtonLabelField(),
+        const SizedBox(height: 20),
+        _buildFontFamilyDropdown(),
+        const SizedBox(height: 20),
+        _buildFontWeightDropdown(),
+        const SizedBox(height: 20),
+        _buildColorFields(),
+        const SizedBox(height: 20),
+        _buildCornerRadiusSlider(),
+        const SizedBox(height: 20),
+        _buildFlickerCheckbox(),
+        const SizedBox(height: 20),
+        _buildGlowCheckbox(),
+        const SizedBox(height: 20),
+        _buildGlowColorField(),
+        const SizedBox(height: 20),
+        _buildFontSizeSlider(),
+        const SizedBox(height: 20),
+        _buildSaveButton(),
+        const SizedBox(height: 60),
+      ],
+    );
+  }
+
+  Widget _buildPreviewSection() {
     final currentWeight = controller.fontWeight != null
         ? weightMap[controller.fontWeight] ?? FontWeight.w400
         : FontWeight.w400;
@@ -72,8 +92,6 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 20),
-        // Preview Label
         const Text(
           'Previzualizare',
           style: TextStyle(
@@ -83,8 +101,6 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
           ),
         ),
         const SizedBox(height: 15),
-
-        // Preview Section
         Container(
           width: double.infinity,
           height: 100,
@@ -100,7 +116,7 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
             onPointerUp: (_) => setState(() => controller.isTapped = false),
             onPointerCancel: (_) => setState(() => controller.isTapped = false),
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 5.0,horizontal: 30),
+              padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 30),
               decoration: BoxDecoration(
                 color: controller.isTapped
                     ? controller.hexToColor(controller.buttonColorOnTap)
@@ -138,106 +154,102 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
             ),
           ),
         ),
-        const SizedBox(height: 30),
+      ],
+    );
+  }
 
-        // Button Label Input
-        MyTextField(
-          controller: controller.labelController,
-          labelText: 'Text',
-          borderColor: MyColors.lightBlue,
-          borderWidth: 1.5,
-          radius: 20,
-          validator: (value) =>
-          value == null || value.isEmpty ? 'Introdu un text la buton' : null,
-        ),
-        const SizedBox(height: 20),
+  Widget _buildButtonLabelField() {
+    return MyTextField(
+      controller: controller.labelController,
+      labelText: 'Text',
+      borderColor: MyColors.lightBlue,
+      borderWidth: 1.5,
+      radius: 20,
+      validator: (value) =>
+      value == null || value.isEmpty ? 'Introdu un text la buton' : null,
+    );
+  }
 
-        // ───── Font Family Dropdown ─────
-        MyDropdownField<String>(
-          labelText: 'Tip Font',
-          items: const [
-            DropdownMenuItem(
-              value: 'Poppins',
-              child: Text(
-                'Poppins',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 14,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            DropdownMenuItem(
-              value: 'Monospace',
-              child: Text(
-                'Monospace',
-                style: TextStyle(
-                  fontFamily: 'Monospace',
-                  fontSize: 14,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          ],
-          value: controller.fontFamily,
-          onChanged: (value) {
-            setState(() {
-              controller.fontFamily = value;
-            });
-          },
-          validator: (value) => value == null ? 'Selectează tipul de font' : null,
-          borderColor: MyColors.lightBlue,
-          borderWidth: 1.5,
-          radius: 20,
-          hint: const Text(
-            'Selectează tipul de font',
+  Widget _buildFontFamilyDropdown() {
+    return MyDropdownField<String>(
+      labelText: 'Tip Font',
+      items: const [
+        DropdownMenuItem(
+          value: 'Poppins',
+          child: Text(
+            'Poppins',
             style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14,
-              color: MyColors.greyText,
+              color: Colors.black,
             ),
           ),
         ),
-        const SizedBox(height: 20),
-
-        // ───── Font Weight Dropdown ─────
-        MyDropdownField<String>(
-          labelText: 'Grosime Font',
-          items: weightMap.keys
-              .map((label) => DropdownMenuItem(
-            value: label,
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 14,
-                color: Colors.black,
-              ),
-            ),
-          ))
-              .toList(),
-          value: controller.fontWeight,
-          onChanged: (value) {
-            setState(() {
-              controller.fontWeight = value;
-            });
-          },
-          validator: (value) => value == null ? 'Selectează grosimea fontului' : null,
-          borderColor: MyColors.lightBlue,
-          borderWidth: 1.5,
-          radius: 20,
-          hint: const Text(
-            'Selectează grosimea fontului',
+        DropdownMenuItem(
+          value: 'Monospace',
+          child: Text(
+            'Monospace',
             style: TextStyle(
-              fontFamily: 'Poppins',
+              fontFamily: 'Monospace',
               fontSize: 14,
-              color: MyColors.greyText,
+              color: Colors.black,
             ),
           ),
         ),
-        const SizedBox(height: 20),
+      ],
+      value: controller.fontFamily,
+      onChanged: (value) => setState(() => controller.fontFamily = value),
+      validator: (value) => value == null ? 'Selectează tipul de font' : null,
+      borderColor: MyColors.lightBlue,
+      borderWidth: 1.5,
+      radius: 20,
+      hint: const Text(
+        'Selectează tipul de font',
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 14,
+          color: MyColors.greyText,
+        ),
+      ),
+    );
+  }
 
-        // Color Pickers
+  Widget _buildFontWeightDropdown() {
+    return MyDropdownField<String>(
+      labelText: 'Grosime Font',
+      items: weightMap.keys
+          .map((label) => DropdownMenuItem(
+        value: label,
+        child: Text(
+          label,
+          style: const TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 14,
+            color: Colors.black,
+          ),
+        ),
+      ))
+          .toList(),
+      value: controller.fontWeight,
+      onChanged: (value) => setState(() => controller.fontWeight = value),
+      validator: (value) => value == null ? 'Selectează grosimea fontului' : null,
+      borderColor: MyColors.lightBlue,
+      borderWidth: 1.5,
+      radius: 20,
+      hint: const Text(
+        'Selectează grosimea fontului',
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 14,
+          color: MyColors.greyText,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildColorFields() {
+    return Column(
+      children: [
         controller.buildColorPickerField(
           title: 'Culoare fundal',
           colorHex: controller.buttonColor,
@@ -245,7 +257,6 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
           context: context,
         ),
         const SizedBox(height: 20),
-
         controller.buildColorPickerField(
           title: 'Culoare fundal apăsat',
           colorHex: controller.buttonColorOnTap,
@@ -253,7 +264,6 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
           context: context,
         ),
         const SizedBox(height: 20),
-
         controller.buildColorPickerField(
           title: 'Culoare text',
           colorHex: controller.buttonTextColor,
@@ -261,7 +271,6 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
           context: context,
         ),
         const SizedBox(height: 20),
-
         controller.buildColorPickerField(
           title: 'Culoare text apăsat',
           colorHex: controller.buttonTextColorOnTap,
@@ -269,163 +278,132 @@ class ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget
           context: context,
         ),
         const SizedBox(height: 20),
-
         controller.buildColorPickerField(
           title: 'Culoare chenar',
           colorHex: controller.borderColor,
           onColorChanged: (color) => setState(() => controller.borderColor = color),
           context: context,
         ),
-        const SizedBox(height: 20),
+      ],
+    );
+  }
 
-        // ───── Corner Radius Slider ─────
-        SliderWidget(
-          title: 'Rotunjire chenar',
-          min: 0,
-          max: 50,
-          divisions: 50,
-          value: controller.cornerRadius,
-          label: controller.cornerRadius.toStringAsFixed(0),
-          onChanged: (value) {
-            setState(() {
-              controller.cornerRadius = value;
-            });
-          },
-        ),
-        const SizedBox(height: 20),
+  Widget _buildCornerRadiusSlider() {
+    return SliderWidget(
+      title: 'Rotunjire chenar',
+      min: 0,
+      max: 50,
+      divisions: 50,
+      value: controller.cornerRadius,
+      label: controller.cornerRadius.toStringAsFixed(0),
+      onChanged: (value) => setState(() => controller.cornerRadius = value),
+    );
+  }
 
-        // ───── Flicker Animation Checkbox ─────
-        Row(
-          children: [
-            Transform.scale(
-              scale: 1.5,
-              child: Checkbox(
-                value: controller.enableFlicker,
-                activeColor: MyColors.lightBlue,
-                onChanged: (value) {
-                  setState(() {
-                    controller.enableFlicker = value ?? false;
-                  });
-                },
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                side: const BorderSide(
-                  width: 1.5,
-                  color: MyColors.lightBlue,
-                ),
-              ),
+  Widget _buildFlickerCheckbox() {
+    return Row(
+      children: [
+        Transform.scale(
+          scale: 1.5,
+          child: Checkbox(
+            value: controller.enableFlicker,
+            activeColor: MyColors.lightBlue,
+            onChanged: (value) => setState(() => controller.enableFlicker = value ?? false),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(6),
             ),
-            const SizedBox(width: 16),
-            const Text(
-              'Animatie Flicker',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
+            side: const BorderSide(
+              width: 1.5,
+              color: MyColors.lightBlue,
             ),
-          ],
-        ),
-        const SizedBox(height: 20),
-
-        // ───── Glow Button Checkbox ─────
-        Row(
-          children: [
-            Transform.scale(
-              scale: 1.5,
-              child: Checkbox(
-                value: controller.enableGlow,
-                onChanged: (v) => setState(() => controller.enableGlow = v!),
-                activeColor: MyColors.lightBlue,
-                checkColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                side: const BorderSide(
-                  width: 1.5,
-                  color: MyColors.lightBlue,
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            const Text(
-              'Glow buton',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-
-        controller.buildColorPickerField(
-          title: 'Culoare Glow',
-          colorHex: controller.glowColor,
-          onColorChanged: (color) => setState(() => controller.glowColor = color),
-          context: context,
-        ),
-        const SizedBox(height: 20),
-        SliderWidget(
-          title: 'Dimensiune Text',
-          min: 8,
-          max: 72,
-          divisions: 64,
-          value: controller.fontSize,
-          label: controller.fontSize.toStringAsFixed(0),
-          onChanged: (value) => setState(() => controller.fontSize = value),
-        ),
-        const SizedBox(height: 20),
-
-
-        // Save Button
-        Center(
-          child: MyButton(
-            buttonText: 'Salveaza componenta',
-            textColor: Colors.white,
-            buttonOnTap: () {
-              if (widget.componentToEdit != null) {
-                // Update existing component
-                widget.componentToEdit!.buttonLabel = controller.labelController.text;
-                widget.componentToEdit!.buttonColor = controller.buttonColor;
-                widget.componentToEdit!.buttonColorOnTap = controller.buttonColorOnTap;
-                widget.componentToEdit!.buttonTextColor = controller.buttonTextColor;
-                widget.componentToEdit!.buttonTextColorOnTap = controller.buttonTextColorOnTap;
-                widget.componentToEdit!.borderColor = controller.borderColor;
-                widget.componentToEdit!.fontWeight = controller.fontWeight;
-                widget.componentToEdit!.fontFamily = controller.fontFamily;
-                widget.componentToEdit!.cornerRadius = controller.cornerRadius;
-                widget.componentToEdit!.enableFlicker = controller.enableFlicker;
-                widget.componentToEdit!.enableGlow = controller.enableGlow;
-                widget.componentToEdit!.glowColor = controller.glowColor;
-                Widget componentWidget = ComponentToWidget().convert(widget.componentToEdit!);
-                widget.refreshUI(componentWidget);
-                Navigator.pop(context);
-
-              } else {
-                // Create new component
-                controller.saveComponent(
-                  context,
-                  widget.missionSelected,
-                  widget.puzzleSelected,
-                  widget.addMissionsController,
-                  widget.refreshUI,
-                );
-              }
-            },
-            withBorder: false,
-            buttonColor: MyColors.lightBlue,
-            fontWeight: FontWeight.w500,
-            buttonTextSize: 14,
-            buttonWidth: 270,
           ),
         ),
-        const SizedBox(height: 60),
-        
-
+        const SizedBox(width: 16),
+        const Text(
+          'Animatie Flicker',
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ],
+    );
+  }
+
+  Widget _buildGlowCheckbox() {
+    return Row(
+      children: [
+        Transform.scale(
+          scale: 1.5,
+          child: Checkbox(
+            value: controller.enableGlow,
+            onChanged: (v) => setState(() => controller.enableGlow = v!),
+            activeColor: MyColors.lightBlue,
+            checkColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(6),
+            ),
+            side: const BorderSide(
+              width: 1.5,
+              color: MyColors.lightBlue,
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        const Text(
+          'Glow buton',
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGlowColorField() {
+    return controller.buildColorPickerField(
+      title: 'Culoare Glow',
+      colorHex: controller.glowColor,
+      onColorChanged: (color) => setState(() => controller.glowColor = color),
+      context: context,
+    );
+  }
+
+  Widget _buildFontSizeSlider() {
+    return SliderWidget(
+      title: 'Dimensiune Text',
+      min: 8,
+      max: 72,
+      divisions: 64,
+      value: controller.fontSize,
+      label: controller.fontSize.toStringAsFixed(0),
+      onChanged: (value) => setState(() => controller.fontSize = value),
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return Center(
+      child: MyButton(
+        buttonText: 'Salvează componenta',
+        textColor: Colors.white,
+        buttonOnTap: () {
+          controller.saveComponent(
+            context: context,
+            puzzle: widget.puzzle,
+            component: widget.component,
+            refreshUI: widget.refreshUI,
+            isEditMode: widget.edit,
+          );
+        },
+        withBorder: false,
+        buttonColor: MyColors.lightBlue,
+        fontWeight: FontWeight.w500,
+        buttonTextSize: 14,
+        buttonWidth: 270,
+      ),
     );
   }
 }

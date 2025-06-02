@@ -88,44 +88,53 @@ class MyDropdownField<T> extends StatelessWidget {
           dropdownColor: Colors.white,
           elevation: 4,
           value: value,
-          items:
-              items.asMap().entries.map((e) {
-                final idx = e.key;
-                final item = e.value;
-                return DropdownMenuItem<T>(
-                  value: item.value,
-                  alignment: Alignment.center,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      border: idx < items.length - 1
-                          ? const Border(
-                        bottom: BorderSide(
-                          color: Color(0xFFE7F7F7), // divider color
-                          width: 1,                  // thickness
-                        ),
-                      )
-                          : null,
+          // Use the original items directly, just apply custom styling to the dropdown menu
+          items: items.asMap().entries.map((e) {
+            final idx = e.key;
+            final item = e.value;
+
+            return DropdownMenuItem<T>(
+              value: item.value, // Keep the original value
+              alignment: Alignment.center,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  border: idx < items.length - 1
+                      ? const Border(
+                    bottom: BorderSide(
+                      color: Color(0xFFE7F7F7),
+                      width: 1,
                     ),
-                    child: Center(
-                      child: Text(
-                        (item.child as Text).data!,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontFamily: 'Poppins',
-                          color: MyColors.blackColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
+                  )
+                      : null,
+                ),
+                child: Center(
+                  child: _getItemText(item.child),
+                ),
+              ),
+            );
+          }).toList(),
           onChanged: onChanged,
           hint: hint,
           validator: validator,
+          // Style the selected value display
+          selectedItemBuilder: (BuildContext context) {
+            return items.map<Widget>((DropdownMenuItem<T> item) {
+              return Container(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  _getItemTextString(item.child),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins',
+                    color: MyColors.blackColor,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              );
+            }).toList();
+          },
           style: const TextStyle(
             fontSize: 14,
             fontFamily: 'Poppins',
@@ -135,17 +144,15 @@ class MyDropdownField<T> extends StatelessWidget {
           icon: dropdownIcon,
           isExpanded: true,
           decoration: InputDecoration(
-            prefixIcon:
-                leading != null
-                    ? Padding(
-                      padding: const EdgeInsets.only(left: 10.0, right: 10),
-                      child: leading,
-                    )
-                    : null,
-            prefixIconConstraints:
-                leading != null
-                    ? const BoxConstraints(minWidth: 0, minHeight: 0)
-                    : null,
+            prefixIcon: leading != null
+                ? Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10),
+              child: leading,
+            )
+                : null,
+            prefixIconConstraints: leading != null
+                ? const BoxConstraints(minWidth: 0, minHeight: 0)
+                : null,
             contentPadding: contentPadding,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(radius),
@@ -166,5 +173,30 @@ class MyDropdownField<T> extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  // Helper method to safely extract text from widget
+  Widget _getItemText(Widget child) {
+    if (child is Text) {
+      return Text(
+        child.data ?? '',
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: 16,
+          fontFamily: 'Poppins',
+          color: MyColors.blackColor,
+          fontWeight: FontWeight.w500,
+        ),
+      );
+    }
+    return child; // Return as-is if not a Text widget
+  }
+
+  // Helper method to get text string for selectedItemBuilder
+  String _getItemTextString(Widget child) {
+    if (child is Text) {
+      return child.data ?? '';
+    }
+    return 'Item'; // Fallback
   }
 }

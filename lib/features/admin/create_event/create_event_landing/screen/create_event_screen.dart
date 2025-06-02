@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/admin/create_event/common_widgets/upload_image.dart';
+import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/widgets/my_appbar.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 import '../../../../../constants/padding.dart';
@@ -12,6 +13,7 @@ import '../../../../../widgets/my_text_field.dart';
 import '../controller/create_event_controller.dart';
 
 class CreateEventPage extends StatefulWidget {
+
   const CreateEventPage({super.key});
 
   @override
@@ -20,11 +22,29 @@ class CreateEventPage extends StatefulWidget {
 
 class _CreateEventPageState extends State<CreateEventPage> {
   late CreateEventController controller;
+  late String mode;
+  bool _initialized = false;
 
   @override
-  void initState() {
-    super.initState();
-    controller = CreateEventController();
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    if (!_initialized) {
+      final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+      final Event? event = args?['event'];
+      final bool isBlueprint = args?['isBlueprint'] ?? false;
+
+      if (event == null) {
+        mode = 'create';
+      } else if (isBlueprint) {
+        mode = 'blueprint';
+      } else {
+        mode = 'edit';
+      }
+
+      controller = CreateEventController(event);
+      _initialized = true;
+    }
   }
 
   @override
@@ -44,12 +64,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
       appBar: const MyAppBar(appBarText: 'Eveniment Nou'),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: MyPaddings.appHorizontalPadding),
+          padding: const EdgeInsets.symmetric(
+            horizontal: MyPaddings.appHorizontalPadding,
+          ),
           child: Form(
             key: controller.formKey,
             child: Column(
               children: [
-                const SizedBox(height: 30,),
+                const SizedBox(height: 10),
                 GestureDetector(
                   onTap: () async {
                     print("UploadImage tapped for landing image!");
@@ -76,7 +98,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   radius: 20,
                   borderWidth: 1.5,
                   borderColor: MyColors.lightBlue,
-                  validator: (v) => v!.isEmpty ? 'Introdu nume eveniment' : null,
+                  validator:
+                      (v) => v!.isEmpty ? 'Introdu nume eveniment' : null,
                 ),
                 const SizedBox(height: 20),
 
@@ -104,20 +127,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   maxLines: null,
                   validator:
                       (v) => v!.isEmpty ? 'Introdu descriere eveniment' : null,
-                ),
-                const SizedBox(height: 20),
-
-                // Numar misiuni
-                MyTextField(
-                  controller: controller.nrMissionsController,
-                  labelText: 'Numărul de misiuni',
-                  hintText: 'Introdu numărul de misiuni',
-                  radius: 20,
-                  borderWidth: 1.5,
-                  borderColor: MyColors.lightBlue,
-                  keyboardType: TextInputType.number,
-                  validator:
-                      (v) => v!.isEmpty ? 'Introdu numărul de misiuni' : null,
                 ),
                 const SizedBox(height: 20),
 
@@ -172,15 +181,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     final picked = await controller.selectDate(context);
                     if (picked != null) {
                       setState(() {
-                        controller.dateStartEnrollemnt = picked;
-                        controller
-                            .dateStartRegistrationController
-                            .text = DateFormat('yyyy-MM-dd HH:mm').format(picked);
+                        controller.dateStartEnrollement = picked;
+                        controller.dateStartRegistrationController.text =
+                            DateFormat('yyyy-MM-dd HH:mm').format(picked);
                       });
                     }
                   },
                   validator:
-                      (v) => (v ?? '').isEmpty ? 'Introdu dată deschidere' : null,
+                      (v) =>
+                          (v ?? '').isEmpty ? 'Introdu dată deschidere' : null,
                 ),
                 const SizedBox(height: 20),
 
@@ -203,35 +212,36 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     if (picked != null) {
                       setState(() {
                         controller.deadlineEnrollment = picked;
-                        controller
-                            .dateDeadlineRegistrationController
-                            .text = DateFormat('yyyy-MM-dd HH:mm').format(picked);
+                        controller.dateDeadlineRegistrationController.text =
+                            DateFormat('yyyy-MM-dd HH:mm').format(picked);
                       });
                     }
                   },
                   validator:
-                      (v) => (v ?? '').isEmpty ? 'Introdu dată inchidere' : null,
+                      (v) =>
+                          (v ?? '').isEmpty ? 'Introdu dată inchidere' : null,
                 ),
                 const SizedBox(height: 20),
 
                 // Tip de eveniment
                 MyDropdownField<EventType>(
                   labelText: 'Tipul de eveniment',
-                  items: EventType.values
-                      .map(
-                        (type) => DropdownMenuItem(
-                      value: type,
-                      child: Text(
-                        type.toString().split('.').last,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  )
-                      .toList(),
+                  items:
+                      EventType.values
+                          .map(
+                            (type) => DropdownMenuItem(
+                              value: type,
+                              child: Text(
+                                type.toString().split('.').last,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontFamily: 'Poppins',
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
                   value: controller.selectedType,
                   onChanged: (value) {
                     setState(() {
@@ -249,7 +259,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       ),
                     ),
                   ),
-                  validator: (value) => value == null ? 'Selecteaza tipul de eveniment' : null,
+                  validator:
+                      (value) =>
+                          value == null
+                              ? 'Selecteaza tipul de eveniment'
+                              : null,
                   borderColor: MyColors.lightBlue,
                   borderWidth: 1.5,
                   radius: 20,
@@ -287,7 +301,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 MyButton(
                   buttonText: 'Creeza eveniment',
                   textColor: Colors.white,
-                  buttonOnTap: () => controller.createEvent(context),
+                  buttonOnTap: () => controller.createEvent(context, mode),
                   withBorder: false,
                   gradient: MyColors.myGradient,
                   fontWeight: FontWeight.w600,

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/controller/add_missions_controller.dart';
@@ -17,25 +16,32 @@ class AddMissionsPage extends StatefulWidget {
 
 class _AddMissionsPageState extends State<AddMissionsPage> {
   late AddMissionsController _addMissionsController;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _addMissionsController = AddMissionsController();
-  }
+  bool _initialized = false;
 
   @override
   void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    print("didChangeDependencies called - nameController texttttttttttttttttttttttttttttttttttttttttttttttttttt");
+
     super.didChangeDependencies();
-    if (_addMissionsController.event == null) {
-      setState(() {
-        _addMissionsController.event =
-            ModalRoute.of(context)!.settings.arguments as Event;
-        _addMissionsController.initializeMissions();
-        _addMissionsController.missionWidgets =
-            _addMissionsController.buildMissionWidgets();
-      });
+    if (!_initialized) {
+      final args =
+      ModalRoute
+          .of(context)!
+          .settings
+          .arguments as Map<String, dynamic>?;
+      final Event event = args?['event'];
+      final String mode = args?['mode'] ?? "create";
+
+      _addMissionsController = AddMissionsController(
+        event,
+        mode,
+        onStateChanged: () {
+          setState(() {}); // Rebuild UI when state changes
+        },
+      );
+      _initialized = true;
+
     }
   }
 
@@ -57,13 +63,16 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                   height: 40,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: _addMissionsController.event!.nrMissions + 1,
+                    itemCount: _addMissionsController.event.nrMissions + 1,
                     itemBuilder: (context, index) {
-                      if (index < _addMissionsController.event!.nrMissions) {
+                      if (index < _addMissionsController.event.nrMissions) {
+                        print('Building MyListComponent for index $index, isDone: ${_addMissionsController.isMissionDone[index]}');
                         return MyListComponent(
                           index: index,
                           type: "Misiunea",
-                          isSelected: _addMissionsController.selectedMission == index,
+                          isSelected:
+                              _addMissionsController.selectedMission == index,
+                          isDone: _addMissionsController.isMissionDone[index],
                           onTap: () {
                             setState(() {
                               _addMissionsController.selectedMission = index;
@@ -81,7 +90,10 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                             height: 40,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(color: MyColors.lightBlue, width: 2),
+                              border: Border.all(
+                                color: MyColors.lightBlue,
+                                width: 2,
+                              ),
                             ),
                             child: const Icon(
                               Icons.add,
@@ -101,16 +113,16 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                   children: _addMissionsController.missionWidgets,
                 ),
 
-                const SizedBox(height: 20,),
+                const SizedBox(height: 20),
                 MyButton(
                   buttonText: 'Creeza eveniment',
                   textColor: Colors.white,
-                  buttonOnTap: () => _addMissionsController.printMissions(),
+                  buttonOnTap: () {},
                   withBorder: false,
                   gradient: MyColors.myGradient,
                   fontWeight: FontWeight.w600,
                 ),
-                const SizedBox(height: 30,)
+                const SizedBox(height: 30),
               ],
             ),
           ),

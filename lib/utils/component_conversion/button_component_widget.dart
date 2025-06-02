@@ -111,6 +111,7 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
   @override
   void dispose() {
     _flickerController.dispose();
+    _glowController.dispose();
     super.dispose();
   }
 

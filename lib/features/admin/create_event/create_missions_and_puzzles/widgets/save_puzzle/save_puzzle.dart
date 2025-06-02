@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/save_puzzle/save_puzzle_controller.dart';
+import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/widgets/my_text_field.dart';
 import 'package:teamxperience/widgets/my_dropdown.dart';
 import 'package:teamxperience/widgets/my_button.dart';
@@ -10,15 +11,15 @@ import '../../../../../../constants/padding.dart';
 import '../../controller/add_missions_controller.dart';
 
 class SavePuzzle extends StatefulWidget {
-  final int nrMission; // 1 indexed (so we need to make -1 when we use list.add)
-  final AddMissionsController addMissionsController;
-  final int selectedPuzzle;
+  final Puzzle puzzle;
+  final VoidCallback onSave;
+
 
   const SavePuzzle({
     super.key,
-    required this.nrMission,
-    required this.selectedPuzzle,
-    required this.addMissionsController,
+    required this.puzzle,
+    required this.onSave,
+
   });
 
   @override
@@ -137,7 +138,9 @@ class _SavePuzzleState extends State<SavePuzzle> {
                 buttonText: 'Salvează puzzle',
                 textColor: Colors.white,
                 buttonOnTap: () {
-                    controller.savePuzzle(widget.addMissionsController, widget.nrMission, widget.selectedPuzzle, context);
+                    controller.savePuzzle(widget.puzzle, context);
+                    widget.onSave();
+                    Navigator.pop(context);
                 },
                 withBorder: false,
                 buttonColor: MyColors.lightBlue,

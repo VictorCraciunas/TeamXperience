@@ -3,7 +3,7 @@ import 'package:teamxperience/model/component.dart';
 
 class Puzzle {
   final String id;
-  PuzzleType type;
+  PuzzleType? type;
   List<Component> components;
   String? code;
   String? coordinates;
@@ -16,8 +16,7 @@ class Puzzle {
     this.code,
     this.coordinates,
     this.indiciu
-  }) : components = components ?? [],
-        type = type ?? PuzzleType.code;
+  }) : components = components ?? [];
 
   int get componentsCount => components.length;
 
@@ -55,7 +54,7 @@ class Puzzle {
     return {
       'id': id,
       'components': components.map((c) => c.toJson()).toList(),
-      'type': type.name,
+      'type': type!.name,
        if (code != null) 'text': code,
       if (coordinates != null) 'text': coordinates,
       if (indiciu != null) 'text': indiciu,
@@ -64,7 +63,7 @@ class Puzzle {
   }
   @override
   String toString() {
-    return 'Puzzle(type: ${type.name},id: $id, components: [${components.join(', ')}], code: $code, coordinates" $coordinates, indiciu: $indiciu)';
+    return 'Puzzle(type: ${type != null ? type!.name : null.toString()},id: $id, components: [${components.join(', ')}], code: $code, coordinates" $coordinates, indiciu: $indiciu)';
   }
 
 }

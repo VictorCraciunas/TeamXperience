@@ -4,34 +4,34 @@ import '../enums/event_type.dart';
 import 'mission.dart';
 
 class Event {
-  final String eventId;
-  final String? name;
+   String eventId;
+   String? name;
   List<Mission> missions;
-  final DateTime dateEvent;
-  final DateTime dateDeadlineEnrollment;
-  final DateTime dateStartEnrollment;
-  final String location;
-  final String description;
+   DateTime? dateEvent;
+   DateTime? dateDeadlineEnrollment;
+   DateTime? dateStartEnrollment;
+   String? location;
+   String? description;
    int nrMissions;
-  final EventType type;
-   String landingImageUrl;
-   String taskBackgroundImageUrl;
-  final String startCode;
+   EventType? type;
+   String? landingImageUrl;
+   String? taskBackgroundImageUrl;
+   String? startCode;
 
   Event({
-    required this.eventId ,
-    required this.name ,
+     required this.eventId ,
+     this.name ,
     List<Mission>? missions,
-    required this.dateEvent,
-    required this.dateDeadlineEnrollment,
-    required this.dateStartEnrollment,
-    required this.location ,
-    required this.description,
-    required this.nrMissions ,
-    required this.type,
-    required this.landingImageUrl,
-    required this.taskBackgroundImageUrl ,
-    required this.startCode ,
+     this.dateEvent,
+     this.dateDeadlineEnrollment,
+     this.dateStartEnrollment,
+     this.location ,
+     this.description,
+     this.nrMissions = 0 ,
+     this.type,
+     this.landingImageUrl,
+     this.taskBackgroundImageUrl ,
+     this.startCode ,
   }) : missions = missions ?? [];
 
 
@@ -72,7 +72,7 @@ class Event {
       'location': location,
       'description': description,
       'nrMissions': nrMissions,
-      'type': type.name,
+      'type': type!.name,
       'landingImageUrl': landingImageUrl,
       'taskBackgroundImageUrl': taskBackgroundImageUrl,
       'startCode': startCode,

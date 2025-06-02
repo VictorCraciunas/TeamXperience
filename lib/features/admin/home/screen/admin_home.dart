@@ -30,7 +30,8 @@ class AdminHome extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/create_event');
+                Navigator.pushNamed(context, Routes.createEvent, arguments: {'event': null, 'isBlueprint': false},  );
+
               },
               child: const Text("Create Event"))
         ],

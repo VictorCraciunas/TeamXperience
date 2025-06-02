@@ -2,7 +2,7 @@ import '../enums/animation_type.dart';
 import '../enums/component-type.dart';
 
 class Component {
-  final ComponentType type;
+   ComponentType? type;
    String? text;
   String? imageUrl;
    String? buttonLabel;
@@ -33,7 +33,7 @@ class Component {
    double? height;
 
   Component({
-    required this.type,
+    this.type,
     this.text,
     this.imageUrl,
     this.buttonLabel,
@@ -104,7 +104,7 @@ class Component {
 
   Map<String, dynamic> toJson() {
     return {
-      'type': type.name,
+      if(type != null) 'type': type!.name,
       if (text != null) 'text': text,
       if (imageUrl != null) 'imageUrl': imageUrl,
       if (buttonLabel != null) 'buttonLabel': buttonLabel,
@@ -133,6 +133,6 @@ class Component {
 
   @override
   String toString() {
-    return 'Component(type: ${type.name}, text: $text, imageUrl: $imageUrl, buttonLabel: $buttonLabel, textColor: $textColor, animation: ${animation?.name}, buttonColor: $buttonColor, buttonColorOnTap: $buttonColorOnTap, buttonTextColor: $buttonTextColor, buttonTextColorOnTap: $buttonTextColorOnTap, borderColor: $borderColor, fontSize: $fontSize, fontWeight: $fontWeight, fontFamily: $fontFamily, codeLength: $codeLength, cornerRadius: $cornerRadius, enableFlicker: $enableFlicker, enableGlow: $enableGlow, glowColor: $glowColor, inputType: $inputType, capsLock: $capsLock, frameCornerRadius: $frameCornerRadius, inputCornerRadius: $inputCornerRadius, frameBackgroundColor: $frameBackgroundColor, inputBackgroundColor: $inputBackgroundColor, colorBorderInput: $colorBorderInput, colorBorderContainer: $colorBorderContainer, width: $width, height: $height)';
+    return 'Component(type: ${type != null ? type!.name : null.toString()}, text: $text, imageUrl: $imageUrl, buttonLabel: $buttonLabel, textColor: $textColor, animation: ${animation?.name}, buttonColor: $buttonColor, buttonColorOnTap: $buttonColorOnTap, buttonTextColor: $buttonTextColor, buttonTextColorOnTap: $buttonTextColorOnTap, borderColor: $borderColor, fontSize: $fontSize, fontWeight: $fontWeight, fontFamily: $fontFamily, codeLength: $codeLength, cornerRadius: $cornerRadius, enableFlicker: $enableFlicker, enableGlow: $enableGlow, glowColor: $glowColor, inputType: $inputType, capsLock: $capsLock, frameCornerRadius: $frameCornerRadius, inputCornerRadius: $inputCornerRadius, frameBackgroundColor: $frameBackgroundColor, inputBackgroundColor: $inputBackgroundColor, colorBorderInput: $colorBorderInput, colorBorderContainer: $colorBorderContainer, width: $width, height: $height)';
   }
 }

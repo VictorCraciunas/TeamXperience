@@ -4,62 +4,40 @@ import 'package:teamxperience/widgets/my_button.dart';
 import 'package:teamxperience/widgets/my_dropdown.dart';
 import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
-import '../../../../../../../utils/component_conversion/component_to_widget.dart';
+import '../../../../../../../model/puzzle.dart';
 import '../../../controller/add_missions_controller.dart';
-import 'code_component_controller.dart'; // Import the controller
-import '../../../../../../../widgets/slider_widget.dart'; // Import the slider widget
+import 'code_component_controller.dart';
+import '../../../../../../../widgets/slider_widget.dart';
 
 class CodeComponentFieldsWidget extends StatefulWidget {
-  final AddMissionsController addMissionsController;
-  final int missionSelected;
-  final int puzzleSelected;
   final Function(Widget) refreshUI;
-  final Component? componentToEdit;
+  final Component component;
+  final bool edit;
+  final Puzzle puzzle;
 
   const CodeComponentFieldsWidget({
     super.key,
-    required this.addMissionsController,
-    required this.missionSelected,
-    required this.puzzleSelected,
     required this.refreshUI,
-    this.componentToEdit,
+    required this.component,
+    required this.edit,
+    required this.puzzle,
   });
 
   @override
-  State<CodeComponentFieldsWidget> createState() =>
-      _CodeComponentFieldsWidgetState();
+  State<CodeComponentFieldsWidget> createState() => _CodeComponentFieldsWidgetState();
 }
 
 class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
-  late CodeComponentController controller;
+  late final CodeComponentController controller;
 
   @override
   void initState() {
     super.initState();
-    // Initialize the controller to manage state and logic
     controller = CodeComponentController();
-    final c = widget.componentToEdit;
-    if (c != null && c.type == ComponentType.code) {
-      controller.codeLength = c.codeLength;
-      controller.inputType = c.inputType;
-      controller.capsLock = c.capsLock;
-      controller.radiusChenar = c.frameCornerRadius ?? controller.radiusChenar;
-      controller.radiusChenarInputuri =
-          c.inputCornerRadius ?? controller.radiusChenarInputuri;
-      controller.frameBackgroundColor =
-          c.frameBackgroundColor ?? controller.frameBackgroundColor;
-      controller.inputBackgroundColor =
-          c.inputBackgroundColor ?? controller.inputBackgroundColor;
-      controller.colorBorderContainer =
-          c.colorBorderContainer ?? controller.colorBorderContainer;
-      controller.colorBorderInput =
-          c.colorBorderInput ?? controller.colorBorderInput;
-      controller.enableGlow = c.enableGlow ?? controller.enableGlow;
-      controller.glowColor = c.glowColor ?? controller.glowColor;
-      controller.widthInput = c.width ?? controller.widthInput;
-      controller.fontSize = c.fontSize ?? controller.fontSize;
-      controller.fontFamily = c.fontFamily ?? controller.fontFamily;
-      controller.textColor = c.textColor ?? controller.textColor;
+
+    // Initialize controller with existing data if in edit mode
+    if (widget.edit && widget.component.type == ComponentType.code) {
+      controller.initializeFromComponent(widget.component);
     }
   }
 
@@ -69,316 +47,347 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 10),
+          _buildPreviewSection(),
+          const SizedBox(height: 30),
+          _buildBasicConfigurationSection(),
           const SizedBox(height: 20),
-          // **Title for the preview section**
-          // Displays "Previzualizare" with a font size of 15
-          const Text(
-            'Previzualizare',
+          _buildStylingSection(),
+          const SizedBox(height: 20),
+          _buildTextStylingSection(),
+          const SizedBox(height: 20),
+          _buildGlowEffectSection(),
+          const SizedBox(height: 20),
+          _buildSaveButton(),
+          const SizedBox(height: 60),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPreviewSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Previzualizare',
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: MyColors.blackColor,
+          ),
+        ),
+        const SizedBox(height: 15),
+        Center(
+          child: controller.canShowPreview
+              ? controller.buildCodePreview(context)
+              : const Text('Select number of characters and input type to preview'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBasicConfigurationSection() {
+    return Column(
+      children: [
+        _buildCodeLengthDropdown(),
+        const SizedBox(height: 20),
+        _buildInputTypeDropdown(),
+        const SizedBox(height: 20),
+        _buildCapsLockDropdown(),
+      ],
+    );
+  }
+
+  Widget _buildCodeLengthDropdown() {
+    return MyDropdownField<int>(
+      labelText: 'Număr de caractere',
+      items: List.generate(10, (index) => index + 1)
+          .map(
+            (length) => DropdownMenuItem(
+          value: length,
+          child: Text('$length'),
+        ),
+      )
+          .toList(),
+      value: controller.codeLength,
+      onChanged: (value) => setState(() => controller.codeLength = value),
+      borderColor: MyColors.lightBlue,
+      borderWidth: 1.5,
+      radius: 20,
+      hint: const Text('Selecteaza numărul de caractere'),
+    );
+  }
+
+  Widget _buildInputTypeDropdown() {
+    return MyDropdownField<String>(
+      labelText: 'Separat / Free',
+      items: const [
+        DropdownMenuItem(value: 'Separated', child: Text('Separated')),
+        DropdownMenuItem(value: 'Free', child: Text('Free')),
+      ],
+      value: controller.inputType,
+      onChanged: (value) => setState(() => controller.inputType = value),
+      borderColor: MyColors.lightBlue,
+      borderWidth: 1.5,
+      radius: 20,
+      hint: const Text('Selecteaza tipul de cod'),
+    );
+  }
+
+  Widget _buildCapsLockDropdown() {
+    return MyDropdownField<String>(
+      labelText: 'CapsLock / Fără',
+      items: const [
+        DropdownMenuItem(value: 'CapsLock', child: Text('CapsLock')),
+        DropdownMenuItem(value: 'Fără', child: Text('Fără')),
+      ],
+      value: controller.capsLock,
+      onChanged: (value) => setState(() => controller.capsLock = value),
+      borderColor: MyColors.lightBlue,
+      borderWidth: 1.5,
+      radius: 20,
+      hint: const Text('Selecteaza tipul de cod'),
+    );
+  }
+
+  Widget _buildStylingSection() {
+    return Column(
+      children: [
+        _buildFrameRadiusSlider(),
+        const SizedBox(height: 20),
+        _buildInputWidthSlider(),
+        const SizedBox(height: 20),
+        _buildInputRadiusSlider(),
+        const SizedBox(height: 20),
+        _buildFrameBackgroundColorPicker(),
+        const SizedBox(height: 20),
+        _buildInputBackgroundColorPicker(),
+        const SizedBox(height: 20),
+        _buildInputBorderColorPicker(),
+        const SizedBox(height: 20),
+        _buildFrameBorderColorPicker(),
+      ],
+    );
+  }
+
+  Widget _buildFrameRadiusSlider() {
+    return SliderWidget(
+      title: 'Rotunjire chenar',
+      min: 0,
+      max: 50,
+      divisions: 50,
+      value: controller.radiusChenar,
+      label: controller.radiusChenar.toStringAsFixed(0),
+      onChanged: (value) => setState(() => controller.radiusChenar = value),
+    );
+  }
+
+  Widget _buildInputWidthSlider() {
+    return SliderWidget(
+      title: 'Lungime inputuri',
+      min: 0,
+      max: 200,
+      divisions: 200,
+      value: controller.widthInput,
+      label: controller.widthInput.toStringAsFixed(0),
+      onChanged: (value) => setState(() => controller.widthInput = value),
+    );
+  }
+
+  Widget _buildInputRadiusSlider() {
+    return SliderWidget(
+      title: 'Rotunjire chenar inputuri',
+      min: 0,
+      max: 50,
+      divisions: 50,
+      value: controller.radiusChenarInputuri,
+      label: controller.radiusChenarInputuri.toStringAsFixed(0),
+      onChanged: (value) => setState(() => controller.radiusChenarInputuri = value),
+    );
+  }
+
+  Widget _buildFrameBackgroundColorPicker() {
+    return controller.buildColorPickerField(
+      'Culoare fundal chenar',
+      controller.frameBackgroundColor,
+          (color) => setState(() => controller.frameBackgroundColor = color),
+      context,
+    );
+  }
+
+  Widget _buildInputBackgroundColorPicker() {
+    return controller.buildColorPickerField(
+      'Culoare fundal input-uri',
+      controller.inputBackgroundColor,
+          (color) => setState(() => controller.inputBackgroundColor = color),
+      context,
+    );
+  }
+
+  Widget _buildInputBorderColorPicker() {
+    return controller.buildColorPickerField(
+      'Culoare bordura input',
+      controller.colorBorderInput,
+          (color) => setState(() => controller.colorBorderInput = color),
+      context,
+    );
+  }
+
+  Widget _buildFrameBorderColorPicker() {
+    return controller.buildColorPickerField(
+      'Culoare bordura chenar',
+      controller.colorBorderContainer,
+          (color) => setState(() => controller.colorBorderContainer = color),
+      context,
+    );
+  }
+
+  Widget _buildTextStylingSection() {
+    return Column(
+      children: [
+        _buildFontFamilyDropdown(),
+        const SizedBox(height: 20),
+        _buildFontSizeSlider(),
+        const SizedBox(height: 20),
+        _buildTextColorPicker(),
+      ],
+    );
+  }
+
+  Widget _buildFontFamilyDropdown() {
+    return MyDropdownField<String>(
+      labelText: 'Tip Font',
+      items: const [
+        DropdownMenuItem(
+          value: 'Poppins',
+          child: Text(
+            'Poppins',
             style: TextStyle(
               fontFamily: 'Poppins',
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: MyColors.blackColor,
+              fontSize: 14,
+              color: Colors.black,
             ),
           ),
-          const SizedBox(height: 15),
-          // **Preview widget**
-          // Shows the code input preview based on selected options or a placeholder text
-          Center(
-            child:
-                controller.codeLength != null && controller.inputType != null
-                    ? controller.buildCodePreview(context)
-                    : const Text(
-                      'Select number of characters and input type to preview',
-                    ),
-          ),
-          const SizedBox(height: 30),
-          // **Dropdown for number of characters**
-          // Allows selecting a number from 1 to 10
-          MyDropdownField<int>(
-            labelText: 'Număr de caractere',
-            items:
-                List.generate(10, (index) => index + 1)
-                    .map(
-                      (length) => DropdownMenuItem(
-                        value: length,
-                        child: Text('$length'),
-                      ),
-                    )
-                    .toList(),
-            value: controller.codeLength,
-            onChanged: (value) => setState(() => controller.codeLength = value),
-            borderColor: MyColors.lightBlue,
-            borderWidth: 1.5,
-            radius: 20,
-            hint: const Text('Selecteaza numărul de caractere'),
-          ),
-          const SizedBox(height: 20),
-          // **Dropdown for input type**
-          // Options: "Separated" or "Free"
-          MyDropdownField<String>(
-            labelText: 'Separat / Free',
-            items: const [
-              DropdownMenuItem(value: 'Separated', child: Text('Separated')),
-              DropdownMenuItem(value: 'Free', child: Text('Free')),
-            ],
-            value: controller.inputType,
-            onChanged: (value) => setState(() => controller.inputType = value),
-            borderColor: MyColors.lightBlue,
-            borderWidth: 1.5,
-            radius: 20,
-            hint: const Text('Selecteaza tipul de cod'),
-          ),
-          const SizedBox(height: 20),
-          // **Dropdown for CapsLock behavior**
-          // Options: "CapsLock" or "Fără"
-          MyDropdownField<String>(
-            labelText: 'CapsLock / Fără',
-            items: const [
-              DropdownMenuItem(value: 'CapsLock', child: Text('CapsLock')),
-              DropdownMenuItem(value: 'Fără', child: Text('Fără')),
-            ],
-            value: controller.capsLock,
-            onChanged: (value) => setState(() => controller.capsLock = value),
-            borderColor: MyColors.lightBlue,
-            borderWidth: 1.5,
-            radius: 20,
-            hint: const Text('Selecteaza tipul de cod'),
-          ),
-          const SizedBox(height: 20),
-          // **Slider for frame corner radius**
-          // Adjusts the corner radius of the frame (0-50)
-          SliderWidget(
-            title: 'Rotunjire chenar',
-            min: 0,
-            max: 50,
-            divisions: 50,
-            value: controller.radiusChenar,
-            label: controller.radiusChenar.toStringAsFixed(0),
-            onChanged:
-                (value) => setState(() => controller.radiusChenar = value),
-          ),
-          const SizedBox(height: 20),
-          // **Slider for input field width**
-          // Adjusts the width of input fields (0-200)
-          SliderWidget(
-            title: 'Lungime inputuri',
-            min: 0,
-            max: 200,
-            divisions: 200,
-            value: controller.widthInput,
-            label: controller.widthInput.toStringAsFixed(0),
-            onChanged: (value) => setState(() => controller.widthInput = value),
-          ),
-          const SizedBox(height: 20),
-          // **Slider for input field corner radius**
-          // Adjusts the corner radius of input fields (0-50)
-          SliderWidget(
-            title: 'Rotunjire chenar inputuri',
-            min: 0,
-            max: 50,
-            divisions: 50,
-            value: controller.radiusChenarInputuri,
-            label: controller.radiusChenarInputuri.toStringAsFixed(0),
-            onChanged:
-                (value) =>
-                    setState(() => controller.radiusChenarInputuri = value),
-          ),
-          const SizedBox(height: 20),
-          // **Color picker for frame background**
-          // Sets the background color of the frame
-          controller.buildColorPickerField(
-            'Culoare fundal chenar',
-            controller.frameBackgroundColor,
-            (color) => setState(() => controller.frameBackgroundColor = color),
-            context,
-          ),
-          const SizedBox(height: 20),
-          // **Color picker for input background**
-          // Sets the background color of the input fields
-          controller.buildColorPickerField(
-            'Culoare fundal input-uri',
-            controller.inputBackgroundColor,
-            (color) => setState(() => controller.inputBackgroundColor = color),
-            context,
-          ),
-          const SizedBox(height: 20),
-          // **Color picker for input border**
-          // Sets the border color of the input fields
-          controller.buildColorPickerField(
-            'Culoare bordura input',
-            controller.colorBorderInput,
-            (color) => setState(() => controller.colorBorderInput = color),
-            context,
-          ),
-          const SizedBox(height: 20),
-          // **Color picker for frame border**
-          // Sets the border color of the frame
-          controller.buildColorPickerField(
-            'Culoare bordura chenar',
-            controller.colorBorderContainer,
-            (color) => setState(() => controller.colorBorderContainer = color),
-            context,
-          ),
-          const SizedBox(height: 20),
-          // **Dropdown for font family**
-          // Options: "Poppins" or "Monospace", font size 14 for items
-          MyDropdownField<String>(
-            labelText: 'Tip Font',
-            items: const [
-              DropdownMenuItem(
-                value: 'Poppins',
-                child: Text(
-                  'Poppins',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              DropdownMenuItem(
-                value: 'Monospace',
-                child: Text(
-                  'Monospace',
-                  style: TextStyle(
-                    fontFamily: 'Monospace',
-                    fontSize: 14,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ],
-            value: controller.fontFamily,
-            onChanged: (value) => setState(() => controller.fontFamily = value),
-            validator:
-                (value) => value == null ? 'Selecteaza tipul de font' : null,
-            borderColor: MyColors.lightBlue,
-            borderWidth: 1.5,
-            radius: 20,
-            hint: const Text(
-              'Selecteaza tipul de font',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 14,
-                color: MyColors.greyText,
-              ),
+        ),
+        DropdownMenuItem(
+          value: 'Monospace',
+          child: Text(
+            'Monospace',
+            style: TextStyle(
+              fontFamily: 'Monospace',
+              fontSize: 14,
+              color: Colors.black,
             ),
           ),
-          const SizedBox(height: 20),
-          // **Slider for font size**
-          // Adjusts the text size (8-72), default is 16
-          SliderWidget(
-            title: 'Dimensiune Text',
-            min: 8,
-            max: 72,
-            divisions: 64,
-            value: controller.fontSize,
-            label: controller.fontSize.toStringAsFixed(0),
-            onChanged: (value) => setState(() => controller.fontSize = value),
-          ),
-          const SizedBox(height: 20),
-          // **Color picker for input text**
-          // Sets the text color in the input fields
-          controller.buildColorPickerField(
-            'Culoare text input',
-            controller.textColor,
-            (color) => setState(() => controller.textColor = color),
-            context,
-          ),
-          const SizedBox(height: 20),
-          // **Checkbox for glow effect**
-          // Enables/disables the glow effect on the frame
-          Row(
-            children: [
-              Transform.scale(
-                scale: 1.5,
-                child: Checkbox(
-                  value: controller.enableGlow,
-                  onChanged: (v) => setState(() => controller.enableGlow = v!),
-                  activeColor: MyColors.lightBlue,
-                  checkColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  side: const BorderSide(width: 1.5, color: MyColors.lightBlue),
-                ),
-              ),
-              const SizedBox(width: 16),
-              const Text(
-                'Glow Chenar',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: MyColors.blackColor,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          // **Color picker for glow color**
-          // Sets the color of the glow effect
-          controller.buildColorPickerField(
-            'Culoare Glow',
-            controller.glowColor,
-            (color) => setState(() => controller.glowColor = color),
-            context,
-          ),
-          const SizedBox(height: 20),
+        ),
+      ],
+      value: controller.fontFamily,
+      onChanged: (value) => setState(() => controller.fontFamily = value),
+      borderColor: MyColors.lightBlue,
+      borderWidth: 1.5,
+      radius: 20,
+      hint: const Text(
+        'Selecteaza tipul de font',
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 14,
+          color: MyColors.greyText,
+        ),
+      ),
+    );
+  }
 
-          // **Save button**
-          // Saves the component with all selected options
-          Center(
-            child: MyButton(
-              buttonText: 'Salvează componenta',
-              textColor: Colors.white,
-              buttonOnTap: () {
-                final c = widget.componentToEdit;
+  Widget _buildFontSizeSlider() {
+    return SliderWidget(
+      title: 'Dimensiune Text',
+      min: 8,
+      max: 72,
+      divisions: 64,
+      value: controller.fontSize,
+      label: controller.fontSize.toStringAsFixed(0),
+      onChanged: (value) => setState(() => controller.fontSize = value),
+    );
+  }
 
-                if (c != null && c.type == ComponentType.code) {
-                  // —— EDIT FLOW ——
-                  c.codeLength = controller.codeLength;
-                  c.inputType = controller.inputType;
-                  c.capsLock = controller.capsLock;
-                  c.frameCornerRadius = controller.radiusChenar;
-                  c.inputCornerRadius = controller.radiusChenarInputuri;
-                  c.frameBackgroundColor = controller.frameBackgroundColor;
-                  c.inputBackgroundColor = controller.inputBackgroundColor;
-                  c.colorBorderContainer = controller.colorBorderContainer;
-                  c.colorBorderInput = controller.colorBorderInput;
-                  c.enableGlow = controller.enableGlow;
-                  c.glowColor = controller.glowColor;
-                  c.width = controller.widthInput;
-                  c.fontSize = controller.fontSize;
-                  c.fontFamily = controller.fontFamily;
-                  c.textColor = controller.textColor;
+  Widget _buildTextColorPicker() {
+    return controller.buildColorPickerField(
+      'Culoare text input',
+      controller.textColor,
+          (color) => setState(() => controller.textColor = color),
+      context,
+    );
+  }
 
-                  // Rebuild its widget and pop
-                  final updatedWidget = ComponentToWidget().convert(c);
-                  widget.refreshUI(updatedWidget);
-                  Navigator.pop(context);
-                } else {
-                  // —— CREATE FLOW ——
-                  controller.saveComponent(
-                    context,
-                    widget.missionSelected,
-                    widget.puzzleSelected,
-                    widget.addMissionsController,
-                    widget.refreshUI,
-                  );
-                }
-              },
-              withBorder: false,
-              buttonColor: MyColors.lightBlue,
-              fontWeight: FontWeight.w500,
-              buttonTextSize: 14,
-              buttonWidth: 270,
+  Widget _buildGlowEffectSection() {
+    return Column(
+      children: [
+        _buildGlowCheckbox(),
+        const SizedBox(height: 20),
+        _buildGlowColorPicker(),
+      ],
+    );
+  }
+
+  Widget _buildGlowCheckbox() {
+    return Row(
+      children: [
+        Transform.scale(
+          scale: 1.5,
+          child: Checkbox(
+            value: controller.enableGlow,
+            onChanged: (value) => setState(() => controller.enableGlow = value!),
+            activeColor: MyColors.lightBlue,
+            checkColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(6),
             ),
+            side: const BorderSide(width: 1.5, color: MyColors.lightBlue),
           ),
-          const SizedBox(height: 60),
+        ),
+        const SizedBox(width: 16),
+        const Text(
+          'Glow Chenar',
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: MyColors.blackColor,
+          ),
+        ),
+      ],
+    );
+  }
 
-        ],
+  Widget _buildGlowColorPicker() {
+    return controller.buildColorPickerField(
+      'Culoare Glow',
+      controller.glowColor,
+          (color) => setState(() => controller.glowColor = color),
+      context,
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return Center(
+      child: MyButton(
+        buttonText: 'Salvează componenta',
+        textColor: Colors.white,
+        buttonOnTap: () {
+          controller.saveComponent(
+            context: context,
+            puzzle: widget.puzzle,
+            component: widget.component,
+            refreshUI: widget.refreshUI,
+            isEditMode: widget.edit,
+          );
+        },
+        withBorder: false,
+        buttonColor: MyColors.lightBlue,
+        fontWeight: FontWeight.w500,
+        buttonTextSize: 14,
+        buttonWidth: 270,
       ),
     );
   }
