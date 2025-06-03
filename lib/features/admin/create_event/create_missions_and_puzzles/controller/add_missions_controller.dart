@@ -1,11 +1,16 @@
+import 'dart:io';
 import 'dart:ui';
 
+import 'package:teamxperience/backend/repo/event_repo.dart';
+import 'package:teamxperience/backend/storage/storage_images.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_mission/mission_widget.dart';
 import 'package:teamxperience/model/mission.dart';
 
 import '../../../../../model/event.dart';
 
 class AddMissionsController {
+  ImageRepo imageRepo = ImageRepo();
+  EventRepo eventRepo = EventRepo();
 
   int selectedMission = 0;
 
@@ -56,7 +61,17 @@ class AddMissionsController {
       }
   }
 
+  Future<void> saveEvent() async{
+    String? backgroundURL = await imageRepo.uploadImage(File(event.taskBackgroundImageUrl!), event.eventId, "background");
+    String? landingImage = await imageRepo.uploadImage(File(event.taskBackgroundImageUrl!), event.eventId, "landingImage");
 
+    if(backgroundURL != null && landingImage != null){
+      event.taskBackgroundImageUrl =backgroundURL;
+      event.landingImageUrl = landingImage;
+    }
+    eventRepo.createEvent(event);
+
+  }
 
 
 }

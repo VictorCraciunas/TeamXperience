@@ -4,13 +4,11 @@ import 'package:teamxperience/model/puzzle.dart';
 class Mission{
   final String id;
   List<Puzzle> puzzles;
-  bool published;
 
 
   Mission({
     required this.id,
     List<Puzzle>? puzzles,
-    this.published = false
   }) : puzzles = puzzles ?? [];
 
 
@@ -28,7 +26,6 @@ class Mission{
     return Mission(
       id: map['id'] as String? ?? '',
       puzzles: puzzles,
-      published: map ['published'] as bool
     );
   }
 
@@ -36,11 +33,10 @@ class Mission{
     return {
       'id': id,
       'puzzles': puzzles.map((p) => p.toJson()).toList(),
-      'published' : published
     };
   }
   @override
   String toString() {
-    return 'Mission(id: $id, published: $published, puzzles: [\n  ${puzzles.join(',\n  ')}\n])';
+    return 'Mission(id: $id, puzzles: [\n  ${puzzles.join(',\n  ')}\n])';
   }
 }

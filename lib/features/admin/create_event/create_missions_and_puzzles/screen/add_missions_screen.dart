@@ -64,17 +64,47 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                     itemCount: _addMissionsController.event.nrMissions + 1,
                     itemBuilder: (context, index) {
                       if (index < _addMissionsController.event.nrMissions) {
-                        return MyListComponent(
-                          index: index,
-                          type: "Misiunea",
-                          isSelected:
-                              _addMissionsController.selectedMission == index,
-                          isDone: _addMissionsController.isMissionDone[index],
-                          onTap: () {
-                            setState(() {
-                              _addMissionsController.selectedMission = index;
-                            });
+                        return GestureDetector(
+                          onLongPress: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  backgroundColor: Colors.white,
+                                  content: TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _addMissionsController.event.missions.removeAt(index);
+                                        _addMissionsController.missionWidgets.removeAt(index);
+                                        _addMissionsController.isMissionDone.removeAt(index);
+                                        _addMissionsController.event.nrMissions--;
+                                        if (_addMissionsController.selectedMission >= index &&
+                                            _addMissionsController.selectedMission > 0) {
+                                          _addMissionsController.selectedMission--;
+                                        } else if (_addMissionsController.event.missions.isEmpty) {
+                                          _addMissionsController.selectedMission = 0;
+                                        }
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('delete'),
+                                  ),
+                                );
+                              },
+                            );
                           },
+                          child: MyListComponent(
+                            index: index,
+                            type: "Misiunea",
+                            isSelected:
+                                _addMissionsController.selectedMission == index,
+                            isDone: _addMissionsController.isMissionDone[index],
+                            onTap: () {
+                              setState(() {
+                                _addMissionsController.selectedMission = index;
+                              });
+                            },
+                          ),
                         );
                       } else {
                         return GestureDetector(
@@ -114,7 +144,10 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                 MyButton(
                   buttonText: 'Creeza eveniment',
                   textColor: Colors.white,
-                  buttonOnTap: () {},
+                  buttonOnTap: () {
+                    print(_addMissionsController.event);
+                    // _addMissionsController.saveEvent();
+                  },
                   withBorder: false,
                   gradient: MyColors.myGradient,
                   fontWeight: FontWeight.w600,

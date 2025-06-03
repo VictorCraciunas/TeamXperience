@@ -64,16 +64,46 @@ class _MissionWidgetState extends State<MissionWidget> {
               // +1 for the "Add Puzzle" button
               itemBuilder: (context, index) {
                 if (index < widget.currentMission.puzzles.length) {
-                  return MyListComponent(
-                    index: index,
-                    type: "Puzzle",
-                    isSelected: controller.selectedPuzzle == index,
-                    isDone: controller.isPuzzleDone[index],
-                    onTap: () {
-                      setState(() {
-                        controller.selectedPuzzle = index;
-                      });
+                  return GestureDetector(
+                    onLongPress: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            content: TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  widget.currentMission.puzzles.removeAt(index);
+                                  controller.isPuzzleDone.removeAt(index);
+                                  controller.puzzleWidgets.removeAt(index);
+                                  if(controller.selectedPuzzle >= index && controller.selectedPuzzle > 0){
+                                    controller.selectedPuzzle --;
+                                  }
+                                  else if (widget.currentMission.puzzles.isEmpty){
+                                    controller.selectedPuzzle = 0;
+                                  }
+
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: const Text('delete'),
+                            ),
+                          );
+                        },
+                      );
                     },
+                    child: MyListComponent(
+                      index: index,
+                      type: "Puzzle",
+                      isSelected: controller.selectedPuzzle == index,
+                      isDone: controller.isPuzzleDone[index],
+                      onTap: () {
+                        setState(() {
+                          controller.selectedPuzzle = index;
+                        });
+                      },
+                    ),
                   );
                 } else {
                   return GestureDetector(

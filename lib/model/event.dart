@@ -78,4 +78,15 @@ class Event {
       'startCode': startCode,
     };
   }
+
+   @override
+   String toString() {
+     return 'Event(eventId: $eventId, name: $name, missions: [${missions.join(', ')}], '
+         'dateEvent: $dateEvent, dateDeadlineEnrollment: $dateDeadlineEnrollment, '
+         'dateStartEnrollment: $dateStartEnrollment, location: $location, '
+         'description: $description, nrMissions: $nrMissions, '
+         'type: ${type != null ? type!.name : null.toString()}, '
+         'landingImageUrl: $landingImageUrl, taskBackgroundImageUrl: $taskBackgroundImageUrl, '
+         'startCode: $startCode)';
+   }
 }
