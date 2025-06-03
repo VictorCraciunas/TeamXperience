@@ -13,4 +13,20 @@ class EventRepo{
     var docRef = _firestore.collection('events').doc(event.eventId);
     await docRef.set(event.toJson());
   }
+
+  Future<List<Event>> getAllEvents() async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('events').get();
+
+      List<Event> events = snapshot.docs.map((doc) {
+        return Event.fromMap(doc.data() as Map<String, dynamic>);
+      }).toList();
+
+      return events;
+    } catch (e,stacktrace) {
+      print('Error fetching events: $e');
+      print('Stack trace: $stacktrace');
+      throw Exception('Failed to fetch events');
+    }
+  }
 }

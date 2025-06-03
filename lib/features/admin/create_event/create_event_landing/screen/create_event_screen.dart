@@ -85,7 +85,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   },
                   child: UploadImage(
                     labelText: 'Adauga imagine eveniment',
-                    imageFile: controller.landingImageFile,
+                      imageUrl: controller.getLandingImageToDisplay(),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -293,7 +293,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   },
                   child: UploadImage(
                     labelText: 'Adauga imagine fundal misiuni',
-                    imageFile: controller.taskBackgroundImageFile,
+                    imageUrl: controller.getTaskBackgroundImageToDisplay(),
                   ),
                 ),
 

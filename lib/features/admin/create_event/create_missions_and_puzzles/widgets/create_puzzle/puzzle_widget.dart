@@ -36,7 +36,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    controller = PuzzleController();
+    controller = PuzzleController(widget.puzzle);
   }
 
   void _editComponent(int componentIndex) {
@@ -72,21 +72,14 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
           Container(
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-              image:
-                  widget.addMissionsController.event.taskBackgroundImageUrl !=
-                          null
-                      ? DecorationImage(
-                        image: FileImage(
-                          File(
-                            widget
-                                .addMissionsController
-                                .event
-                                .taskBackgroundImageUrl!,
-                          ),
-                        ),
-                        fit: BoxFit.cover,
-                      )
-                      : null, // No background if the URL is null
+              image: widget.addMissionsController.event.taskBackgroundImageUrl != null
+                  ? DecorationImage(
+                image: controller.isUrl(widget.addMissionsController.event.taskBackgroundImageUrl!)
+                    ? NetworkImage(widget.addMissionsController.event.taskBackgroundImageUrl!) // Use NetworkImage for URLs
+                    : FileImage(File(widget.addMissionsController.event.taskBackgroundImageUrl!)) as ImageProvider, // Use FileImage for local paths
+                fit: BoxFit.cover,
+              )
+                  : null, // No background if the URL is null
             ),
 
             child: Padding(

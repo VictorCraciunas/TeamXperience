@@ -64,72 +64,77 @@ class Component {
     this.width
   });
 
-  factory Component.fromMap(Map<String, dynamic> map) {
-    final rawType = map['type'] as String;
-    return Component(
-      type: ComponentType.values.byName(rawType),
-      text: map['text'] as String?,
-      imageUrl: map['imageUrl'] as String?,
-      buttonLabel: map['buttonLabel'] as String?,
-      buttonColor: map['buttonColor'] as String?,
-      buttonColorOnTap: map['buttonColorOnTap'] as String?,
-      buttonTextColor: map['buttonTextColor'] as String?,
-      buttonTextColorOnTap: map['buttonTextColorOnTap'] as String?,
-      borderColor: map['borderColor'] as String?,
-      textColor: map['textColor'] as String?,
-      animation:
-          map['animation'] != null
-              ? AnimationType.values.byName(map['animation'] as String)
-              : null,
-      fontSize: map['fontSize'] as double?,
-      fontWeight: map['fontWeight'] as String?,
-      fontFamily: map['fontFamily'] as String?,
-      codeLength: map['codeLength'] as int,
-      cornerRadius: map['cornerRadius'] as double?, // New
-      enableFlicker: map['enableFlicker'] as bool?, // New
-      enableGlow: map['enableGlow'] as bool?, // New
-      glowColor: map['glowColor'] as String?, // New
-      inputType: map['inputType'] as String?,
-      capsLock: map['capsLock'] as String?,
-      frameCornerRadius: map['frameCornerRadius'] as double?,
-      inputCornerRadius: map['inputCornerRadius'] as double?,
-      frameBackgroundColor: map['frameBackgroundColor'] as String?,
-      inputBackgroundColor: map['inputBackgroundColor'] as String?,
-      colorBorderInput: map['colorBorderInput'] as String?,
-      colorBorderContainer: map['colorBorderContainer'] as String?,
-      width: map['width'] as double?,
-      height: map['height'] as double?,
-    );
-  }
+   factory Component.fromMap(Map<String, dynamic> map) {
+     final rawType = map['type'] as String;
+     return Component(
+       type: ComponentType.values.byName(rawType),
+       text: map['text'] as String?,
+       imageUrl: map['imageUrl'] as String?,
+       buttonLabel: map['buttonLabel'] as String?,
+       buttonColor: map['buttonColor'] as String?,
+       buttonColorOnTap: map['buttonColorOnTap'] as String?,
+       buttonTextColor: map['buttonTextColor'] as String?,
+       buttonTextColorOnTap: map['buttonTextColorOnTap'] as String?,
+       borderColor: map['borderColor'] as String?,
+       textColor: map['textColor'] as String?,
+       animation:
+       map['animation'] != null
+           ? AnimationType.values.byName(map['animation'] as String)
+           : null,
+       fontSize: map['fontSize'] as double?,
+       fontWeight: map['fontWeight'] as String?,
+       fontFamily: map['fontFamily'] as String?,
+       codeLength: map['codeLength'] as int?, // FIXED: Added nullable cast
+       cornerRadius: map['cornerRadius'] as double?, // New
+       enableFlicker: map['enableFlicker'] as bool?, // New
+       enableGlow: map['enableGlow'] as bool?, // New
+       glowColor: map['glowColor'] as String?, // New
+       inputType: map['inputType'] as String?,
+       capsLock: map['capsLock'] as String?,
+       frameCornerRadius: map['frameCornerRadius'] as double?,
+       inputCornerRadius: map['inputCornerRadius'] as double?,
+       frameBackgroundColor: map['frameBackgroundColor'] as String?,
+       inputBackgroundColor: map['inputBackgroundColor'] as String?,
+       colorBorderInput: map['colorBorderInput'] as String?,
+       colorBorderContainer: map['colorBorderContainer'] as String?,
+       width: map['width'] as double?,
+       height: map['height'] as double?,
+     );
+   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      if(type != null) 'type': type!.name,
-      if (text != null) 'text': text,
-      if (imageUrl != null) 'imageUrl': imageUrl,
-      if (buttonLabel != null) 'buttonLabel': buttonLabel,
-      if (textColor != null) 'textColor': textColor,
-      if (animation != null) 'animation': animation!.name,
-      if (fontSize != null) 'fontSize': fontSize,
-      if (fontWeight != null) 'fontWeight': fontWeight,
-      if (fontFamily != null) 'fontFamily': fontFamily,
-      if (codeLength != null) 'codeLength': codeLength,
-      if (cornerRadius != null) 'cornerRadius': cornerRadius, // New
-      if (enableFlicker != null) 'enableFlicker': enableFlicker, // New
-      if (enableGlow != null) 'enableGlow': enableGlow, // New
-      if (glowColor != null) 'glowColor': glowColor, // New
-      if (inputType != null) 'inputType': inputType,
-      if (capsLock != null) 'capsLock': capsLock,
-      if (frameCornerRadius != null) 'frameCornerRadius': frameCornerRadius,
-      if (inputCornerRadius != null) 'inputCornerRadius': inputCornerRadius,
-      if (frameBackgroundColor != null) 'frameBackgroundColor': frameBackgroundColor,
-      if (inputBackgroundColor != null) 'inputBackgroundColor': inputBackgroundColor,
-      if (colorBorderInput != null) 'colorBorderInput': colorBorderInput,
-      if (colorBorderContainer != null) 'colorBorderContainer': colorBorderContainer,
-      if (width != null) 'width': width,
-      if (height != null) 'height': height,
-    };
-  }
+   Map<String, dynamic> toJson() {
+     return {
+       if(type != null) 'type': type!.name,
+       if (text != null) 'text': text,
+       if (imageUrl != null) 'imageUrl': imageUrl,
+       if (buttonLabel != null) 'buttonLabel': buttonLabel,
+       if (buttonColor != null) 'buttonColor': buttonColor, // FIXED: Added missing fields
+       if (buttonColorOnTap != null) 'buttonColorOnTap': buttonColorOnTap,
+       if (buttonTextColor != null) 'buttonTextColor': buttonTextColor,
+       if (buttonTextColorOnTap != null) 'buttonTextColorOnTap': buttonTextColorOnTap,
+       if (borderColor != null) 'borderColor': borderColor,
+       if (textColor != null) 'textColor': textColor,
+       if (animation != null) 'animation': animation!.name,
+       if (fontSize != null) 'fontSize': fontSize,
+       if (fontWeight != null) 'fontWeight': fontWeight,
+       if (fontFamily != null) 'fontFamily': fontFamily,
+       if (codeLength != null) 'codeLength': codeLength,
+       if (cornerRadius != null) 'cornerRadius': cornerRadius, // New
+       if (enableFlicker != null) 'enableFlicker': enableFlicker, // New
+       if (enableGlow != null) 'enableGlow': enableGlow, // New
+       if (glowColor != null) 'glowColor': glowColor, // New
+       if (inputType != null) 'inputType': inputType,
+       if (capsLock != null) 'capsLock': capsLock,
+       if (frameCornerRadius != null) 'frameCornerRadius': frameCornerRadius,
+       if (inputCornerRadius != null) 'inputCornerRadius': inputCornerRadius,
+       if (frameBackgroundColor != null) 'frameBackgroundColor': frameBackgroundColor,
+       if (inputBackgroundColor != null) 'inputBackgroundColor': inputBackgroundColor,
+       if (colorBorderInput != null) 'colorBorderInput': colorBorderInput,
+       if (colorBorderContainer != null) 'colorBorderContainer': colorBorderContainer,
+       if (width != null) 'width': width,
+       if (height != null) 'height': height,
+     };
+   }
 
   @override
   String toString() {

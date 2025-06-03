@@ -103,8 +103,16 @@ class CreateEventController {
             const SnackBar(content: Text('Event created successfully')),
           );
           // initialize with one mission
-          event.nrMissions = 1;
-          event.missions.add(Mission(id: "0"));
+
+          if(originalEvent!.missions.isEmpty){
+            event.nrMissions = 1;
+            event.missions.add(Mission(id: "0"));
+          }
+          else{
+            event.missions = originalEvent!.missions;
+            event.nrMissions = originalEvent!.missions.length; // This line was missing!
+          }
+
           Navigator.pushNamed(context, Routes.addMissions, arguments: {'event': event, 'mode': mode},);
         } catch (e) {
           ScaffoldMessenger.of(
@@ -174,6 +182,27 @@ class CreateEventController {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       return File(pickedFile.path);
+    }
+    return null;
+  }
+
+  String? getLandingImageToDisplay() {
+    // Priority: newly selected file > existing event image URL > null
+    if (landingImageFile != null) {
+      return landingImageFile!.path; // Return file path as String
+    } else if (originalEvent?.landingImageUrl != null && originalEvent!.landingImageUrl!.isNotEmpty) {
+      return originalEvent!.landingImageUrl; // Return URL as String
+    }
+    return null;
+  }
+
+// Method to get the image URL/path to display for task background
+  String? getTaskBackgroundImageToDisplay() {
+    // Priority: newly selected file > existing event image URL > null
+    if (taskBackgroundImageFile != null) {
+      return taskBackgroundImageFile!.path; // Return file path as String
+    } else if (originalEvent?.taskBackgroundImageUrl != null && originalEvent!.taskBackgroundImageUrl!.isNotEmpty) {
+      return originalEvent!.taskBackgroundImageUrl; // Return URL as String
     }
     return null;
   }

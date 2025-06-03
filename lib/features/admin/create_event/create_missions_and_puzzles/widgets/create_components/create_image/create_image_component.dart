@@ -69,7 +69,7 @@ class _ImageComponentFieldsWidgetState extends State<ImageComponentFieldsWidget>
       },
       child: UploadImage(
         labelText: 'Adaugă imagine',
-        imageFile: controller.image,
+        imageUrl:  controller.image?.path,
       ),
     );
   }

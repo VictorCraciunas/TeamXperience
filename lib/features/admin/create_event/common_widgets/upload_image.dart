@@ -1,18 +1,23 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 import '../../../../constants/colors.dart';
 
 class UploadImage extends StatelessWidget {
   final String labelText;
-  final File? imageFile;
+  final String? imageUrl; // Changed to String? to handle both file paths and URLs
 
   const UploadImage({
     super.key,
     required this.labelText,
-    this.imageFile,
+    this.imageUrl,
   });
+
+  // Helper to determine if the URL is a network URL or a local file path
+  bool _isNetworkUrl(String? url) {
+    if (url == null || url.isEmpty) return false;
+    return url.startsWith('http://') || url.startsWith('https://');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,16 +38,11 @@ class UploadImage extends StatelessWidget {
           width: double.infinity,
           height: 200,
           decoration: BoxDecoration(
-            color: imageFile == null ? const Color(0xFFE7F7F7) : null,
+            color: imageUrl == null ? const Color(0xFFE7F7F7) : null,
             borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-            image: imageFile != null
-                ? DecorationImage(
-              image: FileImage(imageFile!),
-              fit: BoxFit.cover,
-            )
-                : null,
+            image: imageUrl != null ? _getDecorationImage() : null,
           ),
-          child: imageFile == null ? Column(
+          child: imageUrl == null ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SvgPicture.asset(
@@ -59,9 +59,20 @@ class UploadImage extends StatelessWidget {
                 ),
               ),
             ],
-          ) : null
+          ) : null,
         ),
       ],
+    );
+  }
+
+  DecorationImage? _getDecorationImage() {
+    if (imageUrl == null || imageUrl!.isEmpty) return null;
+
+    return DecorationImage(
+      image: _isNetworkUrl(imageUrl)
+          ? NetworkImage(imageUrl!) // Network image for URLs
+          : FileImage(File(imageUrl!)) as ImageProvider, // Local file for paths
+      fit: BoxFit.cover,
     );
   }
 }

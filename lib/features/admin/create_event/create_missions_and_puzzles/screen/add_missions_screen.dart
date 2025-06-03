@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/controller/add_missions_controller.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/widgets/my_button.dart';
@@ -146,7 +147,8 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                   textColor: Colors.white,
                   buttonOnTap: () {
                     print(_addMissionsController.event);
-                    // _addMissionsController.saveEvent();
+                    _addMissionsController.saveEvent();
+                    Navigator.pushNamedAndRemoveUntil(context, Routes.adminHome, (Route<dynamic> route) => false);
                   },
                   withBorder: false,
                   gradient: MyColors.myGradient,

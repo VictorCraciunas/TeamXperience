@@ -1,11 +1,9 @@
 
-import '../../../../../backend/repo/component_repo.dart';
 import '../../../../../backend/repo/event_repo.dart';
 import '../../../../../enums/event_type.dart';
 import '../../../../../model/event.dart';
 
 class CreateEventService {
-  ComponentRepo componentRepo = ComponentRepo();
   EventRepo eventRepo = EventRepo();
 
   Event createEvent(
