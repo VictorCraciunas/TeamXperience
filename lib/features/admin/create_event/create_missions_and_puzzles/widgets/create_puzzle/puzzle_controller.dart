@@ -12,12 +12,17 @@ class PuzzleController {
 
   PuzzleController(Puzzle puzzle) {
     buildPuzzleComponents(puzzle);
+    isDone = _isPuzzleComplete(puzzle);
   }
 
   void buildPuzzleComponents(Puzzle puzzle) {
     for (int i = 0; i < puzzle.components.length; i++) {
       buildComponent(puzzle.components[i]);
     }
+  }
+  bool _isPuzzleComplete(Puzzle puzzle) {
+    // Puzzle is complete if it has a type set
+    return puzzle.type != null;
   }
 
   void buildComponent(Component component) {

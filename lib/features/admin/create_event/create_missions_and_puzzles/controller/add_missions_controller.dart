@@ -57,11 +57,26 @@ class AddMissionsController {
   void buildMissionWidgets(int nrMissions, String mode) {
       for (int i = 0; i < nrMissions; i ++){
           addMissionWidget(event.missions[i], mode);
+          bool missionComplete = _isMissionComplete(event.missions[i]);
           isMissionDone.add(false);
 
       }
   }
+  bool _isMissionComplete(Mission mission) {
+    // If mission has no puzzles, it's not complete
+    if (mission.puzzles.isEmpty) {
+      return false;
+    }
 
+    // Check if all puzzles have a type set
+    for (var puzzle in mission.puzzles) {
+      if (puzzle.type == null) {
+        return false;
+      }
+    }
+
+    return true;
+  }
   Future<void> saveEvent() async {
     try {
       // Upload main event images only if they exist and are local files

@@ -14,6 +14,7 @@ class EventRepo{
     await docRef.set(event.toJson());
   }
 
+
   Future<List<Event>> getAllEvents() async {
     try {
       QuerySnapshot snapshot = await _firestore.collection('events').get();

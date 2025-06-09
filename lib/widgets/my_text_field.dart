@@ -36,6 +36,8 @@ class MyTextField extends StatefulWidget {
 
   /// Optional custom validator; if null, defaults to checking non-empty
   final String? Function(String?)? validator;
+  /// Optional callback when the text changes
+  final void Function(String)? onChanged;
 
   final double borderWidth;
 
@@ -46,7 +48,6 @@ class MyTextField extends StatefulWidget {
   final Color hintTextColor;
   final double hintTextSize;
   final FontWeight hinttextWeight;
-
   /// Optional callback when the field is tapped (e.g., for date pickers)
   final VoidCallback? onTap;
 
@@ -70,7 +71,8 @@ class MyTextField extends StatefulWidget {
     this.maxLines = 1,
     this.hintTextColor = MyColors.greyText,
     this.hintTextSize = 14,
-    this.hinttextWeight = FontWeight.w400
+    this.hinttextWeight = FontWeight.w400,
+    this.onChanged, // Add this line
   });
 
   @override
@@ -128,6 +130,7 @@ class _MyTextFieldState extends State<MyTextField> {
       keyboardType: widget.keyboardType,
       maxLines: widget.maxLines,
       obscureText: _obscure,
+      onChanged: widget.onChanged, // Add this line
       validator: widget.validator ??
               (value) => (value ?? '').isEmpty
               ? 'Enter ${widget.labelText ?? 'a value'}'

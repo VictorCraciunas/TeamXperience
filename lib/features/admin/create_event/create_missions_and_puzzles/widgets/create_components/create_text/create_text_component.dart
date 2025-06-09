@@ -121,6 +121,9 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
 
   Widget _buildTextContentField() {
     return MyTextField(
+      onChanged: (value) {
+        setState(() {});
+      },
       controller: controller.textController,
       labelText: 'Conținut Text',
       borderColor: MyColors.lightBlue,

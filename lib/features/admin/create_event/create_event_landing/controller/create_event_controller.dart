@@ -104,13 +104,15 @@ class CreateEventController {
           );
           // initialize with one mission
 
-          if(originalEvent!.missions.isEmpty){
+          // Initialize with one mission
+          if (originalEvent == null || originalEvent!.missions.isEmpty) {
+            // For new events or events without missions
             event.nrMissions = 1;
             event.missions.add(Mission(id: "0"));
-          }
-          else{
+          } else {
+            // For blueprint mode where originalEvent exists and has missions
             event.missions = originalEvent!.missions;
-            event.nrMissions = originalEvent!.missions.length; // This line was missing!
+            event.nrMissions = originalEvent!.missions.length;
           }
 
           Navigator.pushNamed(context, Routes.addMissions, arguments: {'event': event, 'mode': mode},);

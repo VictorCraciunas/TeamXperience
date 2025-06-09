@@ -14,6 +14,7 @@ class ButtonComponentWidget extends StatefulWidget {
   final String? fontWeight; // Font weight
   final double? fontSize;
   final double? radius;
+  final VoidCallback? onPressed; // Add callback parameter
 
   const ButtonComponentWidget({
     super.key,
@@ -29,7 +30,8 @@ class ButtonComponentWidget extends StatefulWidget {
     this.fontFamily,
     this.fontWeight,
     this.fontSize,
-    this.radius
+    this.radius,
+    this.onPressed,
   });
 
   @override
@@ -42,10 +44,8 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
   late AnimationController _flickerController;
   late Animation<double> _flickerAnimation;
 
-
   late AnimationController _glowController;
   late Animation<double> _glowAnimation;
-
 
   // Helper to convert hex string to Color
   Color _hexToColor(String? hex, {Color defaultColor = Colors.black}) {
@@ -70,10 +70,7 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
       duration: const Duration(milliseconds: 1500), // Half-second cycle
     );
     _flickerAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _flickerController,
-        curve: Curves.bounceIn,
-      ),
+      CurvedAnimation(parent: _flickerController, curve: Curves.bounceIn),
     )..addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _flickerController.reverse();
@@ -88,12 +85,12 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
     // initialize glow animation flicker
     _glowController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),  // Adjust duration as needed
+      duration: const Duration(milliseconds: 1000), // Adjust duration as needed
     );
     _glowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _glowController,
-        curve: Curves.easeInOut,  // Smooth pulsing effect
+        curve: Curves.easeInOut, // Smooth pulsing effect
       ),
     )..addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -103,10 +100,9 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
       }
     });
     if (widget.enableGlow == true) {
-      _glowController.forward();  // Start glow animation if enabled
+      _glowController.forward(); // Start glow animation if enabled
     }
   }
-
 
   @override
   void dispose() {
@@ -117,13 +113,21 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
 
   @override
   Widget build(BuildContext context) {
-    final currentButtonColor = _isTapped
-        ? _hexToColor(widget.buttonColorOnTap, defaultColor: Colors.grey)
-        : _hexToColor(widget.buttonColor, defaultColor: Colors.white);
-    final currentTextColor = _isTapped
-        ? _hexToColor(widget.buttonTextColorOnTap, defaultColor: Colors.white)
-        : _hexToColor(widget.buttonTextColor, defaultColor: Colors.black);
-    final currentBorderColor = _hexToColor(widget.borderColor, defaultColor: Colors.black);
+    final currentButtonColor =
+        _isTapped
+            ? _hexToColor(widget.buttonColorOnTap, defaultColor: Colors.grey)
+            : _hexToColor(widget.buttonColor, defaultColor: Colors.white);
+    final currentTextColor =
+        _isTapped
+            ? _hexToColor(
+              widget.buttonTextColorOnTap,
+              defaultColor: Colors.white,
+            )
+            : _hexToColor(widget.buttonTextColor, defaultColor: Colors.black);
+    final currentBorderColor = _hexToColor(
+      widget.borderColor,
+      defaultColor: Colors.black,
+    );
     final glowColor = _hexToColor(widget.glowColor, defaultColor: Colors.black);
 
     // Map fontWeight string to FontWeight enum
@@ -136,7 +140,8 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
       'Black (900)': FontWeight.w900,
     };
     final currentFontWeight =
-        weightMap[widget.fontWeight] ?? FontWeight.w400; // Default to bold if null
+        weightMap[widget.fontWeight] ??
+        FontWeight.w400; // Default to bold if null
 
     return AnimatedBuilder(
       animation: _flickerAnimation,
@@ -144,27 +149,37 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
         return Listener(
           behavior: HitTestBehavior.opaque,
           onPointerDown: (_) => setState(() => _isTapped = true),
-          onPointerUp: (_) => setState(() => _isTapped = false),
+          onPointerUp: (_) => setState(() {
+            _isTapped = false;
+            // FIXED: Actually call the onPressed callback
+            if (widget.onPressed != null) {
+              widget.onPressed!();
+            }
+          }),
           onPointerCancel: (_) => setState(() => _isTapped = false),
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 5.0,horizontal: 30),
+            padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 30),
             decoration: BoxDecoration(
               color: currentButtonColor,
               border: Border.all(color: currentBorderColor, width: 1.5),
               borderRadius: BorderRadius.circular(widget.radius!),
-              boxShadow: widget.enableGlow == true
-                  ? [
-                BoxShadow(
-                  color: glowColor.withValues(alpha: (0.6 + _glowAnimation.value * 0.2)),
-                  blurRadius: 10.0,
-                  spreadRadius: 2.0 + (_glowAnimation.value * 3.0),
-                  offset: const Offset(0, 0),
-                ),
-              ]
-                  : null,
+              boxShadow:
+                  widget.enableGlow == true
+                      ? [
+                        BoxShadow(
+                          color: glowColor.withValues(
+                            alpha: (0.6 + _glowAnimation.value * 0.2),
+                          ),
+                          blurRadius: 10.0,
+                          spreadRadius: 2.0 + (_glowAnimation.value * 3.0),
+                          offset: const Offset(0, 0),
+                        ),
+                      ]
+                      : null,
             ),
             child: Opacity(
-              opacity:widget.enableFlicker == true ? _flickerAnimation.value : 1,
+              opacity:
+                  widget.enableFlicker == true ? _flickerAnimation.value : 1,
               child: Text(
                 widget.buttonLabel!,
                 style: TextStyle(

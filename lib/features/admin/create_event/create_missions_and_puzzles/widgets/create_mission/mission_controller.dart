@@ -18,24 +18,40 @@ class MissionController {
       this.missionDone
   ) {
     if (mode == "blueprint" || mode == "edit") {
+      if(mode == "blueprint"){
+        _clearPuzzleDataForDuplication(mission);
+      }
       buildPuzzleWidgets(mission, addMissionsController, mode);
+    }
+  }
+  void _clearPuzzleDataForDuplication(Mission mission) {
+    for (Puzzle puzzle in mission.puzzles) {
+      puzzle.type = null;
+      puzzle.code = null;
+      puzzle.coordinates = null;
+      puzzle.indiciu = null;
     }
   }
 
   void buildPuzzleWidgets(
-    Mission mission,
-    AddMissionsController addMissionsController,
-    String mode,
-  ) {
+      Mission mission,
+      AddMissionsController addMissionsController,
+      String mode,
+      ) {
     for (int i = 0; i < mission.puzzles.length; i++) {
       addPuzzleWidget(mission.puzzles[i], addMissionsController, mode);
-      if (mission.puzzles[i].type == null) {
-        isPuzzleDone.add(false);
+
+      // Check if puzzle is done based on whether it has a type
+      if (mode == "edit") {
+        // In edit mode, check if puzzle has a type to determine if it's done
+        isPuzzleDone.add(mission.puzzles[i].type != null);
       } else {
-        isPuzzleDone.add(true);
+        // For other modes (blueprint, duplicate, create), puzzle is not done initially
+        isPuzzleDone.add(false);
       }
     }
   }
+
 
   void addNewPuzzle(
     AddMissionsController addMissionsController,

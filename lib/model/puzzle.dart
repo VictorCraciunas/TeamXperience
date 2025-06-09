@@ -12,7 +12,7 @@ class Puzzle {
   Puzzle({
     required this.id,
     List<Component>? components,
-    PuzzleType? type,
+    this.type,
     this.code,
     this.coordinates,
     this.indiciu
@@ -38,26 +38,27 @@ class Puzzle {
   factory Puzzle.fromMap(Map<String, dynamic> data) {
     final rawList = data['components'] as List<dynamic>? ?? [];
     final comps = rawList.map((e) => Component.fromMap(e as Map<String, dynamic>)).toList();
-    final rawType = data['type'] as String;
+    final rawType = data['type'] as String? ;
 
-    return Puzzle(
+    final puzzle = Puzzle(
       id: data['id'] as String? ?? '',
       components: comps,
-      type: PuzzleType.values.byName(rawType),
+      type: rawType != null ? PuzzleType.values.byName(rawType) : null,
       code: data['code'] as String?,
       coordinates: data['coordinates'] as String?,
       indiciu: data['indiciu'] as String?,
     );
+    return puzzle;
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'components': components.map((c) => c.toJson()).toList(),
-      'type': type!.name,
-       if (code != null) 'text': code,
-      if (coordinates != null) 'text': coordinates,
-      if (indiciu != null) 'text': indiciu,
+        if (type != null) 'type': type!.name,
+       if (code != null) 'code': code,
+      if (coordinates != null) 'coordinates': coordinates,
+      if (indiciu != null) 'indiciu': indiciu,
 
     };
   }

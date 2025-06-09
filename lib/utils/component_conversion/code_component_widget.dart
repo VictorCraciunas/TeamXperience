@@ -3,10 +3,12 @@ import 'package:teamxperience/model/component.dart';
 
 class CodeComponentWidget extends StatefulWidget {
   final Component component;
+  final Function(String)? onTextChanged;
 
   const CodeComponentWidget({
     super.key,
     required this.component,
+    this.onTextChanged
   });
 
   @override
@@ -19,7 +21,6 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
 
   late AnimationController glowController;
   late Animation<double> glowAnimation;
-
 
   // Keep track of the length we last built for
   late int _lastLength;
@@ -69,6 +70,11 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
   void _initControllers(int length) {
     controllers = List.generate(length, (_) => TextEditingController());
     focusNodes  = List.generate(length, (_) => FocusNode());
+
+    // Add listeners to all controllers to detect changes
+    for (int i = 0; i < controllers.length; i++) {
+      controllers[i].addListener(() => _onTextChanged());
+    }
   }
 
   void _disposeControllers() {
@@ -77,6 +83,24 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
     }
     for (final f in focusNodes) {
       f.dispose();
+    }
+  }
+
+  // New method to handle text changes and notify parent
+  void _onTextChanged() {
+    String combinedText;
+
+    if (widget.component.inputType == 'Separated') {
+      // Concatenate all controller texts for separated mode
+      combinedText = controllers.map((controller) => controller.text).join('');
+    } else {
+      // For free mode, just use the first controller
+      combinedText = controllers.isNotEmpty ? controllers[0].text : '';
+    }
+
+    // Notify parent widget
+    if (widget.onTextChanged != null) {
+      widget.onTextChanged!(combinedText);
     }
   }
 
@@ -98,6 +122,7 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
     final fontFamily = widget.component.fontFamily;
     final textColor = _hexToColor(widget.component.textColor);
     final capsLock = widget.component.capsLock ?? "Fără";
+
     if (codeLength != _lastLength) {
       _disposeControllers();
       _initControllers(codeLength);
@@ -112,7 +137,6 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
     // Distribute items as evenly as possible across rows
     final int basePerRow = codeLength ~/ rowCount;
     final int extra = codeLength % rowCount;
-
 
     Widget content;
     if (inputType == 'Separated') {
@@ -151,30 +175,30 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
     // Wrap in outer Container only for Separated mode
     return inputType == 'Separated'
         ? AnimatedBuilder(
-          animation: glowAnimation,
-          builder: (context,child)=>
-           IntrinsicWidth(
-             child: Container(
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                       color: frameBackgroundColor,
-                       borderRadius: BorderRadius.circular(frameCornerRadius),
-                       border: Border.all(color: colorBorderContainer, width: 1.5),
-                       boxShadow: enableGlow == true
-                ? [
-              BoxShadow(
-                color: glowColor.withValues(alpha: (0.6 +glowAnimation.value * 0.2)),
-                blurRadius: 10.0,
-                spreadRadius: 2.0 + (glowAnimation.value * 3.0),
-                offset: const Offset(0, 0),
-              ),
-                       ]
-                : null,
+      animation: glowAnimation,
+      builder: (context,child)=>
+          IntrinsicWidth(
+            child: Container(
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color: frameBackgroundColor,
+                borderRadius: BorderRadius.circular(frameCornerRadius),
+                border: Border.all(color: colorBorderContainer, width: 1.5),
+                boxShadow: enableGlow == true
+                    ? [
+                  BoxShadow(
+                    color: glowColor.withValues(alpha: (0.6 +glowAnimation.value * 0.2)),
+                    blurRadius: 10.0,
+                    spreadRadius: 2.0 + (glowAnimation.value * 3.0),
+                    offset: const Offset(0, 0),
                   ),
-                  child: content,
-                ),
-           ),
-        )
+                ]
+                    : null,
+              ),
+              child: content,
+            ),
+          ),
+    )
         : content;
   }
 
@@ -220,6 +244,7 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
           } else if (value.isEmpty && index > 0) {
             FocusScope.of(context).requestFocus(focusNodes[index - 1]);
           }
+          // Note: _onTextChanged() is called automatically via the listener
         },
         style:  TextStyle(
             fontSize: fontSize,
@@ -265,11 +290,12 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
           counterText: '',
         ),
         style:  TextStyle(
-          fontSize: fontSize,
-          fontWeight: FontWeight.bold,
-          fontFamily: fontFamily,
-          color: textColor
+            fontSize: fontSize,
+            fontWeight: FontWeight.bold,
+            fontFamily: fontFamily,
+            color: textColor
         ),
+        // Note: _onTextChanged() is called automatically via the listener for free mode too
       ),
     );
   }

@@ -9,7 +9,6 @@ class TextComponentWidget extends StatelessWidget {
   final String? fontWeight; // String like "Black (900)"
   final String? fontFamily;
 
-
   const TextComponentWidget({
     super.key,
     required this.text,
@@ -19,15 +18,16 @@ class TextComponentWidget extends StatelessWidget {
     this.fontWeight,
     this.fontFamily
   });
+
   // Helper to convert hex string to Color
-  Color _hexToColor(String? hex) {
+  Color hexToColor(String? hex) {
     if (hex == null || hex.isEmpty) return Colors.black;
     final hexColor = hex.replaceFirst('#', '');
     return Color(int.parse('FF$hexColor', radix: 16));
   }
 
   // Helper to map fontWeight string to FontWeight
-  FontWeight _mapFontWeight(String? weight) {
+  FontWeight mapFontWeight(String? weight) {
     if (weight == null) return FontWeight.normal;
     final match = RegExp(r'\((\d+)\)').firstMatch(weight);
     if (match != null) {
@@ -42,11 +42,12 @@ class TextComponentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentColor = _hexToColor(textColor);
-    final currentFontWeight = _mapFontWeight(fontWeight);
+    final currentColor = hexToColor(textColor);
+    final currentFontWeight = mapFontWeight(fontWeight);
 
-    if (animation == AnimationType.typewriter) {
+    if (animation == AnimationType.typewriter && text.isNotEmpty) {
       return TypewriterText(
+        key: ValueKey(text), // Add key to force rebuild when text changes
         text: text,
         textColor: currentColor,
         fontSize: fontSize,
@@ -54,13 +55,15 @@ class TextComponentWidget extends StatelessWidget {
         fontFamily: fontFamily,
       );
     }
+
     return Text(
+      textAlign: TextAlign.center,
       text,
       style: TextStyle(
-        color: currentColor,
-        fontSize: fontSize,
-        fontWeight: currentFontWeight,
-        fontFamily: fontFamily
+          color: currentColor,
+          fontSize: fontSize,
+          fontWeight: currentFontWeight,
+          fontFamily: fontFamily
       ),
     );
   }
@@ -72,7 +75,6 @@ class TypewriterText extends StatefulWidget {
   final double? fontSize;
   final FontWeight fontWeight;
   final String? fontFamily;
-
 
   const TypewriterText({
     super.key,
@@ -88,23 +90,44 @@ class TypewriterText extends StatefulWidget {
 }
 
 class _TypewriterTextState extends State<TypewriterText> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+  AnimationController? _controller;
   late Animation<int> _animation;
 
   @override
   void initState() {
     super.initState();
+    _setupAnimation();
+  }
+
+  @override
+  void didUpdateWidget(TypewriterText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Reset animation when text changes
+    if (oldWidget.text != widget.text) {
+      _setupAnimation();
+    }
+  }
+
+  void _setupAnimation() {
+    // Dispose previous controller if it exists
+    _controller?.dispose();
+
     _controller = AnimationController(
       duration: Duration(milliseconds: widget.text.length * 100),
       vsync: this,
     );
-    _animation = IntTween(begin: 0, end: widget.text.length).animate(_controller);
-    _controller.forward();
+
+    _animation = IntTween(
+        begin: 0,
+        end: widget.text.length
+    ).animate(_controller!);
+
+    _controller!.forward();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -113,13 +136,17 @@ class _TypewriterTextState extends State<TypewriterText> with SingleTickerProvid
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
+        // Add bounds checking to prevent RangeError
+        final displayLength = _animation.value.clamp(0, widget.text.length);
+
         return Text(
-          widget.text.substring(0, _animation.value),
+          textAlign: TextAlign.center,
+          widget.text.substring(0, displayLength),
           style: TextStyle(
-            color: widget.textColor,
-            fontSize: widget.fontSize,
-            fontWeight: widget.fontWeight,
-            fontFamily: widget.fontFamily
+              color: widget.textColor,
+              fontSize: widget.fontSize,
+              fontWeight: widget.fontWeight,
+              fontFamily: widget.fontFamily
           ),
         );
       },

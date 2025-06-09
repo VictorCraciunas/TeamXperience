@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/screen/add_missions_screen.dart';
 import 'package:teamxperience/features/admin/home/screen/admin_home.dart';
+import 'package:teamxperience/features/event_details/screen/event_details_screen.dart';
+import 'package:teamxperience/features/event_game/screen/event_game_screen.dart';
+import 'package:teamxperience/features/event_game/screen/puzzle_game_screen.dart';
 import 'package:teamxperience/features/forgot-password/screen/forgot_password_screen.dart';
 import 'package:teamxperience/features/sign-up/screen/register.dart';
 import 'package:teamxperience/features/splash/splash.dart';
@@ -54,7 +57,10 @@ class MyApp extends StatelessWidget {
         Routes.addMissions: (_) => const AddMissionsPage(),
         Routes.adminHome:   (_) => const AdminHome(),
         Routes.splash: (_) => const SplashScreen(),
-        Routes.forgotPassword: (_) => const ForgotPasswordScreen()
+        Routes.forgotPassword: (_) => const ForgotPasswordScreen(),
+        Routes.eventDetails: (_) => const EventDetailsScreen(),
+        Routes.eventGame: (_) => const EventGameScreen(),
+        Routes.puzzleGame: (_) => const PuzzleGameScreen()
 
       },
     );

@@ -9,4 +9,7 @@ abstract class Routes {
   static const adminHome    = '/admin_home';
   static const splash    = '/splash';
   static const forgotPassword    = '/forgot_password';
+  static const eventDetails = '/event_details';
+  static const puzzleGame ='/puzzle_game';
+  static const eventGame = '/event_game';
 }

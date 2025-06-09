@@ -57,6 +57,10 @@ class _AdminHomeState extends State<AdminHome> {
     );
   }
 
+  void _navigateToEventDetails(Event event){
+    Navigator.pushNamed(context, Routes.eventDetails,arguments: event);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,7 +178,7 @@ class _AdminHomeState extends State<AdminHome> {
           final event = controller.events[index];
           return EventCard(
             event: event,
-            onTap: () => _navigateToCreateEvent(event: event),
+            onTap: () => _navigateToEventDetails(event),
           );
         },
       ),
