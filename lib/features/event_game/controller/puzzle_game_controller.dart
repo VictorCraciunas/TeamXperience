@@ -17,10 +17,12 @@ class PuzzleGameController {
   PuzzleGameController(this.mission, this.background) {
     loadPuzzles();
   }
+
   // Method to set context when screen is ready
   void setContext(BuildContext ctx) {
     context = ctx;
   }
+
   int get selectedPuzzle => selectedPuzzleNotifier.value;
 
   void loadPuzzles() {
@@ -89,14 +91,25 @@ class PuzzleGameController {
   int get totalPuzzles => mission.puzzles.length;
   int get currentPuzzleIndex => selectedPuzzle;
 
-  List<Widget> buildComponentsWithSpacing(List<Widget> components) {
+  // Updated method to include sequential animations
+  List<Widget> buildComponentsWithSpacing(List<Widget> components, List<Animation<double>> animations) {
     if (components.isEmpty) return components;
 
     List<Widget> spacedComponents = [];
     for (int i = 0; i < components.length; i++) {
-      spacedComponents.add(components[i]);
+      // Wrap each component with animated opacity
+      Widget animatedComponent = Opacity(
+        opacity: animations.isNotEmpty && i < animations.length
+            ? animations[i].value
+            : 1.0,
+        child: components[i],
+      );
+
+      spacedComponents.add(animatedComponent);
+
+      // Add spacing between components (except after the last one)
       if (i < components.length - 1) {
-        double spacing = 30.0;
+        double spacing = 40.0;
         spacedComponents.add(SizedBox(height: spacing));
       }
     }

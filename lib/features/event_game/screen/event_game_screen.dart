@@ -24,13 +24,9 @@ class _EventGameScreenState extends State<EventGameScreen> {
     if (!_initialized) {
       final event = ModalRoute.of(context)!.settings.arguments as Event;
 
-      controller = EventGameController(event);
+      controller = EventGameController(event,context);
       _initialized = true;
     }
-  }
-
-  Future<void> _preloadBackground(ImageProvider background) async {
-    await precacheImage(background, context);
   }
 
   @override
@@ -49,17 +45,17 @@ class _EventGameScreenState extends State<EventGameScreen> {
                   scrollDirection: Axis.horizontal,
                   itemCount: controller.event.nrMissions ,
                   itemBuilder: (context, index) {
-                    return ElevatedButton(onPressed: () async {
-                      // await _preloadBackground(controller.background);
-                      Navigator.pushNamed(
-                          context,
-                          Routes.puzzleGame,
-                        arguments: {
-                          'mission': controller.event.missions[index],
-                          'background': controller.background, // or however you get the background
-                        },
-                      );
-                    }, child: Text("Missiune $index"));
+                    return ElevatedButton(
+                        onPressed: ()  {
+                            Navigator.pushNamed(
+                              context,
+                              Routes.puzzleGame,
+                              arguments: {
+                                'mission': controller.event.missions[index],
+                                'background': controller.background,
+                              },
+                            );
+                        }, child: Text("Missiune $index"));
                   },
 
                 ),

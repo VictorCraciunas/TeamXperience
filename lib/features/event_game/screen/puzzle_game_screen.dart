@@ -10,9 +10,11 @@ class PuzzleGameScreen extends StatefulWidget {
   State<PuzzleGameScreen> createState() => _PuzzleGameScreenState();
 }
 
-class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
+class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerProviderStateMixin{
   late PuzzleGameController controller;
   bool _initialized = false;
+  late AnimationController _animationController;
+  List<Animation<double>> _animations = [];
 
   @override
   void didChangeDependencies() {
@@ -22,16 +24,44 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
       final mission = args['mission'] as Mission;
       final background = args['background'] as ImageProvider;
       controller = PuzzleGameController(mission, background);
+
+      // Initialize animation controller
+      _animationController = AnimationController(
+        duration: const Duration(milliseconds: 4000), // Total duration for all animations
+        vsync: this,
+      );
+
       _initialized = true;
     }
 
     controller.setContext(context);
-    _initialized = true;
+  }
 
+  void _createAnimations(int componentCount) {
+    if (componentCount == 0) return;
+
+    _animations = List.generate(componentCount, (index) {
+      double start = index / componentCount;
+      double end = (index + 1) / componentCount;
+
+      return Tween<double>(
+        begin: 0.0,
+        end: 1.0,
+      ).animate(CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(start, end, curve: Curves.easeIn),
+      ));
+    });
+  }
+
+  void _startAnimation() {
+    _animationController.reset();
+    _animationController.forward();
   }
 
   @override
   void dispose() {
+    _animationController.dispose();
     controller.dispose();
     super.dispose();
   }
@@ -57,57 +87,45 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
             padding: const EdgeInsets.symmetric(
               horizontal: MyPaddings.appHorizontalPadding,
             ),
-            child: Column(
-              children: [
-                // Header with puzzle info - this will rebuild when selectedPuzzle changes
-                ValueListenableBuilder<int>(
-                  valueListenable: controller.selectedPuzzleNotifier,
-                  builder: (context, selectedPuzzle, child) {
-                    return Container(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Puzzle ${selectedPuzzle + 1}/${controller.totalPuzzles}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+            child: ValueListenableBuilder<int>(
+              valueListenable: controller.selectedPuzzleNotifier,
+              builder: (context, selectedPuzzle, child) {
+                final components = controller.getCurrentPuzzleWidgets();
+
+                // Create animations for current puzzle components
+                _createAnimations(components.length);
+
+                // Start animation when puzzle changes
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _startAnimation();
+                });
+
+                return Container(
+                  child: components.isEmpty
+                      ? const Center(
+                    child: Text(
+                      'No puzzle components found',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  )
+                      : Center(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(20),
+                      child: AnimatedBuilder(
+                        animation: _animationController,
+                        builder: (context, child) {
+                          return Column(
+                            children: controller.buildComponentsWithSpacing(
+                              components,
+                              _animations,
                             ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-                // Main puzzle content area - this will also rebuild
-                Expanded(
-                  child: ValueListenableBuilder<int>(
-                    valueListenable: controller.selectedPuzzleNotifier,
-                    builder: (context, selectedPuzzle, child) {
-                      return Container(
-                        child: controller.getCurrentPuzzleWidgets().isEmpty
-                            ? const Center(
-                          child: Text(
-                            'No puzzle components found',
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        )
-                            : Center(
-                          child: SingleChildScrollView(
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                              children: controller.buildComponentsWithSpacing(
-                                  controller.getCurrentPuzzleWidgets()),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                    ),
                   ),
-                ),
-              ],
+                );
+              },
             ),
           ),
         ),

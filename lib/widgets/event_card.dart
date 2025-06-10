@@ -1,24 +1,30 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import '../../model/event.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
   final VoidCallback? onTap;
 
-  const EventCard({
-    super.key,
-    required this.event,
-    this.onTap,
-  });
+  const EventCard({super.key, required this.event, this.onTap});
+
+  static final CacheManager _eventImageCache = CacheManager(
+    Config(
+      'eventImagesCache',
+      maxNrOfCacheObjects: 200, // Increased for better caching
+      stalePeriod: const Duration(days: 30),
+      // Optional: Add repo for better performance
+      repo: JsonCacheInfoRepository(databaseName: 'eventImagesCache'),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -27,47 +33,28 @@ class EventCard extends StatelessWidget {
           children: [
             // Event Image
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(12),
+              ),
               child: SizedBox(
                 height: 200,
                 width: double.infinity,
-                child: event.landingImageUrl != null && event.landingImageUrl!.isNotEmpty
-                    ? Image.network(
-                  event.landingImageUrl!,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Icon(
-                        Icons.image_not_supported,
-                        size: 50,
-                        color: Colors.grey,
-                      ),
-                    );
-                  },
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      color: Colors.grey[200],
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                              : null,
+                child:
+                    event.landingImageUrl != null &&
+                            event.landingImageUrl!.isNotEmpty
+                        ? CachedNetworkImage(
+                          imageUrl: event.landingImageUrl!,
+                          fit: BoxFit.cover,
+                      cacheManager: _eventImageCache,
+                        )
+                        : Container(
+                          color: Colors.grey[300],
+                          child: const Icon(
+                            Icons.event,
+                            size: 50,
+                            color: Colors.grey,
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                )
-                    : Container(
-                  color: Colors.grey[300],
-                  child: const Icon(
-                    Icons.event,
-                    size: 50,
-                    color: Colors.grey,
-                  ),
-                ),
               ),
             ),
 
@@ -184,4 +171,12 @@ class EventCard extends StatelessWidget {
   }
 
 
+  static Future<void> preloadImage(String imageUrl) async {
+    try {
+      await _eventImageCache.downloadFile(imageUrl);
+    } catch (e) {
+      // Handle preload errors silently
+      debugPrint('Failed to preload image: $imageUrl');
+    }
+  }
 }
