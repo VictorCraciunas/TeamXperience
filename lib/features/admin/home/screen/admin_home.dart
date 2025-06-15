@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/constants/routes.dart';
+import 'package:teamxperience/features/admin/home/widgets/navigate_card.dart';
 import '../../../../backend/authentication/AuthenticationRepository.dart';
 import '../../../../model/event.dart';
-import '../../../../widgets/event_card.dart';
+import '../../../../widgets/event_card/events_list.dart';
 import '../controller/admin_controller.dart';
 
 class AdminHome extends StatefulWidget {
@@ -25,7 +28,6 @@ class _AdminHomeState extends State<AdminHome> {
     controller.setStateCallback(() {
       if (mounted) {
         setState(() {
-          // UI will rebuild because setState is called
         });
       }
     });
@@ -65,123 +67,60 @@ class _AdminHomeState extends State<AdminHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text("Admin Home"),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: controller.refreshEvents,
-          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: _logout,
           ),
         ],
       ),
-      body: _buildBody(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _navigateToCreateEvent(),
-        child: const Icon(Icons.add),
-        tooltip: 'Create New Event',
-      ),
-    );
-  }
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding:  const EdgeInsets.symmetric(horizontal: MyPaddings.appHorizontalPadding),
+            child: Column(
+              children: [
+                Row(
+                 children: [
+                   Expanded(child: NavigateCard(text1: "Creeaza", text2: "evenimennt",onTap: _navigateToCreateEvent)),
+                   const SizedBox(width: 25,),
+                   Expanded(child: NavigateCard(text1: "Adauga", text2: "stire",onTap: (){})),
+                 ],
+                ),
+                const SizedBox(height: 15,),
+                Row(
+                  children: [
+                    Expanded(child: NavigateCard(text1: "Trimite", text2: "notificare",onTap: (){})),
+                    const SizedBox(width: 25,),
+                    Expanded(child: NavigateCard(text1: "Acceseaza", text2: "chat",onTap: (){})),
+                  ],
+                ),
+                SizedBox(height: 20,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Evenimente", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: MyColors.blackColor),),
+                    Text("Vezi mai multe >", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: MyColors.lightBlue),),
 
-  Widget _buildBody() {
-    if (controller.isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-
-    if (controller.errorMessage != null) {
-      return _buildErrorState();
-    }
-
-    if (controller.events.isEmpty) {
-      return _buildEmptyState();
-    }
-
-    return _buildEventsList();
-  }
-
-  Widget _buildErrorState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.error_outline,
-            size: 64,
-            color: Colors.red[300],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            controller.errorMessage!,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Colors.red[700],
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: controller.refreshEvents,
-            child: const Text('Retry'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.event_busy,
-            size: 64,
-            color: Colors.grey[400],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'No events found',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Colors.grey[600],
+                  ],
+                ),
+                EventsList(
+                  events: controller.events,
+                  onEventTap: _navigateToEventDetails,
+                  isAdmin: true,
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Create your first event to get started',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[500],
-            ),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton.icon(
-            onPressed: () => _navigateToCreateEvent(),
-            icon: const Icon(Icons.add),
-            label: const Text('Create Event'),
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildEventsList() {
-    return RefreshIndicator(
-      onRefresh: controller.refreshEvents,
-      child: ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        itemCount: controller.events.length,
-        itemBuilder: (context, index) {
-          final event = controller.events[index];
-          return EventCard(
-            event: event,
-            onTap: () => _navigateToEventDetails(event),
-          );
-        },
-      ),
-    );
-  }
+
+
+
 }

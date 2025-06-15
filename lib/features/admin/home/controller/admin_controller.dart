@@ -29,6 +29,7 @@ class AdminHomeController {
     }
   }
 
+
   Future<void> loadEvents() async {
     _isLoading = true;
     _errorMessage = null;
@@ -45,9 +46,6 @@ class AdminHomeController {
     }
   }
 
-  Future<void> refreshEvents() async {
-    await loadEvents();
-  }
 
   void dispose() {
     _onStateChanged = null;
