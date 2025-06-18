@@ -1,10 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/utils/cache_image.dart';
 import '../../../model/event.dart';
+import '../EventImage.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
@@ -13,15 +13,7 @@ class EventCard extends StatelessWidget {
 
   const EventCard({super.key, required this.event, this.onTap, required this.isAdmin});
 
-  static final CacheManager _eventImageCache = CacheManager(
-    Config(
-      'eventImagesCache',
-      maxNrOfCacheObjects: 200, // Increased for better caching
-      stalePeriod: const Duration(days: 30),
-      // Optional: Add repo for better performance
-      repo: JsonCacheInfoRepository(databaseName: 'eventImagesCache'),
-    ),
-  );
+
 
   @override
   Widget build(BuildContext context) {
@@ -56,103 +48,15 @@ class EventCard extends StatelessWidget {
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: InkWell(
+        splashFactory: InkSplash.splashFactory,
         onTap: onTap,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Event Image with Stack
             Padding(
-              padding: const EdgeInsets.all(10),
-              child: SizedBox(
-                height: 175,
-                width: double.infinity,
-                child: Stack(
-                  children: [
-                    // Background Image
-                    event.landingImageUrl != null &&
-                        event.landingImageUrl!.isNotEmpty
-                        ? CachedNetworkImage(
-                      imageBuilder: (context, imageProvider) => Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      imageUrl: event.landingImageUrl!,
-                      fit: BoxFit.cover,
-                      cacheManager: _eventImageCache,
-                    )
-                        : Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: const Icon(
-                        Icons.event,
-                        size: 50,
-                        color: Colors.grey,
-                      ),
-                    ),
-
-                    // Blue containers overlay
-                    Padding(
-                      padding: const EdgeInsets.all(13.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          if(isAdmin == true)
-                          Container(
-                            width: 78,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              color: MyColors.lightBlue,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/images/user-group.svg',
-                                  width: 18,
-                                  height: 18,
-                                ),
-                                const SizedBox(width: 2.0,),
-                                const Text("5", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600,color: Colors.white),),
-                                const SizedBox(width: 2.0,),
-                                const Text("(78 p.)", style: TextStyle(fontSize: 9, fontWeight: FontWeight.w500,color: Colors.white),),
-
-                              ],
-
-                            )
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            width: 78,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              color: MyColors.lightBlue,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child:  Center(
-                              child: Text(
-                                (event.type?.name ?? "PUBLIC").toUpperCase(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              padding: const EdgeInsets.all(10.0),
+              child: EventImage(event: event, eventImageCache: CacheImageManager.eventImageCache, isAdmin: isAdmin,height: 175,),
             ),
 
             // Event Details
@@ -164,7 +68,7 @@ class EventCard extends StatelessWidget {
                     height: 60,
                     width: 63,
                     decoration: BoxDecoration(
-                      color: const Color(0x2453C4C7),
+                      color: MyColors.transparentLightBlue,
                       borderRadius: BorderRadius.circular(10), // Apply custom radius
                     ),
                     child: Column(
@@ -187,7 +91,7 @@ class EventCard extends StatelessWidget {
                               width: 14,
                               height: 14,
                             ),
-                            const SizedBox(width: 8,),
+                            const SizedBox(width: 5,),
                             Text(event.location ?? "No Location", style: const TextStyle(fontSize: 13,color: Color(0xFF545454)),)
                           ],
                         ),
@@ -206,12 +110,5 @@ class EventCard extends StatelessWidget {
     );
   }
 
-  static Future<void> preloadImage(String imageUrl) async {
-    try {
-      await _eventImageCache.downloadFile(imageUrl);
-    } catch (e) {
-      // Handle preload errors silently
-      debugPrint('Failed to preload image: $imageUrl');
-    }
-  }
 }
+

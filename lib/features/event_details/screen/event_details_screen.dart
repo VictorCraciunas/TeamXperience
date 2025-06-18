@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/event_details/controller/event_details_controller.dart';
+import 'package:teamxperience/features/event_details/widgets/detail_widget.dart';
 import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/utils/cache_image.dart';
+import 'package:teamxperience/widgets/EventImage.dart';
+import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/widgets/my_button.dart';
 
 import '../../../constants/routes.dart';
 
@@ -13,6 +21,7 @@ class EventDetailsScreen extends StatefulWidget {
 
 class _EventDetailsScreenState extends State<EventDetailsScreen> {
   late EventDetailsController controller;
+  late bool isAdmin;
   bool _initialized = false;
 
   @override
@@ -20,43 +29,130 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     if (!_initialized) {
-      final event = ModalRoute.of(context)!.settings.arguments as Event;
+      final arguments = ModalRoute
+          .of(context)!
+          .settings
+          .arguments as Map<String, dynamic>;
+      final event = arguments['event'] as Event;
+      isAdmin = arguments['isAdmin'] as bool? ?? false;
 
       controller = EventDetailsController(event);
       _initialized = true;
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(controller.event.name ?? "Nu avem nume eveniment"),
-          Text(controller.event.description ?? "NU avem descriere eveniment"),
-          TextButton(onPressed: (){
-            Navigator.pushNamed(
-              context,
-              Routes.createEvent,
-              arguments: {'event': controller.event, 'isBlueprint': false},
-            );
-          }, child: Text("Edit")),
-          TextButton(onPressed: (){
-            Navigator.pushNamed(
-              context,
-              Routes.createEvent,
-              arguments: {'event': controller.event, 'isBlueprint': true},
-            );
-          }, child: Text("Duplicate")),
-          TextButton(onPressed: (){
-            Navigator.pushNamed(
-              context,
-              Routes.eventGame,
-              arguments: controller.event
-            );
-          }, child: Text("see event")),
+      appBar: MyAppBar(appBarText: "Detalii Eveniment"),
+      bottomNavigationBar: isAdmin == true ? Container(
+        padding: EdgeInsets.all(16),
+        child: MyButton(
+          buttonText: "Vezi echipele inscrise",
+          textColor: Colors.white,
+          buttonOnTap: () {},
+          withBorder: false,
+          gradient: MyColors.myGradient,
+          buttonTextSize: 15,
+        ),
+      )
+          :
+      Container(
+        padding: EdgeInsets.all(16),
+        child: MyButton(
+          buttonText: "Inscrie-ti echipa",
+          textColor: Colors.white,
+          buttonOnTap: () {},
+          withBorder: false,
+          gradient: MyColors.myGradient,
+          buttonTextSize: 15,
+        ),
+      ),
+      body: SafeArea(child: Padding(
+        padding: EdgeInsets.symmetric(
+            horizontal: MyPaddings.appHorizontalPadding),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              EventImage(event: controller.event,
+                  eventImageCache: CacheImageManager.eventImageCache,
+                  isAdmin: isAdmin,
+                  height: 194),
+              SizedBox(height: 10,),
+              Text(controller.event.name ?? "Nu avem nume eveniment",
+                style: TextStyle(fontSize: 19,
+                    fontWeight: FontWeight.w600,
+                    color: MyColors.blackColor),),
+              SizedBox(height: 20,),
+              DetailWidget(text1: "Sambata, 7 iunie",
+                  text2: "ora 11.00",
+                  iconPath: 'assets/images/calendar_icon.svg'),
+              SizedBox(height: 10,),
+              DetailWidget(text1: controller.event.location ?? "No Location",
+                  text2: "de adaugat",
+                  iconPath: 'assets/images/location_map.svg'),
+              SizedBox(height: 30,),
+              Text(controller.event.description ?? "No description",
+                style: TextStyle(fontSize: 13,
+                    fontWeight: FontWeight.w300,
+                    color: Colors.black),),
+              SizedBox(height: 30,),
+              Text("Detalii", style: TextStyle(fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                  color: MyColors.blackColor),),
+              SizedBox(height: 12,),
+              DetailWidget(text1: "Sambata, 7 iunie",
+                  text2: "ora 11.00",
+                  iconPath: 'assets/images/traseu.svg'),
+              SizedBox(height: 10,),
+              DetailWidget(text1: controller.event.location ?? "No Location",
+                  text2: "de adaugat",
+                  iconPath: 'assets/images/timer.svg'),
+              SizedBox(height: 10,),
+              DetailWidget(text1: controller.event.location ?? "No Location",
+                  text2: "de adaugat",
+                  iconPath: 'assets/images/location_map.svg'),
+              SizedBox(height: 20,),
+              if(isAdmin == true)
+              MyButton(
+                buttonText: "Trimite notificare",
+                textColor: MyColors.blackColor,
+                buttonOnTap: () {},
+                withBorder: false,
+                buttonColor: MyColors.transparentLightBlue,
+                leading: SvgPicture.asset(
+                  'assets/images/notification2.svg',
+                  width: 24,
+                  height: 24,
+                ),),
 
-        ],
+
+              TextButton(onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  Routes.createEvent,
+                  arguments: {'event': controller.event, 'isBlueprint': false},
+                );
+              }, child: Text("Edit")),
+              TextButton(onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  Routes.createEvent,
+                  arguments: {'event': controller.event, 'isBlueprint': true},
+                );
+              }, child: Text("Duplicate")),
+              TextButton(onPressed: () {
+                Navigator.pushNamed(
+                    context,
+                    Routes.eventGame,
+                    arguments: controller.event
+                );
+              }, child: Text("see event")),
+
+            ],
+          ),
+        ),
       )),
     );
   }

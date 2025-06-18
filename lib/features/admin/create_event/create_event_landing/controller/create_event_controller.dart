@@ -17,12 +17,17 @@ class CreateEventController {
   final formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final locationController = TextEditingController();
+  final punctDeStartController = TextEditingController();
   final descriptionController = TextEditingController();
   final nrMissionsController = TextEditingController();
   final startCodeController = TextEditingController();
   final dateEventController = TextEditingController(); // Controller for start time
   final dateDeadlineRegistrationController = TextEditingController();
   final dateStartRegistrationController = TextEditingController();
+
+  final lungimeController = TextEditingController();
+  final durataController = TextEditingController();
+  final dificultateController = TextEditingController();
 
   File? landingImageFile;
   File? taskBackgroundImageFile;

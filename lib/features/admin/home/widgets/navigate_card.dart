@@ -14,6 +14,7 @@ class NavigateCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      splashFactory: InkSplash.splashFactory,
       onTap: onTap,
       child: Container(
         width: 154,

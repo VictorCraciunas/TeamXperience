@@ -116,6 +116,18 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 ),
                 const SizedBox(height: 20),
 
+                MyTextField(
+                  controller: controller.punctDeStartController,
+                  labelText: 'Punct de start',
+                  hintText: 'Punctul de start al evenimentului',
+                  radius: 20,
+                  borderWidth: 1.5,
+                  borderColor: MyColors.lightBlue,
+                  validator:
+                      (v) => v!.isEmpty ? 'Introdu Punctul de start' : null,
+                ),
+                const SizedBox(height: 20),
+
                 // Descriere
                 MyTextField(
                   controller: controller.descriptionController,
@@ -295,6 +307,40 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     labelText: 'Adauga imagine fundal misiuni',
                     imageUrl: controller.getTaskBackgroundImageToDisplay(),
                   ),
+                ),
+                const SizedBox(height: 20),
+
+                // Lungime traseu
+                MyTextField(
+                  controller: controller.lungimeController,
+                  labelText: 'Lungime traseu',
+                  hintText: 'Lungimea traseului',
+                  radius: 20,
+                  borderWidth: 1.5,
+                  borderColor: MyColors.lightBlue,
+                  validator: (v) => v!.isEmpty ? 'Introdu lungime traseu' : null,
+                ),                const SizedBox(height: 20),
+
+                // Durata
+                MyTextField(
+                  controller: controller.startCodeController,
+                  labelText: 'Durata',
+                  hintText: 'Durata evenimentului',
+                  radius: 20,
+                  borderWidth: 1.5,
+                  borderColor: MyColors.lightBlue,
+                  validator: (v) => v!.isEmpty ? 'Introdu durata' : null,
+                ),                const SizedBox(height: 20),
+
+                // Dificultate
+                MyTextField(
+                  controller: controller.startCodeController,
+                  labelText: 'Dificultate',
+                  hintText: 'Dificultatea evenimentului',
+                  radius: 20,
+                  borderWidth: 1.5,
+                  borderColor: MyColors.lightBlue,
+                  validator: (v) => v!.isEmpty ? 'Introdu dificultate' : null,
                 ),
 
                 const SizedBox(height: 20),
