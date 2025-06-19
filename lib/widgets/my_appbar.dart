@@ -1,13 +1,98 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/model/event.dart';
 
-class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
+import 'new_dropdown.dart';
+
+class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String appBarText;
+  final String? iconString;
+  final bool showDropdown;
+  final Event? event;
 
   const MyAppBar({
     super.key,
     required this.appBarText,
+    this.iconString,
+    this.showDropdown = false,
+    this.event
   });
+
+  @override
+  State<MyAppBar> createState() => _MyAppBarState();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+
+class _MyAppBarState extends State<MyAppBar> {
+  final GlobalKey _menuButtonKey = GlobalKey();
+  OverlayEntry? _overlayEntry;
+  bool _isMenuOpen = false;
+
+  @override
+  void dispose() {
+    _removeOverlay();
+    super.dispose();
+  }
+
+  void _toggleMenu() {
+    if (_isMenuOpen) {
+      _removeOverlay();
+    } else {
+      _showOverlay();
+    }
+  }
+
+  void _showOverlay() {
+    final RenderBox renderBox = _menuButtonKey.currentContext!.findRenderObject() as RenderBox;
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+    final Size size = renderBox.size;
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Stack(
+        children: [
+          // Invisible barrier to close menu when tapping outside
+          GestureDetector(
+            onTap: _removeOverlay,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              color: Colors.transparent,
+            ),
+          ),
+          // Dropdown menu positioned below the menu button
+          Positioned(
+            top: offset.dy + size.height + 8,
+            right: MediaQuery.of(context).size.width - offset.dx - size.width,
+            child: Material(
+              color: Colors.transparent,
+              child: DropdownMenuWidget(
+                onClose: _removeOverlay,
+                event: widget.event
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+    setState(() {
+      _isMenuOpen = true;
+    });
+  }
+
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+    if (mounted) {
+      setState(() {
+        _isMenuOpen = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,18 +101,42 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 4,
       backgroundColor: MyColors.backgroundColor,
       title: Text(
-        appBarText,
-        style: const TextStyle(
+        widget.appBarText,
+        style:  TextStyle(
           fontSize: 24,
           fontFamily: 'Poppins',
           fontWeight: FontWeight.w500,
-          color: Color(0xFF0C092A),
+          color: MyColors.blackColor,
         ),
       ),
       centerTitle: true,
+      actions: [
+        if (widget.iconString != null)
+          Padding(
+            padding: const EdgeInsets.only(right: 15.0),
+            child: GestureDetector(
+              key: _menuButtonKey,
+              onTap: widget.showDropdown ? _toggleMenu : null,
+              child: Container(
+                width: 45,
+                height: 45,
+                decoration: BoxDecoration(
+                  color: _isMenuOpen
+                      ? MyColors.transparentLightBlue.withValues(alpha: 0.8)
+                      : MyColors.transparentLightBlue,
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: Center(
+                  child: SvgPicture.asset(
+                    widget.iconString!,
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
+              ),
+            ),
+          )
+      ],
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight); // Standard AppBar height
 }

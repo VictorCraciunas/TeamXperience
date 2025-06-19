@@ -10,7 +10,6 @@ import 'package:teamxperience/widgets/EventImage.dart';
 import 'package:teamxperience/widgets/my_appbar.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 
-import '../../../constants/routes.dart';
 
 class EventDetailsScreen extends StatefulWidget {
   const EventDetailsScreen({super.key});
@@ -44,7 +43,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(appBarText: "Detalii Eveniment"),
+      appBar:  MyAppBar(appBarText: "Detalii Eveniment",iconString: 'assets/images/menu.svg',showDropdown: true,event: controller.event,),
       bottomNavigationBar: isAdmin == true ? Container(
         padding: const EdgeInsets.all(16),
         child: MyButton(
@@ -75,6 +74,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 15,),
               EventImage(event: controller.event,
                   eventImageCache: ImageHelper.eventImageCache,
                   isAdmin: isAdmin,
@@ -128,29 +128,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   width: 24,
                   height: 24,
                 ),),
-
-
-              TextButton(onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  Routes.createEvent,
-                  arguments: {'event': controller.event, 'isBlueprint': false},
-                );
-              }, child: const Text("Edit")),
-              TextButton(onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  Routes.createEvent,
-                  arguments: {'event': controller.event, 'isBlueprint': true},
-                );
-              }, child: const Text("Duplicate")),
-              TextButton(onPressed: () {
-                Navigator.pushNamed(
-                    context,
-                    Routes.eventGame,
-                    arguments: controller.event
-                );
-              }, child: const Text("see event")),
 
             ],
           ),
