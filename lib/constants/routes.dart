@@ -14,4 +14,6 @@ abstract class Routes {
   static const eventGame = '/event_game';
   static const eventDashboard = '/events_dashboard';
   static const filter = '/filter';
+  static const createNews = '/create_news';
+
 }

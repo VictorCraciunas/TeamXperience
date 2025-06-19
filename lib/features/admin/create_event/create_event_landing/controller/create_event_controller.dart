@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:teamxperience/backend/storage/storage_images.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/utils/calendar_helper.dart';
+import 'package:teamxperience/utils/image_helper.dart';
 
 import '../../../../../enums/event_type.dart';
 import '../../../../../model/mission.dart';
@@ -53,6 +54,10 @@ class CreateEventController {
       dateEvent = event.dateEvent;
       deadlineEnrollment = event.dateDeadlineEnrollment;
       dateStartEnrollement = event.dateStartEnrollment;
+      punctDeStartController.text = event.punctDeStart ?? "";
+      lungimeController.text = event.lungimeTraseu ?? "";
+      durataController.text = event.durata ?? "";
+      dificultateController.text = event.dificultate ?? "";
       if (dateEvent != null) {
         dateEventController.text = DateFormat('yyyy-MM-dd HH:mm').format(dateEvent!);
       }
@@ -95,13 +100,14 @@ class CreateEventController {
             dateStartEnrollement!,
             locationController.text,
             descriptionController.text,
-           // int.parse(nrMissionsController.text),
             selectedType!,
             landingImageFile!.path,
             taskBackgroundImageFile!.path,
-            // 'test',
-            // 'test',
             startCodeController.text,
+            punctDeStartController.text,
+            lungimeController.text,
+            durataController.text,
+            dificultateController.text,
           );
           if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
@@ -147,50 +153,19 @@ class CreateEventController {
     originalEvent!.dateStartEnrollment = dateStartEnrollement!;
     originalEvent!.landingImageUrl = landingImageFile!.path;
     originalEvent!.taskBackgroundImageUrl = taskBackgroundImageFile!.path;
+    originalEvent!.punctDeStart = punctDeStartController.text;
+    originalEvent!.lungimeTraseu = lungimeController.text;
+    originalEvent!.durata = durataController.text;
+    originalEvent!.dificultate = dificultateController.text;
   }
 
   Future<DateTime?> selectDate(BuildContext context) async {
-    // Pick the date (or null if they cancel)
-    final pickedDate = await showDatePicker(
-      context:  context,
-      initialDate: DateTime.now(),
-      firstDate:   DateTime.now(),
-      lastDate:    DateTime(2100),
-    );
-
-    if (pickedDate == null) {
-      // user tapped “Cancel” on the date picker
-      return null;
-    }
-
-    // Now pick a time (or null if they cancel)
-    final pickedTime = await showTimePicker(
-      context:context,
-      initialTime: TimeOfDay.now(),
-    );
-
-    if (pickedTime == null) {
-      // user tapped “Cancel” on the time picker
-      return null;
-    }
-
-    // Both non-null ⇒ build and return the combined DateTime
-    return DateTime(
-      pickedDate.year,
-      pickedDate.month,
-      pickedDate.day,
-      pickedTime.hour,
-      pickedTime.minute,
-    );
+    CalendarHelper calendarHelper = CalendarHelper();
+    return calendarHelper.selectDate(context);
   }
 
   Future<File?> pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      return File(pickedFile.path);
-    }
-    return null;
+      return ImageHelper.pickImage();
   }
 
   String? getLandingImageToDisplay() {

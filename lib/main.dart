@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/screen/add_missions_screen.dart';
+import 'package:teamxperience/features/admin/create_news/screen/create_news_screen.dart';
 import 'package:teamxperience/features/admin/home/screen/admin_home.dart';
 import 'package:teamxperience/features/event_details/screen/event_details_screen.dart';
 import 'package:teamxperience/features/event_game/screen/event_game_screen.dart';
@@ -68,7 +69,8 @@ class MyApp extends StatelessWidget {
         Routes.eventGame: (_) => const EventGameScreen(),
         Routes.puzzleGame: (_) => const PuzzleGameScreen(),
         Routes.eventDashboard: (_) => const EventsDashboard(),
-        Routes.filter: (_) => const FilterScreen()
+        Routes.filter: (_) => const FilterScreen(),
+        Routes.createNews: (_) => const CreateNewsScreen(),
 
       },
     );

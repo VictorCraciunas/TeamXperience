@@ -1,6 +1,9 @@
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'dart:io';
 
-class CacheImageManager{
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:image_picker/image_picker.dart';
+
+class ImageHelper{
   static final CacheManager eventImageCache = CacheManager(
     Config(
       'eventImagesCache',
@@ -10,5 +13,14 @@ class CacheImageManager{
       repo: JsonCacheInfoRepository(databaseName: 'eventImagesCache'),
     ),
   );
+
+  static Future<File?> pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      return File(pickedFile.path);
+    }
+    return null;
+  }
 }
 

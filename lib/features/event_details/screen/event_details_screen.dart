@@ -5,7 +5,7 @@ import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/event_details/controller/event_details_controller.dart';
 import 'package:teamxperience/features/event_details/widgets/detail_widget.dart';
 import 'package:teamxperience/model/event.dart';
-import 'package:teamxperience/utils/cache_image.dart';
+import 'package:teamxperience/utils/image_helper.dart';
 import 'package:teamxperience/widgets/EventImage.dart';
 import 'package:teamxperience/widgets/my_appbar.dart';
 import 'package:teamxperience/widgets/my_button.dart';
@@ -44,9 +44,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(appBarText: "Detalii Eveniment"),
+      appBar: const MyAppBar(appBarText: "Detalii Eveniment"),
       bottomNavigationBar: isAdmin == true ? Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: MyButton(
           buttonText: "Vezi echipele inscrise",
           textColor: Colors.white,
@@ -58,7 +58,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       )
           :
       Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: MyButton(
           buttonText: "Inscrie-ti echipa",
           textColor: Colors.white,
@@ -69,51 +69,53 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         ),
       ),
       body: SafeArea(child: Padding(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
             horizontal: MyPaddings.appHorizontalPadding),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               EventImage(event: controller.event,
-                  eventImageCache: CacheImageManager.eventImageCache,
+                  eventImageCache: ImageHelper.eventImageCache,
                   isAdmin: isAdmin,
                   height: 194),
-              SizedBox(height: 10,),
+              const SizedBox(height: 10,),
               Text(controller.event.name ?? "Nu avem nume eveniment",
-                style: TextStyle(fontSize: 19,
+                style: const TextStyle(fontSize: 19,
                     fontWeight: FontWeight.w600,
                     color: MyColors.blackColor),),
-              SizedBox(height: 20,),
-              DetailWidget(text1: "Sambata, 7 iunie",
+              const SizedBox(height: 20,),
+              const DetailWidget(text1: "Sambata, 7 iunie",
                   text2: "ora 11.00",
                   iconPath: 'assets/images/calendar_icon.svg'),
-              SizedBox(height: 10,),
+              const SizedBox(height: 10,),
               DetailWidget(text1: controller.event.location ?? "No Location",
-                  text2: "de adaugat",
+                  text2: controller.event.punctDeStart ?? "No starting point",
                   iconPath: 'assets/images/location_map.svg'),
-              SizedBox(height: 30,),
+              const SizedBox(height: 30,),
               Text(controller.event.description ?? "No description",
-                style: TextStyle(fontSize: 13,
+                style: const TextStyle(fontSize: 13,
                     fontWeight: FontWeight.w300,
                     color: Colors.black),),
-              SizedBox(height: 30,),
-              Text("Detalii", style: TextStyle(fontSize: 20,
+              const SizedBox(height: 30,),
+
+              // ------ Detalii ------
+              const Text("Detalii", style: TextStyle(fontSize: 20,
                   fontWeight: FontWeight.w500,
                   color: MyColors.blackColor),),
-              SizedBox(height: 12,),
-              DetailWidget(text1: "Sambata, 7 iunie",
-                  text2: "ora 11.00",
+              const SizedBox(height: 12,),
+              DetailWidget(text1: "Lungime traseu",
+                  text2: controller.event.lungimeTraseu ?? "No track length",
                   iconPath: 'assets/images/traseu.svg'),
-              SizedBox(height: 10,),
-              DetailWidget(text1: controller.event.location ?? "No Location",
-                  text2: "de adaugat",
+              const SizedBox(height: 10,),
+              DetailWidget(text1: "Durata",
+                  text2: controller.event.durata ?? "No duration",
                   iconPath: 'assets/images/timer.svg'),
-              SizedBox(height: 10,),
-              DetailWidget(text1: controller.event.location ?? "No Location",
-                  text2: "de adaugat",
+              const SizedBox(height: 10,),
+              DetailWidget(text1: "Dificultate",
+                  text2: controller.event.dificultate ?? "No dificulty ",
                   iconPath: 'assets/images/location_map.svg'),
-              SizedBox(height: 20,),
+              const SizedBox(height: 20,),
               if(isAdmin == true)
               MyButton(
                 buttonText: "Trimite notificare",
@@ -134,21 +136,21 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   Routes.createEvent,
                   arguments: {'event': controller.event, 'isBlueprint': false},
                 );
-              }, child: Text("Edit")),
+              }, child: const Text("Edit")),
               TextButton(onPressed: () {
                 Navigator.pushNamed(
                   context,
                   Routes.createEvent,
                   arguments: {'event': controller.event, 'isBlueprint': true},
                 );
-              }, child: Text("Duplicate")),
+              }, child: const Text("Duplicate")),
               TextButton(onPressed: () {
                 Navigator.pushNamed(
                     context,
                     Routes.eventGame,
                     arguments: controller.event
                 );
-              }, child: Text("see event")),
+              }, child: const Text("see event")),
 
             ],
           ),

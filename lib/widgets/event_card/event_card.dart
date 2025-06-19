@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:teamxperience/constants/colors.dart';
-import 'package:teamxperience/utils/cache_image.dart';
+import 'package:teamxperience/utils/image_helper.dart';
 import '../../../model/event.dart';
 import '../EventImage.dart';
 
@@ -56,7 +56,7 @@ class EventCard extends StatelessWidget {
             // Event Image with Stack
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: EventImage(event: event, eventImageCache: CacheImageManager.eventImageCache, isAdmin: isAdmin,height: 175,),
+              child: EventImage(event: event, eventImageCache: ImageHelper.eventImageCache, isAdmin: isAdmin,height: 175,),
             ),
 
             // Event Details

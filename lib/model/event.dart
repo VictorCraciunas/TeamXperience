@@ -17,6 +17,10 @@ class Event {
    String? landingImageUrl;
    String? taskBackgroundImageUrl;
    String? startCode;
+   String? punctDeStart;
+   String? lungimeTraseu;
+   String? durata;
+   String? dificultate;
 
   Event({
      required this.eventId ,
@@ -32,6 +36,10 @@ class Event {
      this.landingImageUrl,
      this.taskBackgroundImageUrl ,
      this.startCode ,
+    this.punctDeStart,
+    this.dificultate,
+    this.lungimeTraseu,
+    this.durata,
   }) : missions = missions ?? [];
 
 
@@ -58,6 +66,11 @@ class Event {
       landingImageUrl: map['landingImageUrl'] as String? ?? '',
       taskBackgroundImageUrl: map['taskBackgroundImageUrl'] as String? ?? '',
       startCode: map['startCode'] as String? ?? '',
+      punctDeStart: map['punctDeStart'] as String? ?? '',
+      dificultate: map['dificultate'] as String? ?? '',
+      durata: map['durata'] as String? ?? '',
+      lungimeTraseu: map['lungimeTraseu'] as String? ?? '',
+
     );
   }
 
@@ -76,6 +89,10 @@ class Event {
       'landingImageUrl': landingImageUrl,
       'taskBackgroundImageUrl': taskBackgroundImageUrl,
       'startCode': startCode,
+      'lungimeTraseu': lungimeTraseu,
+      'durata': durata,
+      'dificultate': dificultate,
+      'punctDeStart': punctDeStart,
     };
   }
 
@@ -87,6 +104,7 @@ class Event {
          'description: $description, nrMissions: $nrMissions, '
          'type: ${type != null ? type!.name : null.toString()}, '
          'landingImageUrl: $landingImageUrl, taskBackgroundImageUrl: $taskBackgroundImageUrl, '
-         'startCode: $startCode)';
+         'startCode: $startCode, punctDeStart: $punctDeStart, '
+         'lungimeTraseu: $lungimeTraseu, durata: $durata, dificultate: $dificultate)';
    }
 }

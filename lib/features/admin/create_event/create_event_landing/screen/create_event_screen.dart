@@ -323,7 +323,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
                 // Durata
                 MyTextField(
-                  controller: controller.startCodeController,
+                  controller: controller.durataController,
                   labelText: 'Durata',
                   hintText: 'Durata evenimentului',
                   radius: 20,
@@ -334,7 +334,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
                 // Dificultate
                 MyTextField(
-                  controller: controller.startCodeController,
+                  controller: controller.dificultateController,
                   labelText: 'Dificultate',
                   hintText: 'Dificultatea evenimentului',
                   radius: 20,

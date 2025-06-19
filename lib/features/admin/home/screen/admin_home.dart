@@ -69,6 +69,12 @@ class _AdminHomeState extends State<AdminHome> {
       },
     );
   }
+  void _navigateToCreateNews() {
+    Navigator.pushNamed(
+      context,
+      Routes.createNews,
+    );
+  }
 
   void _navigateToEventDashboard() {
     Navigator.pushNamed(
@@ -111,7 +117,7 @@ class _AdminHomeState extends State<AdminHome> {
                       child: NavigateCard(
                         text1: "Adauga",
                         text2: "stire",
-                        onTap: () {},
+                        onTap: _navigateToCreateNews,
                       ),
                     ),
                   ],

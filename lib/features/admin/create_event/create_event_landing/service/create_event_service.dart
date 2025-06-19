@@ -18,6 +18,10 @@ class CreateEventService {
     String landingImageUrl,
     String taskBackgroundImageUrl,
     String startCode,
+      String punctDeStart,
+      String lungimeTraseu,
+      String durata,
+      String dificultate,
   )  {
     Event event = Event(
       eventId: eventId,
@@ -31,6 +35,10 @@ class CreateEventService {
       landingImageUrl: landingImageUrl,
       taskBackgroundImageUrl: taskBackgroundImageUrl,
       startCode: startCode,
+      punctDeStart: punctDeStart,
+      lungimeTraseu: lungimeTraseu,
+      durata: durata,
+      dificultate: dificultate,
     );
 
     return event;
