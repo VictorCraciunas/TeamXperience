@@ -7,7 +7,8 @@ import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';
 import '../../../../../../../utils/component_conversion/component_to_widget.dart';
-import '../../../../../../../widgets/my_dropdown.dart';
+import '../../../../../../../widgets/my_dropdown/dropdown_item.dart';
+import '../../../../../../../widgets/my_dropdown/my_dropdown.dart';
 import '../../../controller/add_missions_controller.dart';
 import 'create_button_controller.dart';
 
@@ -137,27 +138,13 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
     return MyDropdownField<String>(
       labelText: 'Tip Font',
       items: const [
-        DropdownMenuItem(
+        DropdownItem<String>(
           value: 'Poppins',
-          child: Text(
-            'Poppins',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 14,
-              color: Colors.black,
-            ),
-          ),
+          label: 'Poppins',
         ),
-        DropdownMenuItem(
+        DropdownItem<String>(
           value: 'Monospace',
-          child: Text(
-            'Monospace',
-            style: TextStyle(
-              fontFamily: 'Monospace',
-              fontSize: 14,
-              color: Colors.black,
-            ),
-          ),
+          label: 'Monospace',
         ),
       ],
       value: controller.fontFamily,
@@ -181,16 +168,9 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
     return MyDropdownField<String>(
       labelText: 'Grosime Font',
       items: weightMap.keys
-          .map((label) => DropdownMenuItem(
+          .map((label) => DropdownItem<String>(
         value: label,
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            color: Colors.black,
-          ),
-        ),
+        label: label,
       ))
           .toList(),
       value: controller.fontWeight,

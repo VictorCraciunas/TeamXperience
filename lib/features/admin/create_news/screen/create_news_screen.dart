@@ -4,39 +4,37 @@ import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/admin/create_event/common_widgets/upload_image.dart';
 import 'package:teamxperience/widgets/my_appbar.dart';
 import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/enums/stire_type.dart';
+import 'package:teamxperience/enums/stire_category.dart';
 import '../../../../../constants/padding.dart';
-import '../../../../../widgets/my_dropdown.dart';
 import '../../../../../widgets/my_text_field.dart';
+import '../../../../../widgets/my_dropdown/dropdown_item.dart';
+import '../../../../../widgets/my_dropdown/my_dropdown.dart';
 import '../controller/create_news_controller.dart';
 
-class CreateNewsScreen extends StatefulWidget {
-  const CreateNewsScreen({super.key});
+class CreateStireScreen extends StatefulWidget {
+  const CreateStireScreen({super.key});
 
   @override
-  State<CreateNewsScreen> createState() => _CreateNewsScreen();
+  State<CreateStireScreen> createState() => _CreateStireScreenState();
 }
 
-class _CreateNewsScreen extends State<CreateNewsScreen> {
-  late CreateNewsController controller;
+class _CreateStireScreenState extends State<CreateStireScreen> {
+  late CreateStireController controller;
   bool _initialized = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_initialized) {
-      controller = CreateNewsController();
+      controller = CreateStireController();
       _initialized = true;
     }
   }
 
   @override
   void dispose() {
-    controller.titleController.dispose();
-    controller.descriptionController.dispose();
-    controller.dateController.dispose();
-    controller.categoryController.dispose();
-    controller.textButtonController.dispose();
-    controller.linkButtonController.dispose();
+    controller.dispose();
     super.dispose();
   }
 
@@ -75,23 +73,95 @@ class _CreateNewsScreen extends State<CreateNewsScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Secondary Image Upload (smaller one shown in the design)
-                Row(
+                // Secondary Images Section
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const Text(
+                      'Imagini secundare',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: MyColors.blackColor,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Display existing secondary images
+                    if (controller.secondaryImageFiles.isNotEmpty) ...[
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: controller.secondaryImageFiles.asMap().entries.map((entry) {
+                          int index = entry.key;
+                          var imageFile = entry.value;
+
+                          return Stack(
+                            children: [
+                              Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: MyColors.lightBlue,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.file(
+                                    imageFile,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              // Remove button
+                              Positioned(
+                                top: -5,
+                                right: -5,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      controller.removeSecondaryImage(index);
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      color: Colors.red,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.close,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+
+                    // Add new secondary image button
                     GestureDetector(
                       onTap: () async {
-                        print("UploadImage tapped for secondary image!");
+                        print("Adding secondary image!");
                         final pickedFile = await controller.pickImage();
                         if (pickedFile == null) {
                           return;
                         }
                         setState(() {
-                          controller.secondaryImageFile = pickedFile;
+                          controller.addSecondaryImage(pickedFile);
                         });
                       },
                       child: Container(
-                        width: 60,
-                        height: 60,
+                        width: 80,
+                        height: 80,
                         decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(8),
@@ -100,22 +170,13 @@ class _CreateNewsScreen extends State<CreateNewsScreen> {
                             width: 1.5,
                           ),
                         ),
-                        child: controller.secondaryImageFile != null
-                            ? ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            controller.secondaryImageFile!,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                            : const Icon(
+                        child: const Icon(
                           Icons.add,
                           color: Colors.grey,
                           size: 30,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 10),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -123,7 +184,7 @@ class _CreateNewsScreen extends State<CreateNewsScreen> {
                 // Title
                 MyTextField(
                   controller: controller.titleController,
-                  labelText: 'Titlu6',
+                  labelText: 'Titlu știre',
                   hintText: 'Titlul știrii',
                   radius: 20,
                   borderWidth: 1.5,
@@ -174,27 +235,20 @@ class _CreateNewsScreen extends State<CreateNewsScreen> {
                 const SizedBox(height: 20),
 
                 // News Type Dropdown
-                MyDropdownField<String>(
+                MyDropdownField<StireType>(
                   labelText: 'Tip de știre',
-                  items: controller.newsTypes
+                  items: StireType.values
                       .map(
-                        (type) => DropdownMenuItem(
+                        (type) => DropdownItem<StireType>(
                       value: type,
-                      child: Text(
-                        type,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          color: Colors.black,
-                        ),
-                      ),
+                      label: type.displayName,
                     ),
                   )
                       .toList(),
-                  value: controller.selectedNewsType,
+                  value: controller.selectedType,
                   onChanged: (value) {
                     setState(() {
-                      controller.selectedNewsType = value;
+                      controller.selectedType = value;
                     });
                   },
                   hint: const Padding(
@@ -216,20 +270,13 @@ class _CreateNewsScreen extends State<CreateNewsScreen> {
                 const SizedBox(height: 20),
 
                 // Category Dropdown
-                MyDropdownField<String>(
+                MyDropdownField<StireCategory>(
                   labelText: 'Categorie',
-                  items: controller.categories
+                  items: StireCategory.values
                       .map(
-                        (category) => DropdownMenuItem(
+                        (category) => DropdownItem<StireCategory>(
                       value: category,
-                      child: Text(
-                        category,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          color: Colors.black,
-                        ),
-                      ),
+                      label: category.displayName,
                     ),
                   )
                       .toList(),
@@ -272,7 +319,7 @@ class _CreateNewsScreen extends State<CreateNewsScreen> {
                 // Button Link
                 MyTextField(
                   controller: controller.linkButtonController,
-                  labelText: '',
+                  labelText: 'Link',
                   hintText: 'Link buton',
                   radius: 20,
                   borderWidth: 1.5,
@@ -285,7 +332,7 @@ class _CreateNewsScreen extends State<CreateNewsScreen> {
                 MyButton(
                   buttonText: 'Publică știre',
                   textColor: Colors.white,
-                  buttonOnTap: () => controller.publishNews(context),
+                  buttonOnTap: () => controller.createStire(context),
                   withBorder: false,
                   gradient: MyColors.myGradient,
                   fontWeight: FontWeight.w600,

@@ -5,7 +5,8 @@ import 'package:teamxperience/model/puzzle.dart';
 
 import '../../../../../../constants/colors.dart';
 import '../../../../../../constants/padding.dart';
-import '../../../../../../widgets/my_dropdown.dart';
+import '../../../../../../widgets/my_dropdown/dropdown_item.dart';
+import '../../../../../../widgets/my_dropdown/my_dropdown.dart';
 import '../../controller/add_missions_controller.dart';
 import 'create_button/create_button_component.dart';
 import 'create_code/create_code_component.dart';
@@ -18,12 +19,12 @@ class AddComponentWidget extends StatefulWidget {
   final Component component;
   final bool edit;
 
-   const AddComponentWidget({
+  const AddComponentWidget({
     super.key,
-     required this.puzzle,
+    required this.puzzle,
     required this.refreshUI,
     required this.component,
-     required this.edit
+    required this.edit
   });
 
   @override
@@ -56,22 +57,14 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
               const SizedBox(height: 60),
               MyDropdownField<ComponentType>(
                 labelText: 'Tip de componenta',
-                items:
-                    ComponentType.values
-                        .map(
-                          (type) => DropdownMenuItem(
-                            value: type,
-                            child: Text(
-                              type.toString().split('.').last,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'Poppins',
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        )
-                        .toList(),
+                items: ComponentType.values
+                    .map(
+                      (type) => DropdownItem<ComponentType>(
+                    value: type,
+                    label: type.toString().split('.').last,
+                  ),
+                )
+                    .toList(),
                 value: type,
                 onChanged: (value) {
                   setState(() {
@@ -80,16 +73,13 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
                 },
                 validator:
                     (value) =>
-                        value == null ? 'Please select a component type' : null,
-                hint: const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Text(
-                    "Selecteaza tipul de componenta",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontFamily: 'Poppins',
-                      color: MyColors.greyText,
-                    ),
+                value == null ? 'Please select a component type' : null,
+                hint: const Text(
+                  "Selecteaza tipul de componenta",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins',
+                    color: MyColors.greyText,
                   ),
                 ),
                 borderColor: MyColors.lightBlue,

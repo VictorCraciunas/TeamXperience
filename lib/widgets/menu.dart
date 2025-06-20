@@ -4,11 +4,11 @@ import 'package:teamxperience/constants/colors.dart';
 import '../constants/routes.dart';
 import '../model/event.dart';
 
-class DropdownMenuWidget extends StatelessWidget {
+class MenuWidget extends StatelessWidget {
   final VoidCallback onClose;
   final Event? event;
 
-  const DropdownMenuWidget({
+  const MenuWidget({
     super.key,
     required this.onClose,
     required this.event

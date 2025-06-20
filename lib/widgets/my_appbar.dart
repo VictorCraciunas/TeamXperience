@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/model/event.dart';
 
-import 'new_dropdown.dart';
+import 'menu.dart';
 
 class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String appBarText;
@@ -33,7 +33,10 @@ class _MyAppBarState extends State<MyAppBar> {
 
   @override
   void dispose() {
-    _removeOverlay();
+    if (_overlayEntry != null) {
+      _overlayEntry!.remove();
+      _overlayEntry = null;
+    }
     super.dispose();
   }
 
@@ -68,7 +71,7 @@ class _MyAppBarState extends State<MyAppBar> {
             right: MediaQuery.of(context).size.width - offset.dx - size.width,
             child: Material(
               color: Colors.transparent,
-              child: DropdownMenuWidget(
+              child: MenuWidget(
                 onClose: _removeOverlay,
                 event: widget.event
               ),
@@ -102,7 +105,7 @@ class _MyAppBarState extends State<MyAppBar> {
       backgroundColor: MyColors.backgroundColor,
       title: Text(
         widget.appBarText,
-        style:  TextStyle(
+        style:  const TextStyle(
           fontSize: 24,
           fontFamily: 'Poppins',
           fontWeight: FontWeight.w500,

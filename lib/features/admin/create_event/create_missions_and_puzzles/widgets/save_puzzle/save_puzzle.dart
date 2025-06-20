@@ -4,10 +4,11 @@ import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/save_puzzle/save_puzzle_controller.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/widgets/my_text_field.dart';
-import 'package:teamxperience/widgets/my_dropdown.dart';
+import 'package:teamxperience/widgets/my_dropdown/my_dropdown.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 
 import '../../../../../../constants/padding.dart';
+import '../../../../../../widgets/my_dropdown/dropdown_item.dart';
 import '../../controller/add_missions_controller.dart';
 
 class SavePuzzle extends StatefulWidget {
@@ -45,22 +46,14 @@ class _SavePuzzleState extends State<SavePuzzle> {
             MyDropdownField<PuzzleType>(
               labelText: 'Tip Eveniment',
               value: controller.type,
-              items:
-                  PuzzleType.values
-                      .map(
-                        (type) => DropdownMenuItem(
-                          value: type,
-                          child: Text(
-                            type.toString().split('.').last,
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 14,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      )
-                      .toList(),
+              items: PuzzleType.values
+                  .map(
+                    (type) => DropdownItem<PuzzleType>(
+                  value: type,
+                  label: type.toString().split('.').last,
+                ),
+              )
+                  .toList(),
               onChanged: (value) {
                 setState(() {
                   controller.type = value;
@@ -68,7 +61,7 @@ class _SavePuzzleState extends State<SavePuzzle> {
               },
               validator:
                   (value) =>
-                      value == null ? 'Selectează tipul de puzzle' : null,
+              value == null ? 'Selectează tipul de puzzle' : null,
               borderColor: MyColors.lightBlue,
               borderWidth: 1.5,
               radius: 20,
@@ -94,9 +87,9 @@ class _SavePuzzleState extends State<SavePuzzle> {
                 radius: 20,
                 validator:
                     (value) =>
-                        value == null || value.isEmpty
-                            ? 'Introdu un cod'
-                            : null,
+                value == null || value.isEmpty
+                    ? 'Introdu un cod'
+                    : null,
               ),
               const SizedBox(height: 20), // Match spacing
             ],
@@ -138,9 +131,9 @@ class _SavePuzzleState extends State<SavePuzzle> {
                 buttonText: 'Salvează puzzle',
                 textColor: Colors.white,
                 buttonOnTap: () {
-                    controller.savePuzzle(widget.puzzle, context);
-                    widget.onSave();
-                    Navigator.pop(context);
+                  controller.savePuzzle(widget.puzzle, context);
+                  widget.onSave();
+                  Navigator.pop(context);
                 },
                 withBorder: false,
                 buttonColor: MyColors.lightBlue,

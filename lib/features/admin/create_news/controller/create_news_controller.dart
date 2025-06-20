@@ -1,115 +1,32 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:teamxperience/model/stire.dart';
+import 'package:teamxperience/enums/stire_type.dart';
+import 'package:teamxperience/enums/stire_category.dart';
+import '../../../../utils/calendar_helper.dart';
+import '../../../../utils/image_helper.dart';
+import '../service/create_news_service.dart';
 
-class CreateNewsController {
-  // Form key
+class CreateStireController {
+  final CreateStireService createStireService = CreateStireService();
   final formKey = GlobalKey<FormState>();
-
-  // Text editing controllers
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
   final dateController = TextEditingController();
-  final categoryController = TextEditingController();
   final textButtonController = TextEditingController();
   final linkButtonController = TextEditingController();
 
-  // Image files
   File? mainImageFile;
-  File? secondaryImageFile;
+  List<File> secondaryImageFiles = []; // Changed to support multiple secondary images
 
-  // Date field
   DateTime? publicationDate;
+  StireType? selectedType;
+  StireCategory? selectedCategory;
 
-  // Dropdown selections
-  String? selectedNewsType;
-  String? selectedCategory;
+  CreateStireController();
 
-  // Dropdown options
-  final List<String> newsTypes = [
-    'Știri generale',
-    'Evenimente',
-    'Anunțuri',
-    'Promoții',
-    'Actualizări'
-  ];
-
-  final List<String> categories = [
-    'Sport',
-    'Tehnologie',
-    'Cultură',
-    'Business',
-    'Educație',
-    'Sănătate',
-    'Travel'
-  ];
-
-  // Method to select date and time
-  Future<DateTime?> selectDate(BuildContext context) async {
-    // Pick the date (or null if they cancel)
-    final pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
-    );
-
-    if (pickedDate == null) {
-      // User tapped "Cancel" on the date picker
-      return null;
-    }
-
-    // Now pick a time (or null if they cancel)
-    final pickedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-
-    if (pickedTime == null) {
-      // User tapped "Cancel" on the time picker
-      return null;
-    }
-
-    // Both non-null ⇒ build and return the combined DateTime
-    return DateTime(
-      pickedDate.year,
-      pickedDate.month,
-      pickedDate.day,
-      pickedTime.hour,
-      pickedTime.minute,
-    );
-  }
-
-  // Method to pick image from gallery
-  Future<File?> pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      return File(pickedFile.path);
-    }
-    return null;
-  }
-
-  // Method to get main image to display
-  String? getMainImageToDisplay() {
-    if (mainImageFile != null) {
-      return mainImageFile!.path;
-    }
-    return null;
-  }
-
-  // Method to get secondary image to display
-  String? getSecondaryImageToDisplay() {
-    if (secondaryImageFile != null) {
-      return secondaryImageFile!.path;
-    }
-    return null;
-  }
-
-  // Method to publish news (placeholder for logic)
-  Future<void> publishNews(BuildContext context) async {
+  Future<void> createStire(BuildContext context) async {
     if (formKey.currentState!.validate()) {
-      // Validate images
       if (mainImageFile == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -119,37 +36,118 @@ class CreateNewsController {
         return;
       }
 
-      // TODO: Add your publish news logic here
-      print('Publishing news...');
-      print('Title: ${titleController.text}');
-      print('Description: ${descriptionController.text}');
-      print('Publication Date: $publicationDate');
-      print('News Type: $selectedNewsType');
-      print('Category: $selectedCategory');
-      print('Button Text: ${textButtonController.text}');
-      print('Button Link: ${linkButtonController.text}');
-      print('Main Image: ${mainImageFile?.path}');
-      print('Secondary Image: ${secondaryImageFile?.path}');
+      if (selectedType == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Te rog selectează tipul de știre'),
+          ),
+        );
+        return;
+      }
 
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Știrea a fost publicată cu succes!'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      if (selectedCategory == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Te rog selectează categoria'),
+          ),
+        );
+        return;
+      }
 
-      // Navigate back or to another screen
-      // Navigator.pop(context);
+      try {
+        // Show loading indicator
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        );
+
+        String stireId = await createStireService.getStireId();
+
+        // Convert secondary image files to paths
+        List<String> secondaryImagePaths = secondaryImageFiles
+            .map((file) => file.path)
+            .toList();
+
+        Stire stire = createStireService.createStire(
+          stireId,
+          titleController.text,
+          descriptionController.text,
+          publicationDate!,
+          selectedType!,
+          selectedCategory!,
+          textButtonController.text,
+          linkButtonController.text,
+          mainImageFile!.path,
+          secondaryImagePaths,
+        );
+
+        // Save the stire with image upload logic
+        await createStireService.saveStire(stire);
+
+        if (!context.mounted) return;
+
+        // Hide loading indicator
+        Navigator.of(context).pop();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Știrea a fost publicată cu succes!')),
+        );
+        Navigator.pop(context);
+      } catch (e) {
+        if (!context.mounted) return;
+
+        // Hide loading indicator
+        Navigator.of(context).pop();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Eroare la crearea știrii: $e')),
+        );
+      }
     }
   }
 
-  // Dispose method to clean up controllers
+  Future<DateTime?> selectDate(BuildContext context) async {
+    CalendarHelper calendarHelper = CalendarHelper();
+    return calendarHelper.selectDate(context);
+  }
+
+  Future<File?> pickImage() async {
+    return ImageHelper.pickImage();
+  }
+
+  /// Add a secondary image file
+  void addSecondaryImage(File imageFile) {
+    secondaryImageFiles.add(imageFile);
+  }
+
+  /// Remove a secondary image file at specific index
+  void removeSecondaryImage(int index) {
+    if (index >= 0 && index < secondaryImageFiles.length) {
+      secondaryImageFiles.removeAt(index);
+    }
+  }
+
+  /// Get all secondary image paths for display
+  List<String> getSecondaryImagePaths() {
+    return secondaryImageFiles.map((file) => file.path).toList();
+  }
+
+  String? getMainImageToDisplay() {
+    if (mainImageFile != null) {
+      return mainImageFile!.path;
+    }
+    return null;
+  }
+
   void dispose() {
     titleController.dispose();
     descriptionController.dispose();
     dateController.dispose();
-    categoryController.dispose();
     textButtonController.dispose();
     linkButtonController.dispose();
   }

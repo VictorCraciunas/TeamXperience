@@ -16,4 +16,15 @@ class ImageRepo{
     }
   }
 
+  Future<String?> uploadStireImage(File imageFile, String eventId, String imageType) async {
+    try {
+      final imageRef = storageRef.child('stiri/$eventId/$imageType.jpg');
+      await imageRef.putFile(imageFile);
+      return await imageRef.getDownloadURL();
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
+  }
+
 }

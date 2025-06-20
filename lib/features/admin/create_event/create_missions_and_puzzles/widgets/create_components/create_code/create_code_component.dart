@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/widgets/my_button.dart';
-import 'package:teamxperience/widgets/my_dropdown.dart';
+import 'package:teamxperience/widgets/my_dropdown/my_dropdown.dart';
 import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';
 import '../../../../../../../utils/component_conversion/component_to_widget.dart';
-import '../../../controller/add_missions_controller.dart';
+import '../../../../../../../widgets/my_dropdown/dropdown_item.dart';
 import 'code_component_controller.dart';
 import '../../../../../../../widgets/slider_widget.dart';
 
@@ -130,18 +130,26 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
       labelText: 'Număr de caractere',
       items: List.generate(10, (index) => index + 1)
           .map(
-            (length) => DropdownMenuItem(
+            (length) => DropdownItem<int>(
           value: length,
-          child: Text('$length'),
+          label: '$length',
         ),
       )
           .toList(),
       value: controller.codeLength,
       onChanged: (value) => setState(() => controller.codeLength = value),
+      validator: (value) => value == null ? 'Selectează numărul de caractere' : null,
       borderColor: MyColors.lightBlue,
       borderWidth: 1.5,
       radius: 20,
-      hint: const Text('Selecteaza numărul de caractere'),
+      hint: const Text(
+        'Selectează numărul de caractere',
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 14,
+          color: MyColors.greyText,
+        ),
+      ),
     );
   }
 
@@ -149,15 +157,23 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
     return MyDropdownField<String>(
       labelText: 'Separat / Free',
       items: const [
-        DropdownMenuItem(value: 'Separated', child: Text('Separated')),
-        DropdownMenuItem(value: 'Free', child: Text('Free')),
+        DropdownItem<String>(value: 'Separated', label: 'Separated'),
+        DropdownItem<String>(value: 'Free', label: 'Free'),
       ],
       value: controller.inputType,
       onChanged: (value) => setState(() => controller.inputType = value),
+      validator: (value) => value == null ? 'Selectează tipul de cod' : null,
       borderColor: MyColors.lightBlue,
       borderWidth: 1.5,
       radius: 20,
-      hint: const Text('Selecteaza tipul de cod'),
+      hint: const Text(
+        'Selectează tipul de cod',
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 14,
+          color: MyColors.greyText,
+        ),
+      ),
     );
   }
 
@@ -165,15 +181,23 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
     return MyDropdownField<String>(
       labelText: 'CapsLock / Fără',
       items: const [
-        DropdownMenuItem(value: 'CapsLock', child: Text('CapsLock')),
-        DropdownMenuItem(value: 'Fără', child: Text('Fără')),
+        DropdownItem<String>(value: 'CapsLock', label: 'CapsLock'),
+        DropdownItem<String>(value: 'Fără', label: 'Fără'),
       ],
       value: controller.capsLock,
       onChanged: (value) => setState(() => controller.capsLock = value),
+      validator: (value) => value == null ? 'Selectează tipul de cod' : null,
       borderColor: MyColors.lightBlue,
       borderWidth: 1.5,
       radius: 20,
-      hint: const Text('Selecteaza tipul de cod'),
+      hint: const Text(
+        'Selectează tipul de cod',
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 14,
+          color: MyColors.greyText,
+        ),
+      ),
     );
   }
 
@@ -285,36 +309,23 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
     return MyDropdownField<String>(
       labelText: 'Tip Font',
       items: const [
-        DropdownMenuItem(
+        DropdownItem<String>(
           value: 'Poppins',
-          child: Text(
-            'Poppins',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 14,
-              color: Colors.black,
-            ),
-          ),
+          label: 'Poppins',
         ),
-        DropdownMenuItem(
+        DropdownItem<String>(
           value: 'Monospace',
-          child: Text(
-            'Monospace',
-            style: TextStyle(
-              fontFamily: 'Monospace',
-              fontSize: 14,
-              color: Colors.black,
-            ),
-          ),
+          label: 'Monospace',
         ),
       ],
       value: controller.fontFamily,
       onChanged: (value) => setState(() => controller.fontFamily = value),
+      validator: (value) => value == null ? 'Selectează tipul de font' : null,
       borderColor: MyColors.lightBlue,
       borderWidth: 1.5,
       radius: 20,
       hint: const Text(
-        'Selecteaza tipul de font',
+        'Selectează tipul de font',
         style: TextStyle(
           fontFamily: 'Poppins',
           fontSize: 14,

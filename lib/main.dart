@@ -7,7 +7,7 @@ import 'package:teamxperience/features/admin/home/screen/admin_home.dart';
 import 'package:teamxperience/features/event_details/screen/event_details_screen.dart';
 import 'package:teamxperience/features/event_game/screen/event_game_screen.dart';
 import 'package:teamxperience/features/event_game/screen/puzzle_game_screen.dart';
-import 'package:teamxperience/features/events_dashboard/events_dasboard.dart';
+import 'package:teamxperience/features/events_dashboard/screen/events_dasboard_screen.dart';
 import 'package:teamxperience/features/filter/screen/filter_screen.dart';
 import 'package:teamxperience/features/forgot-password/screen/forgot_password_screen.dart';
 import 'package:teamxperience/features/sign-up/screen/register.dart';
@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
         Routes.puzzleGame: (_) => const PuzzleGameScreen(),
         Routes.eventDashboard: (_) => const EventsDashboard(),
         Routes.filter: (_) => const FilterScreen(),
-        Routes.createNews: (_) => const CreateNewsScreen(),
+        Routes.createNews: (_) => const CreateStireScreen(),
 
       },
     );

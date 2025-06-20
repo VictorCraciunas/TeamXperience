@@ -8,7 +8,8 @@ import 'package:teamxperience/widgets/my_appbar.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 import '../../../../../constants/padding.dart';
 import '../../../../../enums/event_type.dart';
-import '../../../../../widgets/my_dropdown.dart';
+import '../../../../../widgets/my_dropdown/dropdown_item.dart';
+import '../../../../../widgets/my_dropdown/my_dropdown.dart';
 import '../../../../../widgets/my_text_field.dart';
 import '../controller/create_event_controller.dart';
 
@@ -238,22 +239,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 // Tip de eveniment
                 MyDropdownField<EventType>(
                   labelText: 'Tipul de eveniment',
-                  items:
-                      EventType.values
-                          .map(
-                            (type) => DropdownMenuItem(
-                              value: type,
-                              child: Text(
-                                type.toString().split('.').last,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: 'Poppins',
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
+                  items: EventType.values
+                      .map(
+                        (type) => DropdownItem<EventType>(
+                      value: type,
+                      label: type.toString().split('.').last,
+                    ),
+                  )
+                      .toList(),
                   value: controller.selectedType,
                   onChanged: (value) {
                     setState(() {
@@ -271,11 +264,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       ),
                     ),
                   ),
-                  validator:
-                      (value) =>
-                          value == null
-                              ? 'Selecteaza tipul de eveniment'
-                              : null,
+                  validator: (value) =>
+                  value == null ? 'Selecteaza tipul de eveniment' : null,
                   borderColor: MyColors.lightBlue,
                   borderWidth: 1.5,
                   radius: 20,

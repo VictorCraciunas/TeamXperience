@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/animation_type.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/widgets/my_text_field.dart';
-import 'package:teamxperience/widgets/my_dropdown.dart';
+import 'package:teamxperience/widgets/my_dropdown/my_dropdown.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 import 'package:teamxperience/widgets/color_picker_dialog.dart';
 import 'package:teamxperience/widgets/slider_widget.dart';
@@ -11,6 +11,7 @@ import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';
 import '../../../../../../../utils/component_conversion/component_to_widget.dart';
+import '../../../../../../../widgets/my_dropdown/dropdown_item.dart';
 import 'create_text_controller.dart';
 
 class TextComponentFieldsWidget extends StatefulWidget {
@@ -87,8 +88,6 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
   }
 
   Widget _buildPreviewSection() {
-
-
     final previewComponent = Component();
     controller.updateComponentFields(previewComponent);
     final previewWidget = ComponentToWidget().convert(previewComponent);
@@ -140,16 +139,9 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
       labelText: 'Animație',
       items: AnimationType.values
           .map(
-            (anim) => DropdownMenuItem(
+            (anim) => DropdownItem<AnimationType>(
           value: anim,
-          child: Text(
-            anim.toString().split('.').last,
-            style: const TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 14,
-              color: Colors.black,
-            ),
-          ),
+          label: anim.toString().split('.').last,
         ),
       )
           .toList(),
@@ -178,27 +170,13 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
     return MyDropdownField<String>(
       labelText: 'Tip Font',
       items: const [
-        DropdownMenuItem(
+        DropdownItem<String>(
           value: 'Poppins',
-          child: Text(
-            'Poppins',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 14,
-              color: Colors.black,
-            ),
-          ),
+          label: 'Poppins',
         ),
-        DropdownMenuItem(
+        DropdownItem<String>(
           value: 'Monospace',
-          child: Text(
-            'Monospace',
-            style: TextStyle(
-              fontFamily: 'Monospace',
-              fontSize: 14,
-              color: Colors.black,
-            ),
-          ),
+          label: 'Monospace',
         ),
       ],
       value: controller.fontFamily,
@@ -226,16 +204,9 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
     return MyDropdownField<String>(
       labelText: 'Grosime Font',
       items: weightMap.keys
-          .map((label) => DropdownMenuItem(
+          .map((label) => DropdownItem<String>(
         value: label,
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            color: Colors.black,
-          ),
-        ),
+        label: label,
       ))
           .toList(),
       value: controller.fontWeight,
