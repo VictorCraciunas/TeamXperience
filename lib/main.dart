@@ -10,6 +10,7 @@ import 'package:teamxperience/features/event_game/screen/puzzle_game_screen.dart
 import 'package:teamxperience/features/events_dashboard/screen/events_dasboard_screen.dart';
 import 'package:teamxperience/features/filter/screen/filter_screen.dart';
 import 'package:teamxperience/features/forgot-password/screen/forgot_password_screen.dart';
+import 'package:teamxperience/features/news_details/news_screen.dart';
 import 'package:teamxperience/features/sign-up/screen/register.dart';
 import 'package:teamxperience/features/splash/splash.dart';
 import 'package:teamxperience/utils/auth_util.dart';
@@ -71,6 +72,7 @@ class MyApp extends StatelessWidget {
         Routes.eventDashboard: (_) => const EventsDashboard(),
         Routes.filter: (_) => const FilterScreen(),
         Routes.createNews: (_) => const CreateStireScreen(),
+        Routes.newsDetails: (_) => const NewsScreen(),
 
       },
     );

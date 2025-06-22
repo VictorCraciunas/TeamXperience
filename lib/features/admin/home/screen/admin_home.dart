@@ -3,9 +3,12 @@ import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/admin/home/widgets/navigate_card.dart';
+import 'package:teamxperience/features/admin/home/widgets/title_carousel.dart';
 import '../../../../backend/authentication/AuthenticationRepository.dart';
 import '../../../../model/event.dart';
-import '../../../../widgets/event_card/events_slider.dart';
+import '../../../../model/stire.dart';
+import '../../../../widgets/event_card/events_carousel.dart';
+import '../../../../widgets/stire_card/stiri_carousel.dart';
 import '../controller/admin_controller.dart';
 
 class AdminHome extends StatefulWidget {
@@ -18,7 +21,7 @@ class AdminHome extends StatefulWidget {
 class _AdminHomeState extends State<AdminHome> {
   late AdminHomeController controller;
   final AuthenticationRepository authenticationRepository =
-      AuthenticationRepository();
+  AuthenticationRepository();
 
   @override
   void initState() {
@@ -32,8 +35,8 @@ class _AdminHomeState extends State<AdminHome> {
       }
     });
 
-    // Load events when the page initializes
-    controller.loadEvents();
+    // Load both events and stiri when the page initializes
+    controller.loadAll();
   }
 
   @override
@@ -47,7 +50,7 @@ class _AdminHomeState extends State<AdminHome> {
     Navigator.pushNamedAndRemoveUntil(
       context,
       Routes.splash,
-      (Route<dynamic> route) => false,
+          (Route<dynamic> route) => false,
     );
   }
 
@@ -65,15 +68,23 @@ class _AdminHomeState extends State<AdminHome> {
       Routes.eventDetails,
       arguments: {
         'event': event,
-        'isAdmin': true, // or false
+        'isAdmin': true,
       },
     );
   }
-  void _navigateToCreateNews() {
+
+  void _navigateToStireDetails(Stire stire) {
+    // Add navigation to stire details page when you create it
+    // For now, just print or show a snackbar
     Navigator.pushNamed(
       context,
-      Routes.createNews,
+      Routes.newsDetails,
+      arguments: stire
     );
+  }
+
+  void _navigateToCreateNews() {
+    Navigator.pushNamed(context, Routes.createNews);
   }
 
   void _navigateToEventDashboard() {
@@ -81,6 +92,13 @@ class _AdminHomeState extends State<AdminHome> {
       context,
       Routes.eventDashboard,
       arguments: controller.events,
+    );
+  }
+
+  void _navigateToStiriDashboard() {
+    // Add navigation to stiri dashboard when you create it
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Stiri dashboard - coming soon!')),
     );
   }
 
@@ -96,7 +114,9 @@ class _AdminHomeState extends State<AdminHome> {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: controller.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: MyPaddings.appHorizontalPadding,
@@ -142,42 +162,27 @@ class _AdminHomeState extends State<AdminHome> {
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Evenimente",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w500,
-                        color: MyColors.blackColor,
-                      ),
-                    ),
-                    InkWell(
-                      splashFactory: InkSplash.splashFactory,
-                      onTap: () => _navigateToEventDashboard(),
-                      child: Container(
-                        padding: EdgeInsets.all(5),
-                        child: Text(
-                          "Vezi mai multe >",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: MyColors.lightBlue,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-                EventsSlider(
+                // Events Section
+                TitleCarousel(text: "Evenimente", onTap: _navigateToEventDashboard),
+                const SizedBox(height: 20),
+                EventsCarousel(
                   events: controller.events,
                   onEventTap: _navigateToEventDetails,
                   isAdmin: true,
                 ),
+                const SizedBox(height: 20),
+
+                // News Section
+                TitleCarousel(text: "Stiri", onTap: _navigateToStiriDashboard),
+                const SizedBox(height: 20),
+                StiriCarousel(
+                  stiri: controller.stiri,
+                  onStireTap: _navigateToStireDetails,
+                  isAdmin: true,
+                ),
+                const SizedBox(height: 30),
               ],
             ),
           ),

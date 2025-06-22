@@ -3,12 +3,12 @@ import 'package:teamxperience/constants/colors.dart';
 import '../../model/event.dart';
 import '../../widgets/event_card/event_card.dart';
 
-class EventsSlider extends StatefulWidget {
+class EventsCarousel extends StatefulWidget {
   final List<Event> events;
   final Function(Event) onEventTap;
   final bool isAdmin;
 
-  const EventsSlider({
+  const EventsCarousel({
     super.key,
     required this.events,
     required this.onEventTap,
@@ -16,10 +16,10 @@ class EventsSlider extends StatefulWidget {
   });
 
   @override
-  State<EventsSlider> createState() => _EventsSliderState();
+  State<EventsCarousel> createState() => _EventsCarouselState();
 }
 
-class _EventsSliderState extends State<EventsSlider> {
+class _EventsCarouselState extends State<EventsCarousel> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
 
