@@ -96,9 +96,10 @@ class _AdminHomeState extends State<AdminHome> {
   }
 
   void _navigateToStiriDashboard() {
-    // Add navigation to stiri dashboard when you create it
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Stiri dashboard - coming soon!')),
+    Navigator.pushNamed(
+      context,
+      Routes.newsDashboard,
+      arguments: controller.stiri,
     );
   }
 
@@ -181,6 +182,7 @@ class _AdminHomeState extends State<AdminHome> {
                   stiri: controller.stiri,
                   onStireTap: _navigateToStireDetails,
                   isAdmin: true,
+                  showBadge: false,
                 ),
                 const SizedBox(height: 30),
               ],

@@ -10,7 +10,9 @@ import '../../../../../constants/padding.dart';
 import '../../../../../widgets/my_text_field.dart';
 import '../../../../../widgets/my_dropdown/dropdown_item.dart';
 import '../../../../../widgets/my_dropdown/my_dropdown.dart';
+import '../../../../model/stire.dart';
 import '../controller/create_news_controller.dart';
+import 'dart:io';
 
 class CreateStireScreen extends StatefulWidget {
   const CreateStireScreen({super.key});
@@ -22,12 +24,22 @@ class CreateStireScreen extends StatefulWidget {
 class _CreateStireScreenState extends State<CreateStireScreen> {
   late CreateStireController controller;
   bool _initialized = false;
+  late String mode;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_initialized) {
-      controller = CreateStireController();
+      final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+      final Stire? stire = args?['stire'];
+
+      if (stire == null) {
+        mode = 'create';
+      } else {
+        mode = 'edit';
+      }
+
+      controller = CreateStireController(stire);
       _initialized = true;
     }
   }
@@ -36,6 +48,52 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  // Helper widget to display image (either from file or URL)
+  Widget buildImageWidget(String imagePath) {
+    if (imagePath.startsWith('http')) {
+      // It's a URL, use Image.network
+      return Image.network(
+        imagePath,
+        width: 60,
+        height: 60,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            width: 60,
+            height: 60,
+            color: Colors.grey[300],
+            child: const Icon(Icons.error, color: Colors.red),
+          );
+        },
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            width: 60,
+            height: 60,
+            color: Colors.grey[300],
+            child: const CircularProgressIndicator(),
+          );
+        },
+      );
+    } else {
+      // It's a local file path, use Image.file
+      return Image.file(
+        File(imagePath),
+        width: 60,
+        height: 60,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            width: 60,
+            height: 60,
+            color: Colors.grey[300],
+            child: const Icon(Icons.error, color: Colors.red),
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -51,6 +109,8 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
           child: Form(
             key: controller.formKey,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+
               children: [
                 const SizedBox(height: 10),
 
@@ -74,77 +134,35 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                 const SizedBox(height: 20),
 
                 // Secondary Images Section
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
                   children: [
-                    const Text(
-                      'Imagini secundare',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: MyColors.blackColor,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-
-                    // Display existing secondary images
-                    if (controller.secondaryImageFiles.isNotEmpty) ...[
+                    // Display existing secondary images - UPDATED TO USE getSecondaryImagePaths()
+                    if (controller.getSecondaryImagePaths().isNotEmpty) ...[
                       Wrap(
                         spacing: 10,
                         runSpacing: 10,
-                        children: controller.secondaryImageFiles.asMap().entries.map((entry) {
+                        children: controller.getSecondaryImagePaths().asMap().entries.map((entry) {
                           int index = entry.key;
-                          var imageFile = entry.value;
+                          String imagePath = entry.value; // Now using String path instead of File
 
                           return Stack(
                             children: [
                               Container(
-                                width: 80,
-                                height: 80,
+                                width: 60,
+                                height: 60,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color: MyColors.lightBlue,
-                                    width: 1.5,
-                                  ),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
-                                  child: Image.file(
-                                    imageFile,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              // Remove button
-                              Positioned(
-                                top: -5,
-                                right: -5,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      controller.removeSecondaryImage(index);
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: const BoxDecoration(
-                                      color: Colors.red,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.close,
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
-                                  ),
+                                  child: buildImageWidget(imagePath), // Use helper method
                                 ),
                               ),
                             ],
                           );
                         }).toList(),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(width: 10),
                     ],
 
                     // Add new secondary image button
@@ -160,19 +178,15 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                         });
                       },
                       child: Container(
-                        width: 80,
-                        height: 80,
+                        width: 60,
+                        height: 60,
                         decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: MyColors.lightBlue,
-                            width: 1.5,
-                          ),
+                          color: MyColors.transparentLightBlue,
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
                           Icons.add,
-                          color: Colors.grey,
+                          color: Colors.black,
                           size: 30,
                         ),
                       ),
@@ -332,7 +346,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                 MyButton(
                   buttonText: 'Publică știre',
                   textColor: Colors.white,
-                  buttonOnTap: () => controller.createStire(context),
+                  buttonOnTap: () => controller.createStire(context,mode),
                   withBorder: false,
                   gradient: MyColors.myGradient,
                   fontWeight: FontWeight.w600,

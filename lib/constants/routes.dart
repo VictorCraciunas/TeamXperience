@@ -16,5 +16,6 @@ abstract class Routes {
   static const filter = '/filter';
   static const createNews = '/create_news';
   static const newsDetails = '/news_details';
+  static const newsDashboard = '/news_dashboard';
 
 }

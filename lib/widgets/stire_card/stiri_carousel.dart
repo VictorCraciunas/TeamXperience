@@ -7,12 +7,16 @@ class StiriCarousel extends StatefulWidget {
   final List<Stire> stiri;
   final Function(Stire) onStireTap;
   final bool isAdmin;
+  final bool showBadge;
+
 
   const StiriCarousel({
     super.key,
     required this.stiri,
     required this.onStireTap,
     this.isAdmin = false,
+    required this.showBadge
+
   });
 
   @override
@@ -54,11 +58,12 @@ class _StiriCarouselState extends State<StiriCarousel> {
             itemBuilder: (context, index) {
               final stire = widget.stiri[index];
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 3.0),
                 child: StireCard(
                   stire: stire,
                   onTap: () => widget.onStireTap(stire),
                   isAdmin: widget.isAdmin,
+                  showBadge: widget.showBadge,
                 ),
               );
             },

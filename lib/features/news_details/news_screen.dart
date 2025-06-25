@@ -1,64 +1,313 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/stire.dart';
+import 'package:teamxperience/widgets/my_button.dart';
 
-class NewsScreen extends StatelessWidget {
+import '../../constants/routes.dart';
+
+class NewsScreen extends StatefulWidget {
   const NewsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    Stire stire = ModalRoute.of(context)!.settings.arguments as Stire;
+  State<NewsScreen> createState() => _NewsScreenState();
+}
 
-    return Scaffold(
-      body: Stack(
+class _NewsScreenState extends State<NewsScreen> {
+  final PageController _pageController = PageController();
+  int _currentImageIndex = 0;
+  late Stire stire;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'No date';
+    return DateFormat('dd MMM yyyy').format(date);
+  }
+  void _navigateToEditStire(Stire stire) {
+    Navigator.pushNamed(
+      context,
+      Routes.createNews,
+      arguments: {
+        'stire': stire,
+      },
+    );
+  }
+
+  List<String> _getAllImages(Stire stire) {
+    List<String> allImages = [];
+
+    // Add principal image first if it exists
+    if (stire.principalImage != null && stire.principalImage!.isNotEmpty) {
+      allImages.add(stire.principalImage!);
+    }
+
+    // Add secondary images
+    if (stire.secondaryImages != null && stire.secondaryImages!.isNotEmpty) {
+      allImages.addAll(stire.secondaryImages!);
+    }
+
+    return allImages;
+  }
+
+  Widget _buildImageCarousel(List<String> images) {
+    if (images.isEmpty) {
+      return Container(
+        height: 317,
+        width: double.infinity,
+        color: Colors.grey[300],
+        child: const Center(
+          child: Icon(
+            Icons.image_not_supported,
+            color: Colors.grey,
+            size: 50,
+          ),
+        ),
+      );
+    }
+
+    return SizedBox(
+      height: 317,
+      width: double.infinity,
+      child: Stack(
         children: [
-          // Background image
-          Container(
-            height: 317,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(stire.principalImage!),
+          // Image carousel
+          PageView.builder(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() {
+                _currentImageIndex = index;
+              });
+            },
+            itemCount: images.length,
+            itemBuilder: (context, index) {
+              return Image.network(
+                images[index],
                 fit: BoxFit.cover,
+                width: double.infinity,
+                loadingBuilder: (BuildContext context, Widget child,
+                    ImageChunkEvent? loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child;
+                  }
+                  return Container(
+                    color: Colors.grey[300],
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey[300],
+                    child: const Center(
+                      child: Icon(
+                        Icons.error_outline,
+                        color: Colors.grey,
+                        size: 50,
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration:  BoxDecoration(
+                        color: const Color(0x90FFFFFF),
+                        borderRadius: BorderRadius.circular(50)
+                      ),
+                      child: SvgPicture.asset(
+                        'assets/images/back_icon.svg',
+                        width: 24,
+                        height: 24,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  GestureDetector(
+                    onTap: (){_navigateToEditStire(stire);} ,
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration:  BoxDecoration(
+                          color: const Color(0x90FFFFFF),
+                          borderRadius: BorderRadius.circular(50)
+                      ),
+                      child: SvgPicture.asset(
+                        'assets/images/download.svg',
+                        width: 24,
+                        height: 24,
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
           ),
 
-          // White card overlay
-          Positioned(
-            top: 250, // Start overlapping the image
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
-                ),
+
+          // Dots indicator overlay - positioned at bottom
+          if (images.length > 1)
+            Positioned(
+              bottom: 40,
+              left: 0,
+              right: 0,
+              child: _buildDotsIndicator(images.length),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDotsIndicator(int imageCount) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(
+        imageCount,
+            (index) => AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          margin: const EdgeInsets.symmetric(horizontal: 4.0),
+          width: _currentImageIndex == index ? 34.0 : 8.0,
+          height: 8.0,
+          decoration: BoxDecoration(
+            color: _currentImageIndex == index
+                ? Colors.white
+                : Colors.white.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(4.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.3),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
               ),
-              child:  Padding(
-                padding:  EdgeInsets.symmetric(horizontal: MyPaddings.appHorizontalPadding),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    stire = ModalRoute.of(context)!.settings.arguments as Stire;
+    List<String> allImages = _getAllImages(stire);
+
+    return Scaffold(
+      body: Column(
+          children: [
+          // Image carousel - Fixed height
+          _buildImageCarousel(allImages),
+
+      // Content area - Overlapping with negative margin
+      Expanded(
+        child: Transform.translate(
+          offset: const Offset(0, -30), // Move up by 30 pixels to create overlay
+          child: Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
+              ),
+            ),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: MyPaddings.appHorizontalPadding,
+                  vertical: 20,
+                ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Keep the date container centered
                     Container(
                       width: 205,
                       height: 24,
-                      color: MyColors.transparentLightBlue,
+                      decoration: BoxDecoration(
+                        color: MyColors.transparentLightBlue,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Evenimente")
+                          SvgPicture.asset(
+                            'assets/images/calendar_icon.svg',
+                            width: 14,
+                            height: 14,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            "Evenimente - ${_formatDate(stire.publicationDate)}",
+                            style: const TextStyle(fontSize: 12),
+                          ),
                         ],
                       ),
-                    )
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Am publicat fotografiile de la evenimentul ${stire.title ?? 'Untitled'}',
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(
+                        fontSize: 19,
+                        color: MyColors.blackColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      stire.description ?? "No description",
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w300,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    // Align button to the left as well
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: MyButton(
+                        buttonText: "Vezi galeria foto",
+                        textColor: MyColors.blackColor,
+                        buttonOnTap: () {},
+                        withBorder: false,
+                        buttonColor: MyColors.transparentLightBlue,
+                        buttonTextSize: 15,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
           ),
+        ),
+
+      )
         ],
       ),
     );

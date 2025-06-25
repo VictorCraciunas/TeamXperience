@@ -71,7 +71,7 @@ class MenuWidget extends StatelessWidget {
           _buildDivider(),
           _buildMenuItem(
             context,
-            'Vezi misiune',
+            'Vezi Eveniment',
                 () {
               onClose();
               // Navigate to teams screen
@@ -120,6 +120,7 @@ class MenuWidget extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           title: const Text('Confirmare ștergere'),
           content: const Text('Ești sigur că vrei să ștergi acest eveniment?'),
           actions: [

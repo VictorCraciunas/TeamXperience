@@ -10,12 +10,14 @@ class StireCard extends StatelessWidget {
   final Stire stire;
   final VoidCallback? onTap;
   final bool isAdmin;
+  final bool showBadge;
 
   StireCard({
     super.key,
     required this.stire,
     this.onTap,
     required this.isAdmin,
+    required this.showBadge
   });
 
   @override
@@ -81,6 +83,7 @@ class StireCard extends StatelessWidget {
             ),
 
             // Blue containers overlay (right side only like EventImage)
+            if(showBadge == true)
             Padding(
               padding: const EdgeInsets.all(13.0),
               child: Row(
