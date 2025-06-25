@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:teamxperience/model/stire.dart';
 import 'package:teamxperience/enums/stire_type.dart';
-import 'package:teamxperience/enums/stire_category.dart';
+import 'package:teamxperience/model/newsCategory.dart'; // Import NewsCategory instead of enum
 import '../../../../utils/calendar_helper.dart';
 import '../../../../utils/image_helper.dart';
 import '../service/create_news_service.dart';
@@ -15,6 +15,7 @@ class CreateStireController {
   final dateController = TextEditingController();
   final textButtonController = TextEditingController();
   final linkButtonController = TextEditingController();
+  final categoryController = TextEditingController();
 
   File? mainImageFile;
   List<File> secondaryImageFiles = [];
@@ -24,7 +25,7 @@ class CreateStireController {
 
   DateTime? publicationDate;
   StireType? selectedType;
-  StireCategory? selectedCategory;
+  NewsCategory? selectedCategory; // Changed from StireCategory to NewsCategory
 
   Stire? originalStire;
 
@@ -38,6 +39,11 @@ class CreateStireController {
       selectedType = stire.type;
       selectedCategory = stire.category;
       publicationDate = stire.publicationDate;
+
+      // Set category controller text if category exists
+      if (stire.category != null) {
+        categoryController.text = stire.category!.name;
+      }
 
       if (publicationDate != null) {
         dateController.text =
@@ -105,9 +111,9 @@ class CreateStireController {
             stireId,
             titleController.text,
             descriptionController.text,
-            publicationDate!,
-            selectedType!,
-            selectedCategory!,
+            publicationDate,
+            selectedType,
+            selectedCategory!, // Now passing NewsCategory instead of StireCategory
             textButtonController.text,
             linkButtonController.text,
             mainImageFile!.path,
@@ -154,7 +160,7 @@ class CreateStireController {
     originalStire!.buttonText = textButtonController.text;
     originalStire!.buttonLink = linkButtonController.text;
     originalStire!.type = selectedType!;
-    originalStire!.category = selectedCategory!;
+    originalStire!.category = selectedCategory!; // Now using NewsCategory
     originalStire!.publicationDate = publicationDate!;
 
     // Update main image only if a new one was selected
@@ -225,5 +231,6 @@ class CreateStireController {
     dateController.dispose();
     textButtonController.dispose();
     linkButtonController.dispose();
+    categoryController.dispose();
   }
 }

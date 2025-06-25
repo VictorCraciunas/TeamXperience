@@ -3,7 +3,7 @@ import '../../../../../backend/repo/stire_repo.dart';
 import '../../../../../backend/storage/storage_images.dart';
 import '../../../../../model/stire.dart';
 import '../../../../../enums/stire_type.dart';
-import '../../../../../enums/stire_category.dart';
+import '../../../../../model/newsCategory.dart'; // Changed from enum import to model import
 
 class CreateStireService {
   StireRepo stireRepo = StireRepo();
@@ -13,11 +13,11 @@ class CreateStireService {
       String id,
       String title,
       String description,
-      DateTime publicationDate,
-      StireType type,
-      StireCategory category,
-      String buttonText,
-      String buttonLink,
+      DateTime? publicationDate,
+      StireType? type,
+      NewsCategory? category, // Changed from StireCategory to NewsCategory
+      String? buttonText,
+      String? buttonLink,
       String principalImage,
       List<String> secondaryImages,
       ) {
@@ -27,7 +27,7 @@ class CreateStireService {
       description: description,
       publicationDate: publicationDate,
       type: type,
-      category: category,
+      category: category, // Now using NewsCategory instead of StireCategory
       buttonText: buttonText,
       buttonLink: buttonLink,
       principalImage: principalImage,

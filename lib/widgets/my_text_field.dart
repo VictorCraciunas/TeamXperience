@@ -5,7 +5,7 @@ import 'package:teamxperience/constants/colors.dart';
 /// and an outlined text field on the right, with customizable styling.
 class MyTextField extends StatefulWidget {
   /// Controller for the text input
-  final TextEditingController controller;
+  final TextEditingController? controller;
 
   /// The text label displayed above the field
   final String? labelText;
@@ -53,7 +53,7 @@ class MyTextField extends StatefulWidget {
 
   const MyTextField({
     super.key,
-    required this.controller,
+    this.controller,
     this.labelText,
     this.labelFontSize = 15,
     this.labelFontWeight = FontWeight.w500,

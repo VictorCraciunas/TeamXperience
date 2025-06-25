@@ -53,26 +53,30 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       ),
       bottomNavigationBar:
           isAdmin == true
-              ? Container(
-                padding: const EdgeInsets.all(16),
-                child: MyButton(
-                  buttonText: "Vezi echipele inscrise",
-                  textColor: Colors.white,
-                  buttonOnTap: () {},
-                  withBorder: false,
-                  gradient: MyColors.myGradient,
-                  buttonTextSize: 15,
+              ? SafeArea(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: MyButton(
+                    buttonText: "Vezi echipele inscrise",
+                    textColor: Colors.white,
+                    buttonOnTap: () {},
+                    withBorder: false,
+                    gradient: MyColors.myGradient,
+                    buttonTextSize: 15,
+                  ),
                 ),
               )
-              : Container(
-                padding: const EdgeInsets.all(16),
-                child: MyButton(
-                  buttonText: "Inscrie-ti echipa",
-                  textColor: Colors.white,
-                  buttonOnTap: () {},
-                  withBorder: false,
-                  gradient: MyColors.myGradient,
-                  buttonTextSize: 15,
+              : SafeArea(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: MyButton(
+                    buttonText: "Inscrie-ti echipa",
+                    textColor: Colors.white,
+                    buttonOnTap: () {},
+                    withBorder: false,
+                    gradient: MyColors.myGradient,
+                    buttonTextSize: 15,
+                  ),
                 ),
               ),
       body: SafeArea(

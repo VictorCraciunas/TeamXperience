@@ -7,6 +7,7 @@ import 'package:teamxperience/model/stire.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 
 import '../../constants/routes.dart';
+import '../../utils/link_util.dart';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({super.key});
@@ -30,6 +31,7 @@ class _NewsScreenState extends State<NewsScreen> {
     if (date == null) return 'No date';
     return DateFormat('dd MMM yyyy').format(date);
   }
+
   void _navigateToEditStire(Stire stire) {
     Navigator.pushNamed(
       context,
@@ -39,6 +41,7 @@ class _NewsScreenState extends State<NewsScreen> {
       },
     );
   }
+  final LinkUtil _linkUtil = LinkUtil();
 
   List<String> _getAllImages(Stire stire) {
     List<String> allImages = [];
@@ -132,9 +135,9 @@ class _NewsScreenState extends State<NewsScreen> {
                   GestureDetector(
                     child: Container(
                       padding: const EdgeInsets.all(8.0),
-                      decoration:  BoxDecoration(
-                        color: const Color(0x90FFFFFF),
-                        borderRadius: BorderRadius.circular(50)
+                      decoration: BoxDecoration(
+                          color: const Color(0x90FFFFFF),
+                          borderRadius: BorderRadius.circular(50)
                       ),
                       child: SvgPicture.asset(
                         'assets/images/back_icon.svg',
@@ -147,10 +150,12 @@ class _NewsScreenState extends State<NewsScreen> {
                     },
                   ),
                   GestureDetector(
-                    onTap: (){_navigateToEditStire(stire);} ,
+                    onTap: () {
+                      _navigateToEditStire(stire);
+                    },
                     child: Container(
                       padding: const EdgeInsets.all(8.0),
-                      decoration:  BoxDecoration(
+                      decoration: BoxDecoration(
                           color: const Color(0x90FFFFFF),
                           borderRadius: BorderRadius.circular(50)
                       ),
@@ -165,7 +170,6 @@ class _NewsScreenState extends State<NewsScreen> {
               ),
             ),
           ),
-
 
           // Dots indicator overlay - positioned at bottom
           if (images.length > 1)
@@ -216,98 +220,101 @@ class _NewsScreenState extends State<NewsScreen> {
 
     return Scaffold(
       body: Column(
-          children: [
+        children: [
           // Image carousel - Fixed height
           _buildImageCarousel(allImages),
 
-      // Content area - Overlapping with negative margin
-      Expanded(
-        child: Transform.translate(
-          offset: const Offset(0, -30), // Move up by 30 pixels to create overlay
-          child: Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
+          // Content area - Overlapping with negative margin
+          Expanded(
+            child: Transform.translate(
+              offset: const Offset(0, -30), // Move up by 30 pixels to create overlay
+              child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: MyPaddings.appHorizontalPadding,
+                      vertical: 20,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Category and date container
+                        Container(
+                          width: 205,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            color: MyColors.transparentLightBlue,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/images/calendar_icon.svg',
+                                width: 14,
+                                height: 14,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                "${stire.category?.name ?? 'No Category'} - ${_formatDate(stire.publicationDate)}", // Now using NewsCategory name
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          'Am publicat fotografiile de la evenimentul ${stire.title ?? 'Untitled'}',
+                          textAlign: TextAlign.left,
+                          style: const TextStyle(
+                            fontSize: 19,
+                            color: MyColors.blackColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          stire.description ?? "No description",
+                          textAlign: TextAlign.left,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        // Button using the buttonText from stire
+                        if(stire.buttonText != "")
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: MyButton(
+                            buttonText: stire.buttonText ?? "Vezi galeria foto",
+                            textColor: MyColors.blackColor,
+                            buttonOnTap: () {
+                              print(stire.buttonLink);
+                              _linkUtil.launchURL(stire.buttonLink, context);
+                            },
+                            withBorder: false,
+                            buttonColor: MyColors.transparentLightBlue,
+                            buttonTextSize: 15,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: MyPaddings.appHorizontalPadding,
-                  vertical: 20,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Keep the date container centered
-                    Container(
-                      width: 205,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: MyColors.transparentLightBlue,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/images/calendar_icon.svg',
-                            width: 14,
-                            height: 14,
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            "Evenimente - ${_formatDate(stire.publicationDate)}",
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Am publicat fotografiile de la evenimentul ${stire.title ?? 'Untitled'}',
-                      textAlign: TextAlign.left,
-                      style: const TextStyle(
-                        fontSize: 19,
-                        color: MyColors.blackColor,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      stire.description ?? "No description",
-                      textAlign: TextAlign.left,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w300,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    // Align button to the left as well
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: MyButton(
-                        buttonText: "Vezi galeria foto",
-                        textColor: MyColors.blackColor,
-                        buttonOnTap: () {},
-                        withBorder: false,
-                        buttonColor: MyColors.transparentLightBlue,
-                        buttonTextSize: 15,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-
-      )
+          )
         ],
       ),
     );
