@@ -4,6 +4,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../constants/colors.dart';
+import '../enums/event_type.dart';
 import '../model/event.dart';
 
 class EventImage extends StatelessWidget {
@@ -100,12 +101,12 @@ class EventImage extends StatelessWidget {
                   width: 78,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: MyColors.lightBlue,
+                    color: event.type == EventType.PUBLIC ? MyColors.lightBlue : const Color(0xFF1C1243),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Center(
                     child: Text(
-                      (event.type?.name ?? "GRATUIT").toUpperCase(),
+                      (event.type?.name ?? "GRATUIT"),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,

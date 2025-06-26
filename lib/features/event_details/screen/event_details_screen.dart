@@ -113,7 +113,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 const SizedBox(height: 10),
                 DetailWidget(
                   text1: controller.event.location ?? "No Location",
-                  text2: controller.event.punctDeStart ?? "No starting point",
+                  text2: 'Punct de start: ${controller.event.punctDeStart ?? "No starting point"}',
                   iconPath: 'assets/images/location_map.svg',
                 ),
                 const SizedBox(height: 30),

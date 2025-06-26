@@ -15,6 +15,16 @@ class EventRepo{
   }
 
 
+  Future<void> deleteEvent(String eventId) async {
+    try {
+      await _firestore.collection('events').doc(eventId).delete();
+    } catch (e, stacktrace) {
+      print('Error deleting event: $e');
+      print('Stack trace: $stacktrace');
+      throw Exception('Failed to delete event with ID: $eventId');
+    }
+  }
+
   Future<List<Event>> getAllEvents() async {
     try {
       QuerySnapshot snapshot = await _firestore.collection('events').get();

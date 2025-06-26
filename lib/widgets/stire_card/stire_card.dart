@@ -2,9 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/enums/stire_type.dart';
 import 'package:teamxperience/model/stire.dart';
 import 'package:teamxperience/utils/image_helper.dart';
 import 'package:intl/intl.dart';
+
+import '../../utils/calendar_helper.dart';
 
 class StireCard extends StatelessWidget {
   final Stire stire;
@@ -12,7 +15,7 @@ class StireCard extends StatelessWidget {
   final bool isAdmin;
   final bool showBadge;
 
-  StireCard({
+  const StireCard({
     super.key,
     required this.stire,
     this.onTap,
@@ -62,10 +65,10 @@ class StireCard extends StatelessWidget {
               bottom: 0,
               left: 0,
               right: 0,
-              height: 220 * 0.50, // 1/3 of the card height
+              height: 220 * 0.70, // 1/3 of the card height
               child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
                   ),
@@ -73,9 +76,9 @@ class StireCard extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.4),
-                      Colors.black.withValues(alpha: 0.8),
+                      Color(0x0021305C),
+                      Color(0xCC21305C),
+                      Color(0xFF21305C),
                     ],
                   ),
                 ),
@@ -94,12 +97,12 @@ class StireCard extends StatelessWidget {
                     width: 78,
                     height: 20,
                     decoration: BoxDecoration(
-                      color: MyColors.lightBlue,
+                      color: stire.type == StireType.PUBLICA ? MyColors.lightBlue : const Color(0xFF0B2F63),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Center(
                       child: Text(
-                        (stire.type?.name ?? "PUBLIC").toUpperCase(),
+                        (stire.type?.name ?? "PUBLIC"),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
@@ -141,13 +144,31 @@ class StireCard extends StatelessWidget {
                     children: [
                       SvgPicture.asset(
                         'assets/images/calendar.svg',
-                        height: 12,
-                        width: 12,
-                        color: Colors.white70,
+                        height: 10,
+                        width: 10,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white70,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Text(
+                        'Evenimente',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 10,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      SvgPicture.asset(
+                        'assets/images/punct.svg',
+                        height: 2,
+                        width: 2,
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        'Evenimente - ${_formatDate(stire.publicationDate)}',
+                        CalendarHelper.formatDate(stire.publicationDate),
                         style: const TextStyle(
                           color: Colors.white70,
                           fontSize: 10,
@@ -165,8 +186,4 @@ class StireCard extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime? date) {
-    if (date == null) return 'No date';
-    return DateFormat('dd MMM yyyy').format(date);
-  }
 }

@@ -7,6 +7,7 @@ import 'package:teamxperience/model/stire.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 
 import '../../constants/routes.dart';
+import '../../utils/calendar_helper.dart';
 import '../../utils/link_util.dart';
 
 class NewsScreen extends StatefulWidget {
@@ -27,10 +28,6 @@ class _NewsScreenState extends State<NewsScreen> {
     super.dispose();
   }
 
-  String _formatDate(DateTime? date) {
-    if (date == null) return 'No date';
-    return DateFormat('dd MMM yyyy').format(date);
-  }
 
   void _navigateToEditStire(Stire stire) {
     Navigator.pushNamed(
@@ -264,8 +261,23 @@ class _NewsScreenState extends State<NewsScreen> {
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                "${stire.category?.name ?? 'No Category'} - ${_formatDate(stire.publicationDate)}", // Now using NewsCategory name
-                                style: const TextStyle(fontSize: 12),
+                                stire.category?.name ?? 'No Category', // Now using NewsCategory name
+                                style: const TextStyle(fontSize: 12,color: Color(0xFF0B2F63)),
+                              ),
+                              const SizedBox(width: 4,),
+                              SvgPicture.asset(
+                                'assets/images/punct.svg',
+                                height: 3,
+                                width: 3,
+                                colorFilter: const ColorFilter.mode(
+                                  Color(0xFF0B2F63),
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                              const SizedBox(width: 4,),
+                              Text(
+                                CalendarHelper.formatDate(stire.publicationDate), // Now using NewsCategory name
+                                style: const TextStyle(fontSize: 12,color: Color(0xFF0B2F63)),
                               ),
                             ],
                           ),
@@ -299,7 +311,6 @@ class _NewsScreenState extends State<NewsScreen> {
                             buttonText: stire.buttonText ?? "Vezi galeria foto",
                             textColor: MyColors.blackColor,
                             buttonOnTap: () {
-                              print(stire.buttonLink);
                               _linkUtil.launchURL(stire.buttonLink, context);
                             },
                             withBorder: false,

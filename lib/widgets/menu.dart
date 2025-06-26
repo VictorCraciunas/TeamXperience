@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/backend/repo/event_repo.dart';
 import 'package:teamxperience/constants/colors.dart';
 
 import '../constants/routes.dart';
@@ -131,7 +132,6 @@ class MenuWidget extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                // Handle delete logic here
                 _handleDeleteEvent(context);
               },
               child: const Text('Șterge', style: TextStyle(color: Colors.red)),
@@ -143,9 +143,11 @@ class MenuWidget extends StatelessWidget {
   }
 
   void _handleDeleteEvent(BuildContext context) {
-    // Implement delete logic here
+    EventRepo eventRepo = EventRepo();
+    eventRepo.deleteEvent(event!.eventId);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Evenimentul a fost șters')),
     );
+    Navigator.pop(context);
   }
 }

@@ -3,8 +3,10 @@ import '../../../enums/event_type.dart';
 import '../../../model/event.dart';
 
 class EventsDashboardController extends ChangeNotifier {
-  List<Event> allEvents = [];
-  List<Event> filteredEvents = [];
+  List<Event> allUpcomingEvents = [];
+  List<Event> allPastEvents = [];
+  List<Event> filteredUpcomingEvents = [];
+  List<Event> filteredPastEvents = [];
   List<Event> searchResults = [];
   String searchQuery = '';
 
@@ -13,38 +15,103 @@ class EventsDashboardController extends ChangeNotifier {
   DateTime? startDate;
   DateTime? endDate;
 
-  List<Event> get displayedEvents {
+  List<Event> get displayedUpcomingEvents {
     if (searchQuery.isNotEmpty) {
-      return searchResults;
+      return searchResults.where((event) {
+        final now = DateTime.now();
+        return event.dateEvent == null || event.dateEvent!.isAfter(now);
+      }).toList();
     }
-    return filteredEvents;
+    return filteredUpcomingEvents;
+  }
+
+  List<Event> get displayedPastEvents {
+    if (searchQuery.isNotEmpty) {
+      return searchResults.where((event) {
+        final now = DateTime.now();
+        return event.dateEvent != null && event.dateEvent!.isBefore(now);
+      }).toList();
+    }
+    return filteredPastEvents;
+  }
+
+  // For backward compatibility - returns combined list with upcoming first
+  List<Event> get displayedEvents {
+    return [...displayedUpcomingEvents, ...displayedPastEvents];
   }
 
   void initializeEvents(List<Event>? events) {
-    if (events != null && allEvents.isEmpty) {
-      allEvents = events;
-      filteredEvents = events;
+    if (events != null && allUpcomingEvents.isEmpty && allPastEvents.isEmpty) {
+      _separateEvents(events);
+      _applyFiltersToSeparatedEvents();
       notifyListeners();
     }
   }
 
-  void applyFilters() {
-    filteredEvents = allEvents.where((event) {
-      // Filter by event type
-      if (selectedEventType != null && event.type != selectedEventType) {
+  void _separateEvents(List<Event> events) {
+    final now = DateTime.now();
+    allUpcomingEvents = [];
+    allPastEvents = [];
+
+    for (final event in events) {
+      if (event.dateEvent == null) {
+        // Events without dates go to upcoming events
+        allUpcomingEvents.add(event);
+      } else if (event.dateEvent!.isAfter(now)) {
+        allUpcomingEvents.add(event);
+      } else {
+        allPastEvents.add(event);
+      }
+    }
+
+    // Sort upcoming events ascending (closest first)
+    allUpcomingEvents.sort((a, b) {
+      if (a.dateEvent == null && b.dateEvent == null) return 0;
+      if (a.dateEvent == null) return 1;
+      if (b.dateEvent == null) return -1;
+      return a.dateEvent!.compareTo(b.dateEvent!);
+    });
+
+    // Sort past events descending (most recent first)
+    allPastEvents.sort((a, b) {
+      if (a.dateEvent == null && b.dateEvent == null) return 0;
+      if (a.dateEvent == null) return 1;
+      if (b.dateEvent == null) return -1;
+      return b.dateEvent!.compareTo(a.dateEvent!);
+    });
+  }
+
+  void _applyFiltersToSeparatedEvents() {
+    // Apply filters to upcoming events
+    filteredUpcomingEvents = allUpcomingEvents.where((event) {
+      return _eventMatchesFilters(event);
+    }).toList();
+
+    // Apply filters to past events
+    filteredPastEvents = allPastEvents.where((event) {
+      return _eventMatchesFilters(event);
+    }).toList();
+  }
+
+  bool _eventMatchesFilters(Event event) {
+    // Filter by event type
+    if (selectedEventType != null && event.type != selectedEventType) {
+      return false;
+    }
+
+    // Filter by date range
+    if (startDate != null && endDate != null && event.dateEvent != null) {
+      final eventDate = event.dateEvent!;
+      if (eventDate.isBefore(startDate!) || eventDate.isAfter(endDate!)) {
         return false;
       }
+    }
 
-      // Filter by date range
-      if (startDate != null && endDate != null && event.dateEvent != null) {
-        final eventDate = event.dateEvent!;
-        if (eventDate.isBefore(startDate!) || eventDate.isAfter(endDate!)) {
-          return false;
-        }
-      }
+    return true;
+  }
 
-      return true;
-    }).toList();
+  void applyFilters() {
+    _applyFiltersToSeparatedEvents();
 
     // If search is active, apply search on filtered results
     if (searchQuery.isNotEmpty) {
@@ -66,7 +133,8 @@ class EventsDashboardController extends ChangeNotifier {
 
   void _applySearch() {
     final lowerQuery = searchQuery.toLowerCase();
-    searchResults = filteredEvents.where((event) {
+    final allFilteredEvents = [...filteredUpcomingEvents, ...filteredPastEvents];
+    searchResults = allFilteredEvents.where((event) {
       final eventName = event.name?.toLowerCase() ?? '';
       return eventName.contains(lowerQuery);
     }).toList();
@@ -91,7 +159,7 @@ class EventsDashboardController extends ChangeNotifier {
     selectedEventType = null;
     startDate = null;
     endDate = null;
-    filteredEvents = allEvents;
+    _applyFiltersToSeparatedEvents();
     if (searchQuery.isNotEmpty) {
       _applySearch();
     }
@@ -119,4 +187,7 @@ class EventsDashboardController extends ChangeNotifier {
     'startDate': startDate,
     'endDate': endDate,
   };
+
+  bool get hasUpcomingEvents => displayedUpcomingEvents.isNotEmpty;
+  bool get hasPastEvents => displayedPastEvents.isNotEmpty;
 }

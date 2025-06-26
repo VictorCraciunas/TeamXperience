@@ -77,9 +77,9 @@ class _AdminHomeState extends State<AdminHome> {
     // Add navigation to stire details page when you create it
     // For now, just print or show a snackbar
     Navigator.pushNamed(
-      context,
-      Routes.newsDetails,
-      arguments: stire
+        context,
+        Routes.newsDetails,
+        arguments: stire
     );
   }
 
@@ -91,7 +91,7 @@ class _AdminHomeState extends State<AdminHome> {
     Navigator.pushNamed(
       context,
       Routes.eventDashboard,
-      arguments: controller.events,
+      arguments: controller.allEvents, // Pass all events, dashboard will separate them
     );
   }
 
@@ -165,11 +165,11 @@ class _AdminHomeState extends State<AdminHome> {
                 ),
                 const SizedBox(height: 20),
 
-                // Events Section
+                // Events Section - Only show upcoming events in carousel
                 TitleCarousel(text: "Evenimente", onTap: _navigateToEventDashboard),
                 const SizedBox(height: 20),
                 EventsCarousel(
-                  events: controller.events,
+                  events: controller.upcomingEvents, // Show only upcoming events
                   onEventTap: _navigateToEventDetails,
                   isAdmin: true,
                 ),

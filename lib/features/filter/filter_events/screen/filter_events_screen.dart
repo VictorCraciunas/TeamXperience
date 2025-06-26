@@ -5,17 +5,17 @@ import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/widgets/my_appbar.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 import 'package:teamxperience/widgets/my_dropdown/my_dropdown.dart';
-import '../../../widgets/my_dropdown/dropdown_item.dart';
-import '../controller/filter_controller.dart';
+import '../../../../widgets/my_dropdown/dropdown_item.dart';
+import '../controller/filter_events_controller.dart';
 
-class FilterScreen extends StatefulWidget {
-  const FilterScreen({super.key});
+class FilterEventsScreen extends StatefulWidget {
+  const FilterEventsScreen({super.key});
 
   @override
-  State<FilterScreen> createState() => _FilterScreenState();
+  State<FilterEventsScreen> createState() => _FilterEventsScreenState();
 }
 
-class _FilterScreenState extends State<FilterScreen> {
+class _FilterEventsScreenState extends State<FilterEventsScreen> {
   late FilterController controller;
 
   @override
@@ -177,9 +177,9 @@ class _FilterScreenState extends State<FilterScreen> {
   String _getEventTypeDisplayName(EventType type) {
     // Convert enum to display name
     switch (type) {
-      case EventType.public:
+      case EventType.PUBLIC:
         return 'Public';
-      case EventType.private:
+      case EventType.PRIVAT:
         return 'Privat';
       }
   }

@@ -1,4 +1,4 @@
 enum EventType{
-  public,
-  private
+  PUBLIC,
+  PRIVAT
 }

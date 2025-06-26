@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/event.dart';
-import 'package:teamxperience/widgets/event_card/events_list.dart';
+import 'package:teamxperience/widgets/event_card/event_card.dart'; // Assuming you have an EventCard widget
 import 'package:teamxperience/widgets/my_appbar.dart';
 
 import '../../../constants/routes.dart';
@@ -115,15 +115,71 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
 
   String _getEventTypeDisplayName(EventType type) {
     switch (type) {
-      case EventType.public:
+      case EventType.PUBLIC:
         return 'Public';
-      case EventType.private:
+      case EventType.PRIVAT:
         return 'Privat';
     }
   }
 
   String _formatDate(DateTime date) {
     return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              height: 2,
+              decoration: BoxDecoration(
+                color: MyColors.lightBlue,
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: MyColors.blackColor,
+              fontFamily: 'Poppins',
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Container(
+              height: 2,
+              decoration: BoxDecoration(
+                color: MyColors.lightBlue,
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEventsList(List<Event> events) {
+    return Column(
+      children: events.map((event) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: GestureDetector(
+            onTap: () => navigateToEventDetails(context, event),
+            child: EventCard( // Replace with your actual EventCard widget
+              event: event,
+              isAdmin: true,
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 
   @override
@@ -141,6 +197,7 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
             builder: (context, child) {
               return Column(
                 children: [
+                  // Header with buttons and filters (non-scrollable)
                   AnimatedBuilder(
                     animation: _searchAnimation,
                     builder: (context, child) {
@@ -270,7 +327,7 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                         width: 45,
                                         height: 45,
                                         decoration: const BoxDecoration(),
-                                        child: Center(
+                                        child: const Center(
                                           child: Icon(
                                             Icons.close,
                                             size: 24,
@@ -307,6 +364,8 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                       );
                     },
                   ),
+
+                  // Active filters display
                   if (controller.hasActiveFilters) ...[
                     const SizedBox(height: 10),
                     Wrap(
@@ -382,6 +441,8 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                       ],
                     ),
                   ],
+
+                  // Search query display
                   if (controller.searchQuery.isNotEmpty) ...[
                     const SizedBox(height: 10),
                     Container(
@@ -423,12 +484,55 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                       ),
                     ),
                   ],
+
                   const SizedBox(height: 10),
+
+                  // Scrollable content area
                   Expanded(
-                    child: EventsList(
-                      events: controller.displayedEvents,
-                      onEventTap: (event) => navigateToEventDetails(context, event),
-                      isAdmin: true,
+                    child: controller.hasUpcomingEvents || controller.hasPastEvents
+                        ? SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Upcoming Events Section
+                          if (controller.hasUpcomingEvents) ...[
+                            _buildSectionHeader("Evenimente viitoare"),
+                            _buildEventsList(controller.displayedUpcomingEvents),
+                          ],
+
+                          // Past Events Section
+                          if (controller.hasPastEvents) ...[
+                            _buildSectionHeader("Evenimente trecute"),
+                            _buildEventsList(controller.displayedPastEvents),
+                          ],
+
+                          // Add some bottom padding
+                          const SizedBox(height: 20),
+                        ],
+                      ),
+                    )
+                        : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.event_busy,
+                            size: 64,
+                            color: MyColors.greyText.withOpacity(0.5),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            controller.searchQuery.isNotEmpty
+                                ? 'Nu s-au găsit evenimente'
+                                : 'Nu există evenimente',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: MyColors.greyText.withOpacity(0.7),
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

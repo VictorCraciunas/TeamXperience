@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../enums/event_type.dart';
+
+import '../../../../enums/event_type.dart';
 
 class FilterController extends ChangeNotifier {
   EventType? _selectedEventType;

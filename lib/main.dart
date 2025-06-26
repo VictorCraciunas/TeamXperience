@@ -8,7 +8,8 @@ import 'package:teamxperience/features/event_details/screen/event_details_screen
 import 'package:teamxperience/features/event_game/screen/event_game_screen.dart';
 import 'package:teamxperience/features/event_game/screen/puzzle_game_screen.dart';
 import 'package:teamxperience/features/events_dashboard/screen/events_dasboard_screen.dart';
-import 'package:teamxperience/features/filter/screen/filter_screen.dart';
+import 'package:teamxperience/features/filter/filter_events/screen/filter_events_screen.dart';
+import 'package:teamxperience/features/filter/filter_news/screen/filter_news.dart';
 import 'package:teamxperience/features/forgot-password/screen/forgot_password_screen.dart';
 import 'package:teamxperience/features/news_category_manipulation/screen/news_catergory_manipulation_screen.dart';
 import 'package:teamxperience/features/news_dashboard/screen/stiri_dashboard_screen.dart';
@@ -72,11 +73,12 @@ class MyApp extends StatelessWidget {
         Routes.eventGame: (_) => const EventGameScreen(),
         Routes.puzzleGame: (_) => const PuzzleGameScreen(),
         Routes.eventDashboard: (_) => const EventsDashboard(),
-        Routes.filter: (_) => const FilterScreen(),
+        Routes.filter: (_) => const FilterEventsScreen(),
         Routes.createNews: (_) => const CreateStireScreen(),
         Routes.newsDetails: (_) => const NewsScreen(),
         Routes.newsDashboard: (_) => const StiriDashboard(),
         Routes.chooseNewsType: (_) => const NewsCategoryManipulationScreen(),
+        Routes.filterStiri: (_) => const FilterStiriScreen(),
 
       },
     );
