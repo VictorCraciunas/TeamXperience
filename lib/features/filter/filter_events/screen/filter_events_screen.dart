@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
+import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/widgets/my_appbar.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 import 'package:teamxperience/widgets/my_dropdown/my_dropdown.dart';
 import '../../../../widgets/my_dropdown/dropdown_item.dart';
+import '../../../../widgets/my_text_field.dart';
 import '../controller/filter_events_controller.dart';
 
 class FilterEventsScreen extends StatefulWidget {
@@ -17,28 +19,41 @@ class FilterEventsScreen extends StatefulWidget {
 
 class _FilterEventsScreenState extends State<FilterEventsScreen> {
   late FilterController controller;
+  late TextEditingController _periodController;
+
 
   @override
   void initState() {
     super.initState();
     controller = FilterController();
+    _periodController = TextEditingController();
   }
 
   @override
   void dispose() {
     controller.dispose();
+    _periodController.dispose();
     super.dispose();
   }
 
-  void _navigateToPeriodSelection() {
-    // TODO: Navigate to period selection screen
-    // For now, just a placeholder navigation
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Navigating to period selection...'),
-        duration: Duration(seconds: 1),
-      ),
-    );
+  void _updatePeriodText() {
+    _periodController.text = controller.startDate != null && controller.endDate != null
+        ? '${_formatDate(controller.startDate!)} - ${_formatDate(controller.endDate!)}'
+        : '';
+  }
+  void _navigateToPeriodSelection() async {
+    final result = await Navigator.pushNamed(
+      context,
+      Routes.calendar,
+    ) as Map<String, DateTime?>?;
+
+    if (result != null) {
+      controller.setDateRange(
+        result['startDate'],
+        result['endDate'],
+      );
+      _updatePeriodText(); // Update the text field
+    }
   }
 
   void _applyFilters() {
@@ -99,59 +114,19 @@ class _FilterEventsScreenState extends State<FilterEventsScreen> {
               const SizedBox(height: 20),
 
               // Period Selection Button
-              const Text(
-                'Perioada',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: MyColors.blackColor,
-                ),
-              ),
-              const SizedBox(height: 8),
-              GestureDetector(
+              MyTextField(
+                labelText: 'Perioada',
+                hintText: 'Selectează perioadă',
+                readOnly: true,
                 onTap: _navigateToPeriodSelection,
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 20,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: MyColors.lightBlue,
-                      width: 1.5,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      AnimatedBuilder(
-                        animation: controller,
-                        builder: (context, _) {
-                          return Text(
-                            controller.startDate != null && controller.endDate != null
-                                ? '${_formatDate(controller.startDate!)} - ${_formatDate(controller.endDate!)}'
-                                : 'Selectează perioadă',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'Poppins',
-                              color: controller.startDate != null
-                                  ? MyColors.blackColor
-                                  : MyColors.greyText,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          );
-                        },
-                      ),
-                      const Icon(
-                        Icons.chevron_right,
-                        color: MyColors.blackColor,
-                      ),
-                    ],
-                  ),
+                trailing: const Icon(
+                  Icons.chevron_right,
+                  color: MyColors.lightBlue,
                 ),
+                borderColor: MyColors.lightBlue,
+                borderWidth: 1.5,
+                radius: 20,
+                controller: _periodController,
               ),
 
               const Spacer(),

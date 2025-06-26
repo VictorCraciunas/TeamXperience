@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/screen/add_missions_screen.dart';
 import 'package:teamxperience/features/admin/create_news/screen/create_news_screen.dart';
 import 'package:teamxperience/features/admin/home/screen/admin_home.dart';
+import 'package:teamxperience/features/calendar/screen/calendar_screen.dart';
 import 'package:teamxperience/features/event_details/screen/event_details_screen.dart';
 import 'package:teamxperience/features/event_game/screen/event_game_screen.dart';
 import 'package:teamxperience/features/event_game/screen/puzzle_game_screen.dart';
@@ -79,6 +80,7 @@ class MyApp extends StatelessWidget {
         Routes.newsDashboard: (_) => const StiriDashboard(),
         Routes.chooseNewsType: (_) => const NewsCategoryManipulationScreen(),
         Routes.filterStiri: (_) => const FilterStiriScreen(),
+        Routes.calendar: (_) => const DateRangeSelectionScreen(),
 
       },
     );

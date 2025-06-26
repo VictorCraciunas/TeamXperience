@@ -148,7 +148,6 @@ class _NewsScreenState extends State<NewsScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      _navigateToEditStire(stire);
                     },
                     child: Container(
                       padding: const EdgeInsets.all(8.0),
@@ -216,14 +215,14 @@ class _NewsScreenState extends State<NewsScreen> {
     List<String> allImages = _getAllImages(stire);
 
     return Scaffold(
-      body: Column(
-        children: [
-          // Image carousel - Fixed height
-          _buildImageCarousel(allImages),
-
-          // Content area - Overlapping with negative margin
-          Expanded(
-            child: Transform.translate(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Image carousel - Fixed height
+            _buildImageCarousel(allImages),
+        
+            // Content area - Overlapping with negative margin
+            Transform.translate(
               offset: const Offset(0, -30), // Move up by 30 pixels to create overlay
               child: Container(
                 width: double.infinity,
@@ -234,11 +233,10 @@ class _NewsScreenState extends State<NewsScreen> {
                     topRight: Radius.circular(30),
                   ),
                 ),
-                child: SingleChildScrollView(
+                child: SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: MyPaddings.appHorizontalPadding,
-                      vertical: 20,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -305,28 +303,39 @@ class _NewsScreenState extends State<NewsScreen> {
                         const SizedBox(height: 20),
                         // Button using the buttonText from stire
                         if(stire.buttonText != "")
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: MyButton(
-                            buttonText: stire.buttonText ?? "Vezi galeria foto",
-                            textColor: MyColors.blackColor,
-                            buttonOnTap: () {
-                              _linkUtil.launchURL(stire.buttonLink, context);
-                            },
-                            withBorder: false,
-                            buttonColor: MyColors.transparentLightBlue,
-                            buttonTextSize: 15,
-                            fontWeight: FontWeight.w400,
-                          ),
+                        MyButton(
+                          buttonText: stire.buttonText ?? "Vezi galeria foto",
+                          textColor: MyColors.blackColor,
+                          buttonOnTap: () {
+                            _linkUtil.launchURL(stire.buttonLink, context);
+                          },
+                          withBorder: false,
+                          buttonColor: MyColors.transparentLightBlue,
+                          buttonTextSize: 15,
+                          fontWeight: FontWeight.w400,
+                        ),
+
+                        const SizedBox(height: 30),
+
+                        MyButton(
+                          buttonText:"Editeaza",
+                          textColor: Colors.white,
+                          buttonOnTap: () {
+                            _navigateToEditStire(stire);
+                          },
+                          withBorder: false,
+                          buttonTextSize: 16,
+                          fontWeight: FontWeight.w600,
+                          gradient: MyColors.myGradient,
                         ),
                       ],
                     ),
                   ),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

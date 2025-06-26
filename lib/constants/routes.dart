@@ -19,5 +19,6 @@ abstract class Routes {
   static const newsDashboard = '/news_dashboard';
   static const chooseNewsType = '/chooseNewsType';
   static const filterStiri = '/filter_stiri';
+  static const calendar = '/calendar';
 
 }

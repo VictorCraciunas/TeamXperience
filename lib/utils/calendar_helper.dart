@@ -129,4 +129,18 @@ class CalendarHelper {
 
     return '$day $monthAbbr $year';
   }
+
+
+
+  // Romanian day abbreviations for calendar headers
+  static const List<String> romanianDaysShort = [
+    'Lu', 'Ma', 'Mi', 'Jo', 'Vi', 'Sâ', 'Du'
+  ];
+
+  // Romanian month names (uppercase for calendar headers)
+  static const Map<int, String> romanianMonthsUpper = {
+    1: 'IANUARIE', 2: 'FEBRUARIE', 3: 'MARTIE', 4: 'APRILIE',
+    5: 'MAI', 6: 'IUNIE', 7: 'IULIE', 8: 'AUGUST',
+    9: 'SEPTEMBRIE', 10: 'OCTOMBRIE', 11: 'NOIEMBRIE', 12: 'DECEMBRIE',
+  };
 }

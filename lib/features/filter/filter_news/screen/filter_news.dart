@@ -23,17 +23,22 @@ class FilterStiriScreen extends StatefulWidget {
 class _FilterStiriScreenState extends State<FilterStiriScreen> {
   late FilterStiriController controller;
   final CalendarHelper calendarHelper = CalendarHelper();
+  late TextEditingController _periodController;
 
   @override
   void initState() {
     super.initState();
     controller = FilterStiriController();
+    _periodController = TextEditingController();
+
   }
 
   @override
   void dispose() {
     controller.dispose();
     super.dispose();
+    _periodController.dispose();
+
   }
 
   Future<void> _selectStartDate() async {
@@ -70,9 +75,29 @@ class _FilterStiriScreenState extends State<FilterStiriScreen> {
     controller.clearFilters();
   }
 
-  String _formatDateTime(DateTime? dateTime) {
-    if (dateTime == null) return '';
-    return '${dateTime.day.toString().padLeft(2, '0')}.${dateTime.month.toString().padLeft(2, '0')}.${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+
+  String _formatDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+  }
+
+  void _updatePeriodText() {
+    _periodController.text = controller.startDate != null && controller.endDate != null
+        ? '${_formatDate(controller.startDate!)} - ${_formatDate(controller.endDate!)}'
+        : '';
+  }
+  void _navigateToPeriodSelection() async {
+    final result = await Navigator.pushNamed(
+      context,
+      Routes.calendar,
+    ) as Map<String, DateTime?>?;
+
+    if (result != null) {
+      controller.setDateRange(
+        result['startDate'],
+        result['endDate'],
+      );
+      _updatePeriodText(); // Update the text field
+    }
   }
 
   @override
@@ -151,71 +176,22 @@ class _FilterStiriScreenState extends State<FilterStiriScreen> {
                   const SizedBox(height: 20),
 
                   // Start Date
-                  const Text(
-                    'Data de început',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: MyColors.blackColor,
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
-                  const SizedBox(height: 10),
                   MyTextField(
-                    controller: TextEditingController(
-                        text: _formatDateTime(controller.startDate)
-                    ),
-                    hintText: "Data de început",
+                    labelText: 'Perioada',
+                    hintText: 'Selectează perioadă',
                     readOnly: true,
-                    onTap: _selectStartDate,
-                    trailing: SvgPicture.asset(
-                      'assets/images/calendar.svg',
-                      height: 24,
-                      width: 24,
-                      colorFilter: const ColorFilter.mode(
-                        MyColors.lightBlue,
-                        BlendMode.srcIn,
-                      ),
+                    onTap: _navigateToPeriodSelection,
+                    trailing: const Icon(
+                      Icons.chevron_right,
+                      color: MyColors.lightBlue,
                     ),
-                    radius: 15,
                     borderColor: MyColors.lightBlue,
                     borderWidth: 1.5,
-                  ),
-                  const SizedBox(height: 20),
-
-                  // End Date
-                  const Text(
-                    'Data de sfârșit',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: MyColors.blackColor,
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  MyTextField(
-                    controller: TextEditingController(
-                        text: _formatDateTime(controller.endDate)
-                    ),
-                    hintText: "Data de sfârșit",
-                    readOnly: true,
-                    onTap: _selectEndDate,
-                    trailing: SvgPicture.asset(
-                      'assets/images/calendar.svg',
-                      height: 24,
-                      width: 24,
-                      colorFilter: const ColorFilter.mode(
-                        MyColors.lightBlue,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                    radius: 15,
-                    borderColor: MyColors.lightBlue,
-                    borderWidth: 1.5,
+                    radius: 20,
+                    controller: _periodController,
                   ),
 
-                  const Spacer(),
+                  SizedBox(height: 10,),
 
                   // Action Buttons
                   MyButton(
