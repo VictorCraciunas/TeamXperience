@@ -123,6 +123,26 @@ class _NewsScreenState extends State<NewsScreen> {
               );
             },
           ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 317 * 0.3, // 40% of the carousel height
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0x0021305C),
+                    Color(0x8021305C),
+                    Color(0xCC21305C),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(15.0),
@@ -253,9 +273,13 @@ class _NewsScreenState extends State<NewsScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SvgPicture.asset(
-                                'assets/images/calendar_icon.svg',
+                                'assets/images/folder-search.svg',
                                 width: 14,
                                 height: 14,
+                                colorFilter: const ColorFilter.mode(
+                                  Color(0xFF0B2F63),
+                                  BlendMode.srcIn,
+                                ),
                               ),
                               const SizedBox(width: 5),
                               Text(

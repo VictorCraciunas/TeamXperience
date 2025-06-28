@@ -5,9 +5,9 @@ enum StireType {
   String get displayName {
     switch (this) {
       case StireType.PUBLICA:
-        return 'PUBLICĂ';
+        return 'Publică';
       case StireType.PRIVATA:
-        return 'PRIVATĂ';
+        return 'Privată';
     }
   }
 }

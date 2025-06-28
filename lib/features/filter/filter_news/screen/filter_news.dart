@@ -41,20 +41,6 @@ class _FilterStiriScreenState extends State<FilterStiriScreen> {
 
   }
 
-  Future<void> _selectStartDate() async {
-    final selectedDate = await calendarHelper.selectDate(context);
-    if (selectedDate != null) {
-      controller.setStartDate(selectedDate);
-    }
-  }
-
-  Future<void> _selectEndDate() async {
-    final selectedDate = await calendarHelper.selectDate(context);
-    if (selectedDate != null) {
-      controller.setEndDate(selectedDate);
-    }
-  }
-
   Future<void> _selectCategory() async {
     final selectedCategory = await Navigator.pushNamed(
       context,

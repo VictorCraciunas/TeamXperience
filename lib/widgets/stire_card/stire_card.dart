@@ -102,7 +102,7 @@ class StireCard extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        (stire.type?.name ?? "PUBLIC"),
+                        (stire.type?.displayName ?? "PUBLICA").toUpperCase(),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
@@ -143,7 +143,7 @@ class StireCard extends StatelessWidget {
                   Row(
                     children: [
                       SvgPicture.asset(
-                        'assets/images/calendar.svg',
+                        'assets/images/folder-search.svg',
                         height: 10,
                         width: 10,
                         colorFilter: const ColorFilter.mode(

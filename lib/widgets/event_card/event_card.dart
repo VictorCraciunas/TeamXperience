@@ -11,18 +11,22 @@ class EventCard extends StatelessWidget {
   final VoidCallback? onTap;
   final bool isAdmin;
 
-  const EventCard({super.key, required this.event, this.onTap, required this.isAdmin});
-
-
+  const EventCard({
+    super.key,
+    required this.event,
+    this.onTap,
+    required this.isAdmin,
+  });
 
   @override
   Widget build(BuildContext context) {
     String month = 'Ianuarie'; // Default fallback
     String day = '01'; // Default fallback
     if (event.dateEvent != null) {
-      month = DateTime.now().month == event.dateEvent!.month
-          ? 'Iunie' // Hardcoded to Romanian "June" for June 10, 2025 context
-          : DateFormat('MMMM').format(event.dateEvent!);
+      month =
+          DateTime.now().month == event.dateEvent!.month
+              ? 'Iunie' // Hardcoded to Romanian "June" for June 10, 2025 context
+              : DateFormat('MMMM').format(event.dateEvent!);
       day = event.dateEvent!.day.toString().padLeft(2, '0');
     }
 
@@ -44,8 +48,9 @@ class EventCard extends StatelessWidget {
     String romanianMonth = monthMap[month] ?? month;
 
     return Card(
+      shadowColor: const Color(0xFF0B2F63).withValues(alpha: 0.07),
       color: Colors.white,
-      elevation: 2,
+      elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: InkWell(
         splashFactory: InkSplash.splashFactory,
@@ -56,7 +61,12 @@ class EventCard extends StatelessWidget {
             // Event Image with Stack
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: EventImage(event: event, eventImageCache: ImageHelper.eventImageCache, isAdmin: isAdmin,height: 175,),
+              child: EventImage(
+                event: event,
+                eventImageCache: ImageHelper.eventImageCache,
+                isAdmin: isAdmin,
+                height: 175,
+              ),
             ),
 
             // Event Details
@@ -69,17 +79,33 @@ class EventCard extends StatelessWidget {
                     width: 63,
                     decoration: BoxDecoration(
                       color: MyColors.transparentLightBlue,
-                      borderRadius: BorderRadius.circular(10), // Apply custom radius
+                      borderRadius: BorderRadius.circular(
+                        10,
+                      ), // Apply custom radius
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(romanianMonth,style: const TextStyle(fontWeight: FontWeight.w500,fontSize: 13, color: MyColors.blackColor),),
-                        Text(day,style: const TextStyle(fontWeight: FontWeight.w700,fontSize: 15,color: MyColors.blackColor),),
+                        Text(
+                          romanianMonth,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                            color: MyColors.blackColor,
+                          ),
+                        ),
+                        Text(
+                          day,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
+                            color: MyColors.blackColor,
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 10,),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,24 +117,37 @@ class EventCard extends StatelessWidget {
                               width: 14,
                               height: 14,
                             ),
-                            const SizedBox(width: 5,),
-                            Text(event.location ?? "No Location", style: const TextStyle(fontSize: 13,color: Color(0xFF545454)),)
+                            const SizedBox(width: 5),
+                            Expanded(
+                              child: Text(
+                                event.location ?? "No Location",
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: Color(0xFF545454),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                        const SizedBox(width: 8,),
-                        Text(event.name ?? "No Title",style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w600,color: MyColors.blackColor),)
+                        const SizedBox(width: 8),
+                        Text(
+                          event.name ?? "No Title",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: MyColors.blackColor,
+                          ),
+                        ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 15,)
+            const SizedBox(height: 15),
           ],
         ),
       ),
     );
   }
-
 }
-

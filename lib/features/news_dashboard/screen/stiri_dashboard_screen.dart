@@ -113,50 +113,12 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
     return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              height: 2,
-              decoration: BoxDecoration(
-                color: MyColors.lightBlue,
-                borderRadius: BorderRadius.circular(1),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: MyColors.blackColor,
-              fontFamily: 'Poppins',
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Container(
-              height: 2,
-              decoration: BoxDecoration(
-                color: MyColors.lightBlue,
-                borderRadius: BorderRadius.circular(1),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildStiriList(List<Stire> stiri) {
     return Column(
       children: stiri.map((stire) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: 12.0),
+          padding: const EdgeInsets.only(bottom: 15.0),
           child: GestureDetector(
             onTap: () => navigateToStireDetails(context, stire),
             child: StireCard(
@@ -375,7 +337,7 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  controller.selectedStireType!.displayName,
+                                  controller.selectedStireType!.displayName.toUpperCase(),
                                   style: const TextStyle(
                                     fontSize: 12,
                                     fontFamily: 'Poppins',
@@ -518,15 +480,10 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                         children: [
                           // Recent Stiri Section
                           if (controller.hasRecentStiri) ...[
-                            _buildSectionHeader("Știri recente"),
+                            const SizedBox(height: 20),
                             _buildStiriList(controller.displayedRecentStiri),
                           ],
 
-                          // Older Stiri Section
-                          if (controller.hasOlderStiri) ...[
-                            _buildSectionHeader("Știri mai vechi"),
-                            _buildStiriList(controller.displayedOlderStiri),
-                          ],
 
                           // Add some bottom padding
                           const SizedBox(height: 20),
