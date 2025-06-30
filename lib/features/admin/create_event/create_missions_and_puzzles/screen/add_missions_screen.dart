@@ -145,9 +145,8 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                 MyButton(
                   buttonText: 'Creeza eveniment',
                   textColor: Colors.white,
-                  buttonOnTap: () {
-                    print(_addMissionsController.event);
-                    _addMissionsController.saveEvent();
+                  buttonOnTap: () async{
+                    await _addMissionsController.saveEvent(context);
                     Navigator.pushNamedAndRemoveUntil(context, Routes.adminHome, (Route<dynamic> route) => false);
                   },
                   withBorder: false,

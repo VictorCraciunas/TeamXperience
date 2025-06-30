@@ -8,7 +8,6 @@ class EventService {
   final EventRepo _eventRepo = EventRepo();
   final UploadImagesHelper _uploadImagesHelper = UploadImagesHelper();
 
-  // Pure business logic methods
   Future<List<Event>> getAllEvents() async {
     try {
       return await _eventRepo.getAllEvents();
@@ -59,28 +58,5 @@ class EventService {
     }
   }
 
-  Future<Event> duplicateEvent(Event originalEvent) async {
-    try {
-      // Create a copy with new ID
-      final eventMap = originalEvent.toJson();
-      eventMap['eventId'] = await _eventRepo.getNewEventId();
-
-      final duplicatedEvent = Event.fromMap(eventMap);
-
-      // Clear mission data for blueprint mode
-      for (final mission in duplicatedEvent.missions) {
-        for (final puzzle in mission.puzzles) {
-          puzzle.type = null;
-          puzzle.code = null;
-          puzzle.coordinates = null;
-          puzzle.indiciu = null;
-        }
-      }
-
-      return duplicatedEvent;
-    } catch (e) {
-      throw EventServiceException('Failed to duplicate event: $e');
-    }
-  }
 
 }

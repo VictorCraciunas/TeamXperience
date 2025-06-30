@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart'; // Add this import
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/screen/add_missions_screen.dart';
 import 'package:teamxperience/features/admin/create_news/screen/create_news_screen.dart';
 import 'package:teamxperience/features/admin/home/screen/admin_home.dart';
@@ -17,6 +18,9 @@ import 'package:teamxperience/features/news_dashboard/screen/stiri_dashboard_scr
 import 'package:teamxperience/features/news_details/news_screen.dart';
 import 'package:teamxperience/features/sign-up/screen/register.dart';
 import 'package:teamxperience/features/splash/splash.dart';
+import 'package:teamxperience/service/news_service/news_service.dart';
+import 'package:teamxperience/state_management/events_state_management.dart';
+import 'package:teamxperience/state_management/news_state_management.dart';
 import 'package:teamxperience/utils/auth_util.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'backend/authentication/AuthenticationRepository.dart';
@@ -28,6 +32,8 @@ import 'features/log-in/screen/log_in_screen.dart';
 import 'features/sign-up/screen/sign_up.dart';
 import 'firebase_options.dart';
 
+// Add these imports for your services and state management
+import 'package:teamxperience/service/event_service/event_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,42 +53,71 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final userRepo = UserRepo();
     final authenticationRepository = AuthenticationRepository();
-    final AuthUtil authUtil = AuthUtil(userRepo,authenticationRepository);
+    final AuthUtil authUtil = AuthUtil(userRepo, authenticationRepository);
 
-    return MaterialApp(
-      theme: ThemeData(
-        useMaterial3: true,
-        primaryColor: Colors.white,
-        fontFamily: 'Poppins',
-        scaffoldBackgroundColor: Colors.white,      // makes Scaffold background white
-        canvasColor: Colors.white,
+    // Wrap MaterialApp with MultiProvider
+    return MultiProvider(
+      providers: [
+        // Core services (no state management)
+        Provider<EventService>(
+          create: (_) => EventService(),
+        ),
+
+        Provider<NewsService>(
+        create: (_) => NewsService(),
+        ),
+
+
+
+        // State management providers
+        ChangeNotifierProvider<EventList>(
+          create: (context) => EventList(
+            Provider.of<EventService>(context, listen: false),
+          ),
+        ),
+
+        ChangeNotifierProvider<NewsList>(
+          create: (context) => NewsList(
+            Provider.of<NewsService>(context, listen: false),
+          ),
+        ),
+
+
+      ],
+      child: MaterialApp(
+        theme: ThemeData(
+          useMaterial3: true,
+          primaryColor: Colors.white,
+          fontFamily: 'Poppins',
+          scaffoldBackgroundColor: Colors.white,
+          canvasColor: Colors.white,
+        ),
+        title: 'Treasure Hunt',
+        initialRoute: Routes.redirect,
+        routes: {
+          Routes.redirect: (_) => LandingPage(authUtil: authUtil),
+          Routes.register: (_) => const Register(),
+          Routes.signup: (_) => const RegisterScreen(),
+          Routes.login: (_) => const LogInScreen(),
+          Routes.home: (_) => const Home(),
+          Routes.createEvent: (_) => const CreateEventPage(),
+          Routes.addMissions: (_) => const AddMissionsPage(),
+          Routes.adminHome: (_) => const AdminHome(),
+          Routes.splash: (_) => const SplashScreen(),
+          Routes.forgotPassword: (_) => const ForgotPasswordScreen(),
+          Routes.eventDetails: (_) => const EventDetailsScreen(),
+          Routes.eventGame: (_) => const EventGameScreen(),
+          Routes.puzzleGame: (_) => const PuzzleGameScreen(),
+          Routes.eventDashboard: (_) => const EventsDashboard(),
+          Routes.filter: (_) => const FilterEventsScreen(),
+          Routes.createNews: (_) => const CreateStireScreen(),
+          Routes.newsDetails: (_) => const NewsScreen(),
+          Routes.newsDashboard: (_) => const StiriDashboard(),
+          Routes.chooseNewsType: (_) => const NewsCategoryManipulationScreen(),
+          Routes.filterStiri: (_) => const FilterStiriScreen(),
+          Routes.calendar: (_) => const DateRangeSelectionScreen(),
+        },
       ),
-      title: 'Treasure Hunt',
-      initialRoute: Routes.redirect,
-      routes: {
-        Routes.redirect:     (_) => LandingPage(authUtil: authUtil),
-        Routes.register:    (_) => const Register(),
-        Routes.signup: (_) => const RegisterScreen(),
-        Routes.login:       (_) => const LogInScreen(),
-        Routes.home:        (_) => const Home(),
-        Routes.createEvent: (_) => const CreateEventPage(),
-        Routes.addMissions: (_) => const AddMissionsPage(),
-        Routes.adminHome:   (_) => const AdminHome(),
-        Routes.splash: (_) => const SplashScreen(),
-        Routes.forgotPassword: (_) => const ForgotPasswordScreen(),
-        Routes.eventDetails: (_) => const EventDetailsScreen(),
-        Routes.eventGame: (_) => const EventGameScreen(),
-        Routes.puzzleGame: (_) => const PuzzleGameScreen(),
-        Routes.eventDashboard: (_) => const EventsDashboard(),
-        Routes.filter: (_) => const FilterEventsScreen(),
-        Routes.createNews: (_) => const CreateStireScreen(),
-        Routes.newsDetails: (_) => const NewsScreen(),
-        Routes.newsDashboard: (_) => const StiriDashboard(),
-        Routes.chooseNewsType: (_) => const NewsCategoryManipulationScreen(),
-        Routes.filterStiri: (_) => const FilterStiriScreen(),
-        Routes.calendar: (_) => const DateRangeSelectionScreen(),
-
-      },
     );
   }
-  }
+}

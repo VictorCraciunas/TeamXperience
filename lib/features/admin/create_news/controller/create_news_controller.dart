@@ -1,14 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:teamxperience/model/stire.dart';
 import 'package:teamxperience/enums/stire_type.dart';
-import 'package:teamxperience/model/newsCategory.dart'; // Import NewsCategory instead of enum
+import 'package:teamxperience/model/newsCategory.dart';
+import 'package:teamxperience/state_management/news_state_management.dart';
 import '../../../../utils/calendar_helper.dart';
 import '../../../../utils/image_helper.dart';
-import '../service/create_news_service.dart';
 
 class CreateStireController {
-  final CreateStireService createStireService = CreateStireService();
   final formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
@@ -25,7 +25,7 @@ class CreateStireController {
 
   DateTime? publicationDate;
   StireType? selectedType;
-  NewsCategory? selectedCategory; // Changed from StireCategory to NewsCategory
+  NewsCategory? selectedCategory;
 
   Stire? originalStire;
 
@@ -99,28 +99,28 @@ class CreateStireController {
           },
         );
 
-        if (mode == "create") {
-          // Create new stire
-          String stireId = await createStireService.getStireId();
+        final newsList = context.read<NewsList>();
 
+        if (mode == "create") {
+          // Create new stire using the simple Stire constructor
           List<String> secondaryImagePaths = secondaryImageFiles
               .map((file) => file.path)
               .toList();
 
-          Stire stire = createStireService.createStire(
-            stireId,
-            titleController.text,
-            descriptionController.text,
-            publicationDate,
-            selectedType,
-            selectedCategory!, // Now passing NewsCategory instead of StireCategory
-            textButtonController.text,
-            linkButtonController.text,
-            mainImageFile!.path,
-            secondaryImagePaths,
+          Stire stire = Stire(
+            title: titleController.text,
+            description: descriptionController.text,
+            publicationDate: publicationDate,
+            type: selectedType,
+            category: selectedCategory,
+            buttonText: textButtonController.text.isEmpty ? null : textButtonController.text,
+            buttonLink: linkButtonController.text.isEmpty ? null : linkButtonController.text,
+            principalImage: mainImageFile!.path,
+            secondaryImages: secondaryImagePaths,
           );
 
-          await createStireService.saveStire(stire);
+          // Use state management instead of direct service call
+          await newsList.createStire(stire);
 
           if (!context.mounted) return;
           Navigator.of(context).pop(); // Hide loading indicator
@@ -131,7 +131,9 @@ class CreateStireController {
         } else if (mode == "edit") {
           // Update existing stire
           updateCurrentOriginalStire();
-          await createStireService.saveStire(originalStire!);
+
+          // Use state management instead of direct service call
+          await newsList.updateStire(originalStire!);
 
           if (!context.mounted) return;
           Navigator.of(context).pop(); // Hide loading indicator
@@ -157,10 +159,10 @@ class CreateStireController {
   void updateCurrentOriginalStire() {
     originalStire!.title = titleController.text;
     originalStire!.description = descriptionController.text;
-    originalStire!.buttonText = textButtonController.text;
-    originalStire!.buttonLink = linkButtonController.text;
+    originalStire!.buttonText = textButtonController.text.isEmpty ? null : textButtonController.text;
+    originalStire!.buttonLink = linkButtonController.text.isEmpty ? null : linkButtonController.text;
     originalStire!.type = selectedType!;
-    originalStire!.category = selectedCategory!; // Now using NewsCategory
+    originalStire!.category = selectedCategory!;
     originalStire!.publicationDate = publicationDate!;
 
     // Update main image only if a new one was selected

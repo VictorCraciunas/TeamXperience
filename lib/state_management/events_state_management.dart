@@ -51,7 +51,7 @@ class EventList extends ChangeNotifier {
     }
 
     _setLoading(true);
-    _clearError();
+    clearError();
 
     try {
       final events = await _eventService.getAllEvents();
@@ -67,7 +67,7 @@ class EventList extends ChangeNotifier {
 
   Future<Event> createEvent(Event event) async {
     _setLoading(true);
-    _clearError();
+    clearError();
 
     try {
       final createdEvent = await _eventService.createEvent(event);
@@ -84,8 +84,7 @@ class EventList extends ChangeNotifier {
   }
 
   Future<void> updateEvent(Event event) async {
-    _setLoading(true);
-    _clearError();
+    clearError();
 
     try {
       final updatedEvent = await _eventService.updateEvent(event);
@@ -99,38 +98,17 @@ class EventList extends ChangeNotifier {
       _setError(e.toString());
       rethrow;
     } finally {
-      _setLoading(false);
     }
   }
 
   Future<void> deleteEvent(String eventId) async {
     _setLoading(true);
-    _clearError();
+    clearError();
 
     try {
       await _eventService.deleteEvent(eventId);
       _events.removeWhere((e) => e.eventId == eventId);
       notifyListeners();
-    } catch (e) {
-      _setError(e.toString());
-      rethrow;
-    } finally {
-      _setLoading(false);
-    }
-  }
-
-  Future<Event> duplicateEvent(String eventId) async {
-    _setLoading(true);
-    _clearError();
-
-    try {
-      final originalEvent = getEventById(eventId);
-      if (originalEvent == null) {
-        throw Exception('Event not found');
-      }
-
-      final duplicatedEvent = await _eventService.duplicateEvent(originalEvent);
-      return duplicatedEvent;
     } catch (e) {
       _setError(e.toString());
       rethrow;
@@ -148,29 +126,15 @@ class EventList extends ChangeNotifier {
     }
   }
 
-  List<Event> searchEvents(String query) {
-    if (query.isEmpty) return events;
-
-    final lowercaseQuery = query.toLowerCase();
-    return _events.where((event) =>
-    (event.name?.toLowerCase().contains(lowercaseQuery) ?? false) ||
-        (event.location?.toLowerCase().contains(lowercaseQuery) ?? false) ||
-        (event.description?.toLowerCase().contains(lowercaseQuery) ?? false)
-    ).toList();
+  void _sortEvents() {
+    _events.sort((a, b) {
+      if (a.dateEvent == null && b.dateEvent == null) return 0;
+      if (a.dateEvent == null) return 1;
+      if (b.dateEvent == null) return -1;
+      return a.dateEvent!.compareTo(b.dateEvent!);
+    });
   }
 
-  List<Event> filterEvents({
-    EventType? type,
-    DateTime? startDate,
-    DateTime? endDate,
-  }) {
-    return _events.where((event) {
-      if (type != null && event.type != type) return false;
-      if (startDate != null && (event.dateEvent?.isBefore(startDate) ?? true)) return false;
-      if (endDate != null && (event.dateEvent?.isAfter(endDate) ?? true)) return false;
-      return true;
-    }).toList();
-  }
 
   // State management helpers
   void _setLoading(bool loading) {
@@ -183,18 +147,10 @@ class EventList extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _clearError() {
+  void clearError() {
     _error = null;
   }
 
-  void _sortEvents() {
-    _events.sort((a, b) {
-      if (a.dateEvent == null && b.dateEvent == null) return 0;
-      if (a.dateEvent == null) return 1;
-      if (b.dateEvent == null) return -1;
-      return a.dateEvent!.compareTo(b.dateEvent!);
-    });
-  }
 
   // Refresh method for pull-to-refresh
   Future<void> refresh() async {

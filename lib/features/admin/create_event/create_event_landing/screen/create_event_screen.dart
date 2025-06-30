@@ -14,7 +14,6 @@ import '../../../../../widgets/my_text_field.dart';
 import '../controller/create_event_controller.dart';
 
 class CreateEventPage extends StatefulWidget {
-
   const CreateEventPage({super.key});
 
   @override
@@ -31,7 +30,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     if (!_initialized) {
-      final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+      final args =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
       final Event? event = args?['event'];
       final bool isBlueprint = args?['isBlueprint'] ?? false;
 
@@ -53,7 +53,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
     controller.nameController.dispose();
     controller.locationController.dispose();
     controller.descriptionController.dispose();
-    controller.nrMissionsController.dispose();
     controller.startCodeController.dispose();
     super.dispose();
   }
@@ -62,7 +61,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyColors.backgroundColor,
-      appBar: const MyAppBar(appBarText: 'Eveniment Nou'),
+      appBar: MyAppBar(
+        appBarText:
+            mode == 'edit'
+                ? 'Editează Eveniment'
+                : mode == 'blueprint'
+                ? 'Crează din Șablon'
+                : 'Eveniment Nou',
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -87,7 +93,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     },
                     child: UploadImage(
                       labelText: 'Adauga imagine eveniment',
-                        imageUrl: controller.getLandingImageToDisplay(),
+                      imageUrl: controller.getLandingImageToDisplay(),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -141,7 +147,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     maxLines: null,
                     keyboardType: TextInputType.multiline,
                     validator:
-                        (v) => v!.isEmpty ? 'Introdu descriere eveniment' : null,
+                        (v) =>
+                            v!.isEmpty ? 'Introdu descriere eveniment' : null,
                   ),
                   const SizedBox(height: 20),
 
@@ -204,7 +211,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     },
                     validator:
                         (v) =>
-                            (v ?? '').isEmpty ? 'Introdu dată deschidere' : null,
+                            (v ?? '').isEmpty
+                                ? 'Introdu dată deschidere'
+                                : null,
                   ),
                   const SizedBox(height: 20),
 
@@ -241,14 +250,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   // Tip de eveniment
                   MyDropdownField<EventType>(
                     labelText: 'Tipul de eveniment',
-                    items: EventType.values
-                        .map(
-                          (type) => DropdownItem<EventType>(
-                        value: type,
-                        label: type.toString().split('.').last,
-                      ),
-                    )
-                        .toList(),
+                    items:
+                        EventType.values
+                            .map(
+                              (type) => DropdownItem<EventType>(
+                                value: type,
+                                label: type.toString().split('.').last,
+                              ),
+                            )
+                            .toList(),
                     value: controller.selectedType,
                     onChanged: (value) {
                       setState(() {
@@ -266,8 +276,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         ),
                       ),
                     ),
-                    validator: (value) =>
-                    value == null ? 'Selecteaza tipul de eveniment' : null,
+                    validator:
+                        (value) =>
+                            value == null
+                                ? 'Selecteaza tipul de eveniment'
+                                : null,
                     borderColor: MyColors.lightBlue,
                     borderWidth: 1.5,
                     radius: 20,
@@ -310,8 +323,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     radius: 20,
                     borderWidth: 1.5,
                     borderColor: MyColors.lightBlue,
-                    validator: (v) => v!.isEmpty ? 'Introdu lungime traseu' : null,
-                  ),                const SizedBox(height: 20),
+                    validator:
+                        (v) => v!.isEmpty ? 'Introdu lungime traseu' : null,
+                  ),
+                  const SizedBox(height: 20),
 
                   // Durata
                   MyTextField(
@@ -322,7 +337,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     borderWidth: 1.5,
                     borderColor: MyColors.lightBlue,
                     validator: (v) => v!.isEmpty ? 'Introdu durata' : null,
-                  ),                const SizedBox(height: 20),
+                  ),
+                  const SizedBox(height: 20),
 
                   // Dificultate
                   MyTextField(
@@ -337,7 +353,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
                   const SizedBox(height: 20),
                   MyButton(
-                    buttonText: 'Creeza eveniment',
+                    buttonText:
+                        mode == 'edit'
+                            ? 'Actualizează eveniment'
+                            : 'Creează eveniment',
                     textColor: Colors.white,
                     buttonOnTap: () => controller.createEvent(context, mode),
                     withBorder: false,

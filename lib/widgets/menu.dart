@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/backend/repo/event_repo.dart';
+import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/colors.dart';
 
 import '../constants/routes.dart';
 import '../model/event.dart';
+import '../state_management/events_state_management.dart';
 
 class MenuWidget extends StatelessWidget {
   final VoidCallback onClose;
@@ -143,8 +144,8 @@ class MenuWidget extends StatelessWidget {
   }
 
   void _handleDeleteEvent(BuildContext context) {
-    EventRepo eventRepo = EventRepo();
-    eventRepo.deleteEvent(event!.eventId);
+    final eventList = context.read<EventList>();
+    eventList.deleteEvent(event!.eventId);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Evenimentul a fost șters')),
     );

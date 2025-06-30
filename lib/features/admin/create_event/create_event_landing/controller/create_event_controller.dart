@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:teamxperience/backend/storage/storage_images.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/utils/calendar_helper.dart';
@@ -10,17 +9,13 @@ import 'package:teamxperience/utils/image_helper.dart';
 
 import '../../../../../enums/event_type.dart';
 import '../../../../../model/mission.dart';
-import '../service/create_event_service.dart';
 
 class CreateEventController {
-  final CreateEventService createEventService = CreateEventService();
-  final ImageRepo imageRepo = ImageRepo();
   final formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final locationController = TextEditingController();
   final punctDeStartController = TextEditingController();
   final descriptionController = TextEditingController();
-  final nrMissionsController = TextEditingController();
   final startCodeController = TextEditingController();
   final dateEventController = TextEditingController(); // Controller for start time
   final dateDeadlineRegistrationController = TextEditingController();
@@ -80,65 +75,62 @@ class CreateEventController {
       if (landingImageFile == null || taskBackgroundImageFile == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text(
-              'Please select both landing and task background images',
-            ),
+            content: Text('Please select both landing and task background images'),
           ),
         );
         return;
       }
 
-      if (mode == "create" || mode == "blueprint"){
-        try {
-          String eventId = await createEventService.getEventId();
-
-          Event event =  createEventService.createEvent(
-            eventId,
-            nameController.text,
-            dateEvent!,
-            deadlineEnrollment!,
-            dateStartEnrollement!,
-            locationController.text,
-            descriptionController.text,
-            selectedType!,
-            landingImageFile!.path,
-            taskBackgroundImageFile!.path,
-            startCodeController.text,
-            punctDeStartController.text,
-            lungimeController.text,
-            durataController.text,
-            dificultateController.text,
+      try {
+        if (mode == "create" || mode == "blueprint") {
+          // Create new event object
+          Event event = Event(
+            eventId: '', // Let EventService generate this
+            name: nameController.text,
+            dateEvent: dateEvent!,
+            dateDeadlineEnrollment: deadlineEnrollment!,
+            dateStartEnrollment: dateStartEnrollement!,
+            location: locationController.text,
+            description: descriptionController.text,
+            type: selectedType!,
+            landingImageUrl: landingImageFile!.path,
+            taskBackgroundImageUrl: taskBackgroundImageFile!.path,
+            startCode: startCodeController.text,
+            punctDeStart: punctDeStartController.text,
+            lungimeTraseu: lungimeController.text,
+            durata: durataController.text,
+            dificultate: dificultateController.text,
           );
-          if (!context.mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Event created successfully')),
-          );
-          // initialize with one mission
 
-          // Initialize with one mission
+          // Initialize missions
           if (originalEvent == null || originalEvent!.missions.isEmpty) {
-            // For new events or events without missions
             event.nrMissions = 1;
             event.missions.add(Mission(id: "0"));
           } else {
-            // For blueprint mode where originalEvent exists and has missions
             event.missions = originalEvent!.missions;
             event.nrMissions = originalEvent!.missions.length;
           }
 
-          Navigator.pushNamed(context, Routes.addMissions, arguments: {'event': event, 'mode': mode},);
-        } catch (e) {
-          ScaffoldMessenger.of(
+          if (!context.mounted) return;
+          Navigator.pushNamed(
             context,
-          ).showSnackBar(SnackBar(content: Text('Failed to create event: $e')));
+            Routes.addMissions,
+            arguments: {'event': event, 'mode': mode},
+          );
+        } else {
+          // Edit mode - update existing event
+          updateCurrentOriginalEvent();
+          Navigator.pushNamed(
+            context,
+            Routes.addMissions,
+            arguments: {'event': originalEvent, 'mode': mode},
+          );
         }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to prepare event: $e')),
+        );
       }
-      else{
-            updateCurrentOriginalEvent();
-            Navigator.pushNamed(context, Routes.addMissions, arguments: {'event': originalEvent, 'mode': mode},);
-
-      }
-
     }
   }
 

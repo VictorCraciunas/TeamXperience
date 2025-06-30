@@ -4,44 +4,43 @@ import '../enums/event_type.dart';
 import 'mission.dart';
 
 class Event {
-   String eventId;
-   String? name;
+  String eventId;
+  String? name;
   List<Mission> missions;
-   DateTime? dateEvent;
-   DateTime? dateDeadlineEnrollment;
-   DateTime? dateStartEnrollment;
-   String? location;
-   String? description;
-   int nrMissions;
-   EventType? type;
-   String? landingImageUrl;
-   String? taskBackgroundImageUrl;
-   String? startCode;
-   String? punctDeStart;
-   String? lungimeTraseu;
-   String? durata;
-   String? dificultate;
+  DateTime? dateEvent;
+  DateTime? dateDeadlineEnrollment;
+  DateTime? dateStartEnrollment;
+  String? location;
+  String? description;
+  int nrMissions;
+  EventType? type;
+  String? landingImageUrl;
+  String? taskBackgroundImageUrl;
+  String? startCode;
+  String? punctDeStart;
+  String? lungimeTraseu;
+  String? durata;
+  String? dificultate;
 
   Event({
-     required this.eventId ,
-     this.name ,
+    required this.eventId,
+    this.name,
     List<Mission>? missions,
-     this.dateEvent,
-     this.dateDeadlineEnrollment,
-     this.dateStartEnrollment,
-     this.location ,
-     this.description,
-     this.nrMissions = 0 ,
-     this.type,
-     this.landingImageUrl,
-     this.taskBackgroundImageUrl ,
-     this.startCode ,
+    this.dateEvent,
+    this.dateDeadlineEnrollment,
+    this.dateStartEnrollment,
+    this.location,
+    this.description,
+    this.nrMissions = 0,
+    this.type,
+    this.landingImageUrl,
+    this.taskBackgroundImageUrl,
+    this.startCode,
     this.punctDeStart,
     this.dificultate,
     this.lungimeTraseu,
     this.durata,
   }) : missions = missions ?? [];
-
 
   Mission addMission(Mission mission) {
     missions.add(mission);
@@ -51,13 +50,15 @@ class Event {
   factory Event.fromMap(Map<String, dynamic> map) {
     final rawType = map['type'] as String;
     final rawList = map['missions'] as List<dynamic>? ?? [];
-    final missions = rawList.map((e) => Mission.fromMap(e as Map<String, dynamic>)).toList();
+    final missions =
+        rawList.map((e) => Mission.fromMap(e as Map<String, dynamic>)).toList();
     return Event(
       eventId: map['eventId'],
       name: map['name'] as String? ?? '',
-      missions:missions,
+      missions: missions,
       dateEvent: (map['dateEvent'] as Timestamp).toDate(),
-      dateDeadlineEnrollment: (map['dateDeadlineEnrollment'] as Timestamp).toDate(),
+      dateDeadlineEnrollment:
+          (map['dateDeadlineEnrollment'] as Timestamp).toDate(),
       dateStartEnrollment: (map['dateStartEnrollment'] as Timestamp).toDate(),
       location: map['location'] as String? ?? '',
       description: map['description'] as String? ?? '',
@@ -70,7 +71,6 @@ class Event {
       dificultate: map['dificultate'] as String? ?? '',
       durata: map['durata'] as String? ?? '',
       lungimeTraseu: map['lungimeTraseu'] as String? ?? '',
-
     );
   }
 
@@ -96,15 +96,17 @@ class Event {
     };
   }
 
-   @override
-   String toString() {
-     return 'Event(eventId: $eventId, name: $name, missions: [${missions.join(', ')}], '
-         'dateEvent: $dateEvent, dateDeadlineEnrollment: $dateDeadlineEnrollment, '
-         'dateStartEnrollment: $dateStartEnrollment, location: $location, '
-         'description: $description, nrMissions: $nrMissions, '
-         'type: ${type != null ? type!.name : null.toString()}, '
-         'landingImageUrl: $landingImageUrl, taskBackgroundImageUrl: $taskBackgroundImageUrl, '
-         'startCode: $startCode, punctDeStart: $punctDeStart, '
-         'lungimeTraseu: $lungimeTraseu, durata: $durata, dificultate: $dificultate)';
-   }
+  @override
+  String toString() {
+    //   return 'Event(eventId: $eventId, name: $name, missions: [${missions.join(', ')}], '
+    //       'dateEvent: $dateEvent, dateDeadlineEnrollment: $dateDeadlineEnrollment, '
+    //       'dateStartEnrollment: $dateStartEnrollment, location: $location, '
+    //       'description: $description, nrMissions: $nrMissions, '
+    //       'type: ${type != null ? type!.name : null.toString()}, '
+    //       'landingImageUrl: $landingImageUrl, taskBackgroundImageUrl: $taskBackgroundImageUrl, '
+    //       'startCode: $startCode, punctDeStart: $punctDeStart, '
+    //       'lungimeTraseu: $lungimeTraseu, durata: $durata, dificultate: $dificultate)';
+    // }
+    return 'landingImageUrl: $landingImageUrl, taskBackgroundImageUrl: $taskBackgroundImageUrl';
+  }
 }
