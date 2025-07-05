@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
+import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/event_details/controller/event_details_controller.dart';
 import 'package:teamxperience/features/event_details/widgets/detail_widget.dart';
 import 'package:teamxperience/model/event.dart';
@@ -33,11 +34,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       final event = arguments['event'] as Event;
       isAdmin = arguments['isAdmin'] as bool? ?? false;
 
-      controller = EventDetailsController(event);
+      controller = EventDetailsController(event, context);
       _initialized = true;
     }
   }
-
+  void _navigateToRegisterTeam(){
+    Navigator.pushNamed(context, Routes.registerTeam, arguments: controller.event);
+  }
   @override
   Widget build(BuildContext context) {
     final eventDateTime = CalendarHelper.formatEventDateTime(
@@ -45,12 +48,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     );
 
     return Scaffold(
-      appBar: MyAppBar(
+      appBar: isAdmin == true ? MyAppBar(
         appBarText: "Detalii Eveniment",
         iconString: 'assets/images/menu.svg',
         showDropdown: true,
         event: controller.event,
-      ),
+      ) : MyAppBar(
+      appBarText: "Detalii Eveniment",
+    ),
       bottomNavigationBar:
           isAdmin == true
               ? SafeArea(
@@ -70,9 +75,21 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   child: MyButton(
-                    buttonText: "Inscrie-ti echipa",
+                    buttonText: !controller.user!.isRegisterToEvent(controller.event.eventId) ? "Înscrie-ți echipa" : "Vezi detalii inscriere",
+                    leading:                       SvgPicture.asset(
+                      'assets/images/user_icon.svg',
+                      width: 19,
+                      height: 19,
+                    ),
                     textColor: Colors.white,
-                    buttonOnTap: () {},
+                    buttonOnTap: () {
+                      if(isAdmin){
+
+                      }
+                      else{
+                        _navigateToRegisterTeam();
+                      }
+                    },
                     withBorder: false,
                     gradient: MyColors.myGradient,
                     buttonTextSize: 15,
@@ -159,7 +176,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   MyButton(
                     buttonText: "Trimite notificare",
                     textColor: MyColors.blackColor,
-                    buttonOnTap: () {},
+                    buttonOnTap: () {
+
+                    },
                     withBorder: false,
                     buttonColor: MyColors.transparentLightBlue,
                     leading: SvgPicture.asset(

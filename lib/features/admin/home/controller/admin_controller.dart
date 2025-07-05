@@ -48,7 +48,10 @@ class AdminHomeController {
     Navigator.pushNamed(
       context,
       Routes.newsDetails,
-      arguments: stire,
+      arguments: {
+        'stire': stire,
+        'isAdmin': true,
+      },
     );
   }
 

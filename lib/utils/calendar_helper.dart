@@ -88,6 +88,28 @@ class CalendarHelper {
 
     return "$dayName, $day $monthName";
   }
+  static Map<String, String> formatEventCardDate(DateTime? dateTime) {
+    if (dateTime == null) {
+      return {'month': 'Ianuarie', 'day': '01'};
+    }
+
+    final month = _romanianMonths[dateTime.month] ?? 'Ianuarie';
+    final day = dateTime.day.toString().padLeft(2, '0');
+
+    return {'month': month, 'day': day};
+  }
+
+  /// Alternative: Get just the month name for event cards
+  static String getEventCardMonth(DateTime? dateTime) {
+    if (dateTime == null) return 'Ianuarie';
+    return _romanianMonths[dateTime.month] ?? 'Ianuarie';
+  }
+
+  /// Alternative: Get just the day for event cards
+  static String getEventCardDay(DateTime? dateTime) {
+    if (dateTime == null) return '01';
+    return dateTime.day.toString().padLeft(2, '0');
+  }
 
   /// Formats a DateTime to time format: "ora 11:00"
   static String formatEventTime(DateTime? dateTime) {

@@ -21,6 +21,7 @@ class EventImage extends StatelessWidget {
   final bool isAdmin;
   final double height;
 
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -101,12 +102,14 @@ class EventImage extends StatelessWidget {
                   width: 78,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: event.type == EventType.PUBLIC ? MyColors.lightBlue : const Color(0xFF1C1243),
+                    color: event.type == EventType.PUBLIC || isAdmin == false ? MyColors.lightBlue : const Color(0xFF1C1243),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Center(
                     child: Text(
-                      (event.type?.name ?? "GRATUIT"),
+                      isAdmin == true
+                          ? event.type?.name ?? "GRATUIT"  // if isAdmin is true
+                          : "GRATUIT" ,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,

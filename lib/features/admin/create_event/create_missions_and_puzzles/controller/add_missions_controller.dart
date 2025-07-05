@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_mission/mission_widget.dart';
 import 'package:teamxperience/model/mission.dart';
+import 'package:teamxperience/utils/snackbars.dart';
 
 import '../../../../../model/event.dart';
 import '../../../../../state_management/events_state_management.dart';
@@ -93,19 +94,15 @@ class AddMissionsController {
         await eventList.updateEvent(event);
         if (!context.mounted) return;
         Navigator.of(context).pop();
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Evenimentul a fost editat cu success!')),
-        );
+        MySnackBars.successSnackBar(context, title: "Eveniment editat !", message: "Eveniment editat cu success");
       } else {
         // Create new event (EventService will handle all image uploads)
         await eventList.createEvent(event);
         if (!context.mounted) return;
         Navigator.of(context).pop();
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Evenimentul a fost publicat cu success!')),
-        );
+        MySnackBars.successSnackBar(context, title: "Eveniment create !", message: "Eveniment creat cu success");
+
       }
 
     } catch (e) {

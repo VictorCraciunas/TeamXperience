@@ -100,7 +100,5 @@ class AuthenticationRepository {
     await _auth.signOut();
   }
 
-  User? getCurrentUser() {
-    return FirebaseAuth.instance.currentUser;
-  }
+
 }

@@ -20,5 +20,8 @@ abstract class Routes {
   static const chooseNewsType = '/chooseNewsType';
   static const filterStiri = '/filter_stiri';
   static const calendar = '/calendar';
+  static const eventDashboardUser = '/events_dasboard/user';
+  static const registerTeam = '/register_tean';
+  static const registerTeamDetails = '/register_team/details';
 
 }

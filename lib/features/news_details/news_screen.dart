@@ -20,6 +20,7 @@ class NewsScreen extends StatefulWidget {
 class _NewsScreenState extends State<NewsScreen> {
   final PageController _pageController = PageController();
   int _currentImageIndex = 0;
+  late bool isAdmin;
   late Stire stire;
 
   @override
@@ -27,6 +28,23 @@ class _NewsScreenState extends State<NewsScreen> {
     _pageController.dispose();
     super.dispose();
   }
+
+  bool _initialized = false;
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    if (!_initialized) {
+      final arguments =
+      ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      stire = arguments['stire'] as Stire;
+      isAdmin = arguments['isAdmin'] as bool? ?? false;
+
+      _initialized = true;
+    }
+  }
+
 
 
   void _navigateToEditStire(Stire stire) {
@@ -231,7 +249,6 @@ class _NewsScreenState extends State<NewsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    stire = ModalRoute.of(context)!.settings.arguments as Stire;
     List<String> allImages = _getAllImages(stire);
 
     return Scaffold(
@@ -340,7 +357,7 @@ class _NewsScreenState extends State<NewsScreen> {
                         ),
 
                         const SizedBox(height: 30),
-
+                        if (isAdmin == true)
                         MyButton(
                           buttonText:"Editeaza",
                           textColor: Colors.white,

@@ -29,11 +29,20 @@ class _FilterEventsScreenState extends State<FilterEventsScreen> {
     _periodController = TextEditingController();
   }
 
+
   @override
   void dispose() {
     controller.dispose();
     _periodController.dispose();
     super.dispose();
+  }
+
+  late bool isAdmin;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    isAdmin = ModalRoute.of(context)?.settings.arguments as bool;
   }
 
   void _updatePeriodText() {
@@ -76,6 +85,7 @@ class _FilterEventsScreenState extends State<FilterEventsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Event Type Dropdown
+              if (isAdmin)
               AnimatedBuilder(
                 animation: controller,
                 builder: (context, _) {

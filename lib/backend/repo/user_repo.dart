@@ -29,4 +29,15 @@ class UserRepo{
     }
   }
 
+  Future<void> addEventToUser(String userId, String eventId) async {
+    try {
+      await _firestore.collection('users').doc(userId).update({
+        'registeredEventIds': FieldValue.arrayUnion([eventId])
+      });
+    } catch (e) {
+      print('Error adding event to user: $e');
+      throw Exception('Failed to add event to user: $userId');
+    }
+  }
+
 }

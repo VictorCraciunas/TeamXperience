@@ -5,6 +5,8 @@ class MyColors{
   static const transparentLightBlue = Color(0x2453C4C7);
   static const facebookBlue = Color(0xFF0056B2);
   static const yellow = Color(0xFFF6AF1A);
+  static const transparentYellow = Color(0xA8FFDA8C);
+
   static const greyText = Color(0xFF858494);
   static const backgroundColor = Colors.white;
   static const blackColor = Color(0xFF0C092A);

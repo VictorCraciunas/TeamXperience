@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/utils/image_helper.dart';
+import 'package:teamxperience/utils/calendar_helper.dart';
 import '../../../model/event.dart';
 import '../EventImage.dart';
 
@@ -20,35 +20,13 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String month = 'Ianuarie'; // Default fallback
-    String day = '01'; // Default fallback
-    if (event.dateEvent != null) {
-      month =
-          DateTime.now().month == event.dateEvent!.month
-              ? 'Iunie' // Hardcoded to Romanian "June" for June 10, 2025 context
-              : DateFormat('MMMM').format(event.dateEvent!);
-      day = event.dateEvent!.day.toString().padLeft(2, '0');
-    }
-
-    // Convert month to Romanian (manual mapping)
-    Map<String, String> monthMap = {
-      'January': 'Ianuarie',
-      'February': 'Februarie',
-      'March': 'Martie',
-      'April': 'Aprilie',
-      'May': 'Mai',
-      'June': 'Iunie',
-      'July': 'Iulie',
-      'August': 'August',
-      'September': 'Septembrie',
-      'October': 'Octombrie',
-      'November': 'Noiembrie',
-      'December': 'Decembrie',
-    };
-    String romanianMonth = monthMap[month] ?? month;
+    // Use CalendarHelper for date formatting
+    final dateFormatted = CalendarHelper.formatEventCardDate(event.dateEvent);
+    final month = dateFormatted['month']!;
+    final day = dateFormatted['day']!;
 
     return Card(
-      shadowColor: const Color(0xFF0B2F63).withValues(alpha: 0.07),
+      shadowColor: const Color(0xFF0B2F63).withValues(alpha: 0.1),
       color: Colors.white,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -79,15 +57,13 @@ class EventCard extends StatelessWidget {
                     width: 63,
                     decoration: BoxDecoration(
                       color: MyColors.transparentLightBlue,
-                      borderRadius: BorderRadius.circular(
-                        10,
-                      ), // Apply custom radius
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          romanianMonth,
+                          month,
                           style: const TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 13,
