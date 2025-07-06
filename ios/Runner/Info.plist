@@ -50,6 +50,7 @@
     <array>
     	<string>https</string>
     	<string>http</string>
+    	 <string>whatsapp</string>
     	<string>mailto</string>
     	<string>tel</string>
     	<string>sms</string>

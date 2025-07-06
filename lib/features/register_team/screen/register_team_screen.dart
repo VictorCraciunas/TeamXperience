@@ -200,7 +200,7 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                 const SizedBox(height: 30),
                 MyButton(
                   buttonText:
-                      !controller.secondStep && !controller.thirdStep
+                      !(controller.secondStep && controller.thirdStep)
                           ? "Următorul pas"
                           : "Înscrie-ți echipa",
                   textColor: Colors.white,

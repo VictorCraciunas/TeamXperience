@@ -12,7 +12,7 @@ class TeamService{
   Team addTeam(String name, String teamMembers, String captainName, String phoneNumber, String captainEmail, AppUser user, Event event){
     List<String> users = [user.uid];
     Team team = Team(name: name, teamMembers: teamMembers, captainName: captainName, phoneNumber: phoneNumber, captainEmail: captainEmail, userIds: users);
-    teamRepo.addTeam(team,event.eventId);
+    teamRepo.addTeam(team,event.eventId, user.uid);
     userRepo.addEventToUser(user.uid, event.eventId);
     return team;
   }

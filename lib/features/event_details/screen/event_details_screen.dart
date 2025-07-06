@@ -38,9 +38,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       _initialized = true;
     }
   }
+
   void _navigateToRegisterTeam(){
     Navigator.pushNamed(context, Routes.registerTeam, arguments: controller.event);
   }
+  void _navigateToTeamDetails(){
+    Navigator.pushNamed(context, Routes.registerTeamDetails,       arguments: {
+      'event': controller.event,
+      'user': controller.user,
+    },);
+  }
+
   @override
   Widget build(BuildContext context) {
     final eventDateTime = CalendarHelper.formatEventDateTime(
@@ -87,7 +95,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
                       }
                       else{
-                        _navigateToRegisterTeam();
+                        if (!controller.user!.isRegisterToEvent(controller.event.eventId)){
+                          _navigateToRegisterTeam();
+                        }
+                        else{
+                          _navigateToTeamDetails();
+                        }
                       }
                     },
                     withBorder: false,

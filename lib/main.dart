@@ -33,6 +33,7 @@ import 'features/home/screen/home.dart';
 import 'features/loader_page/landing_page.dart';
 import 'features/log-in/screen/log_in_screen.dart';
 import 'features/sign-up/screen/sign_up.dart';
+import 'features/team_details/screen/team_details_screen.dart';
 import 'firebase_options.dart';
 
 // Add these imports for your services and state management
@@ -137,6 +138,7 @@ class MyApp extends StatelessWidget {
           Routes.calendar: (_) => const DateRangeSelectionScreen(),
           Routes.eventDashboardUser: (_) => const FilterEventsUser(),
           Routes.registerTeam: (_) => const RegisterTeamScreen(),
+          Routes.registerTeamDetails: (_) => const TeamDetailsScreen(),
         },
       ),
     );

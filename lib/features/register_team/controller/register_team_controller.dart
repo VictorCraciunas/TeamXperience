@@ -46,6 +46,7 @@ class RegisterTeamController {
           event,
         );
       }
+      Navigator.pop(context);
     }
   }
 }
