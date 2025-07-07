@@ -26,7 +26,7 @@ class TeamControllerDetails {
 
   Future<Team?> _getTeam() async {
     if (user != null) {
-      return await teamRepo.getTeamByUserId(event.eventId, user!.uid);
+      return await teamRepo.getUserTeamForEvent(event.eventId, user!.uid);
     }
     return null;
   }

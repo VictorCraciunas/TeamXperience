@@ -42,6 +42,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   void _navigateToRegisterTeam(){
     Navigator.pushNamed(context, Routes.registerTeam, arguments: controller.event);
   }
+
   void _navigateToTeamDetails(){
     Navigator.pushNamed(context, Routes.registerTeamDetails,       arguments: {
       'event': controller.event,

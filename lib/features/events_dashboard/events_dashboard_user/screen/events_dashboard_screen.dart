@@ -1,14 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/events_dashboard/events_dashboard_user/controller/events_dash_user_controller.dart';
-import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/widgets/CustomIconDashboard.dart';
+import 'package:teamxperience/widgets/registered_events/registered_event_card.dart';
+import 'package:teamxperience/widgets/registered_events/registered_events_list.dart';
 
 import '../../../../constants/colors.dart';
 import '../../../../constants/routes.dart';
 import '../../../../model/event.dart';
+import '../../../../state_management/user_registered_events.dart';
 import '../../../../widgets/event_card/events_list.dart';
 
 class FilterEventsUser extends StatefulWidget {
@@ -53,7 +55,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
   void didChangeDependencies() {
     super.didChangeDependencies();
     final events = ModalRoute.of(context)?.settings.arguments as List<Event>;
-    controller = EventsDashboardUserController(events);
+    controller = EventsDashboardUserController(events,context);
   }
 
   @override
@@ -95,6 +97,16 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
       },
     );
   }
+  void _navigateToTeamDetails(Event event) {
+    Navigator.pushNamed(
+      context,
+      Routes.registerTeamDetails,
+      arguments: {
+        'event': event,
+        'user': controller.user,
+      },
+    );
+  }
 
   void _navigateToFilter(BuildContext context) async {
     final filterData = await Navigator.pushNamed(
@@ -112,7 +124,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: MyPaddings.appHorizontalPadding),
+          padding: const EdgeInsets.symmetric(horizontal: MyPaddings.appHorizontalPadding),
           child: AnimatedBuilder(
             animation: controller,
             builder: (context, child) {
@@ -404,7 +416,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                             Icon(
                               Icons.event_busy,
                               size: 64,
-                              color: MyColors.greyText.withOpacity(0.5),
+                              color: MyColors.greyText.withValues(alpha: 0.5),
                             ),
                             const SizedBox(height: 16),
                             Text(
@@ -413,14 +425,49 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                                   : 'Nu există evenimente',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: MyColors.greyText.withOpacity(0.7),
+                                color: MyColors.greyText.withValues(alpha: 0.7),
                                 fontFamily: 'Poppins',
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ),
+                    )
+                  else
+                    Expanded(
+                      child: Consumer<UserEventsProvider>(
+                        builder: (context, userEventsProvider, child) {
+                          if (userEventsProvider.upcomingRegisteredEvents.isNotEmpty) {
+                            return RegisteredEventsList(
+                              events: userEventsProvider.upcomingRegisteredEvents, // Use userEventsProvider instead of controller
+                              onEventTap: (event) => _navigateToTeamDetails(event),
+                            );
+                          } else {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.event_available,
+                                    size: 64,
+                                    color: MyColors.greyText.withValues(alpha: 0.5),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Nu există înscrieri',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: MyColors.greyText.withValues(alpha: 0.7),
+                                      fontFamily: 'Poppins',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    )
                 ],
               );
             },

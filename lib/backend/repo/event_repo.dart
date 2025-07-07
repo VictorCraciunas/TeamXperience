@@ -40,4 +40,5 @@ class EventRepo{
       throw Exception('Failed to fetch events');
     }
   }
+
 }

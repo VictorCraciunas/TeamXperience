@@ -40,4 +40,41 @@ class UserRepo{
     }
   }
 
+  Future<List<Map<String, dynamic>>> getRegisteredEventsFromUser(AppUser user) async {
+    try {
+      // If user has no registered events, return empty list
+      if (user.registeredEventIds.isEmpty) {
+        return [];
+      }
+
+      List<Map<String, dynamic>> registeredEvents = [];
+
+      // Fetch each registered event
+      for (String eventId in user.registeredEventIds) {
+        try {
+          DocumentSnapshot eventDoc = await _firestore.collection('events').doc(eventId).get();
+
+          if (eventDoc.exists) {
+            Map<String, dynamic> eventData = eventDoc.data() as Map<String, dynamic>;
+            registeredEvents.add({
+              'eventId': eventId,
+              'eventData': eventData,
+              'eventTitle': eventData['title'] ?? 'Unknown Event',
+              'eventDate': eventData['date'],
+            });
+          }
+        } catch (e) {
+          print('Error fetching event $eventId: $e');
+          // Continue with other events if one fails
+        }
+      }
+
+      return registeredEvents;
+    } catch (e, stacktrace) {
+      print('Error fetching registered events from user object: $e');
+      print('Stack trace: $stacktrace');
+      throw Exception('Failed to fetch registered events for user: ${user.uid}');
+    }
+  }
+
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:teamxperience/model/user.dart';
 
 import '../../../backend/authentication/AuthenticationRepository.dart';
 import '../../../constants/routes.dart';
@@ -7,6 +8,7 @@ import '../../../model/event.dart';
 import '../../../model/stire.dart';
 import '../../../state_management/events_state_management.dart';
 import '../../../state_management/news_state_management.dart';
+import '../../../state_management/user_provider.dart';
 
 class HomeController {
   final BuildContext context;
@@ -44,6 +46,13 @@ class HomeController {
       arguments: eventList.upcomingEvents,
     );
   }
+  void navigateToEnterCodeScreen(Event event) {
+    Navigator.pushNamed(
+      context,
+      Routes.enterCodeScreen,
+      arguments: event
+    );
+  }
   void navigateToStireDetails(Stire stire) {
     Navigator.pushNamed(
       context,
@@ -51,6 +60,19 @@ class HomeController {
       arguments: {
         'stire': stire,
         'isAdmin': false,
+      },
+    );
+  }
+  void navigateToTeamDetails(Event event) {
+    AppUser? user = Provider.of<UserProvider>(context, listen: false).currentUser;
+
+
+    Navigator.pushNamed(
+      context,
+      Routes.registerTeamDetails,
+      arguments: {
+        'event': event,
+        'user': user
       },
     );
   }

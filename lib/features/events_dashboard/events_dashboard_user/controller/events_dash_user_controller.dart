@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/model/user.dart';
 import '../../../../enums/event_type.dart';
+import '../../../../state_management/user_provider.dart';
 import '../../events_filter_service.dart';
 
 class EventsDashboardUserController extends ChangeNotifier {
@@ -8,6 +11,8 @@ class EventsDashboardUserController extends ChangeNotifier {
 
   // Original events passed to the controller
   final List<Event> _allEvents;
+  late final List<Event> registeredEvents;
+  AppUser? user;
 
   // Search state
   String _searchQuery = '';
@@ -19,7 +24,15 @@ class EventsDashboardUserController extends ChangeNotifier {
   DateTime? _endDate;
 
   // Constructor
-  EventsDashboardUserController(List<Event> events) : _allEvents = events;
+  EventsDashboardUserController(List<Event> events,context) : _allEvents = events{
+    user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    if(user != null){
+      //registeredEvents = _filterService.registeredEventsFromUser(_allEvents, user!);
+    }
+    else {
+      registeredEvents = []; // ← Initialize to empty list if no user
+    }
+  }
 
   // Getters
   String get searchQuery => _searchQuery;

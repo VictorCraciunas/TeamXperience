@@ -5,22 +5,18 @@ import '../../model/team.dart';
 class TeamRepo {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<String> getNewTeamId(String eventId) async {
-    return _firestore.collection('events').doc(eventId).collection('teams').doc().id;
-  }
-
-  Future<void> addTeam(Team team, String eventId, String userId) async {
-    var docRef = _firestore.collection('events').doc(eventId).collection('teams').doc(userId);
+  Future<void> addTeam(Team team, String eventId) async {
+    var docRef = _firestore.collection('events').doc(eventId).collection('teams').doc(team.name);
     await docRef.set(team.toJson());
   }
 
-  Future<void> deleteTeam(String eventId, String userId) async {
+  Future<void> deleteTeam(String eventId, String teamName) async {
     try {
-      await _firestore.collection('events').doc(eventId).collection('teams').doc(userId).delete();
+      await _firestore.collection('events').doc(eventId).collection('teams').doc(teamName).delete();
     } catch (e, stacktrace) {
       print('Error deleting team: $e');
       print('Stack trace: $stacktrace');
-      throw Exception('Failed to delete team for user: $userId');
+      throw Exception('Failed to delete team: $teamName');
     }
   }
 
@@ -40,104 +36,86 @@ class TeamRepo {
     }
   }
 
-  Future<Team?> getTeamByUserId(String eventId, String userId) async {
-    try {
-      DocumentSnapshot doc = await _firestore.collection('events').doc(eventId).collection('teams').doc(userId).get();
 
-      if (doc.exists) {
-        return Team.fromMap(doc.data() as Map<String, dynamic>);
-      }
-      return null;
-    } catch (e, stacktrace) {
-      print('Error fetching team by user ID: $e');
-      print('Stack trace: $stacktrace');
-      throw Exception('Failed to fetch team for user: $userId');
-    }
-  }
-
-  Future<void> updateTeam(Team team, String eventId, String userId) async {
+  // Updated: Use team name as document ID
+  Future<void> updateMissionProgress(String eventId, String teamName, int progress) async {
     try {
-      var docRef = _firestore.collection('events').doc(eventId).collection('teams').doc(userId);
-      await docRef.update(team.toJson());
-    } catch (e, stacktrace) {
-      print('Error updating team: $e');
-      print('Stack trace: $stacktrace');
-      throw Exception('Failed to update team for user: $userId');
-    }
-  }
-
-  Future<void> updateMissionProgress(String eventId, String userId, int progress) async {
-    try {
-      await _firestore.collection('events').doc(eventId).collection('teams').doc(userId).update({
+      await _firestore.collection('events').doc(eventId).collection('teams').doc(teamName).update({
         'missionProgress': progress,
       });
     } catch (e, stacktrace) {
       print('Error updating mission progress: $e');
       print('Stack trace: $stacktrace');
-      throw Exception('Failed to update mission progress for user: $userId');
+      throw Exception('Failed to update mission progress for team: $teamName');
     }
   }
 
-  Future<void> updatePuzzleNumber(String eventId, String userId, int puzzleNumber) async {
+  // Updated: Use team name as document ID
+  Future<void> updatePuzzleNumber(String eventId, String teamName, int puzzleNumber) async {
     try {
-      await _firestore.collection('events').doc(eventId).collection('teams').doc(userId).update({
+      await _firestore.collection('events').doc(eventId).collection('teams').doc(teamName).update({
         'puzzleNumber': puzzleNumber,
       });
     } catch (e, stacktrace) {
       print('Error updating puzzle number: $e');
       print('Stack trace: $stacktrace');
-      throw Exception('Failed to update puzzle number for user: $userId');
+      throw Exception('Failed to update puzzle number for team: $teamName');
     }
   }
 
-  Future<void> addUserToTeam(String eventId, String teamOwnerId, String userId) async {
+  Future<void> addUserToTeam(String eventId, String teamName, String userId) async {
     try {
-      await _firestore.collection('events').doc(eventId).collection('teams').doc(teamOwnerId).update({
+      await _firestore.collection('events').doc(eventId).collection('teams').doc(teamName).update({
         'userIds': FieldValue.arrayUnion([userId])
       });
     } catch (e, stacktrace) {
       print('Error adding user to team: $e');
       print('Stack trace: $stacktrace');
-      throw Exception('Failed to add user to team owned by: $teamOwnerId');
+      throw Exception('Failed to add user to team: $teamName');
     }
   }
 
-  Future<void> removeUserFromTeam(String eventId, String teamOwnerId, String userId) async {
+
+  // Check if team name already exists for an event
+  Future<bool> isTeamNameTaken(String eventId, String teamName) async {
     try {
-      await _firestore.collection('events').doc(eventId).collection('teams').doc(teamOwnerId).update({
-        'userIds': FieldValue.arrayRemove([userId])
-      });
+      DocumentSnapshot doc = await _firestore
+          .collection('events')
+          .doc(eventId)
+          .collection('teams')
+          .doc(teamName)
+          .get();
+
+      return doc.exists;
     } catch (e, stacktrace) {
-      print('Error removing user from team: $e');
+      print('Error checking team name availability: $e');
       print('Stack trace: $stacktrace');
-      throw Exception('Failed to remove user from team owned by: $teamOwnerId');
+      return true; // Return true to be safe - assume name is taken if error occurs
     }
   }
 
-  // Additional method to get all teams across all events (if needed)
-  Future<List<Team>> getAllTeams() async {
+  Future<Team?> getUserTeamForEvent(String eventId, String userId) async {
     try {
-      List<Team> allTeams = [];
+      // Query teams where userIds array contains the userId
+      QuerySnapshot snapshot = await _firestore
+          .collection('events')
+          .doc(eventId)
+          .collection('teams')
+          .where('userIds', arrayContains: userId)
+          .get();
 
-      // Get all events first
-      QuerySnapshot eventsSnapshot = await _firestore.collection('events').get();
-
-      // For each event, get its teams
-      for (var eventDoc in eventsSnapshot.docs) {
-        QuerySnapshot teamsSnapshot = await eventDoc.reference.collection('teams').get();
-
-        List<Team> eventTeams = teamsSnapshot.docs.map((doc) {
-          return Team.fromMap(doc.data() as Map<String, dynamic>);
-        }).toList();
-
-        allTeams.addAll(eventTeams);
+      // If user is found in any team, return the first one
+      // (user should only be in one team per event)
+      if (snapshot.docs.isNotEmpty) {
+        return Team.fromMap(snapshot.docs.first.data() as Map<String, dynamic>);
       }
 
-      return allTeams;
+      return null;
     } catch (e, stacktrace) {
-      print('Error fetching all teams: $e');
+      print('Error fetching user team for event: $e');
       print('Stack trace: $stacktrace');
-      throw Exception('Failed to fetch all teams');
+      throw Exception('Failed to fetch team for user: $userId in event: $eventId');
     }
   }
+
 }

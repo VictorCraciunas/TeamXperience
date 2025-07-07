@@ -6,6 +6,7 @@ import 'package:teamxperience/features/admin/create_event/create_missions_and_pu
 import 'package:teamxperience/features/admin/create_news/screen/create_news_screen.dart';
 import 'package:teamxperience/features/admin/home/screen/admin_home.dart';
 import 'package:teamxperience/features/calendar/screen/calendar_screen.dart';
+import 'package:teamxperience/features/enter_code/screen/enter_code.dart';
 import 'package:teamxperience/features/event_details/screen/event_details_screen.dart';
 import 'package:teamxperience/features/event_game/screen/event_game_screen.dart';
 import 'package:teamxperience/features/event_game/screen/puzzle_game_screen.dart';
@@ -21,6 +22,7 @@ import 'package:teamxperience/service/news_service/news_service.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/state_management/news_state_management.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
+import 'package:teamxperience/state_management/user_registered_events.dart';
 import 'package:teamxperience/utils/auth_util.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'backend/authentication/AuthenticationRepository.dart';
@@ -101,6 +103,24 @@ class MyApp extends StatelessWidget {
             Provider.of<NewsService>(context, listen: false),
           ),
         ),
+        ChangeNotifierProxyProvider2<UserProvider, EventList, UserEventsProvider>(
+          create: (context) => UserEventsProvider(
+            Provider.of<UserProvider>(context, listen: false),
+            Provider.of<EventList>(context, listen: false),
+            Provider.of<EventService>(context, listen: false),
+          ),
+          update: (context, userProvider, eventList, previous) => UserEventsProvider(
+            userProvider,
+            eventList,
+            Provider.of<EventService>(context, listen: false),
+          ),
+        ),
+
+        ChangeNotifierProvider<NewsList>(
+          create: (context) => NewsList(
+            Provider.of<NewsService>(context, listen: false),
+          ),
+        ),
       ],
       child: MaterialApp(
         theme: ThemeData(
@@ -139,6 +159,8 @@ class MyApp extends StatelessWidget {
           Routes.eventDashboardUser: (_) => const FilterEventsUser(),
           Routes.registerTeam: (_) => const RegisterTeamScreen(),
           Routes.registerTeamDetails: (_) => const TeamDetailsScreen(),
+          Routes.enterCodeScreen: (_) => const EnterCode(),
+
         },
       ),
     );

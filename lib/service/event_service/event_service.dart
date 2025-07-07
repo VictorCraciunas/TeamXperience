@@ -3,6 +3,7 @@ import 'package:teamxperience/service/event_service/upload_images.dart';
 import '../../backend/repo/event_repo.dart';
 import '../../exceptions/events_exceptions.dart';
 import '../../model/event.dart';
+import '../../model/user.dart';
 
 class EventService {
   final EventRepo _eventRepo = EventRepo();
@@ -56,6 +57,25 @@ class EventService {
     } catch (e) {
       throw EventServiceException('Failed to delete event: $e');
     }
+  }
+
+
+  List<Event> registeredEventsFromUser(List<Event> allEvents, AppUser user){
+    List<Event> registeredEvents = [];
+
+    ///create a map for faster look
+    Map<String, Event> eventMap = {
+      for (Event event in allEvents) event.eventId: event
+    };
+
+    for(String eventId in user.registeredEventIds){
+      Event? event = eventMap[eventId];
+      if(event != null){
+        registeredEvents.add(event);
+      }
+    }
+
+    return registeredEvents;
   }
 
 

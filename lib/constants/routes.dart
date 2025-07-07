@@ -23,5 +23,6 @@ abstract class Routes {
   static const eventDashboardUser = '/events_dasboard/user';
   static const registerTeam = '/register_tean';
   static const registerTeamDetails = '/register_team/details';
+  static const enterCodeScreen = '/enter_code/screen';
 
 }

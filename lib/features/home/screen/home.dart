@@ -6,7 +6,10 @@ import '../../../constants/colors.dart';
 import '../../../constants/padding.dart';
 import '../../../state_management/events_state_management.dart';
 import '../../../state_management/news_state_management.dart';
+import '../../../state_management/user_registered_events.dart'; // Add this import
 import '../../../widgets/event_card/events_carousel.dart';
+import '../../../widgets/registered_events/registered_event_card.dart';
+import '../../../widgets/registered_events/registered_events_carousel.dart';
 import '../../../widgets/stire_card/stiri_carousel.dart';
 import '../../admin/home/widgets/title_carousel.dart';
 
@@ -18,16 +21,17 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late  HomeController controller;
+  late HomeController controller;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-     controller = HomeController(context);
+    controller = HomeController(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.loadInitialData();
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,8 +48,9 @@ class _HomeState extends State<Home> {
         ],
       ),
       body: SafeArea(
-        child: Consumer2<EventList, NewsList>(
-          builder: (context, eventList, newsList, child) {
+        child: Consumer3<EventList, NewsList, UserEventsProvider>(
+          builder: (context, eventList, newsList, userEventsProvider, child) {
+            final nextEvent = userEventsProvider.nextEventWithinHour;
             if ((eventList.isLoading && !eventList.hasData) ||
                 (newsList.isLoading && !newsList.hasData)) {
               return const Center(child: CircularProgressIndicator());
@@ -62,13 +67,37 @@ class _HomeState extends State<Home> {
                     children: [
                       // News Section
                       StiriCarousel(
-                        stiri: newsList.getLatestNews(5), // Show latest 5 news
+                        stiri: newsList.getLatestNews(5),
                         onStireTap: controller.navigateToStireDetails,
                         showBadge: false,
                       ),
                       const SizedBox(height: 30),
+                      if (nextEvent != null)
+                        RegisteredEventCard(
+                          event: nextEvent,
+                          onEventTap: (event) =>
+                              controller.navigateToEnterCodeScreen(event),
+                          upComingRegisteredEvent: true, // Show blue card!
+                        ),
+                      const SizedBox(height: 30),
 
-                      // Events Section
+                      // Registered Events Section (show only if user has registered events)
+                      if (userEventsProvider.upcomingRegisteredEvents
+                          .isNotEmpty) ...[
+                        TitleCarousel(
+                          text: "Înscrierile tale",
+                          onTap: controller.navigateToEventDashboard,
+                        ),
+                        const SizedBox(height: 20),
+                        RegisteredEventsCarousel(
+                          events: userEventsProvider.upcomingRegisteredEvents,
+                          onEventTap: (event) =>
+                              controller.navigateToTeamDetails(event),
+                        ),
+                        const SizedBox(height: 30),
+                      ],
+
+                      // All Events Section
                       TitleCarousel(
                         text: "Evenimente",
                         onTap: controller.navigateToEventDashboard,
@@ -79,8 +108,6 @@ class _HomeState extends State<Home> {
                         onEventTap: controller.navigateToEventDetails,
                       ),
                       const SizedBox(height: 20),
-
-
                     ],
                   ),
                 ),

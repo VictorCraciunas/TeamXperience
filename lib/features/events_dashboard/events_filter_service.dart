@@ -1,9 +1,10 @@
+import 'package:teamxperience/model/user.dart';
+
 import '../../../../enums/event_type.dart';
 import '../../../../model/event.dart';
 
 class FilterService {
   /// Filters events based on event type and/or date range
-  /// Returns filtered list of events
   List<Event> filterEvents({
     required List<Event> events,
     EventType? eventType,
@@ -73,4 +74,5 @@ class FilterService {
 
     return filteredEvents;
   }
+
 }
