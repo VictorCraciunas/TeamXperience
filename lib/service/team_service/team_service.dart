@@ -31,4 +31,11 @@ class TeamService{
 
     return team;
   }
+
+  Future<Team?> getUserTeamForEvent(String eventId, String userId) async{
+    return teamRepo.getUserTeamForEvent(eventId, userId);
+  }
+  Future<void> updateMissionProgress(String eventId, String teamName, int progress) async {
+    return teamRepo.updateMissionProgress(eventId, teamName, progress);
+  }
 }

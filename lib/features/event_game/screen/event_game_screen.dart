@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/enums/missions_state.dart';
+import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/widgets/misison_state_widget.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 
@@ -27,9 +28,11 @@ class _EventGameScreenState extends State<EventGameScreen> {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     if (!_initialized) {
-      final event = ModalRoute.of(context)!.settings.arguments as Event;
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      final event = arguments['event'] as Event;
+      final team = arguments['team'] as Team?;
 
-      controller = EventGameController(event, context);
+      controller = EventGameController(event, team, context);
       _initialized = true;
     }
   }
@@ -40,27 +43,6 @@ class _EventGameScreenState extends State<EventGameScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // SizedBox(
-            //   height: 40,
-            //   child: ListView.builder(
-            //     scrollDirection: Axis.horizontal,
-            //     itemCount: controller.event.nrMissions ,
-            //     itemBuilder: (context, index) {
-            //       return ElevatedButton(
-            //           onPressed: ()  {
-            //               Navigator.pushNamed(
-            //                 context,
-            //                 Routes.puzzleGame,
-            //                 arguments: {
-            //                   'mission': controller.event.missions[index],
-            //                   'background': controller.background,
-            //                 },
-            //               );
-            //           }, child: Text("Missiune $index"));
-            //     },
-            //
-            //   ),
-            // ),
             SizedBox(
               width: double.infinity,
               child: Column(
@@ -90,12 +72,40 @@ class _EventGameScreenState extends State<EventGameScreen> {
                           ),
                           child: Column(
                             children: [
-                              MissionStateWidget(missionState: MissionState.finalizata,nr: 1,),
-                              SizedBox(height: 10,),
-                              MissionStateWidget(missionState: MissionState.deblcata,nr:2,),
-                              SizedBox(height: 10,),
-                              MissionStateWidget(missionState: MissionState.blocata,nr: 3,),
-                              SizedBox(height: 50,),
+                              ...List.generate(controller.event.nrMissions, (index) {
+                                return Column(
+                                  children: [
+                                    MissionStateWidget(
+                                      missionState: controller.getMissionState(index),
+                                      onTap:  ()  async {
+                                        final updatedTeam = await Navigator.pushNamed(
+                                          context,
+                                          Routes.puzzleGame,
+                                          arguments: {
+                                            'mission': controller.event.missions[index],
+                                            'background': controller.background,
+                                            'event': controller.event, // Pass event
+                                            'team': controller.team,   // Pass team
+                                          },
+                                        ) as Team?;
+
+                                        // If team was updated, refresh the mission states
+                                        if (updatedTeam != null) {
+                                          setState(() {
+                                            controller.team = updatedTeam;
+                                            controller.initMissionState();
+                                          });
+                                        }
+                                      },// You'll need to implement this
+                                      nr: index + 1,
+                                    ),
+                                    if (index < controller.event.nrMissions - 1) // Don't add spacing after last item
+                                      SizedBox(height: 10),
+                                  ],
+                                );
+                              }),
+                              SizedBox(height: 50),
+
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [

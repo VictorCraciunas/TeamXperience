@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
+import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/puzzle.dart';
+import 'package:teamxperience/model/team.dart';
+import 'package:teamxperience/service/team_service/team_service.dart';
 import 'package:teamxperience/utils/component_conversion/component_to_widget.dart';
 import '../../../enums/component-type.dart';
 
@@ -13,8 +16,11 @@ class PuzzleGameController {
   final ComponentToWidget componentToWidget = ComponentToWidget();
   String userInput = "";
   late BuildContext context;
+  TeamService teamService = TeamService();
+  late Event event;
+  late Team team;
 
-  PuzzleGameController(this.mission, this.background) {
+  PuzzleGameController(this.mission, this.background, this.event, this.team) {
     loadPuzzles();
   }
 
@@ -69,11 +75,29 @@ class PuzzleGameController {
     }
   }
 
-  void navigate() {
+  void navigate() async {
     if (hasNextPuzzle()) {
       selectedPuzzleNotifier.value++;
     } else {
-      Navigator.pop(context);
+      // Mission completed - increment progress
+      print("Mission completed! Current progress: ${team.missionProgress}");
+
+      // Correctly increment mission progress
+      team.missionProgress = team.missionProgress + 1;
+
+      print("New progress: ${team.missionProgress}");
+
+      try {
+        // Update in Firebase
+        await teamService.updateMissionProgress(event.eventId, team.name, team.missionProgress);
+        print("Firebase updated successfully");
+
+        Navigator.pop(context, team);
+      } catch (e) {
+        print("Error updating mission progress: $e");
+        // Handle error - maybe show a dialog or snackbar
+        Navigator.pop(context, null);
+      }
     }
   }
 

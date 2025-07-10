@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/features/event_game/controller/puzzle_game_controller.dart';
 import '../../../constants/padding.dart';
+import '../../../model/event.dart';
 import '../../../model/mission.dart';
+import '../../../model/team.dart';
 
 class PuzzleGameScreen extends StatefulWidget {
   const PuzzleGameScreen({super.key});
@@ -23,7 +25,9 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
       final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       final mission = args['mission'] as Mission;
       final background = args['background'] as ImageProvider;
-      controller = PuzzleGameController(mission, background);
+      final event = args['event'] as Event;
+      final team = args['team'] as Team;
+      controller = PuzzleGameController(mission, background,event,team);
 
       // Initialize animation controller
       _animationController = AnimationController(

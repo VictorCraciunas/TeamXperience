@@ -80,7 +80,9 @@ class MenuWidget extends StatelessWidget {
               Navigator.pushNamed(
                   context,
                   Routes.eventGame,
-                  arguments: event
+                  arguments:{
+                    'event' : event
+                  }
               );
             },
           ),
