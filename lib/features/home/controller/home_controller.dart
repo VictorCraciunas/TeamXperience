@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/model/user.dart';
+import 'package:teamxperience/service/team_service/team_service.dart';
 
 import '../../../backend/authentication/AuthenticationRepository.dart';
 import '../../../constants/routes.dart';
@@ -14,6 +15,7 @@ class HomeController {
   final BuildContext context;
   final AuthenticationRepository _authRepo = AuthenticationRepository();
    HomeController(this.context);
+  TeamService teamService = TeamService();
 
   void logout() {
     context.read<EventList>().clear();

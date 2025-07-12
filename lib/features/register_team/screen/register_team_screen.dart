@@ -77,16 +77,22 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                 ),
                 const SizedBox(height: 45),
                 if (!controller.secondStep && !controller.thirdStep)
-                  Step1(
-                    numeEchipaController: controller.numeEchipaController,
-                    componentaEchipeiController:
-                        controller.componentaEchipeiController,
+                  Form(
+                    key: controller.step1FormKey,
+                    child: Step1(
+                      numeEchipaController: controller.numeEchipaController,
+                      componentaEchipeiController:
+                          controller.componentaEchipeiController,
+                    ),
                   ),
                 if (controller.secondStep && !controller.thirdStep)
-                  Step2(
-                    numeCapitanController: controller.numeCapitanController,
-                    numarDeTelefonController: controller.numarDeTelefonController,
-                    emailCapitanController: controller.emailCapitanController,
+                  Form(
+                    key: controller.step2FormKey,
+                    child: Step2(
+                      numeCapitanController: controller.numeCapitanController,
+                      numarDeTelefonController: controller.numarDeTelefonController,
+                      emailCapitanController: controller.emailCapitanController,
+                    ),
                   ),
                 if (controller.secondStep && controller.thirdStep)
                   Column(

@@ -1,8 +1,12 @@
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:teamxperience/backend/repo/teamRepo.dart';
 import 'package:teamxperience/backend/repo/user_repo.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/model/user.dart';
+
+import '../../state_management/user_provider.dart';
 
 class TeamService{
   TeamRepo teamRepo = TeamRepo();
@@ -15,7 +19,8 @@ class TeamService{
       String phoneNumber,
       String captainEmail,
       AppUser user,
-      Event event
+      Event event,
+      BuildContext context,
       ) async {
     List<String> users = [user.uid];
     Team team = Team(
@@ -28,6 +33,8 @@ class TeamService{
     );
     await teamRepo.addTeam(team, event.eventId);
     await userRepo.addEventToUser(user.uid, event.eventId);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    userProvider.addRegisteredEvent(event.eventId);
 
     return team;
   }
@@ -37,5 +44,9 @@ class TeamService{
   }
   Future<void> updateMissionProgress(String eventId, String teamName, int progress) async {
     return teamRepo.updateMissionProgress(eventId, teamName, progress);
+  }
+
+  Future<void> startTeam(String eventId, String teamName) async {
+    return teamRepo.startTeam(eventId, teamName);
   }
 }

@@ -133,7 +133,7 @@ class _MyTextFieldState extends State<MyTextField> {
       onChanged: widget.onChanged, // Add this line
       validator: widget.validator ??
               (value) => (value ?? '').isEmpty
-              ? 'Enter ${widget.labelText ?? 'a value'}'
+              ? 'Introdu ${widget.labelText ?? 'a value'}'
               : null,
       decoration: InputDecoration(
         hintText: widget.hintText,

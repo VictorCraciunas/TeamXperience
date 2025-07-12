@@ -48,11 +48,38 @@ class _EventGameScreenState extends State<EventGameScreen> {
               child: Column(
                 children: [
                   if (controller.event.landingImageUrl != null)
-                    Image.network(
-                      controller.event.landingImageUrl!,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: 268,
+                    Stack(
+                      children: [
+                        Image.network(
+                          controller.event.landingImageUrl!,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: 268,
+                        ),
+                        SafeArea(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 20.0),
+                            child: GestureDetector(
+                              child: Container(
+                                padding: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                    color: const Color(0x90FFFFFF),
+                                    borderRadius: BorderRadius.circular(50)
+                                ),
+                                child: SvgPicture.asset(
+                                  'assets/images/back_icon.svg',
+                                  width: 24,
+                                  height: 24,
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+
                     ),
                   Transform.translate(
                     offset: const Offset(0, -30),

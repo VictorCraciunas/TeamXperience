@@ -117,5 +117,16 @@ class TeamRepo {
       throw Exception('Failed to fetch team for user: $userId in event: $eventId');
     }
   }
+  Future<void> startTeam(String eventId, String teamName) async {
+    try {
+      await _firestore.collection('events').doc(eventId).collection('teams').doc(teamName).update({
+        'hasStarted': true,
+      });
+    } catch (e, stacktrace) {
+      print('Error starting team: $e');
+      print('Stack trace: $stacktrace');
+      throw Exception('Failed to start team: $teamName');
+    }
+  }
 
 }

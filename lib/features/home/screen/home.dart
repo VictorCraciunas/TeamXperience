@@ -4,8 +4,12 @@ import 'package:teamxperience/features/home/controller/home_controller.dart';
 
 import '../../../constants/colors.dart';
 import '../../../constants/padding.dart';
+import '../../../constants/routes.dart';
+import '../../../model/team.dart';
+import '../../../model/user.dart';
 import '../../../state_management/events_state_management.dart';
 import '../../../state_management/news_state_management.dart';
+import '../../../state_management/user_provider.dart';
 import '../../../state_management/user_registered_events.dart'; // Add this import
 import '../../../widgets/event_card/events_carousel.dart';
 import '../../../widgets/registered_events/registered_event_card.dart';
@@ -75,8 +79,18 @@ class _HomeState extends State<Home> {
                       if (nextEvent != null)
                         RegisteredEventCard(
                           event: nextEvent,
-                          onEventTap: (event) =>
-                              controller.navigateToEnterCodeScreen(event),
+                          onEventTap: (event) async {
+                            AppUser? currentUser = context.read<UserProvider>().currentUser;
+                            Team? team = await controller.teamService.getUserTeamForEvent(event.eventId, currentUser!.uid);
+                            if(!team!.hasStarted){
+                              controller.navigateToEnterCodeScreen(event);
+
+                            }
+                            else{
+                              Navigator.pushNamed(context, Routes.eventGame, arguments: { 'event' : event, 'team': team});
+
+                            }
+                          },
                           upComingRegisteredEvent: true, // Show blue card!
                         ),
                       const SizedBox(height: 30),

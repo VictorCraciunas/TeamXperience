@@ -7,6 +7,7 @@ class Team {
   int missionProgress;
   int puzzleNumber;
   List<String> userIds;
+  bool hasStarted;
 
   Team({
     required this.name,
@@ -17,6 +18,7 @@ class Team {
     this.missionProgress = 0,
     this.puzzleNumber = 0,
     List<String>? userIds,
+    this.hasStarted = false
   }) : userIds = userIds ?? [];
 
   factory Team.fromMap(Map<String, dynamic> map) {
@@ -32,6 +34,7 @@ class Team {
       missionProgress: map['missionProgress'] as int? ?? 0,
       puzzleNumber: map['puzzleNumber'] as int? ?? 0,
       userIds: userIdsList,
+      hasStarted: map['hasStarted'] as bool
     );
   }
 
@@ -45,6 +48,7 @@ class Team {
       'missionProgress': missionProgress,
       'puzzleNumber': puzzleNumber,
       'userIds': userIds,
+      'hasStarted': hasStarted
     };
   }
 

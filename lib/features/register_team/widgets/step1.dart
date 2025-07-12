@@ -25,7 +25,8 @@ class Step1 extends StatelessWidget {
               height: 24,
               colorFilter: const ColorFilter.mode(MyColors.yellow, BlendMode.srcIn),
             ),
-          ), // ← close SvgPicture.asset
+          ),
+          // ← close SvgPicture.asset
         ),
         const SizedBox(height: 20),
         MyTextField(
@@ -43,9 +44,9 @@ class Step1 extends StatelessWidget {
           ),
           maxLines: null,
           keyboardType: TextInputType.multiline,
-
           // ← close SvgPicture.asset
         ),
+
       ],
     );
   }

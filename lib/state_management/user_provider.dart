@@ -27,5 +27,24 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addRegisteredEvent(String eventId) {
+    if (_currentUser != null) {
+      final updatedEventIds = List<String>.from(_currentUser!.registeredEventIds);
+      if (!updatedEventIds.contains(eventId)) {
+        updatedEventIds.add(eventId);
+
+        _currentUser = AppUser(
+          email: _currentUser!.email,
+          firstName: _currentUser!.firstName,
+          lastName: _currentUser!.lastName,
+          uid: _currentUser!.uid,
+          role: _currentUser!.role,
+          registeredEventIds: updatedEventIds,
+        );
+
+        notifyListeners();
+      }
+    }
+  }
 
 }

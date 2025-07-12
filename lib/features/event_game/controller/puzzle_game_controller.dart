@@ -61,6 +61,7 @@ class PuzzleGameController {
   }
 
   void buttonPressed(Puzzle puzzle) {
+    print(puzzle.type);
     if (puzzle.type == PuzzleType.code) {
       print("a intrat in code");
       if (userInput == puzzle.code) {
