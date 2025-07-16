@@ -95,7 +95,7 @@ class _AdminHomeState extends State<AdminHome> {
                             child: NavigateCard(
                               text1: "Acceseaza",
                               text2: "chat",
-                              onTap: () {},
+                              onTap: controller.navigateToChats,
                             ),
                           ),
                         ],

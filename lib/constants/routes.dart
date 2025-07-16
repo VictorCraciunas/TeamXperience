@@ -24,5 +24,7 @@ abstract class Routes {
   static const registerTeam = '/register_tean';
   static const registerTeamDetails = '/register_team/details';
   static const enterCodeScreen = '/enter_code/screen';
+  static const chatScreen = '/chat/screen';
+  static const teamConversations = '/team_conversions/admin';
 
 }

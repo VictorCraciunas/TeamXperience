@@ -6,6 +6,7 @@ import 'package:teamxperience/features/admin/create_event/create_missions_and_pu
 import 'package:teamxperience/features/admin/create_news/screen/create_news_screen.dart';
 import 'package:teamxperience/features/admin/home/screen/admin_home.dart';
 import 'package:teamxperience/features/calendar/screen/calendar_screen.dart';
+import 'package:teamxperience/features/chat/screen/chat_screen.dart';
 import 'package:teamxperience/features/enter_code/screen/enter_code.dart';
 import 'package:teamxperience/features/event_details/screen/event_details_screen.dart';
 import 'package:teamxperience/features/event_game/screen/event_game_screen.dart';
@@ -18,6 +19,7 @@ import 'package:teamxperience/features/news_details/news_screen.dart';
 import 'package:teamxperience/features/register_team/screen/register_team_screen.dart';
 import 'package:teamxperience/features/sign-up/screen/register.dart';
 import 'package:teamxperience/features/splash/splash.dart';
+import 'package:teamxperience/features/team_chats/screen/team_chats_screen.dart';
 import 'package:teamxperience/service/news_service/news_service.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/state_management/news_state_management.dart';
@@ -160,6 +162,8 @@ class MyApp extends StatelessWidget {
           Routes.registerTeam: (_) => const RegisterTeamScreen(),
           Routes.registerTeamDetails: (_) => const TeamDetailsScreen(),
           Routes.enterCodeScreen: (_) => const EnterCode(),
+          Routes.chatScreen: (_) => const ChatScreen(),
+          Routes.teamConversations: (_) => const TeamChatsScreen(),
 
         },
       ),

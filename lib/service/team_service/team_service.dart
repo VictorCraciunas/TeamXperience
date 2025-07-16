@@ -49,4 +49,8 @@ class TeamService{
   Future<void> startTeam(String eventId, String teamName) async {
     return teamRepo.startTeam(eventId, teamName);
   }
+
+  Future<List<Team>> getTeams(String eventId)async{
+    return teamRepo.getAllTeamsForEvent(eventId);
+  }
 }
