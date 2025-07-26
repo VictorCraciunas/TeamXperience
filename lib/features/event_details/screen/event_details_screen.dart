@@ -206,6 +206,15 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                     const SizedBox(height: 10),
+                    if(isAdmin)
+                      MyButton(
+                        buttonText: "map",
+                        textColor: Colors.black,
+                        buttonOnTap: () {
+                          controller.navigateToMap();
+                        },
+                        withBorder: true,
+                      ),
                   ],
                 ),
               ),

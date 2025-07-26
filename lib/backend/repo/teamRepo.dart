@@ -36,6 +36,24 @@ class TeamRepo {
     }
   }
 
+  Stream<List<Team>> getStreamTeamsForEvent(String eventId) {
+    try {
+      return _firestore
+          .collection('events')
+          .doc(eventId)
+          .collection('teams')
+          .snapshots()
+          .map((QuerySnapshot snapshot) {
+        return snapshot.docs.map((doc) {
+          return Team.fromMap(doc.data() as Map<String, dynamic>);
+        }).toList();
+      });
+    } catch (e, stacktrace) {
+      print('Error setting up teams stream: $e');
+      print('Stack trace: $stacktrace');
+      throw Exception('Failed to set up teams stream for event: $eventId');
+    }
+  }
 
   // Updated: Use team name as document ID
   Future<void> updateMissionProgress(String eventId, String teamName, int progress) async {
@@ -126,6 +144,24 @@ class TeamRepo {
       print('Error starting team: $e');
       print('Stack trace: $stacktrace');
       throw Exception('Failed to start team: $teamName');
+    }
+  }
+
+  Future<void> updateTeamLocation(String eventId, String teamName, double latitude, double longitude) async {
+    try {
+      await _firestore
+          .collection('events')
+          .doc(eventId)
+          .collection('teams')
+          .doc(teamName)
+          .update({
+        'latitude': latitude,
+        'longitude': longitude,
+      });
+    } catch (e, stacktrace) {
+      print('Error updating team location: $e');
+      print('Stack trace: $stacktrace');
+      throw Exception('Failed to update location for team: $teamName');
     }
   }
 

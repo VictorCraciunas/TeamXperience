@@ -26,5 +26,6 @@ abstract class Routes {
   static const enterCodeScreen = '/enter_code/screen';
   static const chatScreen = '/chat/screen';
   static const teamConversations = '/team_conversions/admin';
+  static const map = '/map';
 
 }

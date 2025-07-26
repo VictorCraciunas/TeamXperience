@@ -13,6 +13,7 @@ import 'package:teamxperience/features/event_game/screen/event_game_screen.dart'
 import 'package:teamxperience/features/event_game/screen/puzzle_game_screen.dart';
 import 'package:teamxperience/features/filter/filter_news/screen/filter_news.dart';
 import 'package:teamxperience/features/forgot-password/screen/forgot_password_screen.dart';
+import 'package:teamxperience/features/map/screen/map_screen.dart';
 import 'package:teamxperience/features/news_category_manipulation/screen/news_catergory_manipulation_screen.dart';
 import 'package:teamxperience/features/news_dashboard/screen/stiri_dashboard_screen.dart';
 import 'package:teamxperience/features/news_details/news_screen.dart';
@@ -164,6 +165,7 @@ class MyApp extends StatelessWidget {
           Routes.enterCodeScreen: (_) => const EnterCode(),
           Routes.chatScreen: (_) => const ChatScreen(),
           Routes.teamConversations: (_) => const TeamChatsScreen(),
+          Routes.map: (_) => const MapScreen(),
 
         },
       ),

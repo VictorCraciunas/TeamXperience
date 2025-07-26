@@ -80,15 +80,23 @@ class _HomeState extends State<Home> {
                         RegisteredEventCard(
                           event: nextEvent,
                           onEventTap: (event) async {
-                            AppUser? currentUser = context.read<UserProvider>().currentUser;
-                            Team? team = await controller.teamService.getUserTeamForEvent(event.eventId, currentUser!.uid);
-                            if(!team!.hasStarted){
+                            AppUser? currentUser =
+                                context.read<UserProvider>().currentUser;
+                            Team? team = await controller.teamService
+                                .getUserTeamForEvent(
+                                  event.eventId,
+                                  currentUser!.uid,
+                                );
+                            if (team == null) {
+                              print("nu trebuia sa ajunga aci wtf");
+                            } else if (!team.hasStarted) {
                               controller.navigateToEnterCodeScreen(event);
-
-                            }
-                            else{
-                              Navigator.pushNamed(context, Routes.eventGame, arguments: { 'event' : event, 'team': team});
-
+                            } else {
+                              Navigator.pushNamed(
+                                context,
+                                Routes.eventGame,
+                                arguments: {'event': event, 'team': team},
+                              );
                             }
                           },
                           upComingRegisteredEvent: true, // Show blue card!
@@ -96,7 +104,8 @@ class _HomeState extends State<Home> {
                       const SizedBox(height: 30),
 
                       // Registered Events Section (show only if user has registered events)
-                      if (userEventsProvider.upcomingRegisteredEvents
+                      if (userEventsProvider
+                          .upcomingRegisteredEvents
                           .isNotEmpty) ...[
                         TitleCarousel(
                           text: "Înscrierile tale",
@@ -105,8 +114,9 @@ class _HomeState extends State<Home> {
                         const SizedBox(height: 20),
                         RegisteredEventsCarousel(
                           events: userEventsProvider.upcomingRegisteredEvents,
-                          onEventTap: (event) =>
-                              controller.navigateToTeamDetails(event),
+                          onEventTap:
+                              (event) =>
+                                  controller.navigateToTeamDetails(event),
                         ),
                         const SizedBox(height: 30),
                       ],

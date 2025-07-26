@@ -37,7 +37,7 @@ class MessagesStream extends StatelessWidget {
           final messageBubble = MessageBubble(
             sender: messageSender,
             text: messageText,
-            isMe: user!.role == Role.values.byName(messageSender), // You might want to determine this based on current user
+            isMe: user!.role == Role.values.byName(messageSender),
           );
           messageBubbles.add(messageBubble);
         }

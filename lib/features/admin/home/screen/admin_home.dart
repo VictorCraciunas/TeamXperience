@@ -4,6 +4,7 @@ import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/admin/home/widgets/navigate_card.dart';
 import 'package:teamxperience/features/admin/home/widgets/title_carousel.dart';
+import 'package:teamxperience/widgets/my_button.dart';
 import 'package:teamxperience/widgets/stire_card/stiri_carousel.dart';
 import '../../../../state_management/events_state_management.dart';
 import '../../../../state_management/news_state_management.dart';
@@ -127,6 +128,7 @@ class _AdminHomeState extends State<AdminHome> {
                         showBadge: false,
                       ),
                       const SizedBox(height: 30),
+
                     ],
                   ),
                 ),

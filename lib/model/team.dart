@@ -8,6 +8,8 @@ class Team {
   int puzzleNumber;
   List<String> userIds;
   bool hasStarted;
+  double latitude;
+  double longitude;
 
   Team({
     required this.name,
@@ -18,7 +20,9 @@ class Team {
     this.missionProgress = 0,
     this.puzzleNumber = 0,
     List<String>? userIds,
-    this.hasStarted = false
+    this.hasStarted = false,
+    this.latitude = 0,
+    this.longitude = 0,
   }) : userIds = userIds ?? [];
 
   factory Team.fromMap(Map<String, dynamic> map) {
@@ -34,7 +38,9 @@ class Team {
       missionProgress: map['missionProgress'] as int? ?? 0,
       puzzleNumber: map['puzzleNumber'] as int? ?? 0,
       userIds: userIdsList,
-      hasStarted: map['hasStarted'] as bool
+      hasStarted: map['hasStarted'] as bool,
+      latitude: map['latitude'] as double,
+      longitude: map['longitude'] as double
     );
   }
 
@@ -48,7 +54,9 @@ class Team {
       'missionProgress': missionProgress,
       'puzzleNumber': puzzleNumber,
       'userIds': userIds,
-      'hasStarted': hasStarted
+      'hasStarted': hasStarted,
+      'latitude': latitude,
+      'longitude': longitude
     };
   }
 
