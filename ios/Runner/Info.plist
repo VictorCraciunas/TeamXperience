@@ -55,5 +55,9 @@
     	<string>tel</string>
     	<string>sms</string>
     </array>
+
+     <key>NSLocationWhenInUseUsageDescription</key>
+     <string>This app needs location access to track your team's position during the event.</string>
+
 </dict>
 </plist>

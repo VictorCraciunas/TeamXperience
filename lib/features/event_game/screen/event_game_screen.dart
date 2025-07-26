@@ -24,6 +24,12 @@ class _EventGameScreenState extends State<EventGameScreen> {
   bool _initialized = false;
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    controller.dispose();
+  }
+  @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();

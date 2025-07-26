@@ -47,7 +47,7 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
       context,
       Routes.chatScreen, // Make sure you have this route defined
       arguments: {
-        'event': event,
+        'eventId': event.eventId,
         'team': team,
       },
     );

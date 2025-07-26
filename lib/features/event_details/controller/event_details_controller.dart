@@ -25,7 +25,10 @@ class EventDetailsController{
       Navigator.pushNamed(
         context,
         Routes.map,
-        arguments: teams,
+          arguments: {
+            'eventId': event.eventId,
+            'teams': teams,
+          },
       );
     }
   }

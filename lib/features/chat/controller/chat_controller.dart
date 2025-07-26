@@ -11,20 +11,20 @@ import '../../../state_management/user_provider.dart';
 
 class ChatController{
   late Team team;
-  late Event event;
+  late String eventId;
   final chatTextField = TextEditingController();
   MessageService messageService = MessageService();
   late BuildContext context;
-  ChatController(this.event, this.team, this.context);
+  ChatController(this.eventId, this.team, this.context);
 
   Future<void> sendMessage() async {
     AppUser? user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
-    messageService.sendMessage(event.eventId, team.name, chatTextField.text,user!);
+    messageService.sendMessage(eventId, team.name, chatTextField.text,user!);
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>>  getMessages() {
-    return messageService.getMessages(event.eventId, team.name);
+    return messageService.getMessages(eventId, team.name);
   }
 
 

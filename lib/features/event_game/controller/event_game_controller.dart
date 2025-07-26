@@ -3,6 +3,7 @@ import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 
 import '../../../enums/missions_state.dart';
+import '../../../service/LocationService.dart';
 
 class EventGameController {
   late Event event;
@@ -10,12 +11,23 @@ class EventGameController {
   late BuildContext context;
   late Team? team;
   List<MissionState> missionDone = [];
+  final LocationService _locationService = LocationService();
 
   EventGameController(this.event, this.team, this.context) {
     _initializeBackground();
     initMissionState();
+    _startLocationTracking(); // Start location tracking
   }
 
+
+  void _startLocationTracking() async {
+    if (team != null) {
+      await _locationService.startLocationTracking(
+        eventId: event.eventId,
+        teamName: team!.name,
+      );
+    }
+  }
   void initMissionState() {
     missionDone.clear();
     if (team != null) {
@@ -56,5 +68,9 @@ class EventGameController {
 
   MissionState getMissionState(int index) {
     return missionDone[index];
+  }
+  void dispose() {
+    print("location tracking ended");
+    _locationService.stopLocationTracking();
   }
 }

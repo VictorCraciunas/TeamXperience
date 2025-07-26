@@ -31,10 +31,10 @@ class _ChatScreenState extends State<ChatScreen> {
           .of(context)!
           .settings
           .arguments as Map<String, dynamic>;
-      final event = arguments['event'] as Event;
+      final eventId = arguments['eventId'] as String;
       final team = arguments['team'] as Team?;
 
-      controller = ChatController(event, team!, context);
+      controller = ChatController(eventId, team!, context);
       _initialized = true;
     }
   }

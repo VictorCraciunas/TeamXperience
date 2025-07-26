@@ -17,17 +17,24 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   late MyMapController controller;
+  final MapController _mapController = MapController();
+
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final teams = ModalRoute.of(context)!.settings.arguments as Stream<List<Team>>;
-    controller = MyMapController(teams: teams, context: context);
+    final arguments =
+    ModalRoute
+        .of(context)!
+        .settings
+        .arguments as Map<String, dynamic>;
+    final eventId = arguments['eventId'] as String;
+    final teams = arguments['teams'] as Stream<List<Team>>;
+    controller = MyMapController(teams: teams, eventId:eventId, context: context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final MapController _mapController = MapController();
 
     return Scaffold(
       appBar: MyAppBar(appBarText: "Harta evenimentului"),
@@ -194,12 +201,19 @@ class _MapScreenState extends State<MapScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                    controller.callTeam(team);
+
+                  },
                   icon: const Icon(Icons.phone),
                   label: const Text('Call'),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                    controller.navigateToChat(team);
+                  },
                   icon: const Icon(Icons.message),
                   label: const Text('Message'),
                 ),
