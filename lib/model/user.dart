@@ -7,6 +7,8 @@ class AppUser {
   final String uid;
   final Role role;
   final List<String> registeredEventIds;
+  final String fcmToken;
+
 
   AppUser({
     required this.email,
@@ -15,6 +17,7 @@ class AppUser {
     required this.uid,
     this.role = Role.USER,
     List<String>? registeredEventIds,
+    required this.fcmToken
   }) : registeredEventIds = registeredEventIds ?? [];
 
   factory AppUser.fromFirestore(Map<String, dynamic> data) {
@@ -24,12 +27,13 @@ class AppUser {
     final eventIds = rawEventIds.map((id) => id.toString()).toList();
 
     return AppUser(
-      email: data["email"] ?? "",
-      firstName: data['firstName'] as String,
-      lastName: data['lastName'] as String,
-      uid: data["uid"] ?? "",
-      role: role,
-      registeredEventIds: eventIds,
+        email: data["email"] ?? "",
+        firstName: data['firstName'] as String,
+        lastName: data['lastName'] as String,
+        uid: data["uid"] ?? "",
+        role: role,
+        registeredEventIds: eventIds,
+        fcmToken: data["fcmToken"] as String? ?? ""
     );
   }
 
@@ -41,6 +45,7 @@ class AppUser {
       "uid": uid,
       "role": role.name,
       "registeredEventIds": registeredEventIds,
+      "fcmToken":fcmToken
     };
   }
 

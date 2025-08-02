@@ -77,4 +77,16 @@ class UserRepo{
     }
   }
 
+  Future<void> updateFCMToken(String uid, String fcmToken) async {
+    try {
+      await _firestore.collection('users').doc(uid).update({
+        'fcmToken': fcmToken,
+      });
+      print('FCM token updated for user: $uid');
+    } catch (e) {
+      print('Error updating FCM token: $e');
+      throw e;
+    }
+  }
+
 }

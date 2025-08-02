@@ -1,3 +1,4 @@
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -34,12 +35,13 @@ class UserProvider extends ChangeNotifier {
         updatedEventIds.add(eventId);
 
         _currentUser = AppUser(
-          email: _currentUser!.email,
-          firstName: _currentUser!.firstName,
-          lastName: _currentUser!.lastName,
-          uid: _currentUser!.uid,
-          role: _currentUser!.role,
-          registeredEventIds: updatedEventIds,
+            email: _currentUser!.email,
+            firstName: _currentUser!.firstName,
+            lastName: _currentUser!.lastName,
+            uid: _currentUser!.uid,
+            role: _currentUser!.role,
+            registeredEventIds: updatedEventIds,
+            fcmToken: _currentUser!.fcmToken
         );
 
         notifyListeners();
