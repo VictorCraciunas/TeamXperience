@@ -1,1 +1,37 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"teamxperience-dadc6","appId":"1:37662081989:android:e4d1102c63c4bbbf3081ac","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"teamxperience-dadc6","configurations":{"android":"1:37662081989:android:e4d1102c63c4bbbf3081ac","ios":"1:37662081989:ios:092d26caf00c46e33081ac"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "teamxperience-dadc6",
+          "appId": "1:37662081989:android:e4d1102c63c4bbbf3081ac",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "teamxperience-dadc6",
+          "configurations": {
+            "android": "1:37662081989:android:e4d1102c63c4bbbf3081ac",
+            "ios": "1:37662081989:ios:092d26caf00c46e33081ac"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    }
+  ]
+}
