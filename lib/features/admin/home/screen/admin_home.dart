@@ -88,7 +88,7 @@ class _AdminHomeState extends State<AdminHome> {
                             child: NavigateCard(
                               text1: "Trimite",
                               text2: "notificare",
-                              onTap: () {},
+                              onTap: () {controller.navigateToNotification();},
                             ),
                           ),
                           const SizedBox(width: 25),

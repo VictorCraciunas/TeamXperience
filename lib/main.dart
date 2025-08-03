@@ -17,6 +17,7 @@ import 'package:teamxperience/features/map/screen/map_screen.dart';
 import 'package:teamxperience/features/news_category_manipulation/screen/news_catergory_manipulation_screen.dart';
 import 'package:teamxperience/features/news_dashboard/screen/stiri_dashboard_screen.dart';
 import 'package:teamxperience/features/news_details/news_screen.dart';
+import 'package:teamxperience/features/notification/screen/notification_screen.dart';
 import 'package:teamxperience/features/register_team/screen/register_team_screen.dart';
 import 'package:teamxperience/features/sign-up/screen/register.dart';
 import 'package:teamxperience/features/splash/splash.dart';
@@ -166,6 +167,7 @@ class MyApp extends StatelessWidget {
           Routes.chatScreen: (_) => const ChatScreen(),
           Routes.teamConversations: (_) => const TeamChatsScreen(),
           Routes.map: (_) => const MapScreen(),
+          Routes.sendNotification: (_) => const NotificationScreen(),
 
         },
       ),

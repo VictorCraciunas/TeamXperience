@@ -80,6 +80,13 @@ class AdminHomeController {
     );
   }
 
+  void navigateToNotification() {
+    Navigator.pushNamed(
+      context,
+      Routes.sendNotification,
+    );
+  }
+
   void navigateToStiriDashboard() {
     final newsList = context.read<NewsList>();
     Navigator.pushNamed(

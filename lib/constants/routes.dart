@@ -27,5 +27,6 @@ abstract class Routes {
   static const chatScreen = '/chat/screen';
   static const teamConversations = '/team_conversions/admin';
   static const map = '/map';
+  static const sendNotification = '/notifcation';
 
 }
