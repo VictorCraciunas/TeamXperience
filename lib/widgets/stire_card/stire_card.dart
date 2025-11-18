@@ -125,7 +125,7 @@ class StireCard extends StatelessWidget {
                 children: [
                   // Title
                   Text(
-                    'Am publicat fotografiile de la evenimentul ${stire.title ?? 'Untitled'}',
+                    '${stire.title ?? 'Untitled'}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 15,

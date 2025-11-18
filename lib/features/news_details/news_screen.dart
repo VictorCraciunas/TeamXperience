@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/stire.dart';
@@ -37,7 +36,7 @@ class _NewsScreenState extends State<NewsScreen> {
     super.didChangeDependencies();
     if (!_initialized) {
       final arguments =
-      ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       stire = arguments['stire'] as Stire;
       isAdmin = arguments['isAdmin'] as bool? ?? false;
 
@@ -45,17 +44,14 @@ class _NewsScreenState extends State<NewsScreen> {
     }
   }
 
-
-
   void _navigateToEditStire(Stire stire) {
     Navigator.pushNamed(
       context,
       Routes.createNews,
-      arguments: {
-        'stire': stire,
-      },
+      arguments: {'stire': stire},
     );
   }
+
   final LinkUtil _linkUtil = LinkUtil();
 
   List<String> _getAllImages(Stire stire) {
@@ -81,11 +77,7 @@ class _NewsScreenState extends State<NewsScreen> {
         width: double.infinity,
         color: Colors.grey[300],
         child: const Center(
-          child: Icon(
-            Icons.image_not_supported,
-            color: Colors.grey,
-            size: 50,
-          ),
+          child: Icon(Icons.image_not_supported, color: Colors.grey, size: 50),
         ),
       );
     }
@@ -109,8 +101,11 @@ class _NewsScreenState extends State<NewsScreen> {
                 images[index],
                 fit: BoxFit.cover,
                 width: double.infinity,
-                loadingBuilder: (BuildContext context, Widget child,
-                    ImageChunkEvent? loadingProgress) {
+                loadingBuilder: (
+                  BuildContext context,
+                  Widget child,
+                  ImageChunkEvent? loadingProgress,
+                ) {
                   if (loadingProgress == null) {
                     return child;
                   }
@@ -118,10 +113,11 @@ class _NewsScreenState extends State<NewsScreen> {
                     color: Colors.grey[300],
                     child: Center(
                       child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                            : null,
+                        value:
+                            loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
                       ),
                     ),
                   );
@@ -145,7 +141,8 @@ class _NewsScreenState extends State<NewsScreen> {
             bottom: 0,
             left: 0,
             right: 0,
-            height: 317 * 0.3, // 40% of the carousel height
+            height: 317 * 0.3,
+            // 40% of the carousel height
             child: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
@@ -171,8 +168,8 @@ class _NewsScreenState extends State<NewsScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(8.0),
                       decoration: BoxDecoration(
-                          color: const Color(0x90FFFFFF),
-                          borderRadius: BorderRadius.circular(50)
+                        color: const Color(0x90FFFFFF),
+                        borderRadius: BorderRadius.circular(50),
                       ),
                       child: SvgPicture.asset(
                         'assets/images/back_icon.svg',
@@ -185,13 +182,12 @@ class _NewsScreenState extends State<NewsScreen> {
                     },
                   ),
                   GestureDetector(
-                    onTap: () {
-                    },
+                    onTap: () {},
                     child: Container(
                       padding: const EdgeInsets.all(8.0),
                       decoration: BoxDecoration(
-                          color: const Color(0x90FFFFFF),
-                          borderRadius: BorderRadius.circular(50)
+                        color: const Color(0x90FFFFFF),
+                        borderRadius: BorderRadius.circular(50),
                       ),
                       child: SvgPicture.asset(
                         'assets/images/download.svg',
@@ -199,7 +195,7 @@ class _NewsScreenState extends State<NewsScreen> {
                         height: 24,
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -223,16 +219,17 @@ class _NewsScreenState extends State<NewsScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
         imageCount,
-            (index) => AnimatedContainer(
+        (index) => AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           margin: const EdgeInsets.symmetric(horizontal: 4.0),
           width: _currentImageIndex == index ? 34.0 : 8.0,
           height: 8.0,
           decoration: BoxDecoration(
-            color: _currentImageIndex == index
-                ? Colors.white
-                : Colors.white.withValues(alpha: 0.5),
+            color:
+                _currentImageIndex == index
+                    ? Colors.white
+                    : Colors.white.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(4.0),
             boxShadow: [
               BoxShadow(
@@ -257,10 +254,11 @@ class _NewsScreenState extends State<NewsScreen> {
           children: [
             // Image carousel - Fixed height
             _buildImageCarousel(allImages),
-        
+
             // Content area - Overlapping with negative margin
             Transform.translate(
-              offset: const Offset(0, -30), // Move up by 30 pixels to create overlay
+              offset: const Offset(0, -30),
+              // Move up by 30 pixels to create overlay
               child: Container(
                 width: double.infinity,
                 decoration: const BoxDecoration(
@@ -300,10 +298,14 @@ class _NewsScreenState extends State<NewsScreen> {
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                stire.category?.name ?? 'No Category', // Now using NewsCategory name
-                                style: const TextStyle(fontSize: 12,color: Color(0xFF0B2F63)),
+                                stire.category?.name ?? 'No Category',
+                                // Now using NewsCategory name
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFF0B2F63),
+                                ),
                               ),
-                              const SizedBox(width: 4,),
+                              const SizedBox(width: 4),
                               SvgPicture.asset(
                                 'assets/images/punct.svg',
                                 height: 3,
@@ -313,10 +315,16 @@ class _NewsScreenState extends State<NewsScreen> {
                                   BlendMode.srcIn,
                                 ),
                               ),
-                              const SizedBox(width: 4,),
+                              const SizedBox(width: 4),
                               Text(
-                                CalendarHelper.formatDate(stire.publicationDate), // Now using NewsCategory name
-                                style: const TextStyle(fontSize: 12,color: Color(0xFF0B2F63)),
+                                CalendarHelper.formatDate(
+                                  stire.publicationDate,
+                                ),
+                                // Now using NewsCategory name
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFF0B2F63),
+                                ),
                               ),
                             ],
                           ),
@@ -342,39 +350,38 @@ class _NewsScreenState extends State<NewsScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        // Button using the buttonText from stire
-                        if(stire.buttonText != "")
-                        MyButton(
-                          buttonText: stire.buttonText ?? "Vezi galeria foto",
-                          textColor: MyColors.blackColor,
-                          buttonOnTap: () {
-                            _linkUtil.launchURL(stire.buttonLink, context);
-                          },
-                          withBorder: false,
-                          buttonColor: MyColors.transparentLightBlue,
-                          buttonTextSize: 15,
-                          fontWeight: FontWeight.w400,
-                        ),
+                        if (stire.buttonText != null)
+                          MyButton(
+                            buttonText: stire.buttonText ?? "Vezi galeria foto",
+                            textColor: MyColors.blackColor,
+                            buttonOnTap: () {
+                              _linkUtil.launchURL(stire.buttonLink, context);
+                            },
+                            withBorder: false,
+                            buttonColor: MyColors.transparentLightBlue,
+                            buttonTextSize: 15,
+                            fontWeight: FontWeight.w400,
+                          ),
 
                         const SizedBox(height: 30),
                         if (isAdmin == true)
-                        MyButton(
-                          buttonText:"Editeaza",
-                          textColor: Colors.white,
-                          buttonOnTap: () {
-                            _navigateToEditStire(stire);
-                          },
-                          withBorder: false,
-                          buttonTextSize: 16,
-                          fontWeight: FontWeight.w600,
-                          gradient: MyColors.myGradient,
-                        ),
+                          MyButton(
+                            buttonText: "Editeaza",
+                            textColor: Colors.white,
+                            buttonOnTap: () {
+                              _navigateToEditStire(stire);
+                            },
+                            withBorder: false,
+                            buttonTextSize: 16,
+                            fontWeight: FontWeight.w600,
+                            gradient: MyColors.myGradient,
+                          ),
                       ],
                     ),
                   ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

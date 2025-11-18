@@ -40,7 +40,9 @@ class EventGameController {
       }
     }
     else{
-      print("oare nu intra aici ?????????????????????");
+      for (int i = 0; i < event.nrMissions; i++) {
+        missionDone.add(MissionState.blocata);
+      }
     }
   }
 

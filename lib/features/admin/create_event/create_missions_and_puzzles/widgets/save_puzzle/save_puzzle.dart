@@ -44,7 +44,7 @@ class _SavePuzzleState extends State<SavePuzzle> {
             const SizedBox(height: 60), // Match top spacing
             // Puzzle Type Dropdown
             MyDropdownField<PuzzleType>(
-              labelText: 'Tip Eveniment',
+              labelText: 'Tip Puzzle',
               value: controller.type,
               items: PuzzleType.values
                   .map(

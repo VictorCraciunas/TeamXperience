@@ -25,13 +25,11 @@ class _EventGameScreenState extends State<EventGameScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     controller.dispose();
   }
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     if (!_initialized) {
       final arguments =
@@ -186,7 +184,7 @@ class _EventGameScreenState extends State<EventGameScreen> {
                                         context,
                                         Routes.chatScreen,
                                         arguments: {
-                                          'event' : controller.event,
+                                          'eventId' : controller.event.eventId,
                                           'team': controller.team
                                         },
                                       );
