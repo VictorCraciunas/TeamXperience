@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import '../../../model/stire.dart';
 import '../../../model/newsCategory.dart';
 import '../../../enums/stire_type.dart';
+import '../../../state_management/news_state_management.dart';
 
 class StiriDashboardController extends ChangeNotifier {
-  List<Stire> allRecentStiri = [];
-  List<Stire> allOlderStiri = [];
-  List<Stire> filteredRecentStiri = [];
-  List<Stire> filteredOlderStiri = [];
-  List<Stire> searchResults = [];
-  String searchQuery = '';
+  List<Stire> _searchResults = [];
+  String _searchQuery = '';
 
   // Filter state
   StireType? selectedStireType;
@@ -17,87 +14,39 @@ class StiriDashboardController extends ChangeNotifier {
   DateTime? startDate;
   DateTime? endDate;
 
-  List<Stire> get displayedRecentStiri {
-    if (searchQuery.isNotEmpty) {
-      return searchResults.where((stire) {
-        final now = DateTime.now();
-        final thirtyDaysAgo = now.subtract(const Duration(days: 30));
-        return stire.publicationDate == null ||
-            stire.publicationDate!.isAfter(thirtyDaysAgo);
-      }).toList();
+  // Getters
+  String get searchQuery => _searchQuery;
+
+  bool get hasActiveFilters =>
+      selectedStireType != null ||
+      (selectedCategory != null && selectedCategory!.name.isNotEmpty) ||
+      startDate != null ||
+      endDate != null;
+
+  Map<String, dynamic> get currentFilters => {
+    'stireType': selectedStireType,
+    'category': selectedCategory,
+    'startDate': startDate,
+    'endDate': endDate,
+  };
+
+  /// Get filtered stiri from NewsList
+  List<Stire> getFilteredStiri(NewsList newsList) {
+    return newsList.stireList.where(_stireMatchesFilters).toList()
+      ..sort((a, b) {
+        if (a.publicationDate == null && b.publicationDate == null) return 0;
+        if (a.publicationDate == null) return 1;
+        if (b.publicationDate == null) return -1;
+        return b.publicationDate!.compareTo(a.publicationDate!);
+      });
+  }
+
+  /// Get displayed stiri (with search applied if active)
+  List<Stire> getDisplayedStiri(NewsList newsList) {
+    if (_searchQuery.isNotEmpty) {
+      return _searchResults;
     }
-    return filteredRecentStiri;
-  }
-
-  List<Stire> get displayedOlderStiri {
-    if (searchQuery.isNotEmpty) {
-      return searchResults.where((stire) {
-        final now = DateTime.now();
-        final thirtyDaysAgo = now.subtract(const Duration(days: 30));
-        return stire.publicationDate != null &&
-            stire.publicationDate!.isBefore(thirtyDaysAgo);
-      }).toList();
-    }
-    return filteredOlderStiri;
-  }
-
-  // For backward compatibility - returns combined list with recent first
-  List<Stire> get displayedStiri {
-    return [...displayedRecentStiri, ...displayedOlderStiri];
-  }
-
-  void initializeStiri(List<Stire>? stiri) {
-    if (stiri != null && allRecentStiri.isEmpty && allOlderStiri.isEmpty) {
-      _separateStiri(stiri);
-      _applyFiltersToSeparatedStiri();
-      notifyListeners();
-    }
-  }
-
-  void _separateStiri(List<Stire> stiri) {
-    final now = DateTime.now();
-    final thirtyDaysAgo = now.subtract(const Duration(days: 30));
-    allRecentStiri = [];
-    allOlderStiri = [];
-
-    for (final stire in stiri) {
-      if (stire.publicationDate == null) {
-        // Stiri without dates go to recent stiri
-        allRecentStiri.add(stire);
-      } else if (stire.publicationDate!.isAfter(thirtyDaysAgo)) {
-        allRecentStiri.add(stire);
-      } else {
-        allOlderStiri.add(stire);
-      }
-    }
-
-    // Sort recent stiri descending (newest first)
-    allRecentStiri.sort((a, b) {
-      if (a.publicationDate == null && b.publicationDate == null) return 0;
-      if (a.publicationDate == null) return 1;
-      if (b.publicationDate == null) return -1;
-      return b.publicationDate!.compareTo(a.publicationDate!);
-    });
-
-    // Sort older stiri descending (newest first)
-    allOlderStiri.sort((a, b) {
-      if (a.publicationDate == null && b.publicationDate == null) return 0;
-      if (a.publicationDate == null) return 1;
-      if (b.publicationDate == null) return -1;
-      return b.publicationDate!.compareTo(a.publicationDate!);
-    });
-  }
-
-  void _applyFiltersToSeparatedStiri() {
-    // Apply filters to recent stiri
-    filteredRecentStiri = allRecentStiri.where((stire) {
-      return _stireMatchesFilters(stire);
-    }).toList();
-
-    // Apply filters to older stiri
-    filteredOlderStiri = allOlderStiri.where((stire) {
-      return _stireMatchesFilters(stire);
-    }).toList();
+    return getFilteredStiri(newsList);
   }
 
   bool _stireMatchesFilters(Stire stire) {
@@ -125,40 +74,34 @@ class StiriDashboardController extends ChangeNotifier {
   }
 
   void applyFilters() {
-    _applyFiltersToSeparatedStiri();
-
-    // If search is active, apply search on filtered results
-    if (searchQuery.isNotEmpty) {
-      _applySearch();
+    // Clear search when filters change
+    if (_searchQuery.isNotEmpty) {
+      _searchQuery = '';
+      _searchResults = [];
     }
-
     notifyListeners();
   }
 
-  void searchStiri(String query) {
-    searchQuery = query.trim();
-    if (searchQuery.isEmpty) {
-      searchResults = [];
+  void searchStiri(String query, NewsList newsList) {
+    _searchQuery = query.trim();
+    if (_searchQuery.isEmpty) {
+      _searchResults = [];
     } else {
-      _applySearch();
+      final lowerQuery = _searchQuery.toLowerCase();
+      final allFilteredStiri = getFilteredStiri(newsList);
+      _searchResults = allFilteredStiri.where((stire) {
+        final stireTitle = stire.title?.toLowerCase() ?? '';
+        final stireDescription = stire.description?.toLowerCase() ?? '';
+        return stireTitle.contains(lowerQuery) ||
+            stireDescription.contains(lowerQuery);
+      }).toList();
     }
     notifyListeners();
-  }
-
-  void _applySearch() {
-    final lowerQuery = searchQuery.toLowerCase();
-    final allFilteredStiri = [...filteredRecentStiri, ...filteredOlderStiri];
-    searchResults = allFilteredStiri.where((stire) {
-      final stireTitle = stire.title?.toLowerCase() ?? '';
-      final stireDescription = stire.description?.toLowerCase() ?? '';
-      return stireTitle.contains(lowerQuery) ||
-          stireDescription.contains(lowerQuery);
-    }).toList();
   }
 
   void clearSearch() {
-    searchQuery = '';
-    searchResults = [];
+    _searchQuery = '';
+    _searchResults = [];
     notifyListeners();
   }
 
@@ -177,11 +120,7 @@ class StiriDashboardController extends ChangeNotifier {
     selectedCategory = null;
     startDate = null;
     endDate = null;
-    _applyFiltersToSeparatedStiri();
-    if (searchQuery.isNotEmpty) {
-      _applySearch();
-    }
-    notifyListeners();
+    applyFilters();
   }
 
   void clearStireTypeFilter() {
@@ -199,20 +138,4 @@ class StiriDashboardController extends ChangeNotifier {
     endDate = null;
     applyFilters();
   }
-
-  bool get hasActiveFilters =>
-      selectedStireType != null ||
-          (selectedCategory != null && selectedCategory!.name.isNotEmpty) ||
-          startDate != null ||
-          endDate != null;
-
-  Map<String, dynamic> get currentFilters => {
-    'stireType': selectedStireType,
-    'category': selectedCategory,
-    'startDate': startDate,
-    'endDate': endDate,
-  };
-
-  bool get hasRecentStiri => displayedRecentStiri.isNotEmpty;
-  bool get hasOlderStiri => displayedOlderStiri.isNotEmpty;
 }

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/stire.dart';
 import 'package:teamxperience/widgets/my_appbar.dart';
 
 import '../../../constants/routes.dart';
+import '../../../state_management/news_state_management.dart';
 import '../../../widgets/stire_card/stire_card.dart';
 import '../controller/stiri_dashboard_controller.dart';
 
@@ -43,16 +45,15 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
     ));
 
     _searchController.addListener(() {
-      controller.searchStiri(_searchController.text);
+      final newsList = context.read<NewsList>();
+      controller.searchStiri(_searchController.text, newsList);
     });
-  }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Get stiri from route arguments
-    final stiri = ModalRoute.of(context)?.settings.arguments as List<Stire>?;
-    controller.initializeStiri(stiri);
+    // Load stiri when screen initializes (like events dashboard)
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final newsList = context.read<NewsList>();
+      await newsList.loadStire();
+    });
   }
 
   @override
@@ -143,10 +144,12 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
             horizontal: MyPaddings.appHorizontalPadding,
             vertical: 15,
           ),
-          child: AnimatedBuilder(
-            animation: controller,
-            builder: (context, child) {
-              return Column(
+          child: Consumer<NewsList>(
+            builder: (context, newsList, child) {
+              return AnimatedBuilder(
+                animation: controller,
+                builder: (context, child) {
+                  return Column(
                 children: [
                   // Header with buttons and filters (non-scrollable)
                   AnimatedBuilder(
@@ -473,24 +476,8 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
 
                   // Scrollable content area
                   Expanded(
-                    child: controller.hasRecentStiri || controller.hasOlderStiri
-                        ? SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Recent Stiri Section
-                          if (controller.hasRecentStiri) ...[
-                            const SizedBox(height: 20),
-                            _buildStiriList(controller.displayedRecentStiri),
-                          ],
-
-
-                          // Add some bottom padding
-                          const SizedBox(height: 20),
-                        ],
-                      ),
-                    )
-                        : Center(
+                    child: controller.getDisplayedStiri(newsList).isEmpty
+                        ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -512,13 +499,25 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                           ),
                         ],
                       ),
+                    )
+                        : SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 20),
+                          _buildStiriList(controller.getDisplayedStiri(newsList)),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               );
             },
-          ),
-        ),
+          );
+        },
+      ),
+    ),
       ),
     );
   }
