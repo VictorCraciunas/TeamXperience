@@ -88,27 +88,16 @@ class CalendarHelper {
 
     return "$dayName, $day $monthName";
   }
+
   static Map<String, String> formatEventCardDate(DateTime? dateTime) {
     if (dateTime == null) {
-      return {'month': 'Ianuarie', 'day': '01'};
+      return {'month': 'IAN', 'day': '01'};
     }
 
-    final month = _romanianMonths[dateTime.month] ?? 'Ianuarie';
+    final month = _romanianMonthsShort[dateTime.month] ?? 'ian';
     final day = dateTime.day.toString().padLeft(2, '0');
 
-    return {'month': month, 'day': day};
-  }
-
-  /// Alternative: Get just the month name for event cards
-  static String getEventCardMonth(DateTime? dateTime) {
-    if (dateTime == null) return 'Ianuarie';
-    return _romanianMonths[dateTime.month] ?? 'Ianuarie';
-  }
-
-  /// Alternative: Get just the day for event cards
-  static String getEventCardDay(DateTime? dateTime) {
-    if (dateTime == null) return '01';
-    return dateTime.day.toString().padLeft(2, '0');
+    return {'month': month.toUpperCase(), 'day': day};
   }
 
   /// Formats a DateTime to time format: "ora 11:00"
@@ -140,18 +129,6 @@ class CalendarHelper {
 
     return '$day $monthAbbr $year';
   }
-
-  /// Alternative format with shorter day format: "7 iun 2024" (without leading zero)
-  static String formatDateShort(DateTime? date) {
-    if (date == null) return 'No date';
-
-    final day = date.day.toString();
-    final monthAbbr = _romanianMonthsShort[date.month] ?? 'unknown';
-    final year = date.year.toString();
-
-    return '$day $monthAbbr $year';
-  }
-
 
 
   // Romanian day abbreviations for calendar headers

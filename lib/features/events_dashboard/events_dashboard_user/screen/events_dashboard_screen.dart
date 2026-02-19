@@ -28,6 +28,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
   bool isEvenimente = true;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
+  bool _isControllerInitialized = false;
 
   @override
   void initState() {
@@ -54,8 +55,11 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final events = ModalRoute.of(context)?.settings.arguments as List<Event>;
-    controller = EventsDashboardUserController(events,context);
+    if (!_isControllerInitialized) {
+      final events = ModalRoute.of(context)?.settings.arguments as List<Event>;
+      controller = EventsDashboardUserController(events, context);
+      _isControllerInitialized = true;
+    }
   }
 
   @override
@@ -407,6 +411,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                           onEventTap: (event) => navigateToEventDetails(context, event),
                           isAdmin: false,
                           shrinkWrap: true,
+                          eventStats: controller.eventStats,
                         ),
                       )
                           : Center(
@@ -437,9 +442,14 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                     Expanded(
                       child: Consumer<UserEventsProvider>(
                         builder: (context, userEventsProvider, child) {
-                          if (userEventsProvider.upcomingRegisteredEvents.isNotEmpty) {
-                            return RegisteredEventsList(
-                              events: userEventsProvider.upcomingRegisteredEvents, // Use userEventsProvider instead of controller
+                          // Apply filters to registered events
+                          final filteredRegisteredEvents = controller.filterRegisteredEvents(
+                              userEventsProvider.upcomingRegisteredEvents
+                          );
+
+                          if (filteredRegisteredEvents.isNotEmpty) {
+                            return RegisteredEventsList(  // ✅ Remove SingleChildScrollView wrapper
+                              events: filteredRegisteredEvents,
                               onEventTap: (event) => _navigateToTeamDetails(event),
                             );
                           } else {
@@ -454,7 +464,9 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
-                                    'Nu există înscrieri',
+                                    controller.searchQuery.isNotEmpty || controller.hasActiveFilters
+                                        ? 'Nu s-au găsit înscrieri'
+                                        : 'Nu există înscrieri',
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: MyColors.greyText.withValues(alpha: 0.7),

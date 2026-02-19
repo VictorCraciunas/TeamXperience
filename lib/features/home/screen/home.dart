@@ -130,6 +130,8 @@ class _HomeState extends State<Home> {
                       EventsCarousel(
                         events: eventList.upcomingEvents,
                         onEventTap: controller.navigateToEventDetails,
+                        isAdmin: false,
+                        eventStats: const {},
                       ),
                       const SizedBox(height: 20),
                     ],

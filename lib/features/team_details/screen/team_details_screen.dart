@@ -61,9 +61,14 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (controller.team == null) {
+            final team = controller.team;
+
+            if (team == null) {
               return const Center(child: Text('No team found for this event'));
             }
+
+            final eventDate = eventDateTime['date'] ?? '';
+            final eventTime = eventDateTime['time'] ?? '';
 
             return SingleChildScrollView(
               child: Padding(
@@ -78,6 +83,8 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                       eventImageCache: ImageHelper.eventImageCache,
                       isAdmin: false,
                       height: 194,
+                      nrTeams: controller.teams.length,
+                      nrPerson: team.userIds.length,
                     ),
                     const SizedBox(height: 10),
                     Center(
@@ -92,8 +99,8 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                     ),
                     const SizedBox(height: 20),
                     DetailWidget(
-                      text1: eventDateTime['date']!,
-                      text2: eventDateTime['time']!,
+                      text1: eventDate,
+                      text2: eventTime,
                       iconPath: 'assets/images/calendar_icon.svg',
                     ),
                     const SizedBox(height: 10),
@@ -115,30 +122,27 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                     const SizedBox(height: 20),
                     TeamDetailWidget(
                       text1: "Nume echipă",
-                      text2:
-                          controller
-                              .team!
-                              .name, // Safe to use ! here because we checked above
+                      text2: team.name,
                     ),
                     const SizedBox(height: 15),
                     TeamDetailWidget(
                       text1: "Componență echipă",
-                      text2: controller.team!.teamMembers,
+                      text2: team.teamMembers,
                     ),
                     const SizedBox(height: 15),
                     TeamDetailWidget(
                       text1: "Nume căpitan",
-                      text2: controller.team!.captainName,
+                      text2: team.captainName,
                     ),
                     const SizedBox(height: 15),
                     TeamDetailWidget(
                       text1: "Email capitan",
-                      text2: controller.team!.captainEmail,
+                      text2: team.captainEmail,
                     ),
                     const SizedBox(height: 15),
                     TeamDetailWidget(
                       text1: "Telefon",
-                      text2: controller.team!.phoneNumber,
+                      text2: team.phoneNumber,
                     ),
 
                     const SizedBox(height: 30),

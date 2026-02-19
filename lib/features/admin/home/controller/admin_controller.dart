@@ -3,14 +3,21 @@ import 'package:provider/provider.dart';
 import 'package:teamxperience/state_management/news_state_management.dart';
 
 import '../../../../backend/authentication/AuthenticationRepository.dart';
+import '../../../../backend/repo/teamRepo.dart';
 import '../../../../constants/routes.dart';
 import '../../../../model/event.dart';
 import '../../../../model/stire.dart';
 import '../../../../state_management/events_state_management.dart';
 
-class AdminHomeController {
+class AdminHomeController extends ChangeNotifier {
   final BuildContext context;
   final AuthenticationRepository _authRepo = AuthenticationRepository();
+  final TeamRepo _teamRepo = TeamRepo();
+
+  // Event statistics (eventId -> {nrTeams, nrPerson})
+  Map<String, Map<String, int>> _eventStats = {};
+
+  Map<String, Map<String, int>> get eventStats => _eventStats;
 
   AdminHomeController(this.context);
 
@@ -96,9 +103,13 @@ class AdminHomeController {
     );
   }
 
-  void loadInitialData() {
-    context.read<EventList>().loadEvents();
-    context.read<NewsList>().loadStire();
+  Future<void> loadInitialData() async {
+    await context.read<EventList>().loadEvents();
+    await context.read<NewsList>().loadStire();
+
+    // Load event stats
+    final eventList = context.read<EventList>();
+    await loadEventStats(eventList.upcomingEvents);
   }
 
   Future<void> refreshData() async {
@@ -106,5 +117,29 @@ class AdminHomeController {
       context.read<EventList>().refresh(),
       context.read<NewsList>().refresh(),
     ]);
+
+    // Reload event stats
+    final eventList = context.read<EventList>();
+    await loadEventStats(eventList.upcomingEvents);
+  }
+
+  /// Load team statistics for events
+  Future<void> loadEventStats(List<Event> events) async {
+    for (final event in events) {
+      try {
+        final teams = await _teamRepo.getAllTeamsForEvent(event.eventId);
+        final nrTeams = teams.length;
+        final nrPerson = teams.fold<int>(0, (sum, team) => sum + team.userIds.length);
+
+        _eventStats[event.eventId] = {
+          'nrTeams': nrTeams,
+          'nrPerson': nrPerson,
+        };
+      } catch (e) {
+        // If error fetching teams, default to 0
+        _eventStats[event.eventId] = {'nrTeams': 0, 'nrPerson': 0};
+      }
+    }
+    notifyListeners();
   }
 }

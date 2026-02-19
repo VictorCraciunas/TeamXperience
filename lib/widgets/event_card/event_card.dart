@@ -10,20 +10,24 @@ class EventCard extends StatelessWidget {
   final Event event;
   final VoidCallback? onTap;
   final bool isAdmin;
+  final int nrTeams;
+  final int nrPerson;
 
   const EventCard({
     super.key,
     required this.event,
     this.onTap,
     required this.isAdmin,
+    required this.nrTeams,
+    required this.nrPerson,
   });
 
   @override
   Widget build(BuildContext context) {
     // Use CalendarHelper for date formatting
     final dateFormatted = CalendarHelper.formatEventCardDate(event.dateEvent);
-    final month = dateFormatted['month']!;
-    final day = dateFormatted['day']!;
+    final month = dateFormatted['month'] ?? 'IAN';
+    final day = dateFormatted['day'] ?? '01';
 
     return Card(
       shadowColor: const Color(0xFF0B2F63).withValues(alpha: 0.1),
@@ -44,6 +48,8 @@ class EventCard extends StatelessWidget {
                 eventImageCache: ImageHelper.eventImageCache,
                 isAdmin: isAdmin,
                 height: 175,
+                nrTeams: nrTeams,
+                nrPerson: nrPerson,
               ),
             ),
 
@@ -53,12 +59,12 @@ class EventCard extends StatelessWidget {
               child: Row(
                 children: [
                   Container(
-                    height: 60,
-                    width: 63,
                     decoration: BoxDecoration(
                       color: MyColors.transparentLightBlue,
                       borderRadius: BorderRadius.circular(10),
                     ),
+                    width: 60,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

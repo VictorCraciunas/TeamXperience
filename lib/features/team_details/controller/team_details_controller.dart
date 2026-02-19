@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/backend/repo/teamRepo.dart';
 import 'package:teamxperience/model/user.dart';
+import 'package:teamxperience/service/team_service/team_service.dart';
 import 'package:teamxperience/utils/snackbars.dart';
 
 import '../../../model/event.dart';
@@ -10,7 +11,9 @@ import '../../../service/share_service.dart';
 class TeamControllerDetails {
   late Event event;
   late AppUser? user;
-  TeamRepo teamRepo = TeamRepo();
+  TeamService teamService = TeamService();
+  late List<Team> teams;
+
   ShareService shareService = ShareService();
   Team? team;
   bool isLoading = true;
@@ -21,12 +24,13 @@ class TeamControllerDetails {
 
   Future<void> initializeTeam() async {
     team = await _getTeam();
+    await loadTeams();
     isLoading = false;
   }
 
   Future<Team?> _getTeam() async {
     if (user != null) {
-      return await teamRepo.getUserTeamForEvent(event.eventId, user!.uid);
+      return await teamService.getUserTeamForEvent(event.eventId, user!.uid);
     }
     return null;
   }
@@ -47,7 +51,9 @@ class TeamControllerDetails {
     final success = await shareService.shareTeamRegistration(team!, event, context);
     _handleShareResult(context, success, 'general');
   }
-
+  Future<void> loadTeams() async {
+    teams = await teamService.getTeams(event.eventId);
+  }
 
 
   /// Handles the result of sharing operations
@@ -96,4 +102,5 @@ class TeamControllerDetails {
       }
     }
   }
+
 }

@@ -57,6 +57,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     final eventDateTime = CalendarHelper.formatEventDateTime(
       controller.event.dateEvent,
     );
+    final eventDate = eventDateTime['date'] ?? '';
+    final eventTime = eventDateTime['time'] ?? '';
 
     return Consumer<UserProvider>( // Wrap the entire Scaffold with Consumer
       builder: (context, userProvider, child) {
@@ -122,11 +124,23 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                      const SizedBox(height: 15),
-                    EventImage(
-                      event: controller.event,
-                      eventImageCache: ImageHelper.eventImageCache,
-                      isAdmin: isAdmin,
-                      height: 194,
+                    AnimatedBuilder(
+                      animation: controller,
+                      builder:(context, child)  {
+                        final totalPeople = controller.teams.fold<int>(
+                          0,
+                          (sum, team) => sum + team.userIds.length,
+                        );
+
+                        return EventImage(
+                          event: controller.event,
+                          eventImageCache: ImageHelper.eventImageCache,
+                          isAdmin: isAdmin,
+                          height: 194,
+                          nrTeams: controller.teams.length,
+                          nrPerson: totalPeople,
+                        );
+                      }
                     ),
                     const SizedBox(height: 10),
                     Text(
@@ -141,8 +155,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                       AlreadyRegisteredCard(event: controller.event, onDetailsTap: () => _navigateToTeamDetails()),
                     const SizedBox(height: 20),
                     DetailWidget(
-                      text1: eventDateTime['date']!,
-                      text2: eventDateTime['time']!,
+                      text1: eventDate,
+                      text2: eventTime,
                       iconPath: 'assets/images/calendar_icon.svg',
                     ),
                     const SizedBox(height: 10),

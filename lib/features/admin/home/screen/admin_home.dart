@@ -109,10 +109,14 @@ class _AdminHomeState extends State<AdminHome> {
                         onTap: controller.navigateToEventDashboard,
                       ),
                       const SizedBox(height: 20),
-                      EventsCarousel(
-                        events: eventList.upcomingEvents,
-                        onEventTap: controller.navigateToEventDetails,
-                        isAdmin: true,
+                      AnimatedBuilder(
+                        animation: controller,
+                        builder:(context,child){return EventsCarousel(
+                          events: eventList.upcomingEvents,
+                          onEventTap: controller.navigateToEventDetails,
+                          isAdmin: true,
+                          eventStats: controller.eventStats,
+                        );}
                       ),
                       const SizedBox(height: 20),
 

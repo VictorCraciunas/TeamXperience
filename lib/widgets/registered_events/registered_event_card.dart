@@ -23,8 +23,8 @@ class RegisteredEventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use CalendarHelper for date formatting
     final dateFormatted = CalendarHelper.formatEventCardDate(event.dateEvent);
-    final month = dateFormatted['month']!;
-    final day = dateFormatted['day']!;
+    final month = dateFormatted['month'] ?? 'IAN';
+    final day = dateFormatted['day'] ?? '01';
 
     return Card(
       shadowColor: const Color(0xFF0B2F63).withValues(alpha: 0.1),
@@ -39,7 +39,7 @@ class RegisteredEventCard extends StatelessWidget {
               children: [
                 Container(
                   height: 60,
-                  width: 63,
+                  width: 60,
                   decoration: BoxDecoration(
                     color: upComingRegisteredEvent ? Colors.white : MyColors.transparentLightBlue,
                     borderRadius: BorderRadius.circular(10),

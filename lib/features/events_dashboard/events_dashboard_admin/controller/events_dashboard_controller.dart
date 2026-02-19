@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../backend/repo/teamRepo.dart';
 import '../../../../enums/event_type.dart';
 import '../../../../model/event.dart';
 import '../../../../state_management/events_state_management.dart';
@@ -7,9 +8,13 @@ import '../../events_filter_service.dart';
 
 class EventsDashboardController extends ChangeNotifier {
   final FilterService _filterService = FilterService();
+  final TeamRepo _teamRepo = TeamRepo();
 
   List<Event> _searchResults = [];
   String _searchQuery = '';
+
+  // Event statistics (eventId -> {nrTeams, nrPerson})
+  Map<String, Map<String, int>> _eventStats = {};
 
   // Filter state
   EventType? _selectedEventType;
@@ -21,8 +26,10 @@ class EventsDashboardController extends ChangeNotifier {
   EventType? get selectedEventType => _selectedEventType;
   DateTime? get startDate => _startDate;
   DateTime? get endDate => _endDate;
+  Map<String, Map<String, int>> get eventStats => _eventStats;
 
   bool get hasActiveFilters => _selectedEventType != null || _startDate != null || _endDate != null;
+
 
   Map<String, dynamic> get currentFilters => {
     'eventType': _selectedEventType,
@@ -127,5 +134,30 @@ class EventsDashboardController extends ChangeNotifier {
     _startDate = null;
     _endDate = null;
     notifyListeners();
+  }
+
+  /// Load team statistics for all events
+  Future<void> loadEventStats(List<Event> events) async {
+    for (final event in events) {
+      try {
+        final teams = await _teamRepo.getAllTeamsForEvent(event.eventId);
+        final nrTeams = teams.length;
+        final nrPerson = teams.fold<int>(0, (sum, team) => sum + team.userIds.length);
+
+        _eventStats[event.eventId] = {
+          'nrTeams': nrTeams,
+          'nrPerson': nrPerson,
+        };
+      } catch (e) {
+        // If error fetching teams, default to 0
+        _eventStats[event.eventId] = {'nrTeams': 0, 'nrPerson': 0};
+      }
+    }
+    notifyListeners();
+  }
+
+  /// Get statistics for a specific event
+  Map<String, int> getEventStats(String eventId) {
+    return _eventStats[eventId] ?? {'nrTeams': 0, 'nrPerson': 0};
   }
 }

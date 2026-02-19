@@ -9,14 +9,14 @@ import '../../../constants/routes.dart';
 import '../../../model/event.dart';
 import '../../../state_management/user_provider.dart';
 
-class EventDetailsController{
+class EventDetailsController extends ChangeNotifier{
   late Event  event;
   late AppUser? user;
   late BuildContext context;
-  TeamService service = TeamService();
 
   EventDetailsController(this.event, this.context){
     user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    loadTeams();
   }
 
   void navigateToMap() {
@@ -31,6 +31,13 @@ class EventDetailsController{
           },
       );
     }
+  }
+
+  TeamService service = TeamService();
+   List<Team> teams = [];
+  Future<void> loadTeams() async {
+    teams = await service.getTeams(event.eventId);
+    notifyListeners(); // Trigger UI rebuild
   }
 
 }

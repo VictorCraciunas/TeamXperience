@@ -7,6 +7,7 @@ class EventsList extends StatelessWidget {
   final Function(Event) onEventTap;
   final bool isAdmin;
   final bool shrinkWrap; // Add this parameter to control behavior
+  final Map<String, Map<String, int>> eventStats;
 
   const EventsList({
     super.key,
@@ -14,6 +15,7 @@ class EventsList extends StatelessWidget {
     required this.onEventTap,
     this.isAdmin = false,
     this.shrinkWrap = false, // Default to ListView behavior
+    required this.eventStats,
   });
 
   @override
@@ -28,12 +30,15 @@ class EventsList extends StatelessWidget {
     if (shrinkWrap) {
       return Column(
         children: events.map((event) {
+          final stats = eventStats[event.eventId] ?? {'nrTeams': 0, 'nrPerson': 0};
           return Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: EventCard(
               event: event,
               onTap: () => onEventTap(event),
               isAdmin: isAdmin,
+              nrTeams: stats['nrTeams'] ?? 0,
+              nrPerson: stats['nrPerson'] ?? 0,
             ),
           );
         }).toList(),
@@ -45,12 +50,15 @@ class EventsList extends StatelessWidget {
       itemCount: events.length,
       itemBuilder: (context, index) {
         final event = events[index];
+        final stats = eventStats[event.eventId] ?? {'nrTeams': 0, 'nrPerson': 0};
         return Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: EventCard(
             event: event,
             onTap: () => onEventTap(event),
             isAdmin: isAdmin,
+            nrTeams: stats['nrTeams'] ?? 0,
+            nrPerson: stats['nrPerson'] ?? 0,
           ),
         );
       },

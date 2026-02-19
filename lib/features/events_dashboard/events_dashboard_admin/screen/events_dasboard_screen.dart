@@ -52,8 +52,13 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
     });
 
     // Load events when screen initializes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<EventList>().loadEvents();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final eventList = context.read<EventList>();
+      await eventList.loadEvents();
+
+      // Load team statistics for all events
+      final allEvents = [...eventList.upcomingEvents, ...eventList.pastEvents];
+      await controller.loadEventStats(allEvents);
     });
   }
 
@@ -480,6 +485,7 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                     onEventTap: (event) => navigateToEventDetails(context, event),
                                     isAdmin: true,
                                     shrinkWrap: true, // This makes it use Column instead of ListView
+                                    eventStats: controller.eventStats,
                                   ),
                                 ],
 
@@ -492,6 +498,7 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                     onEventTap: (event) => navigateToEventDetails(context, event),
                                     isAdmin: true,
                                     shrinkWrap: true, // This makes it use Column instead of ListView
+                                    eventStats: controller.eventStats,
                                   ),
                                 ],
 

@@ -14,12 +14,16 @@ class EventImage extends StatelessWidget {
     required CacheManager eventImageCache,
     required this.isAdmin,
     required this.height,
+    required this.nrTeams,
+    required this.nrPerson,
   }) : _eventImageCache = eventImageCache;
 
   final Event event;
   final CacheManager _eventImageCache;
   final bool isAdmin;
   final double height;
+  final int nrTeams;
+  final int nrPerson;
 
 
   @override
@@ -30,7 +34,7 @@ class EventImage extends StatelessWidget {
       child: Stack(
         children: [
           // Background Image
-          event.landingImageUrl != null && event.landingImageUrl!.isNotEmpty
+          event.landingImageUrl != null && event.landingImageUrl?.isNotEmpty == true
               ? CachedNetworkImage(
                 imageBuilder:
                     (context, imageProvider) => Container(
@@ -42,7 +46,7 @@ class EventImage extends StatelessWidget {
                         ),
                       ),
                     ),
-                imageUrl: event.landingImageUrl!,
+                imageUrl: event.landingImageUrl ?? '',
                 fit: BoxFit.cover,
                 cacheManager: _eventImageCache,
               )
@@ -77,18 +81,18 @@ class EventImage extends StatelessWidget {
                           height: 18,
                         ),
                         const SizedBox(width: 2.0),
-                        const Text(
-                          "5",
-                          style: TextStyle(
+                        Text(
+                          "$nrTeams",
+                          style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
                           ),
                         ),
                         const SizedBox(width: 2.0),
-                        const Text(
-                          "(78 p.)",
-                          style: TextStyle(
+                        Text(
+                          "($nrPerson p.)",
+                          style: const TextStyle(
                             fontSize: 9,
                             fontWeight: FontWeight.w500,
                             color: Colors.white,
