@@ -11,6 +11,7 @@ import 'package:teamxperience/features/enter_code/screen/enter_code.dart';
 import 'package:teamxperience/features/event_details/screen/event_details_screen.dart';
 import 'package:teamxperience/features/event_game/screen/event_game_screen.dart';
 import 'package:teamxperience/features/event_game/screen/puzzle_game_screen.dart';
+import 'package:teamxperience/features/event_see_registered_teams/event_registered_teams_screen.dart';
 import 'package:teamxperience/features/filter/filter_news/screen/filter_news.dart';
 import 'package:teamxperience/features/forgot-password/screen/forgot_password_screen.dart';
 import 'package:teamxperience/features/map/screen/map_screen.dart';
@@ -168,6 +169,7 @@ class MyApp extends StatelessWidget {
           Routes.teamConversations: (_) => const TeamChatsScreen(),
           Routes.map: (_) => const MapScreen(),
           Routes.sendNotification: (_) => const NotificationScreen(),
+          Routes.eventRegisteredTeams: (_) => const EventRegisteredTeams(),
 
         },
       ),

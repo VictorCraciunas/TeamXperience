@@ -81,7 +81,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               child: MyButton(
                 buttonText: "Vezi echipele inscrise",
                 textColor: Colors.white,
-                buttonOnTap: () {},
+                buttonOnTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    Routes.eventRegisteredTeams,
+                    arguments: controller.event,
+                  );
+                },
                 withBorder: false,
                 gradient: MyColors.myGradient,
                 buttonTextSize: 15,

@@ -23,6 +23,7 @@ abstract class Routes {
   static const eventDashboardUser = '/events_dasboard/user';
   static const registerTeam = '/register_tean';
   static const registerTeamDetails = '/register_team/details';
+  static const eventRegisteredTeams = '/event_registered_teams';
   static const enterCodeScreen = '/enter_code/screen';
   static const chatScreen = '/chat/screen';
   static const teamConversations = '/team_conversions/admin';
