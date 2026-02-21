@@ -19,11 +19,11 @@ class ComponentToWidget {
           child: TextComponentWidget(
             text: component.text ?? '',
             textColor: component.textColor,
-            // Pass hex string directly
             animation: component.animation,
             fontSize: component.fontSize,
             fontWeight: component.fontWeight,
             fontFamily: component.fontFamily,
+            typewriterSpeed: component.typewriterSpeed,
           ),
         );
       case ComponentType.image:

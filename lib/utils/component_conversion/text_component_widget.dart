@@ -8,6 +8,7 @@ class TextComponentWidget extends StatelessWidget {
   final double? fontSize;
   final String? fontWeight; // String like "Black (900)"
   final String? fontFamily;
+  final int? typewriterSpeed;
 
   const TextComponentWidget({
     super.key,
@@ -16,7 +17,8 @@ class TextComponentWidget extends StatelessWidget {
     this.animation,
     this.fontSize,
     this.fontWeight,
-    this.fontFamily
+    this.fontFamily,
+    this.typewriterSpeed,
   });
 
   // Helper to convert hex string to Color
@@ -53,6 +55,7 @@ class TextComponentWidget extends StatelessWidget {
         fontSize: fontSize,
         fontWeight: currentFontWeight,
         fontFamily: fontFamily,
+        msPerCharacter: typewriterSpeed ?? 100,
       );
     }
 
@@ -75,6 +78,7 @@ class TypewriterText extends StatefulWidget {
   final double? fontSize;
   final FontWeight fontWeight;
   final String? fontFamily;
+  final int msPerCharacter;
 
   const TypewriterText({
     super.key,
@@ -83,6 +87,7 @@ class TypewriterText extends StatefulWidget {
     this.fontSize,
     required this.fontWeight,
     this.fontFamily,
+    this.msPerCharacter = 100,
   });
 
   @override
@@ -113,7 +118,7 @@ class _TypewriterTextState extends State<TypewriterText> with SingleTickerProvid
     _controller?.dispose();
 
     _controller = AnimationController(
-      duration: Duration(milliseconds: widget.text.length * 100),
+      duration: Duration(milliseconds: widget.text.length * widget.msPerCharacter),
       vsync: this,
     );
 

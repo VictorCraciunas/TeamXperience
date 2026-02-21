@@ -72,6 +72,10 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
         _buildTextContentField(),
         const SizedBox(height: 16),
         _buildAnimationDropdown(),
+        if (controller.animation == AnimationType.typewriter) ...[
+          const SizedBox(height: 16),
+          _buildTypewriterSpeedSlider(),
+        ],
         const SizedBox(height: 16),
         _buildFontFamilyDropdown(),
         const SizedBox(height: 16),
@@ -163,6 +167,22 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
           color: MyColors.greyText,
         ),
       ),
+    );
+  }
+
+  Widget _buildTypewriterSpeedSlider() {
+    return SliderWidget(
+      title: 'Viteză Typewriter (ms/caracter)',
+      min: 10,
+      max: 300,
+      divisions: 29,
+      value: controller.typewriterSpeed.toDouble(),
+      label: '${controller.typewriterSpeed} ms',
+      onChanged: (value) {
+        setState(() {
+          controller.typewriterSpeed = value.toInt();
+        });
+      },
     );
   }
 

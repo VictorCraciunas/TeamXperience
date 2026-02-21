@@ -31,6 +31,7 @@ class Component {
    String? colorBorderContainer; // Border color for the container
    double? width;
    double? height;
+   int? typewriterSpeed; // ms per character
 
   Component({
     this.type,
@@ -61,7 +62,8 @@ class Component {
     this.colorBorderInput,
     this.colorBorderContainer,
     this.height,
-    this.width
+    this.width,
+    this.typewriterSpeed,
   });
 
    factory Component.fromMap(Map<String, dynamic> map) {
@@ -99,6 +101,7 @@ class Component {
        colorBorderContainer: map['colorBorderContainer'] as String?,
        width: map['width'] as double?,
        height: map['height'] as double?,
+       typewriterSpeed: map['typewriterSpeed'] as int?,
      );
    }
 
@@ -133,6 +136,7 @@ class Component {
        if (colorBorderContainer != null) 'colorBorderContainer': colorBorderContainer,
        if (width != null) 'width': width,
        if (height != null) 'height': height,
+       if (typewriterSpeed != null) 'typewriterSpeed': typewriterSpeed,
      };
    }
 

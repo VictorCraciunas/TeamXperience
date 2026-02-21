@@ -12,6 +12,7 @@ class TextComponentController {
   double fontSize = 16.0;
   String? fontWeight;
   String? fontFamily;
+  int typewriterSpeed = 100; // ms per character
 
   final TextEditingController textColorController = TextEditingController();
   final TextEditingController textController = TextEditingController();
@@ -47,6 +48,9 @@ class TextComponentController {
     component.fontSize = fontSize;
     component.fontWeight = fontWeight;
     component.fontFamily = fontFamily;
+    if (animation == AnimationType.typewriter) {
+      component.typewriterSpeed = typewriterSpeed;
+    }
   }
 
   // Save component (handles both create and edit modes)
@@ -89,6 +93,7 @@ class TextComponentController {
       fontSize = component.fontSize ?? fontSize;
       fontWeight = component.fontWeight;
       fontFamily = component.fontFamily;
+      typewriterSpeed = component.typewriterSpeed ?? 100;
     }
   }
 
