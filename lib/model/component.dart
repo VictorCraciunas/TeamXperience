@@ -32,6 +32,7 @@ class Component {
    double? width;
    double? height;
    int? typewriterSpeed; // ms per character
+   String? textAlign;
 
   Component({
     this.type,
@@ -64,6 +65,7 @@ class Component {
     this.height,
     this.width,
     this.typewriterSpeed,
+    this.textAlign,
   });
 
    factory Component.fromMap(Map<String, dynamic> map) {
@@ -102,6 +104,7 @@ class Component {
        width: map['width'] as double?,
        height: map['height'] as double?,
        typewriterSpeed: map['typewriterSpeed'] as int?,
+       textAlign: map['textAlign'] as String?,
      );
    }
 
@@ -137,6 +140,7 @@ class Component {
        if (width != null) 'width': width,
        if (height != null) 'height': height,
        if (typewriterSpeed != null) 'typewriterSpeed': typewriterSpeed,
+       if (textAlign != null) 'textAlign': textAlign,
      };
    }
 

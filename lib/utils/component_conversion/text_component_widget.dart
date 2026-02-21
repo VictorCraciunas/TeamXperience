@@ -9,6 +9,7 @@ class TextComponentWidget extends StatelessWidget {
   final String? fontWeight; // String like "Black (900)"
   final String? fontFamily;
   final int? typewriterSpeed;
+  final String? textAlign;
 
   const TextComponentWidget({
     super.key,
@@ -19,7 +20,22 @@ class TextComponentWidget extends StatelessWidget {
     this.fontWeight,
     this.fontFamily,
     this.typewriterSpeed,
+    this.textAlign,
   });
+
+  TextAlign _mapTextAlign(String? align) {
+    switch (align) {
+      case 'left':
+        return TextAlign.left;
+      case 'right':
+        return TextAlign.right;
+      case 'justify':
+        return TextAlign.justify;
+      case 'center':
+      default:
+        return TextAlign.center;
+    }
+  }
 
   // Helper to convert hex string to Color
   Color hexToColor(String? hex) {
@@ -46,21 +62,23 @@ class TextComponentWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentColor = hexToColor(textColor);
     final currentFontWeight = mapFontWeight(fontWeight);
+    final currentTextAlign = _mapTextAlign(textAlign);
 
     if (animation == AnimationType.typewriter && text.isNotEmpty) {
       return TypewriterText(
-        key: ValueKey(text), // Add key to force rebuild when text changes
+        key: ValueKey(text),
         text: text,
         textColor: currentColor,
         fontSize: fontSize,
         fontWeight: currentFontWeight,
         fontFamily: fontFamily,
         msPerCharacter: typewriterSpeed ?? 100,
+        textAlign: currentTextAlign,
       );
     }
 
     return Text(
-      textAlign: TextAlign.center,
+      textAlign: currentTextAlign,
       text,
       style: TextStyle(
           color: currentColor,
@@ -79,6 +97,7 @@ class TypewriterText extends StatefulWidget {
   final FontWeight fontWeight;
   final String? fontFamily;
   final int msPerCharacter;
+  final TextAlign textAlign;
 
   const TypewriterText({
     super.key,
@@ -88,6 +107,7 @@ class TypewriterText extends StatefulWidget {
     required this.fontWeight,
     this.fontFamily,
     this.msPerCharacter = 100,
+    this.textAlign = TextAlign.center,
   });
 
   @override
@@ -145,7 +165,7 @@ class _TypewriterTextState extends State<TypewriterText> with SingleTickerProvid
         final displayLength = _animation.value.clamp(0, widget.text.length);
 
         return Text(
-          textAlign: TextAlign.center,
+          textAlign: widget.textAlign,
           widget.text.substring(0, displayLength),
           style: TextStyle(
               color: widget.textColor,

@@ -24,6 +24,7 @@ class ComponentToWidget {
             fontWeight: component.fontWeight,
             fontFamily: component.fontFamily,
             typewriterSpeed: component.typewriterSpeed,
+            textAlign: component.textAlign,
           ),
         );
       case ComponentType.image:

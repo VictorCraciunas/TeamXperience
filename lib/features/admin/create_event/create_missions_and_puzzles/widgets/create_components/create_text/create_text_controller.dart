@@ -13,6 +13,7 @@ class TextComponentController {
   String? fontWeight;
   String? fontFamily;
   int typewriterSpeed = 100; // ms per character
+  String textAlign = 'center';
 
   final TextEditingController textColorController = TextEditingController();
   final TextEditingController textController = TextEditingController();
@@ -48,6 +49,7 @@ class TextComponentController {
     component.fontSize = fontSize;
     component.fontWeight = fontWeight;
     component.fontFamily = fontFamily;
+    component.textAlign = textAlign;
     if (animation == AnimationType.typewriter) {
       component.typewriterSpeed = typewriterSpeed;
     }
@@ -94,6 +96,7 @@ class TextComponentController {
       fontWeight = component.fontWeight;
       fontFamily = component.fontFamily;
       typewriterSpeed = component.typewriterSpeed ?? 100;
+      textAlign = component.textAlign ?? 'center';
     }
   }
 

@@ -79,6 +79,8 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
         const SizedBox(height: 16),
         _buildFontFamilyDropdown(),
         const SizedBox(height: 16),
+        _buildTextAlignDropdown(),
+        const SizedBox(height: 16),
         _buildFontWeightDropdown(),
         const SizedBox(height: 16),
         _buildFontSizeSlider(),
@@ -295,6 +297,35 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
           color: controller.hexToColor(controller.textColor),
           border: Border.all(color: Colors.grey),
           borderRadius: BorderRadius.circular(5),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextAlignDropdown() {
+    return MyDropdownField<String>(
+      labelText: 'Aliniere Text',
+      items: const [
+        DropdownItem<String>(value: 'left', label: 'Stânga'),
+        DropdownItem<String>(value: 'center', label: 'Centrat'),
+        DropdownItem<String>(value: 'right', label: 'Dreapta'),
+        DropdownItem<String>(value: 'justify', label: 'Justify'),
+      ],
+      value: controller.textAlign,
+      onChanged: (value) {
+        setState(() {
+          controller.textAlign = value ?? 'center';
+        });
+      },
+      borderColor: MyColors.lightBlue,
+      borderWidth: 1.5,
+      radius: 20,
+      hint: const Text(
+        'Selectează alinierea',
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 14,
+          color: MyColors.greyText,
         ),
       ),
     );
