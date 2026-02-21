@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_puzzle/puzzle_controller.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/save_puzzle/save_puzzle.dart';
+import 'package:teamxperience/enums/component-type.dart';
+import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/widgets/my_button.dart';
@@ -37,6 +39,36 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
     // TODO: implement initState
     super.initState();
     controller = PuzzleController(widget.puzzle);
+  }
+
+  void _showEditDialog(int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              TextButton(
+                onPressed: () => _editComponent(index),
+                child: const Text('Edit'),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    controller.puzzleComponents.removeAt(index);
+                    widget.puzzle.removeComponent(index);
+                  });
+                  Navigator.pop(context);
+                },
+                child: const Text('Delete'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _editComponent(int componentIndex) {
@@ -87,47 +119,35 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
               child: Column(
                 children: List.generate(
                   controller.puzzleComponents.length,
-                  (index) => GestureDetector(
-                    onLongPress: () {
-                      if (!controller.isDone) {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              backgroundColor: Colors.white,
-                              content: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      _editComponent(index);
-                                    },
-                                    child: const Text('Edit'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        controller.puzzleComponents.removeAt(index);
-                                        widget.puzzle.removeComponent(index);
-                                      });
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Delete'),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      }
-                    },
-                    child: Padding(
+                  (index) {
+                    final isCodeComponent = index < widget.puzzle.components.length &&
+                        widget.puzzle.components[index].type == ComponentType.code;
+                    final isEditMode = !controller.isDone;
+
+                    Widget child = Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child:
-                          controller
-                              .puzzleComponents[index], // Direct use of the component
-                    ),
-                  ),
+                      child: controller.puzzleComponents[index],
+                    );
+
+                    if (isEditMode && isCodeComponent) {
+                      return Stack(
+                        children: [
+                          IgnorePointer(child: child),
+                          Positioned.fill(
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onLongPress: () => _showEditDialog(index),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+
+                    return GestureDetector(
+                      onLongPress: isEditMode ? () => _showEditDialog(index) : null,
+                      child: child,
+                    );
+                  },
                 ),
               ),
             ),

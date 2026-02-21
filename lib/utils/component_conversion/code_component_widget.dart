@@ -167,9 +167,15 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
         children: rows,
       );
     } else {
-      // Single input for Free mode
-      content = _buildFreeCell(heightInput, widthInput, inputCornerRadius, inputBackgroundColor,
-          colorBorderInput, fontSize,fontFamily!,textColor, capsLock);
+      // Single input for Free mode — glow applied directly on the cell
+      content = AnimatedBuilder(
+        animation: glowAnimation,
+        builder: (context, child) => _buildFreeCell(
+          heightInput, widthInput, inputCornerRadius, inputBackgroundColor,
+          colorBorderInput, fontSize, fontFamily!, textColor, capsLock,
+          enableGlow: enableGlow, glowColor: glowColor, glowValue: glowAnimation.value,
+        ),
+      );
     }
 
     // Wrap in outer Container only for Separated mode
@@ -257,13 +263,24 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
   }
 
   Widget _buildFreeCell(double heightInput, double widthInput, double? inputCornerRadius,
-      Color inputBackgroundColor, Color colorBorderInput, double fontSize, String fontFamily, Color textColor, String capsLock) {
+      Color inputBackgroundColor, Color colorBorderInput, double fontSize, String fontFamily, Color textColor, String capsLock,
+      {bool enableGlow = false, Color glowColor = Colors.black, double glowValue = 0.0}) {
     return Container(
       height: heightInput,
       width: widthInput,
       decoration: BoxDecoration(
         color: inputBackgroundColor,
         borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
+        boxShadow: enableGlow
+            ? [
+                BoxShadow(
+                  color: glowColor.withValues(alpha: (0.6 + glowValue * 0.2)),
+                  blurRadius: 10.0,
+                  spreadRadius: 2.0 + (glowValue * 3.0),
+                  offset: const Offset(0, 0),
+                ),
+              ]
+            : null,
       ),
       alignment: Alignment.center,
       child: TextField(
