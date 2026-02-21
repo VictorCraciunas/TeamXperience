@@ -32,12 +32,46 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
 
     if (!isInitialized) {
       final arguments =
-          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      if (arguments == null) return;
+
       final event = arguments['event'] as Event;
       final user = arguments['user'] as AppUser;
 
       controller = TeamControllerDetails(user, event);
       isInitialized = true;
+    }
+  }
+
+  @override
+  void dispose() {
+    if (isInitialized) {
+      controller.disposeControllers();
+    }
+    super.dispose();
+  }
+
+  void _toggleEditMode() {
+    setState(() {
+      if (!controller.isEditing) {
+        controller.populateControllers();
+      }
+      controller.isEditing = !controller.isEditing;
+    });
+  }
+
+  Future<void> _saveChanges() async {
+    setState(() => controller.isSaving = true);
+
+    final success = await controller.saveChanges(context);
+
+    if (mounted) {
+      setState(() {
+        controller.isSaving = false;
+        if (success) {
+          controller.isEditing = false;
+        }
+      });
     }
   }
 
@@ -111,54 +145,92 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                       iconPath: 'assets/images/location_map.svg',
                     ),
                     const SizedBox(height: 30),
-                    const Text(
-                      "Detalii inscriere",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: MyColors.blackColor,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Detalii inscriere",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: MyColors.blackColor,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: controller.isSaving ? null : _toggleEditMode,
+                          child: Text(
+                            controller.isEditing ? "Anulează" : "Editează",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: MyColors.lightBlue,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 20),
                     TeamDetailWidget(
                       text1: "Nume echipă",
                       text2: team.name,
+                      isEditing: controller.isEditing,
+                      editingController: controller.nameController,
                     ),
                     const SizedBox(height: 15),
                     TeamDetailWidget(
                       text1: "Componență echipă",
                       text2: team.teamMembers,
+                      isEditing: controller.isEditing,
+                      editingController: controller.membersController,
                     ),
                     const SizedBox(height: 15),
                     TeamDetailWidget(
                       text1: "Nume căpitan",
                       text2: team.captainName,
+                      isEditing: controller.isEditing,
+                      editingController: controller.captainNameController,
                     ),
                     const SizedBox(height: 15),
                     TeamDetailWidget(
                       text1: "Email capitan",
                       text2: team.captainEmail,
+                      isEditing: controller.isEditing,
+                      editingController: controller.captainEmailController,
                     ),
                     const SizedBox(height: 15),
                     TeamDetailWidget(
                       text1: "Telefon",
                       text2: team.phoneNumber,
+                      isEditing: controller.isEditing,
+                      editingController: controller.phoneController,
                     ),
 
                     const SizedBox(height: 30),
-                    MyButton(
-                      buttonText: "Distribuie detaliile",
-                      textColor: Colors.white,
-                      buttonOnTap: () => controller.shareTeamRegistration(context),
-                      withBorder: false,
-                      gradient: MyColors.myGradient,
-                      buttonTextSize: 15,
-                      leading: SvgPicture.asset(
-                        'assets/images/download.svg',
-                        width: 19,
-                        height: 19,
+                    if (controller.isEditing)
+                      MyButton(
+                        buttonText: controller.isSaving
+                            ? "Se salvează..."
+                            : "Salvează schimbările",
+                        textColor: Colors.white,
+                        buttonOnTap: controller.isSaving ? () {} : _saveChanges,
+                        withBorder: false,
+                        gradient: MyColors.myGradient,
+                        buttonTextSize: 15,
+                      )
+                    else
+                      MyButton(
+                        buttonText: "Distribuie detaliile",
+                        textColor: Colors.white,
+                        buttonOnTap: () => controller.shareTeamRegistration(context),
+                        withBorder: false,
+                        gradient: MyColors.myGradient,
+                        buttonTextSize: 15,
+                        leading: SvgPicture.asset(
+                          'assets/images/download.svg',
+                          width: 19,
+                          height: 19,
+                        ),
                       ),
-                    ),
                     const SizedBox(height: 30),
                   ],
                 ),

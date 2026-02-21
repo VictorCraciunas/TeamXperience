@@ -147,6 +147,23 @@ class TeamRepo {
     }
   }
 
+  Future<void> updateTeamDetails(String eventId, String oldTeamName, Team updatedTeam) async {
+    try {
+      if (oldTeamName == updatedTeam.name) {
+        // Name didn't change, just update the fields
+        await _firestore.collection('events').doc(eventId).collection('teams').doc(oldTeamName).update(updatedTeam.toJson());
+      } else {
+        // Name changed — delete old doc and create new one
+        await _firestore.collection('events').doc(eventId).collection('teams').doc(oldTeamName).delete();
+        await _firestore.collection('events').doc(eventId).collection('teams').doc(updatedTeam.name).set(updatedTeam.toJson());
+      }
+    } catch (e, stacktrace) {
+      print('Error updating team details: $e');
+      print('Stack trace: $stacktrace');
+      throw Exception('Failed to update team details for team: $oldTeamName');
+    }
+  }
+
   Future<void> updateTeamLocation(String eventId, String teamName, double latitude, double longitude) async {
     try {
       await _firestore

@@ -63,6 +63,10 @@ class TeamService {
     return teamRepo.getStreamTeamsForEvent(eventId);
   }
 
+  Future<void> updateTeamDetails(String eventId, String oldTeamName, Team updatedTeam) async {
+    await teamRepo.updateTeamDetails(eventId, oldTeamName, updatedTeam);
+  }
+
   Future<void> updateTeamLocation(
     String eventId,
     String teamName,
