@@ -1,0 +1,199 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/model/puzzle.dart';
+import 'package:teamxperience/service/LocationService.dart';
+import 'package:teamxperience/widgets/my_button.dart';
+
+class GeolocationPuzzleWidget extends StatefulWidget {
+  final Puzzle puzzle;
+  final VoidCallback onSolved;
+
+  const GeolocationPuzzleWidget({
+    super.key,
+    required this.puzzle,
+    required this.onSolved,
+  });
+
+  @override
+  State<GeolocationPuzzleWidget> createState() => _GeolocationPuzzleWidgetState();
+}
+
+class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
+  final MapController _mapController = MapController();
+  final LocationService _locationService = LocationService();
+  StreamSubscription<Position>? _positionSubscription;
+  LatLng? _currentPosition;
+  bool _isInsideCircle = false;
+  bool _locationError = false;
+  String _errorMessage = '';
+
+  static const double _circleRadiusMeters = 20.0;
+
+  LatLng get _targetPosition => LatLng(
+        widget.puzzle.latitude ?? 0,
+        widget.puzzle.longitude ?? 0,
+      );
+
+  @override
+  void initState() {
+    super.initState();
+    _startTracking();
+  }
+
+  @override
+  void dispose() {
+    _positionSubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _startTracking() async {
+    final hasPermission = await _locationService.checkAndRequestPermission();
+    if (!hasPermission) {
+      if (mounted) {
+        setState(() {
+          _locationError = true;
+          _errorMessage = 'Permisiunea de localizare nu a fost acordată.';
+        });
+      }
+      return;
+    }
+
+    _positionSubscription = _locationService
+        .getPositionStream(distanceFilter: 2)
+        .listen(
+      (Position position) {
+        final userLatLng = LatLng(position.latitude, position.longitude);
+        final distance = Geolocator.distanceBetween(
+          position.latitude,
+          position.longitude,
+          _targetPosition.latitude,
+          _targetPosition.longitude,
+        );
+
+        if (mounted) {
+          setState(() {
+            _currentPosition = userLatLng;
+            _isInsideCircle = distance <= _circleRadiusMeters;
+          });
+        }
+      },
+      onError: (error) {
+        if (mounted) {
+          setState(() {
+            _locationError = true;
+            _errorMessage = 'Eroare la localizare: $error';
+          });
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_locationError) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text(
+            _errorMessage,
+            style: const TextStyle(fontSize: 16, color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: FlutterMap(
+                mapController: _mapController,
+                options: MapOptions(
+                  initialCenter: _targetPosition,
+                  initialZoom: 17.0,
+                  maxZoom: 19.0,
+                  minZoom: 10.0,
+                ),
+                children: [
+                  TileLayer(
+                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'com.example.flutter_map_test',
+                  ),
+                  CircleLayer(
+                    circles: [
+                      CircleMarker(
+                        point: _targetPosition,
+                        radius: _circleRadiusMeters,
+                        useRadiusInMeter: true,
+                        color: MyColors.lightBlue.withValues(alpha: 0.25),
+                        borderColor: MyColors.lightBlue,
+                        borderStrokeWidth: 2,
+                      ),
+                    ],
+                  ),
+                  if (_currentPosition != null)
+                    MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: _currentPosition ?? _targetPosition,
+                          width: 30,
+                          height: 30,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 3),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.blue.withValues(alpha: 0.4),
+                                  blurRadius: 8,
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        if (_isInsideCircle)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
+            child: MyButton(
+              buttonText: 'Continuă',
+              textColor: Colors.white,
+              buttonOnTap: widget.onSolved,
+              withBorder: false,
+              gradient: MyColors.myGradient,
+              buttonTextSize: 15,
+            ),
+          ),
+        if (!_isInsideCircle && _currentPosition != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Text(
+              'Deplasează-te spre zona marcată',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.white.withValues(alpha: 0.8),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}

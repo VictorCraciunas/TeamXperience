@@ -28,7 +28,8 @@ class MissionController {
     for (Puzzle puzzle in mission.puzzles) {
       puzzle.type = null;
       puzzle.code = null;
-      puzzle.coordinates = null;
+      puzzle.latitude = null;
+      puzzle.longitude = null;
       puzzle.indiciu = null;
     }
   }

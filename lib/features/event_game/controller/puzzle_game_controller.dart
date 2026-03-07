@@ -102,6 +102,13 @@ class PuzzleGameController {
     }
   }
 
+  Puzzle? getCurrentPuzzle() {
+    if (mission.puzzles.isNotEmpty && selectedPuzzle < mission.puzzles.length) {
+      return mission.puzzles[selectedPuzzle];
+    }
+    return null;
+  }
+
   List<Widget> getCurrentPuzzleWidgets() {
     if (puzzleWidgets.isNotEmpty && selectedPuzzle < puzzleWidgets.length) {
       return puzzleWidgets[selectedPuzzle];

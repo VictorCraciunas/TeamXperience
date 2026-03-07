@@ -95,20 +95,29 @@ class _SavePuzzleState extends State<SavePuzzle> {
             ],
             if (controller.type == PuzzleType.geolocation) ...[
               MyTextField(
-                controller:controller.textColorController,
-                labelText: 'Introdu coordonatele',
-                hintText: 'Introdu coordonatele',
+                controller: controller.latitudeController,
+                labelText: 'Latitudine',
+                hintText: 'Ex: 45.7833',
                 hintTextColor: MyColors.greyText,
                 borderColor: MyColors.lightBlue,
                 borderWidth: 1.5,
                 radius: 20,
-                validator:
-                    (value) =>
-                value == null || value.isEmpty
-                    ? 'Introdu un cod'
-                    : null,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Introdu latitudinea' : null,
               ),
-              const SizedBox(height: 20), // Match spacing
+              const SizedBox(height: 20),
+              MyTextField(
+                controller: controller.longitudeController,
+                labelText: 'Longitudine',
+                hintText: 'Ex: 24.1500',
+                hintTextColor: MyColors.greyText,
+                borderColor: MyColors.lightBlue,
+                borderWidth: 1.5,
+                radius: 20,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Introdu longitudinea' : null,
+              ),
+              const SizedBox(height: 20),
             ],
             MyTextField(
               controller: controller.indiciuController,

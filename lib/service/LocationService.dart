@@ -14,45 +14,52 @@ class LocationService {
   String? _currentTeamName;
   bool _isTracking = false;
 
+  /// Checks and requests location permissions.
+  /// Returns true if permissions are granted, false otherwise.
+  Future<bool> checkAndRequestPermission() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return false;
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return false;
+    }
+
+    if (permission == LocationPermission.deniedForever) return false;
+
+    return true;
+  }
+
+  /// Returns a position stream with configurable distance filter.
+  Stream<Position> getPositionStream({int distanceFilter = 10}) {
+    final locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: distanceFilter,
+    );
+    return Geolocator.getPositionStream(locationSettings: locationSettings);
+  }
+
   // Start location tracking for a team
   Future<void> startLocationTracking({
     required String eventId,
     required String teamName,
   }) async {
     if (_isTracking) {
-      // If already tracking, stop previous tracking first
       stopLocationTracking();
     }
 
     _currentEventId = eventId;
     _currentTeamName = teamName;
 
-    // Request permissions
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        print('Location permissions denied');
-        return;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      print('Location permissions permanently denied');
+    final hasPermission = await checkAndRequestPermission();
+    if (!hasPermission) {
+      print('Location permissions not granted');
       return;
     }
 
-    // Configure location settings
-    const LocationSettings locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: 10, // Update every 10 meters
-    );
-
-    // Start listening to position updates
-    _positionStream = Geolocator.getPositionStream(
-      locationSettings: locationSettings,
-    ).listen(
-          (Position position) async {
+    _positionStream = getPositionStream(distanceFilter: 10).listen(
+      (Position position) async {
         await _updateTeamLocation(position);
       },
       onError: (error) {

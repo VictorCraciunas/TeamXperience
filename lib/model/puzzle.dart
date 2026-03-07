@@ -6,7 +6,8 @@ class Puzzle {
   PuzzleType? type;
   List<Component> components;
   String? code;
-  String? coordinates;
+  double? latitude;
+  double? longitude;
   String? indiciu;
 
   Puzzle({
@@ -14,8 +15,9 @@ class Puzzle {
     List<Component>? components,
     this.type,
     this.code,
-    this.coordinates,
-    this.indiciu
+    this.latitude,
+    this.longitude,
+    this.indiciu,
   }) : components = components ?? [];
 
   int get componentsCount => components.length;
@@ -45,7 +47,8 @@ class Puzzle {
       components: comps,
       type: rawType != null ? PuzzleType.values.byName(rawType) : null,
       code: data['code'] as String?,
-      coordinates: data['coordinates'] as String?,
+      latitude: (data['latitude'] as num?)?.toDouble(),
+      longitude: (data['longitude'] as num?)?.toDouble(),
       indiciu: data['indiciu'] as String?,
     );
     return puzzle;
@@ -57,14 +60,15 @@ class Puzzle {
       'components': components.map((c) => c.toJson()).toList(),
         if (type != null) 'type': type!.name,
        if (code != null) 'code': code,
-      if (coordinates != null) 'coordinates': coordinates,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
       if (indiciu != null) 'indiciu': indiciu,
 
     };
   }
   @override
   String toString() {
-    return 'Puzzle(type: ${type != null ? type!.name : null.toString()},id: $id, components: [${components.join(', ')}], code: $code, coordinates" $coordinates, indiciu: $indiciu)';
+    return 'Puzzle(type: ${type != null ? type!.name : null.toString()},id: $id, components: [${components.join(', ')}], code: $code, latitude: $latitude, longitude: $longitude, indiciu: $indiciu)';
   }
 
 }

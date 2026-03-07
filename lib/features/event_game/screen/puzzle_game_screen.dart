@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/features/event_game/controller/puzzle_game_controller.dart';
+import 'package:teamxperience/features/event_game/widgets/geolocation_puzzle_widget.dart';
 import '../../../constants/padding.dart';
 import '../../../model/event.dart';
 import '../../../model/mission.dart';
@@ -94,7 +96,9 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
             child: ValueListenableBuilder<int>(
               valueListenable: controller.selectedPuzzleNotifier,
               builder: (context, selectedPuzzle, child) {
+                final currentPuzzle = controller.getCurrentPuzzle();
                 final components = controller.getCurrentPuzzleWidgets();
+                final isGeolocation = currentPuzzle?.type == PuzzleType.geolocation;
 
                 // Create animations for current puzzle components
                 _createAnimations(components.length);
@@ -104,6 +108,38 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                   _startAnimation();
                 });
 
+                if (isGeolocation && currentPuzzle != null) {
+                  return Column(
+                    children: [
+                      // Render admin components (text, images, etc.)
+                      if (components.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: AnimatedBuilder(
+                            animation: _animationController,
+                            builder: (context, child) {
+                              return Column(
+                                children: controller.buildComponentsWithSpacing(
+                                  components,
+                                  _animations,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      // Map + button
+                      Expanded(
+                        child: GeolocationPuzzleWidget(
+                          key: ValueKey('geo_$selectedPuzzle'),
+                          puzzle: currentPuzzle,
+                          onSolved: () => controller.navigate(),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
+                // Default component-based puzzle
                 return Container(
                   child: components.isEmpty
                       ? const Center(
