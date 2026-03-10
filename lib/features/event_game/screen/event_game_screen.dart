@@ -125,9 +125,8 @@ class _EventGameScreenState extends State<EventGameScreen> {
                                                     'background':
                                                         controller.background,
                                                     'event': controller.event,
-                                                    // Pass event
                                                     'team': controller.team,
-                                                    // Pass team
+                                                    'missionIndex': index,
                                                   },
                                                 )
                                                 as Team?;

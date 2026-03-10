@@ -31,12 +31,14 @@ class EventGameController {
   void initMissionState() {
     missionDone.clear();
     if (team != null) {
-      for (int i = 0; i < team!.missionProgress; i++) {
-        missionDone.add(MissionState.finalizata);
-      }
-      missionDone.add(MissionState.deblcata);
-      for (int i = team!.missionProgress; i < event.nrMissions; i++) {
-        missionDone.add(MissionState.blocata);
+      for (int i = 0; i < event.nrMissions; i++) {
+        if (i < team!.missionProgress) {
+          missionDone.add(MissionState.finalizata);
+        } else if (i == team!.missionProgress) {
+          missionDone.add(MissionState.deblcata);
+        } else {
+          missionDone.add(MissionState.blocata);
+        }
       }
     }
     else{

@@ -51,6 +51,14 @@ class TeamService {
     return teamRepo.updateMissionProgress(eventId, teamName, progress);
   }
 
+  Future<void> updatePuzzleNumber(
+    String eventId,
+    String teamName,
+    int puzzleNumber,
+  ) async {
+    return teamRepo.updatePuzzleNumber(eventId, teamName, puzzleNumber);
+  }
+
   Future<void> startTeam(String eventId, String teamName) async {
     return teamRepo.startTeam(eventId, teamName);
   }

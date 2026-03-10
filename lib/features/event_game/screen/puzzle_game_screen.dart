@@ -29,7 +29,8 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
       final background = args['background'] as ImageProvider;
       final event = args['event'] as Event;
       final team = args['team'] as Team;
-      controller = PuzzleGameController(mission, background,event,team);
+      final missionIndex = args['missionIndex'] as int;
+      controller = PuzzleGameController(mission, background, event, team, missionIndex);
 
       // Initialize animation controller
       _animationController = AnimationController(
@@ -133,35 +134,35 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                           key: ValueKey('geo_$selectedPuzzle'),
                           puzzle: currentPuzzle,
                           onSolved: () => controller.navigate(),
+                          isMissionCompleted: controller.isMissionCompleted,
                         ),
                       ),
                     ],
                   );
                 }
 
-                // Default component-based puzzle
-                return Container(
-                  child: components.isEmpty
-                      ? const Center(
+                if (components.isEmpty) {
+                  return const Center(
                     child: Text(
                       'No puzzle components found',
                       style: TextStyle(fontSize: 18),
                     ),
-                  )
-                      : Center(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(20),
-                      child: AnimatedBuilder(
-                        animation: _animationController,
-                        builder: (context, child) {
-                          return Column(
-                            children: controller.buildComponentsWithSpacing(
-                              components,
-                              _animations,
-                            ),
-                          );
-                        },
-                      ),
+                  );
+                }
+
+                return Center(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    child: AnimatedBuilder(
+                      animation: _animationController,
+                      builder: (context, child) {
+                        return Column(
+                          children: controller.buildComponentsWithSpacing(
+                            components,
+                            _animations,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 );

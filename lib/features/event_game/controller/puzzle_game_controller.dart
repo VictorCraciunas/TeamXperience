@@ -11,6 +11,7 @@ import '../../../enums/component-type.dart';
 class PuzzleGameController {
   final Mission mission;
   final ImageProvider background;
+  final int missionIndex;
   List<List<Widget>> puzzleWidgets = [];
   final ValueNotifier<int> selectedPuzzleNotifier = ValueNotifier(0);
   final ComponentToWidget componentToWidget = ComponentToWidget();
@@ -20,8 +21,15 @@ class PuzzleGameController {
   late Event event;
   late Team team;
 
-  PuzzleGameController(this.mission, this.background, this.event, this.team) {
+  /// Whether this mission was already completed before entering
+  bool get isMissionCompleted => missionIndex < team.missionProgress;
+
+  PuzzleGameController(this.mission, this.background, this.event, this.team, this.missionIndex) {
     loadPuzzles();
+    // Resume from saved puzzle progress (only for the current unlocked mission)
+    if (!isMissionCompleted && team.puzzleNumber > 0 && team.puzzleNumber < mission.puzzles.length) {
+      selectedPuzzleNotifier.value = team.puzzleNumber;
+    }
   }
 
   // Method to set context when screen is ready
@@ -61,17 +69,16 @@ class PuzzleGameController {
   }
 
   void buttonPressed(Puzzle puzzle) {
-    print(puzzle.type);
+    if (isMissionCompleted) {
+      navigate();
+      return;
+    }
+
     if (puzzle.type == PuzzleType.code) {
-      print("a intrat in code");
-      if (userInput == puzzle.code) {
-        print("codul e acelasi");
+      if (userInput.trim().toLowerCase() == (puzzle.code ?? '').trim().toLowerCase()) {
         navigate();
-      } else {
-        print("error");
       }
     } else {
-      print("nu e code sau nush");
       navigate();
     }
   }
@@ -79,24 +86,32 @@ class PuzzleGameController {
   void navigate() async {
     if (hasNextPuzzle()) {
       selectedPuzzleNotifier.value++;
-    } else {
-      // Mission completed - increment progress
-      print("Mission completed! Current progress: ${team.missionProgress}");
+      userInput = "";
 
-      // Correctly increment mission progress
+      if (!isMissionCompleted) {
+        team.puzzleNumber = selectedPuzzleNotifier.value;
+        try {
+          await teamService.updatePuzzleNumber(event.eventId, team.name, team.puzzleNumber);
+        } catch (e) {
+          print("Error updating puzzle number: $e");
+        }
+      }
+    } else {
+      if (isMissionCompleted) {
+        Navigator.pop(context, team);
+        return;
+      }
+
+      // Mission completed - reset puzzle number first, then increment progress
+      team.puzzleNumber = 0;
       team.missionProgress = team.missionProgress + 1;
 
-      print("New progress: ${team.missionProgress}");
-
       try {
-        // Update in Firebase
+        await teamService.updatePuzzleNumber(event.eventId, team.name, 0);
         await teamService.updateMissionProgress(event.eventId, team.name, team.missionProgress);
-        print("Firebase updated successfully");
-
         Navigator.pop(context, team);
       } catch (e) {
         print("Error updating mission progress: $e");
-        // Handle error - maybe show a dialog or snackbar
         Navigator.pop(context, null);
       }
     }

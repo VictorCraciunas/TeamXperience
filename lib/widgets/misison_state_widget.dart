@@ -19,7 +19,7 @@ class MissionStateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: missionState == MissionState.deblcata ? onTap : (){},
+      onTap: missionState == MissionState.blocata ? (){} : onTap,
       child: Opacity(
         opacity: missionState == MissionState.blocata ? 0.4 : 1.0,
         child: Container(
@@ -85,7 +85,7 @@ class MissionStateWidget extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if(missionState == MissionState.deblcata)
+                  if(missionState == MissionState.deblcata || missionState == MissionState.finalizata)
                     SvgPicture.asset(
                        'assets/images/arrow.svg',
                     width: 24, // Reasonable size for the icon

@@ -12,11 +12,13 @@ import 'package:teamxperience/widgets/my_button.dart';
 class GeolocationPuzzleWidget extends StatefulWidget {
   final Puzzle puzzle;
   final VoidCallback onSolved;
+  final bool isMissionCompleted;
 
   const GeolocationPuzzleWidget({
     super.key,
     required this.puzzle,
     required this.onSolved,
+    this.isMissionCompleted = false,
   });
 
   @override
@@ -62,6 +64,26 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
       }
       return;
     }
+
+    // Get initial position immediately
+    try {
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+      );
+      if (mounted) {
+        final userLatLng = LatLng(position.latitude, position.longitude);
+        final distance = Geolocator.distanceBetween(
+          position.latitude,
+          position.longitude,
+          _targetPosition.latitude,
+          _targetPosition.longitude,
+        );
+        setState(() {
+          _currentPosition = userLatLng;
+          _isInsideCircle = distance <= _circleRadiusMeters;
+        });
+      }
+    } catch (_) {}
 
     _positionSubscription = _locationService
         .getPositionStream(distanceFilter: 2)
@@ -170,7 +192,7 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
           ),
         ),
         const SizedBox(height: 16),
-        if (_isInsideCircle)
+        if (_isInsideCircle || widget.isMissionCompleted)
           Padding(
             padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
             child: MyButton(
@@ -182,7 +204,7 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
               buttonTextSize: 15,
             ),
           ),
-        if (!_isInsideCircle && _currentPosition != null)
+        if (!_isInsideCircle && !widget.isMissionCompleted && _currentPosition != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: Text(
