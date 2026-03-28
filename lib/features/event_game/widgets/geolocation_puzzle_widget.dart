@@ -7,17 +7,20 @@ import 'package:latlong2/latlong.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/service/LocationService.dart';
+import 'package:teamxperience/service/route_service.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 
 class GeolocationPuzzleWidget extends StatefulWidget {
   final Puzzle puzzle;
   final VoidCallback onSolved;
   final bool isMissionCompleted;
+  final RouteService routeService;
 
   const GeolocationPuzzleWidget({
     super.key,
     required this.puzzle,
     required this.onSolved,
+    required this.routeService,
     this.isMissionCompleted = false,
   });
 
@@ -33,6 +36,10 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
   bool _isInsideCircle = false;
   bool _locationError = false;
   String _errorMessage = '';
+  List<LatLng> _routePoints = [];
+  double? _straightLineDistance;
+  double? _routeDistance;
+  bool _hasInitialFit = false;
 
   static const double _circleRadiusMeters = 20.0;
 
@@ -81,7 +88,10 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
         setState(() {
           _currentPosition = userLatLng;
           _isInsideCircle = distance <= _circleRadiusMeters;
+          _straightLineDistance = distance;
         });
+        _fetchRoute(userLatLng);
+        _fitMapToBounds(userLatLng);
       }
     } catch (_) {}
 
@@ -101,7 +111,9 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
           setState(() {
             _currentPosition = userLatLng;
             _isInsideCircle = distance <= _circleRadiusMeters;
+            _straightLineDistance = distance;
           });
+          _fetchRoute(userLatLng);
         }
       },
       onError: (error) {
@@ -113,6 +125,38 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
         }
       },
     );
+  }
+
+  void _fitMapToBounds(LatLng userPosition) {
+    if (_hasInitialFit) return;
+    _hasInitialFit = true;
+
+    final bounds = LatLngBounds.fromPoints([userPosition, _targetPosition]);
+    // Delay to ensure map is rendered
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        _mapController.fitCamera(
+          CameraFit.bounds(
+            bounds: bounds,
+            padding: const EdgeInsets.all(60),
+          ),
+        );
+      }
+    });
+  }
+
+  Future<void> _fetchRoute(LatLng from) async {
+    final result = await widget.routeService.fetchWalkingRoute(
+      from: from,
+      to: _targetPosition,
+    );
+
+    if (result != null && mounted) {
+      setState(() {
+        _routePoints = result.points;
+        _routeDistance = result.distanceMeters;
+      });
+    }
   }
 
   @override
@@ -162,6 +206,16 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
                       ),
                     ],
                   ),
+                  if (_routePoints.isNotEmpty)
+                    PolylineLayer(
+                      polylines: [
+                        Polyline(
+                          points: _routePoints,
+                          strokeWidth: 4.0,
+                          color: MyColors.lightBlue,
+                        ),
+                      ],
+                    ),
                   if (_currentPosition != null)
                     MarkerLayer(
                       markers: [
@@ -207,12 +261,26 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
         if (!_isInsideCircle && !widget.isMissionCompleted && _currentPosition != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
-            child: Text(
-              'Deplasează-te spre zona marcată',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.white.withValues(alpha: 0.8),
-              ),
+            child: Column(
+              children: [
+                if (_routeDistance != null || _straightLineDistance != null)
+                  Text(
+                    RouteService.formatDistance(_routeDistance ?? _straightLineDistance!),
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                const SizedBox(height: 4),
+                Text(
+                  'Deplasează-te spre zona marcată',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white.withValues(alpha: 0.8),
+                  ),
+                ),
+              ],
             ),
           ),
       ],

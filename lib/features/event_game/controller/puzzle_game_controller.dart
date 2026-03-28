@@ -4,6 +4,7 @@ import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/model/team.dart';
+import 'package:teamxperience/service/route_service.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
 import 'package:teamxperience/utils/component_conversion/component_to_widget.dart';
 import '../../../enums/component-type.dart';
@@ -18,6 +19,7 @@ class PuzzleGameController {
   String userInput = "";
   late BuildContext context;
   TeamService teamService = TeamService();
+  final RouteService routeService = RouteService();
   late Event event;
   late Team team;
 

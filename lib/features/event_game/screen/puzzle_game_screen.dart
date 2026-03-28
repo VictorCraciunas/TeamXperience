@@ -135,6 +135,7 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                           puzzle: currentPuzzle,
                           onSolved: () => controller.navigate(),
                           isMissionCompleted: controller.isMissionCompleted,
+                          routeService: controller.routeService,
                         ),
                       ),
                     ],
