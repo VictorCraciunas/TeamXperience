@@ -194,15 +194,34 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
                     urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     userAgentPackageName: 'com.example.flutter_map_test',
                   ),
-                  CircleLayer(
-                    circles: [
-                      CircleMarker(
+                  MarkerLayer(
+                    markers: [
+                      Marker(
                         point: _targetPosition,
-                        radius: _circleRadiusMeters,
-                        useRadiusInMeter: true,
-                        color: MyColors.lightBlue.withValues(alpha: 0.25),
-                        borderColor: MyColors.lightBlue,
-                        borderStrokeWidth: 2,
+                        width: 60,
+                        height: 60,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: MyColors.lightBlue.withValues(alpha: 0.25),
+                            border: Border.all(
+                              color: MyColors.lightBlue,
+                              width: 3,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: MyColors.lightBlue.withValues(alpha: 0.4),
+                                blurRadius: 12,
+                                spreadRadius: 4,
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.flag_rounded,
+                            color: Colors.red,
+                            size: 28,
+                          ),
+                        ),
                       ),
                     ],
                   ),
