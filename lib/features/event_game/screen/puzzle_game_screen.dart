@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/features/event_game/controller/puzzle_game_controller.dart';
 import 'package:teamxperience/features/event_game/widgets/geolocation_puzzle_widget.dart';
+import 'package:teamxperience/features/event_game/widgets/image_upload_puzzle_widget.dart';
 import '../../../constants/padding.dart';
 import '../../../model/event.dart';
 import '../../../model/mission.dart';
@@ -100,6 +101,7 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                 final currentPuzzle = controller.getCurrentPuzzle();
                 final components = controller.getCurrentPuzzleWidgets();
                 final isGeolocation = currentPuzzle?.type == PuzzleType.geolocation;
+                final isImageUpload = currentPuzzle?.type == PuzzleType.imageToUpload;
 
                 // Create animations for current puzzle components
                 _createAnimations(components.length);
@@ -136,6 +138,39 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                           onSolved: () => controller.navigate(),
                           isMissionCompleted: controller.isMissionCompleted,
                           routeService: controller.routeService,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
+                if (isImageUpload && currentPuzzle != null) {
+                  return Column(
+                    children: [
+                      if (components.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: AnimatedBuilder(
+                            animation: _animationController,
+                            builder: (context, child) {
+                              return Column(
+                                children: controller.buildComponentsWithSpacing(
+                                  components,
+                                  _animations,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      Expanded(
+                        child: ImageUploadPuzzleWidget(
+                          key: ValueKey('img_$selectedPuzzle'),
+                          eventId: controller.event.eventId,
+                          teamName: controller.team.name,
+                          missionIndex: controller.missionIndex,
+                          puzzleIndex: selectedPuzzle,
+                          onSolved: () => controller.navigate(),
+                          isMissionCompleted: controller.isMissionCompleted,
                         ),
                       ),
                     ],
