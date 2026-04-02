@@ -129,7 +129,7 @@ class AdminHomeController extends ChangeNotifier {
       try {
         final teams = await _teamRepo.getAllTeamsForEvent(event.eventId);
         final nrTeams = teams.length;
-        final nrPerson = teams.fold<int>(0, (sum, team) => sum + team.userIds.length);
+        final nrPerson = teams.fold<int>(0, (sum, team) => sum + team.numberOfMembers);
 
         _eventStats[event.eventId] = {
           'nrTeams': nrTeams,
