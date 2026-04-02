@@ -18,6 +18,7 @@ class TeamService {
     String captainName,
     String phoneNumber,
     String captainEmail,
+    int numberOfMembers,
     AppUser user,
     Event event,
     BuildContext context,
@@ -29,6 +30,7 @@ class TeamService {
       captainName: captainName,
       phoneNumber: phoneNumber,
       captainEmail: captainEmail,
+      numberOfMembers: numberOfMembers,
       userIds: users,
     );
     await teamRepo.addTeam(team, event.eventId);

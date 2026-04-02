@@ -7,7 +7,8 @@ import '../../../widgets/my_text_field.dart';
 class Step1 extends StatelessWidget {
   final numeEchipaController;
   final componentaEchipeiController;
-  const Step1({super.key, required this.numeEchipaController, required this.componentaEchipeiController});
+  final numarPersoaneController;
+  const Step1({super.key, required this.numeEchipaController, required this.componentaEchipeiController, required this.numarPersoaneController});
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +46,22 @@ class Step1 extends StatelessWidget {
           maxLines: null,
           keyboardType: TextInputType.multiline,
           // ← close SvgPicture.asset
+        ),
+        const SizedBox(height: 20),
+        MyTextField(
+          controller: numarPersoaneController,
+          labelText: 'Numar persoane *',
+          hintText: 'Ex: 4',
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: SvgPicture.asset(
+              'assets/images/user-group.svg',
+              width: 24,
+              height: 24,
+              colorFilter: const ColorFilter.mode(MyColors.yellow, BlendMode.srcIn),
+            ),
+          ),
+          keyboardType: TextInputType.number,
         ),
 
       ],

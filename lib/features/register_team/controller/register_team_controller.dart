@@ -24,6 +24,7 @@ class RegisterTeamController {
 
   final numeEchipaController = TextEditingController();
   final componentaEchipeiController = TextEditingController();
+  final numarPersoaneController = TextEditingController();
   final numeCapitanController = TextEditingController();
   final numarDeTelefonController = TextEditingController();
   final emailCapitanController = TextEditingController();
@@ -85,6 +86,7 @@ class RegisterTeamController {
             numeCapitanController.text,
             numarDeTelefonController.text,
             emailCapitanController.text,
+            int.tryParse(numarPersoaneController.text) ?? 0,
             user,
             event,
             context

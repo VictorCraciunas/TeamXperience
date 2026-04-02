@@ -83,6 +83,7 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                       numeEchipaController: controller.numeEchipaController,
                       componentaEchipeiController:
                           controller.componentaEchipeiController,
+                      numarPersoaneController: controller.numarPersoaneController,
                     ),
                   ),
                 if (controller.secondStep && !controller.thirdStep)

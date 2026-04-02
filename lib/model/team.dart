@@ -10,6 +10,7 @@ class Team {
   bool hasStarted;
   double latitude;
   double longitude;
+  int numberOfMembers;
 
   Team({
     required this.name,
@@ -23,6 +24,7 @@ class Team {
     this.hasStarted = false,
     this.latitude = 0,
     this.longitude = 0,
+    this.numberOfMembers = 0,
   }) : userIds = userIds ?? [];
 
   factory Team.fromMap(Map<String, dynamic> map) {
@@ -40,7 +42,8 @@ class Team {
       userIds: userIdsList,
       hasStarted: map['hasStarted'] as bool,
       latitude: map['latitude'] as double,
-      longitude: map['longitude'] as double
+      longitude: map['longitude'] as double,
+      numberOfMembers: map['numberOfMembers'] as int? ?? 0,
     );
   }
 
@@ -56,7 +59,8 @@ class Team {
       'userIds': userIds,
       'hasStarted': hasStarted,
       'latitude': latitude,
-      'longitude': longitude
+      'longitude': longitude,
+      'numberOfMembers': numberOfMembers,
     };
   }
 
