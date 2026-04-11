@@ -19,7 +19,7 @@ class MissionStateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: missionState == MissionState.blocata ? (){} : onTap,
+      onTap: missionState == MissionState.deblcata ? onTap : (){},
       child: Opacity(
         opacity: missionState == MissionState.blocata ? 0.4 : 1.0,
         child: Container(
@@ -69,7 +69,7 @@ class MissionStateWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Missiunea $nr",
+                            "Misiunea $nr",
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 15,

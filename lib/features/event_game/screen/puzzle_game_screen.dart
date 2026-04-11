@@ -35,7 +35,7 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
 
       // Initialize animation controller
       _animationController = AnimationController(
-        duration: const Duration(milliseconds: 4000), // Total duration for all animations
+        duration: const Duration(milliseconds: 2000), // Total duration for all animations
         vsync: this,
       );
 
