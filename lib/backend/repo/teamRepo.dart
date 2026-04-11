@@ -147,6 +147,18 @@ class TeamRepo {
     }
   }
 
+  Future<void> finishTeam(String eventId, String teamName) async {
+    try {
+      await _firestore.collection('events').doc(eventId).collection('teams').doc(teamName).update({
+        'hasFinished': true,
+      });
+    } catch (e, stacktrace) {
+      print('Error finishing team: $e');
+      print('Stack trace: $stacktrace');
+      throw Exception('Failed to finish team: $teamName');
+    }
+  }
+
   Future<void> updateTeamDetails(String eventId, String oldTeamName, Team updatedTeam) async {
     try {
       if (oldTeamName == updatedTeam.name) {

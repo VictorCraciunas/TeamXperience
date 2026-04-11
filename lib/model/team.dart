@@ -8,6 +8,7 @@ class Team {
   int puzzleNumber;
   List<String> userIds;
   bool hasStarted;
+  bool hasFinished;
   double latitude;
   double longitude;
   int numberOfMembers;
@@ -22,6 +23,7 @@ class Team {
     this.puzzleNumber = 0,
     List<String>? userIds,
     this.hasStarted = false,
+    this.hasFinished = false,
     this.latitude = 0,
     this.longitude = 0,
     this.numberOfMembers = 0,
@@ -40,7 +42,8 @@ class Team {
       missionProgress: map['missionProgress'] as int? ?? 0,
       puzzleNumber: map['puzzleNumber'] as int? ?? 0,
       userIds: userIdsList,
-      hasStarted: map['hasStarted'] as bool,
+      hasStarted: map['hasStarted'] as bool? ?? false,
+      hasFinished: map['hasFinished'] as bool? ?? false,
       latitude: map['latitude'] as double,
       longitude: map['longitude'] as double,
       numberOfMembers: map['numberOfMembers'] as int? ?? 0,
@@ -58,6 +61,7 @@ class Team {
       'puzzleNumber': puzzleNumber,
       'userIds': userIds,
       'hasStarted': hasStarted,
+      'hasFinished': hasFinished,
       'latitude': latitude,
       'longitude': longitude,
       'numberOfMembers': numberOfMembers,

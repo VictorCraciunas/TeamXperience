@@ -33,6 +33,7 @@ class _HomeState extends State<Home> {
     controller = HomeController(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.loadInitialData();
+      context.read<UserEventsProvider>().loadActiveEvent();
     });
   }
 
@@ -80,13 +81,17 @@ class _HomeState extends State<Home> {
                         RegisteredEventCard(
                           event: nextEvent,
                           onEventTap: (event) async {
-                            AppUser? currentUser =
-                                context.read<UserProvider>().currentUser;
-                            Team? team = await controller.teamService
-                                .getUserTeamForEvent(
-                                  event.eventId,
-                                  currentUser!.uid,
-                                );
+                            // Use cached active team if available
+                            Team? team = userEventsProvider.activeTeam;
+                            if (team == null) {
+                              AppUser? currentUser =
+                                  context.read<UserProvider>().currentUser;
+                              team = await controller.teamService
+                                  .getUserTeamForEvent(
+                                    event.eventId,
+                                    currentUser!.uid,
+                                  );
+                            }
                             if (team == null) {
                               print("nu trebuia sa ajunga aci wtf");
                             } else if (!team.hasStarted) {
@@ -99,7 +104,7 @@ class _HomeState extends State<Home> {
                               );
                             }
                           },
-                          upComingRegisteredEvent: true, // Show blue card!
+                          upComingRegisteredEvent: true,
                         ),
                       const SizedBox(height: 30),
 

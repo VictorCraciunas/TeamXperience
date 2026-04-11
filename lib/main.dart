@@ -45,6 +45,7 @@ import 'firebase_options.dart';
 
 // Add these imports for your services and state management
 import 'package:teamxperience/service/event_service/event_service.dart';
+import 'package:teamxperience/service/team_service/team_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -108,16 +109,12 @@ class MyApp extends StatelessWidget {
             Provider.of<NewsService>(context, listen: false),
           ),
         ),
-        ChangeNotifierProxyProvider2<UserProvider, EventList, UserEventsProvider>(
+        ChangeNotifierProvider<UserEventsProvider>(
           create: (context) => UserEventsProvider(
             Provider.of<UserProvider>(context, listen: false),
             Provider.of<EventList>(context, listen: false),
             Provider.of<EventService>(context, listen: false),
-          ),
-          update: (context, userProvider, eventList, previous) => UserEventsProvider(
-            userProvider,
-            eventList,
-            Provider.of<EventService>(context, listen: false),
+            TeamService(),
           ),
         ),
 
