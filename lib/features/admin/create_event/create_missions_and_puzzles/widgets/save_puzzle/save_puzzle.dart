@@ -30,6 +30,12 @@ class SavePuzzle extends StatefulWidget {
 class _SavePuzzleState extends State<SavePuzzle> {
   SavePuzzleController controller = SavePuzzleController();
 
+  @override
+  void initState() {
+    super.initState();
+    controller.loadFromPuzzle(widget.puzzle);
+  }
+
 
   @override
   Widget build(BuildContext context) {

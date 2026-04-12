@@ -10,6 +10,14 @@ class SavePuzzleController{
   final TextEditingController latitudeController = TextEditingController();
   final TextEditingController longitudeController = TextEditingController();
 
+  void loadFromPuzzle(Puzzle puzzle) {
+    type = puzzle.type;
+    textColorController.text = puzzle.code ?? '';
+    latitudeController.text = puzzle.latitude?.toString() ?? '';
+    longitudeController.text = puzzle.longitude?.toString() ?? '';
+    indiciuController.text = puzzle.indiciu ?? '';
+  }
+
   void savePuzzle(Puzzle puzzle,BuildContext context){
     if (type != null) {
       puzzle.type = type;
