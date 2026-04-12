@@ -17,7 +17,7 @@ class RegisteredEventsList extends StatelessWidget {
   Widget build(BuildContext context) {
     if (events.isEmpty) {
       return const Center(
-        child: Text('No events available'),
+        child: Text('Încă nu sunt evenimente programate'),
       );
     }
     return ListView.builder(

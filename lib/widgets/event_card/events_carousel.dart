@@ -35,7 +35,7 @@ class _EventsCarouselState extends State<EventsCarousel> {
   Widget build(BuildContext context) {
     if (widget.events.isEmpty) {
       return const Center(
-        child: Text('No events available'),
+        child: Text('Încă nu sunt evenimente programate'),
       );
     }
 
