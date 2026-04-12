@@ -9,6 +9,7 @@ import 'package:teamxperience/widgets/my_button.dart';
 import '../../constants/routes.dart';
 import '../../utils/calendar_helper.dart';
 import '../../utils/link_util.dart';
+import 'fullscreen_image_viewer.dart';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({super.key});
@@ -71,6 +72,17 @@ class _NewsScreenState extends State<NewsScreen> {
     return allImages;
   }
 
+  void _openFullscreen(List<String> images, int initialIndex) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => FullscreenImageViewer(
+          images: images,
+          initialIndex: initialIndex,
+        ),
+      ),
+    );
+  }
+
   Widget _buildImageCarousel(List<String> images) {
     if (images.isEmpty) {
       return Container(
@@ -98,23 +110,26 @@ class _NewsScreenState extends State<NewsScreen> {
             },
             itemCount: images.length,
             itemBuilder: (context, index) {
-              return CachedNetworkImage(
-                imageUrl: images[index],
-                fit: BoxFit.cover,
-                width: double.infinity,
-                progressIndicatorBuilder: (context, url, progress) => Container(
-                  color: Colors.grey[300],
-                  child: Center(
-                    child: CircularProgressIndicator(value: progress.progress),
+              return GestureDetector(
+                onTap: () => _openFullscreen(images, index),
+                child: CachedNetworkImage(
+                  imageUrl: images[index],
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  progressIndicatorBuilder: (context, url, progress) => Container(
+                    color: Colors.grey[300],
+                    child: Center(
+                      child: CircularProgressIndicator(value: progress.progress),
+                    ),
                   ),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  color: Colors.grey[300],
-                  child: const Center(
-                    child: Icon(
-                      Icons.error_outline,
-                      color: Colors.grey,
-                      size: 50,
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.grey[300],
+                    child: const Center(
+                      child: Icon(
+                        Icons.error_outline,
+                        color: Colors.grey,
+                        size: 50,
+                      ),
                     ),
                   ),
                 ),
