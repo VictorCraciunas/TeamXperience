@@ -73,6 +73,13 @@ class TeamService {
     return teamRepo.getAllTeamsForEvent(eventId);
   }
 
+  Future<void> deleteTeam(String eventId, Team team) async {
+    for (final userId in team.userIds) {
+      await userRepo.removeEventFromUser(userId, eventId);
+    }
+    await teamRepo.deleteTeam(eventId, team.name);
+  }
+
   Stream<List<Team>> getStreamTeams(String eventId) {
     return teamRepo.getStreamTeamsForEvent(eventId);
   }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/model/team.dart';
+import 'package:teamxperience/utils/snackbars.dart';
 import 'package:teamxperience/widgets/my_appbar.dart';
 
 import 'event_registered_teams_controller.dart';
@@ -38,6 +40,46 @@ class _EventRegisteredTeamsState extends State<EventRegisteredTeams> {
     }
   }
 
+  Future<void> _confirmDelete(Team team) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Confirmare"),
+        content: const Text("Ești sigur că vrei să ștergi echipa înregistrată?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text("Anulează"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text("Șterge"),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      await controller.deleteTeam(team);
+      if (!mounted) return;
+      setState(() {});
+      MySnackBars.successSnackBar(
+        context,
+        title: "Echipa a fost ștearsă cu succes",
+      );
+    } catch (e) {
+      if (!mounted) return;
+      MySnackBars.errorSnackBar(
+        context,
+        title: "Eroare la ștergerea echipei",
+        message: e.toString(),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!_initialized) {
@@ -63,7 +105,11 @@ class _EventRegisteredTeamsState extends State<EventRegisteredTeams> {
                   itemCount: controller.teams.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
-                    return TeamCardWidget(team: controller.teams[index]);
+                    final team = controller.teams[index];
+                    return TeamCardWidget(
+                      team: team,
+                      onDelete: () => _confirmDelete(team),
+                    );
                   },
                 ),
     );

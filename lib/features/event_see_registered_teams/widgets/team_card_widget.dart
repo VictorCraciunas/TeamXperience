@@ -6,8 +6,9 @@ import 'info_row_widget.dart';
 
 class TeamCardWidget extends StatelessWidget {
   final Team team;
+  final VoidCallback? onDelete;
 
-  const TeamCardWidget({super.key, required this.team});
+  const TeamCardWidget({super.key, required this.team, this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -52,11 +53,12 @@ class TeamCardWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              Text(
-                "${team.userIds.length} membri",
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: MyColors.greyText,
+              InkWell(
+                onTap: onDelete,
+                borderRadius: BorderRadius.circular(20),
+                child: const Padding(
+                  padding: EdgeInsets.all(4),
+                  child: Icon(Icons.close, color: Colors.red, size: 22),
                 ),
               ),
             ],
@@ -69,6 +71,17 @@ class TeamCardWidget extends StatelessWidget {
           InfoRowWidget(icon: Icons.phone_outlined, label: "Telefon", value: team.phoneNumber),
           const SizedBox(height: 6),
           InfoRowWidget(icon: Icons.group_outlined, label: "Componență", value: team.teamMembers),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Text(
+              "${team.numberOfMembers} membri",
+              style: const TextStyle(
+                fontSize: 12,
+                color: MyColors.greyText,
+              ),
+            ),
+          ),
         ],
       ),
     );

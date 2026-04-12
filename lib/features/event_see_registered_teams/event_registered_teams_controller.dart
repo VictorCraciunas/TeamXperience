@@ -15,4 +15,9 @@ class EventRegisteredTeamsController {
     teams = await _teamService.getTeams(event.eventId);
     isLoading = false;
   }
+
+  Future<void> deleteTeam(Team team) async {
+    await _teamService.deleteTeam(event.eventId, team);
+    teams.removeWhere((t) => t.name == team.name);
+  }
 }

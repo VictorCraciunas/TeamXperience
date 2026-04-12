@@ -40,6 +40,17 @@ class UserRepo{
     }
   }
 
+  Future<void> removeEventFromUser(String userId, String eventId) async {
+    try {
+      await _firestore.collection('users').doc(userId).update({
+        'registeredEventIds': FieldValue.arrayRemove([eventId])
+      });
+    } catch (e) {
+      print('Error removing event from user: $e');
+      throw Exception('Failed to remove event from user: $userId');
+    }
+  }
+
   Future<List<Map<String, dynamic>>> getRegisteredEventsFromUser(AppUser user) async {
     try {
       // If user has no registered events, return empty list
