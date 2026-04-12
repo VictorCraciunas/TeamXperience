@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
@@ -97,28 +98,23 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
             },
           );
         },
-        child: Image.network(
-          imagePath,
+        child: CachedNetworkImage(
+          imageUrl: imagePath,
           width: 60,
           height: 60,
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              width: 60,
-              height: 60,
-              color: Colors.grey[300],
-              child: const Icon(Icons.error, color: Colors.red),
-            );
-          },
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Container(
-              width: 60,
-              height: 60,
-              color: Colors.grey[300],
-              child: const CircularProgressIndicator(),
-            );
-          },
+          placeholder: (context, url) => Container(
+            width: 60,
+            height: 60,
+            color: Colors.grey[300],
+            child: const CircularProgressIndicator(),
+          ),
+          errorWidget: (context, url, error) => Container(
+            width: 60,
+            height: 60,
+            color: Colors.grey[300],
+            child: const Icon(Icons.error, color: Colors.red),
+          ),
         ),
       );
     } else {

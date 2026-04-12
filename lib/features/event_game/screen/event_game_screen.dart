@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
@@ -55,8 +56,8 @@ class _EventGameScreenState extends State<EventGameScreen> {
                   if (controller.event.landingImageUrl != null)
                     Stack(
                       children: [
-                        Image.network(
-                          controller.event.landingImageUrl!,
+                        CachedNetworkImage(
+                          imageUrl: controller.event.landingImageUrl!,
                           fit: BoxFit.cover,
                           width: double.infinity,
                           height: 268,

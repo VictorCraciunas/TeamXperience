@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
@@ -97,43 +98,26 @@ class _NewsScreenState extends State<NewsScreen> {
             },
             itemCount: images.length,
             itemBuilder: (context, index) {
-              return Image.network(
-                images[index],
+              return CachedNetworkImage(
+                imageUrl: images[index],
                 fit: BoxFit.cover,
                 width: double.infinity,
-                loadingBuilder: (
-                  BuildContext context,
-                  Widget child,
-                  ImageChunkEvent? loadingProgress,
-                ) {
-                  if (loadingProgress == null) {
-                    return child;
-                  }
-                  return Container(
-                    color: Colors.grey[300],
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        value:
-                            loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                : null,
-                      ),
+                progressIndicatorBuilder: (context, url, progress) => Container(
+                  color: Colors.grey[300],
+                  child: Center(
+                    child: CircularProgressIndicator(value: progress.progress),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: Colors.grey[300],
+                  child: const Center(
+                    child: Icon(
+                      Icons.error_outline,
+                      color: Colors.grey,
+                      size: 50,
                     ),
-                  );
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[300],
-                    child: const Center(
-                      child: Icon(
-                        Icons.error_outline,
-                        color: Colors.grey,
-                        size: 50,
-                      ),
-                    ),
-                  );
-                },
+                  ),
+                ),
               );
             },
           ),
