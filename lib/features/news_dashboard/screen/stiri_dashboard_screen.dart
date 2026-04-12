@@ -87,9 +87,12 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
 
   void navigateToStireDetails(BuildContext context, Stire stire) {
     Navigator.pushNamed(
-        context,
-        Routes.newsDetails,
-        arguments: stire
+      context,
+      Routes.newsDetails,
+      arguments: {
+        'stire': stire,
+        'isAdmin': true,
+      },
     );
   }
 
