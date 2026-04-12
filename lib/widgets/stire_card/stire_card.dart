@@ -152,9 +152,9 @@ class StireCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 4),
-                      const Text(
-                        'Evenimente',
-                        style: TextStyle(
+                      Text(
+                        stire.category?.name ?? 'Necategorizat',
+                        style: const TextStyle(
                           color: Colors.white70,
                           fontSize: 10,
                           fontFamily: 'Poppins',
