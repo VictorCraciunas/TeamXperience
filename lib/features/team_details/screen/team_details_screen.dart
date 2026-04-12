@@ -149,7 +149,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          "Detalii inscriere",
+                          "Detalii înscriere",
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w500,

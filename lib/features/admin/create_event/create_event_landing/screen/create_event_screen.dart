@@ -92,7 +92,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       });
                     },
                     child: UploadImage(
-                      labelText: 'Adauga imagine eveniment',
+                      labelText: 'Adaugă imagine eveniment',
                       imageUrl: controller.getLandingImageToDisplay(),
                     ),
                   ),
@@ -243,7 +243,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     },
                     validator:
                         (v) =>
-                            (v ?? '').isEmpty ? 'Introdu dată inchidere' : null,
+                            (v ?? '').isEmpty ? 'Introdu dată închidere' : null,
                   ),
                   const SizedBox(height: 20),
 
@@ -268,7 +268,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     hint: const Padding(
                       padding: EdgeInsets.only(left: 10),
                       child: Text(
-                        "Selecteaza tipul de eveniment",
+                        "Selectează tipul de eveniment",
                         style: TextStyle(
                           fontSize: 14,
                           fontFamily: 'Poppins',
@@ -279,7 +279,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     validator:
                         (value) =>
                             value == null
-                                ? 'Selecteaza tipul de eveniment'
+                                ? 'Selectează tipul de eveniment'
                                 : null,
                     borderColor: MyColors.lightBlue,
                     borderWidth: 1.5,
@@ -309,7 +309,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       });
                     },
                     child: UploadImage(
-                      labelText: 'Adauga imagine fundal misiuni',
+                      labelText: 'Adaugă imagine fundal misiuni',
                       imageUrl: controller.getTaskBackgroundImageToDisplay(),
                     ),
                   ),

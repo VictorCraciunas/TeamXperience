@@ -66,7 +66,7 @@ class _AdminHomeState extends State<AdminHome> {
                         children: [
                           Expanded(
                             child: NavigateCard(
-                              text1: "Creeaza",
+                              text1: "Creează",
                               text2: "eveniment",
                               onTap: controller.navigateToCreateEvent,
                             ),
@@ -74,8 +74,8 @@ class _AdminHomeState extends State<AdminHome> {
                           const SizedBox(width: 25),
                           Expanded(
                             child: NavigateCard(
-                              text1: "Adauga",
-                              text2: "stire",
+                              text1: "Adaugă",
+                              text2: "știre",
                               onTap: controller.navigateToCreateNews,
                             ),
                           ),
@@ -94,7 +94,7 @@ class _AdminHomeState extends State<AdminHome> {
                           const SizedBox(width: 25),
                           Expanded(
                             child: NavigateCard(
-                              text1: "Acceseaza",
+                              text1: "Accesează",
                               text2: "chat",
                               onTap: controller.navigateToChats,
                             ),
@@ -122,7 +122,7 @@ class _AdminHomeState extends State<AdminHome> {
 
                       // News Section
                       TitleCarousel(
-                        text: "Stiri",
+                        text: "Știri",
                         onTap: controller.navigateToStiriDashboard,
                       ),
                       const SizedBox(height: 20),

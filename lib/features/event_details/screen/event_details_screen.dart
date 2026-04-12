@@ -79,7 +79,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             child: Container(
               padding: const EdgeInsets.all(16),
               child: MyButton(
-                buttonText: "Vezi echipele inscrise",
+                buttonText: "Vezi echipele înscrise",
                 textColor: Colors.white,
                 buttonOnTap: () {
                   Navigator.pushNamed(
@@ -98,7 +98,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             child: Container(
               padding: const EdgeInsets.all(16),
               child: MyButton(
-                buttonText: !isRegistered ? "Înscrie-ți echipa" : "Vezi detalii inscriere",
+                buttonText: !isRegistered ? "Înscrie-ți echipa" : "Vezi detalii înscriere",
                 leading: SvgPicture.asset(
                   'assets/images/user_icon.svg',
                   width: 19,

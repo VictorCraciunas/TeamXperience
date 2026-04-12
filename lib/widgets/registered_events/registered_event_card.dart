@@ -112,7 +112,7 @@ class RegisteredEventCard extends StatelessWidget {
             ),
             SizedBox(height: 10),
             MyButton(
-              buttonText: upComingRegisteredEvent ? "Începe jocul" : "Detalii inscriere",
+              buttonText: upComingRegisteredEvent ? "Începe jocul" : "Detalii înscriere",
               textColor: upComingRegisteredEvent ? const Color(0xFF222F62) : MyColors.blackColor,
               buttonOnTap: () => onEventTap(event),
               withBorder: false,

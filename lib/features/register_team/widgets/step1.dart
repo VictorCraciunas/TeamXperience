@@ -16,8 +16,8 @@ class Step1 extends StatelessWidget {
       children: [
         MyTextField(
           controller: numeEchipaController,
-          labelText: 'Nume echipa *',
-          hintText: 'Nume echipa',
+          labelText: 'Nume echipă *',
+          hintText: 'Nume echipă',
           leading: Padding(
             padding: const EdgeInsets.only(left: 8.0),
             child: SvgPicture.asset(
@@ -50,7 +50,7 @@ class Step1 extends StatelessWidget {
         const SizedBox(height: 20),
         MyTextField(
           controller: numarPersoaneController,
-          labelText: 'Numar persoane *',
+          labelText: 'Număr persoane *',
           hintText: 'Ex: 4',
           leading: Padding(
             padding: const EdgeInsets.only(left: 8.0),

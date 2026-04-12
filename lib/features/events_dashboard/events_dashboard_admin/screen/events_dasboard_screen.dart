@@ -240,7 +240,7 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                           ),
                                           const SizedBox(width: 8),
                                           const Text(
-                                            "Creeza eveniment",
+                                            "Creează eveniment",
                                             style: TextStyle(
                                               fontSize: 15,
                                               color: MyColors.blackColor,

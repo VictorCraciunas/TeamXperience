@@ -143,7 +143,7 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
 
                 const SizedBox(height: 20),
                 MyButton(
-                  buttonText: 'Creeza eveniment',
+                  buttonText: 'Creează eveniment',
                   textColor: Colors.white,
                   buttonOnTap: () async{
                     await _addMissionsController.saveEvent(context);

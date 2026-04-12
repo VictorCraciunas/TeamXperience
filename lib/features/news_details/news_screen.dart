@@ -365,7 +365,7 @@ class _NewsScreenState extends State<NewsScreen> {
                         const SizedBox(height: 30),
                         if (isAdmin == true)
                           MyButton(
-                            buttonText: "Editeaza",
+                            buttonText: "Editează",
                             textColor: Colors.white,
                             buttonOnTap: () {
                               _navigateToEditStire(stire);

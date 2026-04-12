@@ -17,7 +17,7 @@ class Step2 extends StatelessWidget {
       children: [
         MyTextField(
           controller: numeCapitanController,
-          labelText: 'Nume capitan *',
+          labelText: 'Nume căpitan *',
           hintText: 'Nume ',
           leading: Padding(
             padding: const EdgeInsets.only(left: 8.0),

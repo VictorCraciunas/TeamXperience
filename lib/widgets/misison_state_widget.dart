@@ -78,7 +78,7 @@ class MissionStateWidget extends StatelessWidget {
                           ),
                           SizedBox(height: 5),
                           Text(
-                            missionState == MissionState.finalizata ? "Finalizata" : missionState == MissionState.deblcata ? "Deblocata" : "Blocata",
+                            missionState == MissionState.finalizata ? "Finalizată" : missionState == MissionState.deblcata ? "Deblocată" : "Blocată",
                             style: TextStyle(fontSize: 12, color: Color(0xFF858493)),
                           ),
                         ],

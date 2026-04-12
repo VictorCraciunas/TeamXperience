@@ -72,7 +72,7 @@ class _NewsCategoryManipulationScreenState
                       // Search Field
                       MyTextField(
                         controller: controller.searchController,
-                        hintText: "Cauta categorie ...",
+                        hintText: "Caută categorie ...",
                         trailing: SvgPicture.asset(
                           'assets/images/search.svg',
                           height: 24,
@@ -184,7 +184,7 @@ class _NewsCategoryManipulationScreenState
                       ),
                       MyTextField(
                         controller: controller.newCategoryController,
-                        labelText: 'Adauga categorie',
+                        labelText: 'Adaugă categorie',
                         hintText: 'Categorie noua',
                         borderColor: MyColors.lightBlue,
                         radius: 15,

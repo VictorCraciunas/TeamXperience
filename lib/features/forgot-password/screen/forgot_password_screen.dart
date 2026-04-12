@@ -25,7 +25,7 @@ class ForgotPasswordScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Text(
-                'Introdu email-ul si noi iti vom trimite un link pentru resetarea parolei',
+                'Introdu email-ul și noi îți vom trimite un link pentru resetarea parolei',
                 style: TextStyle(
                   fontSize: 16,
                   fontFamily: 'Poppins',

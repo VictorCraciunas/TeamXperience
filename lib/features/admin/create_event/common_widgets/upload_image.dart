@@ -51,7 +51,7 @@ class UploadImage extends StatelessWidget {
                 height: 64,
               ),
               const Text(
-                "Incarca imaginea",
+                "Încarcă imaginea",
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 15,

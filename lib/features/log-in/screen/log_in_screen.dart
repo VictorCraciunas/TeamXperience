@@ -115,7 +115,7 @@ class LogInScreen extends StatelessWidget {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Te rugam sa introduci parola';
+                      return 'Te rugăm să introduci parola';
                     }
                     return null;
                   },

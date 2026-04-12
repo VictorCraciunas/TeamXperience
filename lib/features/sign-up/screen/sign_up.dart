@@ -113,10 +113,10 @@ class RegisterScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 MyTextField(
                   controller: controller.confirmPasswordController,
-                  labelText: "Confirma parola",
+                  labelText: "Confirmă parola",
                   labelFontSize: 14,
                   borderColor: const Color(0xFFE6E6E6),
-                  hintText: 'Confirma parola',
+                  hintText: 'Confirmă parola',
                   leading: SvgPicture.asset(
                     'assets/images/pass.svg',
                     height: 24,

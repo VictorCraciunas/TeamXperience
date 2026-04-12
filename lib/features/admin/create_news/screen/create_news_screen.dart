@@ -82,7 +82,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
               return AlertDialog(
                 backgroundColor: Colors.white,
                 content: MyButton(
-                  buttonText: "Sterge",
+                  buttonText: "Șterge",
                   textColor: MyColors.blackColor,
                   buttonOnTap: () {
                     setState(() {
@@ -336,7 +336,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                       MyTextField(
                         controller: controller.categoryController,
                         labelText: 'Categorie',
-                        hintText: 'Selecteaza categoria',
+                        hintText: 'Selectează categoria',
                         radius: 20,
                         borderWidth: 1.5,
                         borderColor: MyColors.lightBlue,

@@ -164,7 +164,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
                 child: MyButton(
                   fontWeight: FontWeight.w500,
                   buttonTextSize: 14,
-                  buttonText: 'Adauga componenta',
+                  buttonText: 'Adaugă componentă',
                   textColor: Colors.white,
                   buttonOnTap: () {
                     showModalBottomSheet(
@@ -195,7 +195,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
               MyButton(
                 fontWeight: FontWeight.w500,
                 buttonTextSize: 14,
-                buttonText: 'Sterge toate componentele',
+                buttonText: 'Șterge toate componentele',
                 textColor: Colors.white,
                 buttonOnTap: () {
                   setState(() {
@@ -212,7 +212,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
               MyButton(
                 fontWeight: FontWeight.w500,
                 buttonTextSize: 14,
-                buttonText: 'Salveaza puzzle',
+                buttonText: 'Salvează puzzle',
                 textColor: Colors.white,
                 buttonOnTap: () {
                   showModalBottomSheet(
