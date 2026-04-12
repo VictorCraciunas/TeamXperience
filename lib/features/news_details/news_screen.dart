@@ -315,7 +315,7 @@ class _NewsScreenState extends State<NewsScreen> {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          'Am publicat fotografiile de la evenimentul ${stire.title ?? 'Untitled'}',
+                          stire.title ?? 'Fara titlu',
                           textAlign: TextAlign.left,
                           style: const TextStyle(
                             fontSize: 19,
