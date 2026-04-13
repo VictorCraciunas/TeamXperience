@@ -3,35 +3,74 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/notification/controller/notification_controller.dart';
+import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/widgets/my_appbar.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 import 'package:teamxperience/widgets/my_text_field.dart';
 
-class NotificationScreen extends StatelessWidget {
+class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    NotificationController controller = NotificationController(context);
+  State<NotificationScreen> createState() => _NotificationScreenState();
+}
 
+class _NotificationScreenState extends State<NotificationScreen> {
+  late NotificationController controller;
+  bool _initialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      final event = ModalRoute.of(context)?.settings.arguments as Event?;
+      controller = NotificationController(context, event: event);
+      _initialized = true;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final appBarText = controller.event != null
+        ? "Trimite notificare — ${controller.event!.name ?? ''}"
+        : "Trimite notificare";
 
     return Scaffold(
-      appBar: MyAppBar(appBarText: "Trimite notificare"),
+      appBar: MyAppBar(appBarText: appBarText),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: MyPaddings.appHorizontalPadding,
           ),
           child: Column(
             children: [
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
+              if (controller.event != null) ...[
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: MyColors.transparentLightBlue,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    "Această notificare va fi trimisă doar participanților înscriși la acest eveniment.",
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: MyColors.blackColor,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 15),
+              ],
               MyTextField(
                 labelText: "Titlu",
                 borderColor: MyColors.lightBlue,
                 hintText: "Titlu notificare...",
                 controller: controller.titluNotificareController,
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               MyTextField(
                 labelText: "Descriere",
                 borderColor: MyColors.lightBlue,
@@ -39,9 +78,8 @@ class NotificationScreen extends StatelessWidget {
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
                 controller: controller.descriereNotificareController,
-
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               MyButton(
                 buttonText: "Trimite",
                 textColor: Colors.white,

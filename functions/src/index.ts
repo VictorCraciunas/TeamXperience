@@ -32,8 +32,8 @@ export const sendNotification = onRequest(async (request, response) => {
       return;
     }
 
-    // Extract title and description from request body
-    const { title, description } = request.body;
+    // Extract title, description and optional eventId from request body
+    const { title, description, eventId } = request.body;
 
     // Validate required fields
     if (!title || !description) {
@@ -47,12 +47,16 @@ export const sendNotification = onRequest(async (request, response) => {
     logger.info("Sending notification", {
       title,
       description,
+      eventId: eventId ?? null,
       structuredData: true
     });
 
-    // Get all users from Firestore
+    // Get users from Firestore — scoped to event registrants if eventId is provided
     const db = getFirestore();
-    const usersSnapshot = await db.collection('users').get();
+    const usersRef = db.collection('users');
+    const usersSnapshot = eventId
+      ? await usersRef.where('registeredEventIds', 'array-contains', eventId).get()
+      : await usersRef.get();
 
     if (usersSnapshot.empty) {
       response.status(404).send({

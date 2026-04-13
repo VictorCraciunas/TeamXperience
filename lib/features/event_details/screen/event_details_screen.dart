@@ -215,7 +215,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         buttonText: "Trimite notificare",
                         textColor: MyColors.blackColor,
                         buttonOnTap: () {
-
+                          Navigator.pushNamed(
+                            context,
+                            Routes.sendNotification,
+                            arguments: controller.event,
+                          );
                         },
                         withBorder: false,
                         buttonColor: MyColors.transparentLightBlue,
