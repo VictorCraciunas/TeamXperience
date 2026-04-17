@@ -64,6 +64,7 @@ class _HomeState extends State<Home> {
             return RefreshIndicator(
               onRefresh: controller.refreshData,
               child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: MyPaddings.appHorizontalPadding,
