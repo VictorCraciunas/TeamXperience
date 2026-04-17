@@ -28,6 +28,7 @@ import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/state_management/news_state_management.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
+import 'package:teamxperience/service/FCMService.dart';
 import 'package:teamxperience/utils/auth_util.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'backend/authentication/AuthenticationRepository.dart';
@@ -55,6 +56,7 @@ void main() async {
   FirebaseFirestore.instance.settings = const Settings(
     persistenceEnabled: true,
   );
+  await FCMService.initNotifications();
   runApp(const MyApp());
 }
 
