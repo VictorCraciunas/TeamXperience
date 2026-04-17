@@ -48,16 +48,16 @@ class UserEventsProvider extends ChangeNotifier {
     if (_activeEvent != null) return _activeEvent;
 
     final now = DateTime.now();
-    final oneHourFromNow = now.add(const Duration(hours: 1));
+    final oneHourAgo = now.subtract(const Duration(hours: 1));
 
-    final nextEvent = upcomingRegisteredEvents.isNotEmpty ? upcomingRegisteredEvents.first : null;
+    // Find events that started within the last hour (user can enter code up to 1h after start)
+    final recentEvents = registeredEvents.where((event) =>
+      event.dateEvent != null &&
+      event.dateEvent!.isBefore(now) &&
+      event.dateEvent!.isAfter(oneHourAgo)
+    ).toList()..sort((a, b) => a.dateEvent!.compareTo(b.dateEvent!));
 
-    if (nextEvent?.dateEvent != null &&
-        nextEvent!.dateEvent!.isBefore(oneHourFromNow)) {
-      return nextEvent;
-    }
-
-    return null;
+    return recentEvents.isNotEmpty ? recentEvents.first : null;
   }
 
   Future<void> loadActiveEvent() async {
