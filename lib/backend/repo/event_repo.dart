@@ -41,4 +41,19 @@ class EventRepo{
     }
   }
 
+  Future<void> stopEvent(String eventId) async {
+    await _firestore.collection('events').doc(eventId).update({
+      'isStopped': true,
+    });
+  }
+
+  Stream<Event> streamEvent(String eventId) {
+    return _firestore
+        .collection('events')
+        .doc(eventId)
+        .snapshots()
+        .where((doc) => doc.exists)
+        .map((doc) => Event.fromMap(doc.data() as Map<String, dynamic>));
+  }
+
 }

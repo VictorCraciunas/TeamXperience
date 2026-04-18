@@ -59,6 +59,18 @@ class EventService {
     }
   }
 
+  Future<void> stopEvent(String eventId) async {
+    try {
+      await _eventRepo.stopEvent(eventId);
+    } catch (e) {
+      throw EventServiceException('Failed to stop event: $e');
+    }
+  }
+
+  Stream<Event> streamEvent(String eventId) {
+    return _eventRepo.streamEvent(eventId);
+  }
+
 
   List<Event> registeredEventsFromUser(List<Event> allEvents, AppUser user){
     List<Event> registeredEvents = [];

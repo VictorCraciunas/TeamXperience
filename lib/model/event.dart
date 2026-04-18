@@ -21,6 +21,7 @@ class Event {
   String? lungimeTraseu;
   String? durata;
   String? dificultate;
+  bool isStopped;
 
   Event({
     required this.eventId,
@@ -40,6 +41,7 @@ class Event {
     this.dificultate,
     this.lungimeTraseu,
     this.durata,
+    this.isStopped = false,
   }) : missions = missions ?? [];
 
   Mission addMission(Mission mission) {
@@ -71,6 +73,7 @@ class Event {
       dificultate: map['dificultate'] as String? ?? '',
       durata: map['durata'] as String? ?? '',
       lungimeTraseu: map['lungimeTraseu'] as String? ?? '',
+      isStopped: map['isStopped'] as bool? ?? false,
     );
   }
 
@@ -93,6 +96,7 @@ class Event {
       'durata': durata,
       'dificultate': dificultate,
       'punctDeStart': punctDeStart,
+      'isStopped': isStopped,
     };
   }
 

@@ -23,11 +23,13 @@ class _EventGameScreenState extends State<EventGameScreen> {
   late EventGameController controller;
 
   bool _initialized = false;
+  bool _endedDialogShown = false;
 
   @override
   void dispose() {
-    super.dispose();
+    controller.removeListener(_onControllerChanged);
     controller.dispose();
+    super.dispose();
   }
   @override
   void didChangeDependencies() {
@@ -39,8 +41,49 @@ class _EventGameScreenState extends State<EventGameScreen> {
       final team = arguments['team'] as Team?;
 
       controller = EventGameController(event, team, context);
+      controller.addListener(_onControllerChanged);
       _initialized = true;
+
+      if (controller.eventEnded) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _showEventEndedDialog();
+        });
+      }
     }
+  }
+
+  void _onControllerChanged() {
+    if (controller.eventEnded && !_endedDialogShown) {
+      _showEventEndedDialog();
+    }
+  }
+
+  void _showEventEndedDialog() {
+    if (_endedDialogShown || !mounted) return;
+    _endedDialogShown = true;
+
+    Navigator.popUntil(
+      context,
+      (route) => route.settings.name == Routes.eventGame || route.isFirst,
+    );
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: const Text("Ne pare rău"),
+        content: const Text("S-a terminat evenimentul."),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.popUntil(context, (route) => route.isFirst);
+            },
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
