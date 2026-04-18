@@ -212,12 +212,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     const SizedBox(height: 20),
                     if (isAdmin == true)
                       MyButton(
-                        buttonText: "Trimite notificare",
+                        buttonText: "Gestionează evenimentul",
                         textColor: MyColors.blackColor,
                         buttonOnTap: () {
                           Navigator.pushNamed(
                             context,
-                            Routes.sendNotification,
+                            Routes.eventManagement,
                             arguments: controller.event,
                           );
                         },
@@ -228,16 +228,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                           width: 24,
                           height: 24,
                         ),
-                      ),
-                    const SizedBox(height: 10),
-                    if(isAdmin)
-                      MyButton(
-                        buttonText: "map",
-                        textColor: Colors.black,
-                        buttonOnTap: () {
-                          controller.navigateToMap();
-                        },
-                        withBorder: true,
+                        buttonTextSize: 15,
                       ),
                   ],
                 ),

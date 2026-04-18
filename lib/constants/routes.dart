@@ -29,5 +29,6 @@ abstract class Routes {
   static const teamConversations = '/team_conversions/admin';
   static const map = '/map';
   static const sendNotification = '/notifcation';
+  static const eventManagement = '/event_management';
 
 }

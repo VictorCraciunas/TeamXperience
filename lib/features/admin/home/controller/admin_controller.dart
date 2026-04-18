@@ -62,18 +62,6 @@ class AdminHomeController extends ChangeNotifier {
     );
   }
 
-  void navigateToChats() {
-    final eventList = context.read<EventList>();
-
-    if (eventList.upcomingEvents.isNotEmpty) {
-      final firstEvent = eventList.upcomingEvents.first;
-      Navigator.pushNamed(
-        context,
-        Routes.teamConversations, // Assuming this is the correct route for team chats
-        arguments: firstEvent,
-      );
-    }
-  }
   void navigateToCreateNews() {
     Navigator.pushNamed(context, Routes.createNews);
   }

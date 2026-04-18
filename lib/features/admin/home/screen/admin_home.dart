@@ -82,24 +82,12 @@ class _AdminHomeState extends State<AdminHome> {
                         ],
                       ),
                       const SizedBox(height: 15),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: NavigateCard(
-                              text1: "Trimite",
-                              text2: "notificare",
-                              onTap: () {controller.navigateToNotification();},
-                            ),
-                          ),
-                          const SizedBox(width: 25),
-                          Expanded(
-                            child: NavigateCard(
-                              text1: "Accesează",
-                              text2: "chat",
-                              onTap: controller.navigateToChats,
-                            ),
-                          ),
-                        ],
+                      Center(
+                        child: NavigateCard(
+                          text1: "Trimite",
+                          text2: "notificare",
+                          onTap: () {controller.navigateToNotification();},
+                        ),
                       ),
                       const SizedBox(height: 20),
 

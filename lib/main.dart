@@ -8,6 +8,7 @@ import 'package:teamxperience/features/admin/home/screen/admin_home.dart';
 import 'package:teamxperience/features/calendar/screen/calendar_screen.dart';
 import 'package:teamxperience/features/chat/screen/chat_screen.dart';
 import 'package:teamxperience/features/enter_code/screen/enter_code.dart';
+import 'package:teamxperience/features/event_management/screen/event_management_screen.dart';
 import 'package:teamxperience/features/event_details/screen/event_details_screen.dart';
 import 'package:teamxperience/features/event_game/screen/event_game_screen.dart';
 import 'package:teamxperience/features/event_game/screen/puzzle_game_screen.dart';
@@ -169,6 +170,7 @@ class MyApp extends StatelessWidget {
           Routes.map: (_) => const MapScreen(),
           Routes.sendNotification: (_) => const NotificationScreen(),
           Routes.eventRegisteredTeams: (_) => const EventRegisteredTeams(),
+          Routes.eventManagement: (_) => const EventManagementScreen(),
 
         },
       ),
