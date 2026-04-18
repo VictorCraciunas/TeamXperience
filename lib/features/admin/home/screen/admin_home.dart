@@ -4,6 +4,7 @@ import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/admin/home/widgets/navigate_card.dart';
 import 'package:teamxperience/features/admin/home/widgets/title_carousel.dart';
+import 'package:teamxperience/features/event_management/widgets/management_button.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 import 'package:teamxperience/widgets/stire_card/stiri_carousel.dart';
 import '../../../../state_management/events_state_management.dart';
@@ -90,6 +91,69 @@ class _AdminHomeState extends State<AdminHome> {
                         ),
                       ),
                       const SizedBox(height: 20),
+
+                      if (eventList.liveEvents.isNotEmpty) ...[
+                        Row(
+                          children: [
+                            Container(
+                              width: 10,
+                              height: 10,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFE53935),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              "Eveniment live",
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFFE53935),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 15),
+                        ...eventList.liveEvents.map(
+                          (event) => Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Container(
+                              padding: const EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                color: const Color(0x1AE53935),
+                                borderRadius: BorderRadius.circular(15),
+                                border: Border.all(
+                                  color: const Color(0xFFE53935),
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    event.name ?? "",
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: MyColors.blackColor,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  ManagementButton(
+                                    text: "Gestionează eveniment",
+                                    icon: 'assets/images/incepe_jocul.svg',
+                                    enabled: true,
+                                    onTap: () => controller
+                                        .navigateToEventManagement(event),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
 
                       // Events Section
                       TitleCarousel(

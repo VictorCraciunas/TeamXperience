@@ -82,6 +82,14 @@ class AdminHomeController extends ChangeNotifier {
     );
   }
 
+  void navigateToEventManagement(Event event) {
+    Navigator.pushNamed(
+      context,
+      Routes.eventManagement,
+      arguments: event,
+    );
+  }
+
   void navigateToStiriDashboard() {
     final newsList = context.read<NewsList>();
     Navigator.pushNamed(

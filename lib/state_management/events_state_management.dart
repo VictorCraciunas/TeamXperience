@@ -27,6 +27,16 @@ class EventList extends ChangeNotifier {
     );
   }
 
+  List<Event> get liveEvents {
+    final now = DateTime.now();
+    return _events.where((e) {
+      final start = e.dateEvent;
+      if (start == null) return false;
+      final end = start.add(const Duration(hours: 3));
+      return !start.isAfter(now) && end.isAfter(now);
+    }).toList()..sort((a, b) => a.dateEvent!.compareTo(b.dateEvent!));
+  }
+
   List<Event> get pastEvents {
     final now = DateTime.now();
     return _events.where((e) =>
