@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/events_dashboard/events_dashboard_user/controller/events_dash_user_controller.dart';
 import 'package:teamxperience/widgets/CustomIconDashboard.dart';
-import 'package:teamxperience/widgets/registered_events/registered_event_card.dart';
 import 'package:teamxperience/widgets/registered_events/registered_events_list.dart';
 
 import '../../../../constants/colors.dart';
@@ -122,6 +121,45 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
   }
   String _formatDate(DateTime date) {
     return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              height: 2,
+              decoration: BoxDecoration(
+                color: MyColors.lightBlue,
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: MyColors.blackColor,
+              fontFamily: 'Poppins',
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Container(
+              height: 2,
+              decoration: BoxDecoration(
+                color: MyColors.lightBlue,
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
   @override
   Widget build(BuildContext context) {
@@ -442,17 +480,17 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                     Expanded(
                       child: Consumer<UserEventsProvider>(
                         builder: (context, userEventsProvider, child) {
-                          // Apply filters to registered events
-                          final filteredRegisteredEvents = controller.filterRegisteredEvents(
-                              userEventsProvider.upcomingRegisteredEvents
+                          final filteredUpcoming = controller.filterRegisteredEvents(
+                            userEventsProvider.upcomingRegisteredEvents,
+                          );
+                          final filteredPast = controller.filterRegisteredEvents(
+                            userEventsProvider.pastRegisteredEvents,
                           );
 
-                          if (filteredRegisteredEvents.isNotEmpty) {
-                            return RegisteredEventsList(  // ✅ Remove SingleChildScrollView wrapper
-                              events: filteredRegisteredEvents,
-                              onEventTap: (event) => _navigateToTeamDetails(event),
-                            );
-                          } else {
+                          final hasUpcoming = filteredUpcoming.isNotEmpty;
+                          final hasPast = filteredPast.isNotEmpty;
+
+                          if (!hasUpcoming && !hasPast) {
                             return Center(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -477,6 +515,31 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                               ),
                             );
                           }
+
+                          return SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (hasUpcoming) ...[
+                                  _buildSectionHeader("Înscrieri viitoare"),
+                                  RegisteredEventsList(
+                                    events: filteredUpcoming,
+                                    onEventTap: (event) => _navigateToTeamDetails(event),
+                                    shrinkWrap: true,
+                                  ),
+                                ],
+                                if (hasPast) ...[
+                                  _buildSectionHeader("Înscrieri trecute"),
+                                  RegisteredEventsList(
+                                    events: filteredPast,
+                                    onEventTap: (event) => _navigateToTeamDetails(event),
+                                    shrinkWrap: true,
+                                  ),
+                                ],
+                                const SizedBox(height: 20),
+                              ],
+                            ),
+                          );
                         },
                       ),
                     )

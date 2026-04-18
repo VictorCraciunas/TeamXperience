@@ -44,6 +44,14 @@ class UserEventsProvider extends ChangeNotifier {
     ).toList()..sort((a, b) => a.dateEvent!.compareTo(b.dateEvent!));
   }
 
+  List<Event> get pastRegisteredEvents {
+    final now = DateTime.now();
+    return registeredEvents.where((event) {
+      final date = event.dateEvent;
+      return date != null && date.isBefore(now);
+    }).toList()..sort((a, b) => b.dateEvent!.compareTo(a.dateEvent!));
+  }
+
   Event? get nextEventWithinHour {
     if (_activeEvent != null) return _activeEvent;
 
