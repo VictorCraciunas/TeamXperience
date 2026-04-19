@@ -46,7 +46,7 @@ class _ChatScreenState extends State<ChatScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            MessagesStream(messageSteam: controller.getMessages()),
+            MessagesStream(controller: controller),
             Padding(
               padding: const EdgeInsets.only(left: 20.0, right: 20.0,bottom: 20.0),
               child: Row(

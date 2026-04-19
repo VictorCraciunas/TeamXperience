@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/features/event_game/controller/puzzle_game_controller.dart';
 import 'package:teamxperience/features/event_game/widgets/geolocation_puzzle_widget.dart';
-import 'package:teamxperience/features/event_game/widgets/image_upload_puzzle_widget.dart';
+import 'package:teamxperience/features/event_game/widgets/image_upload/image_upload_puzzle_widget.dart';
 import '../../../constants/padding.dart';
 import '../../../model/event.dart';
 import '../../../model/mission.dart';

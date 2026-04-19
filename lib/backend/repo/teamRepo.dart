@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../enums/photo_approval_status.dart';
 import '../../model/team.dart';
 
 class TeamRepo {
@@ -33,6 +34,36 @@ class TeamRepo {
       print('Error fetching teams: $e');
       print('Stack trace: $stacktrace');
       throw Exception('Failed to fetch teams for event: $eventId');
+    }
+  }
+
+  Stream<Team> getStreamTeam(String eventId, String teamName) {
+    return _firestore
+        .collection('events')
+        .doc(eventId)
+        .collection('teams')
+        .doc(teamName)
+        .snapshots()
+        .map((doc) => Team.fromMap(doc.data() as Map<String, dynamic>));
+  }
+
+  Future<void> setPhotoApproval(
+    String eventId,
+    String teamName,
+    String key,
+    PhotoApprovalStatus status,
+  ) async {
+    try {
+      await _firestore
+          .collection('events')
+          .doc(eventId)
+          .collection('teams')
+          .doc(teamName)
+          .update({'photoApprovals.$key': status.name});
+    } catch (e, stacktrace) {
+      print('Error updating photo approval: $e');
+      print('Stack trace: $stacktrace');
+      throw Exception('Failed to set photo approval for team: $teamName');
     }
   }
 

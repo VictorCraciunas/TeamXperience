@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/backend/repo/teamRepo.dart';
 import 'package:teamxperience/backend/repo/user_repo.dart';
+import 'package:teamxperience/enums/photo_approval_status.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/model/user.dart';
@@ -82,6 +83,19 @@ class TeamService {
 
   Stream<List<Team>> getStreamTeams(String eventId) {
     return teamRepo.getStreamTeamsForEvent(eventId);
+  }
+
+  Stream<Team> getStreamTeam(String eventId, String teamName) {
+    return teamRepo.getStreamTeam(eventId, teamName);
+  }
+
+  Future<void> setPhotoApproval(
+    String eventId,
+    String teamName,
+    String key,
+    PhotoApprovalStatus status,
+  ) async {
+    return teamRepo.setPhotoApproval(eventId, teamName, key, status);
   }
 
   Future<void> updateTeamDetails(String eventId, String oldTeamName, Team updatedTeam) async {

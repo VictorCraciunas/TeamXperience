@@ -1,3 +1,5 @@
+import 'package:teamxperience/enums/photo_approval_status.dart';
+
 class Team {
   final String name;
   final String teamMembers;
@@ -12,6 +14,7 @@ class Team {
   double latitude;
   double longitude;
   int numberOfMembers;
+  Map<String, PhotoApprovalStatus> photoApprovals;
 
   Team({
     required this.name,
@@ -27,11 +30,26 @@ class Team {
     this.latitude = 0,
     this.longitude = 0,
     this.numberOfMembers = 0,
-  }) : userIds = userIds ?? [];
+    Map<String, PhotoApprovalStatus>? photoApprovals,
+  })  : userIds = userIds ?? [],
+        photoApprovals = photoApprovals ?? {};
+
+  static String approvalKey(int missionIndex, int puzzleIndex) =>
+      '${missionIndex}_$puzzleIndex';
 
   factory Team.fromMap(Map<String, dynamic> map) {
     final rawUserIds = map['userIds'] as List<dynamic>? ?? [];
     final userIdsList = rawUserIds.map((id) => id.toString()).toList();
+
+    final rawApprovals = map['photoApprovals'] as Map<String, dynamic>? ?? {};
+    final approvals = <String, PhotoApprovalStatus>{};
+    rawApprovals.forEach((k, v) {
+      final name = v.toString();
+      final status = PhotoApprovalStatus.values
+          .where((s) => s.name == name)
+          .firstOrNull;
+      if (status != null) approvals[k] = status;
+    });
 
     return Team(
       name: map['name'] as String? ?? '',
@@ -47,6 +65,7 @@ class Team {
       latitude: map['latitude'] as double,
       longitude: map['longitude'] as double,
       numberOfMembers: map['numberOfMembers'] as int? ?? 0,
+      photoApprovals: approvals,
     );
   }
 
@@ -65,6 +84,7 @@ class Team {
       'latitude': latitude,
       'longitude': longitude,
       'numberOfMembers': numberOfMembers,
+      'photoApprovals': photoApprovals.map((k, v) => MapEntry(k, v.name)),
     };
   }
 
