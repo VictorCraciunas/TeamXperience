@@ -131,8 +131,12 @@ class _MissionWidgetState extends State<MissionWidget> {
               },
             ),
           ),
-        IndexedStack(index: controller.selectedPuzzle,
-            children: controller.puzzleWidgets),
+        if (controller.puzzleWidgets.isNotEmpty &&
+            controller.selectedPuzzle >= 0 &&
+            controller.selectedPuzzle < controller.puzzleWidgets.length)
+          IndexedStack(
+              index: controller.selectedPuzzle,
+              children: controller.puzzleWidgets),
       ],
     );
   }
