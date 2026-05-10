@@ -73,15 +73,37 @@ class MyDropdownField<T> extends StatefulWidget {
   State<MyDropdownField<T>> createState() => _MyDropdownFieldState<T>();
 }
 
-class _MyDropdownFieldState<T> extends State<MyDropdownField<T>> {
+class _MyDropdownFieldState<T> extends State<MyDropdownField<T>>
+    with SingleTickerProviderStateMixin {
   final GlobalKey _dropdownKey = GlobalKey();
   OverlayEntry? _overlayEntry;
   bool _isOpen = false;
   String? _errorText;
   bool _isDisposed = false;
+  late final AnimationController _chevronController;
+  late final Animation<double> _chevronTurns;
+
+  @override
+  void initState() {
+    super.initState();
+    _chevronController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _chevronTurns = Tween(begin: 0.0, end: 0.5).animate(
+      CurvedAnimation(parent: _chevronController, curve: Curves.easeOut),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final borderColor = _errorText != null
+        ? const Color(0xFFE03A3A)
+        : _isOpen
+            ? MyColors.lightBlue
+            : widget.borderColor;
+    final borderWidth = _isOpen ? 3.0 : widget.borderWidth;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -98,13 +120,11 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>> {
         GestureDetector(
           key: _dropdownKey,
           onTap: _toggleDropdown,
-          child: Container(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
             padding: widget.contentPadding,
             decoration: BoxDecoration(
-              border: Border.all(
-                color: _errorText != null ? Colors.red : widget.borderColor,
-                width: widget.borderWidth,
-              ),
+              border: Border.all(color: borderColor, width: borderWidth),
               borderRadius: BorderRadius.circular(widget.radius),
             ),
             child: Row(
@@ -115,26 +135,30 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>> {
                     child: widget.leading,
                   ),
                 ],
-                Expanded(
-                  child: _buildSelectedItemDisplay(),
-                ),
+                Expanded(child: _buildSelectedItemDisplay()),
                 widget.dropdownIcon ??
-                    Icon(
-                      _isOpen ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                      color: MyColors.blackColor,
+                    RotationTransition(
+                      turns: _chevronTurns,
+                      child: const Icon(
+                        Icons.keyboard_arrow_down,
+                        color: MyColors.blackColor,
+                      ),
                     ),
               ],
             ),
           ),
         ),
         if (_errorText != null) ...[
-          const SizedBox(height: 4),
-          Text(
-            _errorText!,
-            style: const TextStyle(
-              color: Colors.red,
-              fontSize: 12,
-              fontFamily: 'Poppins',
+          const SizedBox(height: 6),
+          Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Text(
+              _errorText!,
+              style: const TextStyle(
+                color: Color(0xFFE03A3A),
+                fontSize: 12,
+                fontFamily: 'Poppins',
+              ),
             ),
           ),
         ],
@@ -145,7 +169,7 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>> {
   Widget _buildSelectedItemDisplay() {
     if (widget.value != null) {
       final selectedItem = widget.items.firstWhere(
-            (item) => item.value == widget.value,
+        (item) => item.value == widget.value,
         orElse: () => widget.items.first,
       );
       return Text(
@@ -156,17 +180,18 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>> {
           color: MyColors.blackColor,
           fontWeight: FontWeight.w500,
         ),
-      );
-    } else {
-      return widget.hint ?? const Text(
-        'Select an option',
-        style: TextStyle(
-          fontSize: 14,
-          fontFamily: 'Poppins',
-          color: MyColors.greyText,
-        ),
+        overflow: TextOverflow.ellipsis,
       );
     }
+    return widget.hint ??
+        const Text(
+          'Selectează o opțiune',
+          style: TextStyle(
+            fontSize: 14,
+            fontFamily: 'Poppins',
+            color: MyColors.greyText,
+          ),
+        );
   }
 
   void _toggleDropdown() {
@@ -180,7 +205,8 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>> {
   void _openDropdown() {
     if (_overlayEntry != null) return;
 
-    final RenderBox renderBox = _dropdownKey.currentContext!.findRenderObject() as RenderBox;
+    final renderBox =
+        _dropdownKey.currentContext!.findRenderObject() as RenderBox;
     final size = renderBox.size;
     final offset = renderBox.localToGlobal(Offset.zero);
 
@@ -188,9 +214,8 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>> {
     Overlay.of(context).insert(_overlayEntry!);
 
     if (!_isDisposed) {
-      setState(() {
-        _isOpen = true;
-      });
+      setState(() => _isOpen = true);
+      _chevronController.forward();
     }
   }
 
@@ -198,76 +223,98 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>> {
     _overlayEntry?.remove();
     _overlayEntry = null;
     if (!_isDisposed) {
-      setState(() {
-        _isOpen = false;
-      });
+      setState(() => _isOpen = false);
+      _chevronController.reverse();
     }
   }
 
   OverlayEntry _createOverlayEntry(Offset offset, Size size) {
     return OverlayEntry(
-      builder: (context) => Positioned(
-        left: offset.dx,
-        top: offset.dy + size.height + 4,
-        width: size.width,
-        child: Material(
-          elevation: 4,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            constraints: const BoxConstraints(maxHeight: 200),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: const [
-                BoxShadow(
-                  blurRadius: 10,
-                  offset: Offset(0, 4),
-                  color: Colors.black26,
-                ),
-              ],
+      builder: (context) => Stack(
+        children: [
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: _closeDropdown,
+              behavior: HitTestBehavior.opaque,
+              child: const SizedBox.expand(),
             ),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: widget.items.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final item = entry.value;
-                  final isLast = index == widget.items.length - 1;
-
-                  return InkWell(
-                    onTap: () {
-                      _selectItem(item.value);
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        border: !isLast
-                            ? const Border(
-                          bottom: BorderSide(
-                            color: MyColors.transparentLightBlue,
-                            width: 1,
-                          ),
-                        )
-                            : null,
-                      ),
-                      child: Center(
-                        child: Text(
-                          item.label,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontFamily: 'Poppins',
-                            color: MyColors.blackColor,
-                          ),
+          ),
+          Positioned(
+            left: offset.dx,
+            top: offset.dy + size.height + 8,
+            width: size.width,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(
+                    color: MyColors.lightBlue.withValues(alpha: 0.18),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 24,
+                      offset: const Offset(0, 8),
+                      color: MyColors.lightBlue.withValues(alpha: 0.18),
+                    ),
+                    BoxShadow(
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                      color: MyColors.blackColor.withValues(alpha: 0.06),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: widget.items.map((item) {
+                    final isSelected = item.value == widget.value;
+                    return GestureDetector(
+                      onTap: () => _selectItem(item.value),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? MyColors.transparentLightBlue
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(22),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                item.label,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.w400,
+                                  color: MyColors.blackColor,
+                                ),
+                              ),
+                            ),
+                            if (isSelected)
+                              const Icon(
+                                Icons.check_rounded,
+                                color: MyColors.lightBlue,
+                                size: 18,
+                              ),
+                          ],
                         ),
                       ),
-                    ),
-                  );
-                }).toList(),
+                    );
+                  }).toList(),
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -294,9 +341,9 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>> {
   @override
   void dispose() {
     _isDisposed = true;
-    // Remove overlay without calling setState
     _overlayEntry?.remove();
     _overlayEntry = null;
+    _chevronController.dispose();
     super.dispose();
   }
 }
