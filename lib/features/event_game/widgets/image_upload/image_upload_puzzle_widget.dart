@@ -81,8 +81,14 @@ class _ImageUploadPuzzleWidgetState extends State<ImageUploadPuzzleWidget> {
     return StreamBuilder<Team>(
       stream: controller.teamStream,
       builder: (context, snapshot) {
-        final status =
-            snapshot.hasData ? controller.statusFor(snapshot.data!) : null;
+        final team = snapshot.data;
+        if (team == null) {
+          return const Center(
+            child: CircularProgressIndicator(color: MyColors.lightBlue),
+          );
+        }
+
+        final status = controller.statusFor(team);
 
         return AnimatedBuilder(
           animation: controller,
@@ -93,7 +99,7 @@ class _ImageUploadPuzzleWidgetState extends State<ImageUploadPuzzleWidget> {
               children: [
                 Expanded(
                   child: controller.selectedImage == null
-                      ? ImageUploadPicker(onTap: controller.pickAndUpload)
+                      ? ImageUploadPicker(onTap: () => controller.pickAndUpload(team))
                       : ImageUploadPreview(file: controller.selectedImage!),
                 ),
                 const SizedBox(height: 16),
@@ -106,7 +112,7 @@ class _ImageUploadPuzzleWidgetState extends State<ImageUploadPuzzleWidget> {
                   status: status,
                   isUploading: controller.isUploading,
                   onContinue: widget.onSolved,
-                  onReupload: controller.pickAndUpload,
+                  onReupload: () => controller.pickAndUpload(team),
                 ),
               ],
             ),

@@ -34,8 +34,32 @@ class Team {
   })  : userIds = userIds ?? [],
         photoApprovals = photoApprovals ?? {};
 
-  static String approvalKey(int missionIndex, int puzzleIndex) =>
-      '${missionIndex}_$puzzleIndex';
+  static String approvalKeyPrefix(int missionIndex, int puzzleIndex) =>
+      '${missionIndex}_${puzzleIndex}_';
+
+  static String approvalKey(int missionIndex, int puzzleIndex, int tryIndex) =>
+      '${missionIndex}_${puzzleIndex}_$tryIndex';
+
+  int nextTryIndex(int missionIndex, int puzzleIndex) {
+    final prefix = approvalKeyPrefix(missionIndex, puzzleIndex);
+    return photoApprovals.keys.where((k) => k.startsWith(prefix)).length;
+  }
+
+  bool isPuzzleApproved(int missionIndex, int puzzleIndex) {
+    final prefix = approvalKeyPrefix(missionIndex, puzzleIndex);
+    return photoApprovals.entries
+        .any((e) => e.key.startsWith(prefix) && e.value == PhotoApprovalStatus.approved);
+  }
+
+  String? pendingKeyForPuzzle(int missionIndex, int puzzleIndex) {
+    final prefix = approvalKeyPrefix(missionIndex, puzzleIndex);
+    for (final entry in photoApprovals.entries) {
+      if (entry.key.startsWith(prefix) && entry.value == PhotoApprovalStatus.pending) {
+        return entry.key;
+      }
+    }
+    return null;
+  }
 
   factory Team.fromMap(Map<String, dynamic> map) {
     final rawUserIds = map['userIds'] as List<dynamic>? ?? [];

@@ -25,7 +25,7 @@ class ImageUploadPuzzleController extends ChangeNotifier {
 
   File? get selectedImage => _selectedImage;
   bool get isUploading => _isUploading;
-  String get approvalKey => Team.approvalKey(missionIndex, puzzleIndex);
+  String get approvalKeyPrefix => Team.approvalKeyPrefix(missionIndex, puzzleIndex);
 
   late final Stream<Team> teamStream;
 
@@ -39,9 +39,26 @@ class ImageUploadPuzzleController extends ChangeNotifier {
     teamStream = _teamService.getStreamTeam(eventId, teamName);
   }
 
-  PhotoApprovalStatus? statusFor(Team team) => team.photoApprovals[approvalKey];
+  PhotoApprovalStatus? statusFor(Team team) {
+    final prefix = approvalKeyPrefix;
+    PhotoApprovalStatus? latest;
+    int latestTry = -1;
+    for (final entry in team.photoApprovals.entries) {
+      if (entry.key.startsWith(prefix)) {
+        final tryStr = entry.key.substring(prefix.length);
+        final tryIdx = int.tryParse(tryStr) ?? 0;
+        if (tryIdx > latestTry) {
+          latestTry = tryIdx;
+          latest = entry.value;
+        }
+      }
+    }
+    return latest;
+  }
 
-  Future<void> pickAndUpload() async {
+  bool isApproved(Team team) => team.isPuzzleApproved(missionIndex, puzzleIndex);
+
+  Future<void> pickAndUpload(Team team) async {
     final file = await ImageHelper.pickImage();
     if (file == null) return;
 
@@ -59,11 +76,14 @@ class ImageUploadPuzzleController extends ChangeNotifier {
 
     if (url == null) return;
 
-    await _messageService.sendImageMessage(eventId, teamName, url, user);
+    final tryIndex = team.nextTryIndex(missionIndex, puzzleIndex);
+    final key = Team.approvalKey(missionIndex, puzzleIndex, tryIndex);
+
+    await _messageService.sendImageMessage(eventId, teamName, url, user, approvalKey: key);
     await _teamService.setPhotoApproval(
       eventId,
       teamName,
-      approvalKey,
+      key,
       PhotoApprovalStatus.pending,
     );
   }

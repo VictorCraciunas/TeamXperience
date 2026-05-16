@@ -9,6 +9,7 @@ class Message {
   final DateTime timestamp;
   final MessageType type;
   final String? imageUrl;
+  final String? approvalKey;
 
   Message({
     required this.sender,
@@ -16,6 +17,7 @@ class Message {
     required this.timestamp,
     this.type = MessageType.text,
     this.imageUrl,
+    this.approvalKey,
   });
 
   factory Message.fromFirestore(Map<String, dynamic> data) {
@@ -32,6 +34,7 @@ class Message {
       timestamp: (data['timestamp'] as Timestamp).toDate(),
       type: type,
       imageUrl: data['imageUrl'] as String?,
+      approvalKey: data['approvalKey'] as String?,
     );
   }
 
@@ -42,6 +45,7 @@ class Message {
       'timestamp': Timestamp.fromDate(timestamp),
       'type': type.name,
       if (imageUrl != null) 'imageUrl': imageUrl,
+      if (approvalKey != null) 'approvalKey': approvalKey,
     };
   }
 }

@@ -44,8 +44,6 @@ class MessagesStream extends StatelessWidget {
       stream: controller.getTeamStream(),
       builder: (context, teamSnapshot) {
         final team = teamSnapshot.data;
-        final pendingKey =
-            team != null ? controller.pendingApprovalKey(team) : null;
 
         return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
           stream: controller.getMessages(),
@@ -64,14 +62,6 @@ class MessagesStream extends StatelessWidget {
             final user =
                 Provider.of<UserProvider>(context, listen: false).currentUser!;
             final isAdmin = user.role == Role.ADMIN;
-
-            String? latestImageMessageId;
-            for (final doc in docs) {
-              final type = doc.data()['type'] as String?;
-              if (type == MessageType.image.name) {
-                latestImageMessageId = doc.id;
-              }
-            }
 
             // Build chronological list of parsed messages
             final parsed = <_ParsedMsg>[];
@@ -93,6 +83,7 @@ class MessagesStream extends StatelessWidget {
                 type: type,
                 text: data['text'] as String? ?? '',
                 imageUrl: data['imageUrl'] as String?,
+                approvalKey: data['approvalKey'] as String?,
                 dateTime: dateTime,
                 dayLabel: _dayLabel(dateTime),
                 timeLabel: _timeLabel(dateTime),
@@ -136,20 +127,13 @@ class MessagesStream extends StatelessWidget {
               }
 
               if (m.type == MessageType.image) {
-                final isLatest = m.docId == latestImageMessageId;
-                final canApprove =
-                    isAdmin && isLatest && pendingKey != null && team != null;
-
                 PhotoApprovalStatus? status;
-                if (canApprove) {
-                  status = PhotoApprovalStatus.pending;
-                } else if (isLatest && team != null) {
-                  final approvalValue =
-                      team.photoApprovals[pendingKey ?? m.docId];
-                  if (approvalValue != null) {
-                    status = approvalValue;
-                  }
+                if (m.approvalKey != null && team != null) {
+                  status = team.photoApprovals[m.approvalKey];
                 }
+
+                final isPending = status == PhotoApprovalStatus.pending;
+                final canApprove = isAdmin && isPending && team != null;
 
                 widgets.add(ImageMessageBubble(
                   key: ValueKey(m.docId),
@@ -161,9 +145,9 @@ class MessagesStream extends StatelessWidget {
                   showApprovalActions: canApprove,
                   status: status,
                   onApprove:
-                      canApprove ? () => controller.approveCurrentPhoto(team) : null,
+                      canApprove ? () => controller.approvePhoto(team, m.approvalKey!) : null,
                   onDeny:
-                      canApprove ? () => controller.denyCurrentPhoto(team) : null,
+                      canApprove ? () => controller.denyPhoto(team, m.approvalKey!) : null,
                 ));
               } else {
                 widgets.add(MessageBubble(
@@ -202,6 +186,7 @@ class _ParsedMsg {
   final MessageType type;
   final String text;
   final String? imageUrl;
+  final String? approvalKey;
   final DateTime dateTime;
   final String dayLabel;
   final String timeLabel;
@@ -215,6 +200,7 @@ class _ParsedMsg {
     required this.type,
     required this.text,
     required this.imageUrl,
+    required this.approvalKey,
     required this.dateTime,
     required this.dayLabel,
     required this.timeLabel,
