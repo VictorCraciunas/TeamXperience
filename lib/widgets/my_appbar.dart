@@ -10,13 +10,15 @@ class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String? iconString;
   final bool showDropdown;
   final Event? event;
+  final Widget? trailing;
 
   const MyAppBar({
     super.key,
     required this.appBarText,
     this.iconString,
     this.showDropdown = false,
-    this.event
+    this.event,
+    this.trailing,
   });
 
   @override
@@ -101,8 +103,9 @@ class _MyAppBarState extends State<MyAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
       surfaceTintColor: Colors.transparent,
-      elevation: 4,
-      backgroundColor: MyColors.backgroundColor,
+      elevation: 3,
+      shadowColor: const Color(0x1A000000),
+      backgroundColor: MyColors.barColor,
       title: Text(
         widget.appBarText,
         style:  const TextStyle(
@@ -114,7 +117,12 @@ class _MyAppBarState extends State<MyAppBar> {
       ),
       centerTitle: true,
       actions: [
-        if (widget.iconString != null)
+        if (widget.trailing != null)
+          Padding(
+            padding: const EdgeInsets.only(right: 15.0),
+            child: widget.trailing!,
+          )
+        else if (widget.iconString != null)
           Padding(
             padding: const EdgeInsets.only(right: 15.0),
             child: GestureDetector(

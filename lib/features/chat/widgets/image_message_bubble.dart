@@ -43,7 +43,7 @@ class ImageMessageBubble extends StatelessWidget {
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               gradient: isMe ? MyColors.myGradient : null,
-              color: isMe ? null : MyColors.backgroundColor,
+              color: isMe ? null : MyColors.barColor,
               border: isMe
                   ? null
                   : Border.all(color: const Color(0xFFE6E6E6), width: 1.5),
