@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:teamxperience/enums/role.dart';
 import 'package:teamxperience/features/chat/controller/chat_controller.dart';
 import 'package:teamxperience/features/chat/widgets/chat_composer.dart';
 import 'package:teamxperience/features/chat/widgets/message_stream.dart';
+import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/widgets/my_appbar.dart';
 
 import '../../../model/team.dart';
@@ -53,8 +56,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context, listen: false).currentUser!;
+    final isAdmin = user.role == Role.ADMIN;
+    final subtitle = isAdmin ? controller.team.name : 'Administrator';
+
     return Scaffold(
-      appBar: const MyAppBar(appBarText: 'Chat'),
+      appBar: MyAppBar(appBarText: 'Chat', subtitle: subtitle),
       body: Column(
         children: [
           MessagesStream(controller: controller),

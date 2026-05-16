@@ -7,6 +7,7 @@ import 'menu.dart';
 
 class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String appBarText;
+  final String? subtitle;
   final String? iconString;
   final bool showDropdown;
   final Event? event;
@@ -15,6 +16,7 @@ class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
   const MyAppBar({
     super.key,
     required this.appBarText,
+    this.subtitle,
     this.iconString,
     this.showDropdown = false,
     this.event,
@@ -106,15 +108,39 @@ class _MyAppBarState extends State<MyAppBar> {
       elevation: 3,
       shadowColor: const Color(0x1A000000),
       backgroundColor: MyColors.barColor,
-      title: Text(
-        widget.appBarText,
-        style:  const TextStyle(
-          fontSize: 24,
-          fontFamily: 'Poppins',
-          fontWeight: FontWeight.w500,
-          color: MyColors.blackColor,
-        ),
-      ),
+      title: widget.subtitle != null
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  widget.appBarText,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    color: MyColors.blackColor,
+                  ),
+                ),
+                Text(
+                  widget.subtitle!,
+                  style: const TextStyle(
+                    fontSize: 11.5,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                    color: MyColors.greyText,
+                  ),
+                ),
+              ],
+            )
+          : Text(
+              widget.appBarText,
+              style: const TextStyle(
+                fontSize: 24,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+                color: MyColors.blackColor,
+              ),
+            ),
       centerTitle: true,
       actions: [
         if (widget.trailing != null)
