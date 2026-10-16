@@ -63,7 +63,7 @@ class UserEventsProvider extends ChangeNotifier {
       event.dateEvent != null &&
       event.dateEvent!.isBefore(now) &&
       event.dateEvent!.isAfter(oneHourAgo) &&
-      !event.isStopped
+      !event.isOver
     ).toList()..sort((a, b) => a.dateEvent!.compareTo(b.dateEvent!));
 
     return recentEvents.isNotEmpty ? recentEvents.first : null;
@@ -79,7 +79,7 @@ class UserEventsProvider extends ChangeNotifier {
     ).toList();
 
     for (final event in pastEvents) {
-      if (event.isStopped) continue;
+      if (event.isOver) continue;
       final team = await _teamService.getUserTeamForEvent(event.eventId, user.uid);
       if (team != null && team.hasStarted && !team.hasFinished) {
         _activeEvent = event;

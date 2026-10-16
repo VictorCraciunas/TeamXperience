@@ -21,8 +21,8 @@ class EventManagementController extends ChangeNotifier {
     return d != null && d.isBefore(DateTime.now());
   }
 
-  bool get isStopped => event.isStopped;
-  bool get canStop => hasStarted && !event.isStopped && !_isStopping;
+  bool get isStopped => event.isOver;
+  bool get canStop => hasStarted && !event.isOver && !_isStopping;
 
   void navigateToNotification() {
     Navigator.pushNamed(

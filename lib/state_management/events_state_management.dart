@@ -32,9 +32,8 @@ class EventList extends ChangeNotifier {
     return _events.where((e) {
       final start = e.dateEvent;
       if (start == null) return false;
-      if (e.isStopped) return false;
-      final end = start.add(const Duration(hours: 3));
-      return !start.isAfter(now) && end.isAfter(now);
+      if (e.isOver) return false;
+      return !start.isAfter(now);
     }).toList()..sort((a, b) => a.dateEvent!.compareTo(b.dateEvent!));
   }
 

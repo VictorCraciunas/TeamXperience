@@ -23,6 +23,16 @@ class Event {
   String? dificultate;
   bool isStopped;
 
+  static const Duration maxDuration = Duration(hours: 3);
+
+  bool get hasExpired {
+    final start = dateEvent;
+    if (start == null) return false;
+    return DateTime.now().isAfter(start.add(maxDuration));
+  }
+
+  bool get isOver => isStopped || hasExpired;
+
   Event({
     required this.eventId,
     this.name,

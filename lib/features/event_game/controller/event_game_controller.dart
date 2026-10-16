@@ -46,18 +46,12 @@ class EventGameController extends ChangeNotifier {
     final start = event.dateEvent;
     if (start == null) return;
 
-    if (event.isStopped) {
+    if (event.isOver) {
       _triggerEventEnded();
       return;
     }
 
-    final deadline = start.add(const Duration(hours: 3));
-    final remaining = deadline.difference(DateTime.now());
-    if (remaining.isNegative) {
-      _triggerEventEnded();
-      return;
-    }
-
+    final remaining = start.add(Event.maxDuration).difference(DateTime.now());
     _deadlineTimer = Timer(remaining, _triggerEventEnded);
     _eventSubscription = _eventService.streamEvent(event.eventId).listen((
       updatedEvent,
