@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/animation_type.dart';
 import 'package:teamxperience/constants/colors.dart';
-import 'package:teamxperience/widgets/my_text_field.dart';
-import 'package:teamxperience/widgets/my_dropdown/my_dropdown.dart';
-import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
+import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import 'package:teamxperience/widgets/color_picker_dialog.dart';
 import 'package:teamxperience/widgets/slider_widget.dart';
 
@@ -11,7 +11,7 @@ import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';
 import '../../../../../../../utils/component_conversion/component_to_widget.dart';
-import '../../../../../../../widgets/my_dropdown/dropdown_item.dart';
+import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
 import 'create_text_controller.dart';
 
 class TextComponentFieldsWidget extends StatefulWidget {

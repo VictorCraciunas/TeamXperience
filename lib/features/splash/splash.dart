@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/routes.dart';
-import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});

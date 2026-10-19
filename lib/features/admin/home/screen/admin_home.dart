@@ -6,7 +6,7 @@ import 'package:teamxperience/features/admin/home/widgets/navigate_card.dart';
 import 'package:teamxperience/features/admin/home/widgets/title_carousel.dart';
 import 'package:teamxperience/features/event_management/widgets/management_button.dart';
 import 'package:teamxperience/widgets/my_appbar.dart';
-import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import 'package:teamxperience/widgets/stire_card/stiri_carousel.dart';
 import '../../../../state_management/events_state_management.dart';
 import '../../../../state_management/news_state_management.dart';

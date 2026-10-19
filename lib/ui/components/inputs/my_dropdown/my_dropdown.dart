@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../constants/colors.dart';
-import 'dropdown_item.dart';
+import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
 
 /// A reusable labeled dropdown field that displays a label above
 /// a custom dropdown button, with customizable styling and behavior.

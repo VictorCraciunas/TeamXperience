@@ -3,14 +3,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/widgets/my_appbar.dart';
-import 'package:teamxperience/widgets/my_button.dart';
-import 'package:teamxperience/widgets/my_text_field.dart';
-import 'package:teamxperience/widgets/my_dropdown/my_dropdown.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
+import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
 import '../../../../model/newsCategory.dart';
 import '../../../../constants/routes.dart';
 import '../../../../enums/stire_type.dart';
 import '../../../../utils/calendar_helper.dart';
-import '../../../../widgets/my_dropdown/dropdown_item.dart';
+import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
 import '../controller/filter_news_controller.dart';
 
 class FilterStiriScreen extends StatefulWidget {

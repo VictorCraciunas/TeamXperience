@@ -8,7 +8,7 @@ import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/service/LocationService.dart';
 import 'package:teamxperience/service/route_service.dart';
-import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
 class GeolocationPuzzleWidget extends StatefulWidget {
   final Puzzle puzzle;

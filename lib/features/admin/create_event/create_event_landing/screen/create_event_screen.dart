@@ -5,12 +5,12 @@ import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/admin/create_event/common_widgets/upload_image.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/widgets/my_appbar.dart';
-import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import '../../../../../constants/padding.dart';
 import '../../../../../enums/event_type.dart';
-import '../../../../../widgets/my_dropdown/dropdown_item.dart';
-import '../../../../../widgets/my_dropdown/my_dropdown.dart';
-import '../../../../../widgets/my_text_field.dart';
+import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
+import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
+import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
 import '../controller/create_event_controller.dart';
 
 class CreateEventPage extends StatefulWidget {

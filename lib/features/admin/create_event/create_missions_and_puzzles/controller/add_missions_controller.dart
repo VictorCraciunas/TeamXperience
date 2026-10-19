@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_mission/mission_widget.dart';
 import 'package:teamxperience/model/mission.dart';
-import 'package:teamxperience/utils/snackbars.dart';
+import 'package:teamxperience/ui/components/feedback/snackbars.dart';
 
 import '../../../../../model/event.dart';
 import '../../../../../state_management/events_state_management.dart';

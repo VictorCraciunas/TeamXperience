@@ -3,12 +3,12 @@ import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/save_puzzle/save_puzzle_controller.dart';
 import 'package:teamxperience/model/puzzle.dart';
-import 'package:teamxperience/widgets/my_text_field.dart';
-import 'package:teamxperience/widgets/my_dropdown/my_dropdown.dart';
-import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
+import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
 import '../../../../../../constants/padding.dart';
-import '../../../../../../widgets/my_dropdown/dropdown_item.dart';
+import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
 import '../../controller/add_missions_controller.dart';
 
 class SavePuzzle extends StatefulWidget {

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/colors.dart';
-import 'package:teamxperience/widgets/my_button.dart';
-import 'package:teamxperience/widgets/my_dropdown/my_dropdown.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
 import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';
 import '../../../../../../../utils/component_conversion/component_to_widget.dart';
-import '../../../../../../../widgets/my_dropdown/dropdown_item.dart';
+import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
 import 'code_component_controller.dart';
 import '../../../../../../../widgets/slider_widget.dart';
 

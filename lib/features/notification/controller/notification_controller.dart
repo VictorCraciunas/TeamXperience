@@ -3,7 +3,7 @@ import 'package:teamxperience/backend/network/NetworkAPI.dart';
 import 'package:teamxperience/backend/network/NotificationDTO.dart';
 import 'package:teamxperience/backend/network/NotificationResponseDTO.dart';
 import 'package:teamxperience/model/event.dart';
-import 'package:teamxperience/utils/snackbars.dart';
+import 'package:teamxperience/ui/components/feedback/snackbars.dart';
 
 class NotificationController{
   final titluNotificareController = TextEditingController();

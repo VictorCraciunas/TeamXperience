@@ -3,8 +3,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/widgets/my_appbar.dart';
-import 'package:teamxperience/widgets/my_text_field.dart';
-import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import '../../../model/newsCategory.dart';
 import '../controller/news_category_controller.dart';
 

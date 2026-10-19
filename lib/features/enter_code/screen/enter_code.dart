@@ -6,7 +6,7 @@ import 'package:teamxperience/features/enter_code/controller/enter_code_controll
 import 'package:teamxperience/widgets/my_appbar.dart';
 
 import '../../../model/event.dart';
-import '../../../widgets/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
 class EnterCode extends StatefulWidget {
   const EnterCode({super.key});

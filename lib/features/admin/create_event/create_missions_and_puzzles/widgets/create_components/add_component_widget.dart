@@ -5,8 +5,8 @@ import 'package:teamxperience/model/puzzle.dart';
 
 import '../../../../../../constants/colors.dart';
 import '../../../../../../constants/padding.dart';
-import '../../../../../../widgets/my_dropdown/dropdown_item.dart';
-import '../../../../../../widgets/my_dropdown/my_dropdown.dart';
+import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
+import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
 import '../../controller/add_missions_controller.dart';
 import 'create_button/create_button_component.dart';
 import 'create_code/create_code_component.dart';

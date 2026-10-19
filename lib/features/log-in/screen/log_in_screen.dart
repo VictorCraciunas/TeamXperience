@@ -3,12 +3,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/log-in/controller/log_in_controller.dart';
-import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import 'package:teamxperience/widgets/terms_text.dart';
 
 import '../../../constants/padding.dart';
 import '../../../widgets/my_appbar.dart';
-import '../../../widgets/my_text_field.dart';
+import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
 
 class LogInScreen extends StatelessWidget {
   const LogInScreen({super.key});

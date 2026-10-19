@@ -4,10 +4,10 @@ import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/widgets/my_appbar.dart';
-import 'package:teamxperience/widgets/my_button.dart';
-import 'package:teamxperience/widgets/my_dropdown/my_dropdown.dart';
-import '../../../../widgets/my_dropdown/dropdown_item.dart';
-import '../../../../widgets/my_text_field.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
+import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
+import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
 import '../controller/filter_events_controller.dart';
 
 class FilterEventsScreen extends StatefulWidget {

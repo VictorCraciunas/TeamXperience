@@ -5,7 +5,7 @@ import 'package:teamxperience/features/register_team/controller/register_team_co
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/widgets/StepRegisterIcon.dart';
 import 'package:teamxperience/widgets/my_appbar.dart';
-import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
 import '../widgets/step1.dart';
 import '../widgets/step2.dart';
