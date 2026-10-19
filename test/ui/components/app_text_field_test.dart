@@ -8,6 +8,7 @@ void main() {
   testWidgets('shows plain label when not required', (tester) async {
     await pumpUi(tester, const AppTextField(label: 'Nume echipă'));
     expect(find.text('Nume echipă'), findsOneWidget);
+    expect(find.byKey(const ValueKey('app-text-field-label')), findsOneWidget);
   });
 
   testWidgets('marks the label with an asterisk when required', (tester) async {
@@ -86,5 +87,28 @@ void main() {
     await pumpUi(tester, AppTextField(label: 'Nume', onChanged: (v) => last = v));
     await tester.enterText(find.byType(TextField), 'Vulturii');
     expect(last, 'Vulturii');
+  });
+  testWidgets('renders no label when none is given', (tester) async {
+    await pumpUi(tester, const AppTextField(hint: 'Caută eveniment'));
+    expect(find.byKey(const ValueKey('app-text-field-label')), findsNothing);
+    expect(find.byType(TextField), findsOneWidget);
+  });
+  testWidgets('leading and trailing icons are limited to 20dp', (tester) async {
+    await pumpUi(
+      tester,
+      const AppTextField(
+        label: 'Email',
+        leading: SizedBox(width: 40, height: 40),
+        trailing: SizedBox(width: 40, height: 40),
+      ),
+    );
+    expect(
+      tester.getSize(find.byKey(const ValueKey('app-text-field-leading'))),
+      const Size(20, 20),
+    );
+    expect(
+      tester.getSize(find.byKey(const ValueKey('app-text-field-trailing'))),
+      const Size(20, 20),
+    );
   });
 }

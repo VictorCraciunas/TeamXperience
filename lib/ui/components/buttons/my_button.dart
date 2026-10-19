@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/constants/colors.dart';
 
-class MyButton extends StatefulWidget {
-  final String buttonText;
-  final Color? buttonColor;
-  final Color textColor;
-  final LinearGradient? gradient;
-  final Function() buttonOnTap;
-  final Widget? leading;
-  final bool withBorder;
-  final FontWeight fontWeight;
-  final double radius;
-  final double buttonWidth;
-  final double buttonTextSize;
+import 'app_button.dart';
 
+/// Legacy button kept so existing screens keep compiling. It renders an
+/// [AppButton]: gradient and themed-colour buttons become the primary variant,
+/// bordered buttons the secondary one, and any other fill colour (for example a
+/// brand colour) is passed through as an override. Radius, font weight and font
+/// size are accepted but ignored. New code should use [AppButton] directly.
+class MyButton extends StatelessWidget {
   const MyButton({
     super.key,
     required this.buttonText,
@@ -23,70 +19,49 @@ class MyButton extends StatefulWidget {
     this.gradient,
     this.leading,
     this.fontWeight = FontWeight.w500,
-    final this.radius = 50,
+    this.radius = 50,
     this.buttonWidth = double.infinity,
     this.buttonTextSize = 16,
   });
 
-  @override
-  State<MyButton> createState() => _MyButtonState();
-}
+  final String buttonText;
+  final Color? buttonColor;
+  final Color textColor;
+  final LinearGradient? gradient;
+  final VoidCallback buttonOnTap;
+  final Widget? leading;
+  final bool withBorder;
+  final FontWeight fontWeight;
+  final double radius;
+  final double buttonWidth;
+  final double buttonTextSize;
 
-class _MyButtonState extends State<MyButton> {
-  bool isPressed = false;
-  
+  static const _themedFills = [
+    MyColors.lightBlue,
+    MyColors.yellow,
+    MyColors.transparentLightBlue,
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) {
-        setState(() {
-          isPressed = true;
-        });
-      },
-      onTapUp: (_) {
-        setState(() {
-          isPressed = false;
-        });
-      },
-      onTapCancel: () {
-        setState(() {
-          isPressed = false;
-        });
-      },
-      onTap: widget.buttonOnTap,
-      child: Opacity(
-        opacity: isPressed ? 0.6 : 1.0,
-        child: Container(
-          width: widget.buttonWidth,
-          height: 57,
-          decoration: BoxDecoration(
-            borderRadius:  BorderRadius.all(Radius.circular(widget.radius)),
-            color: widget.buttonColor,
-            gradient: widget.gradient,
-            border: widget.withBorder
-                ? Border.all(
-              width: 2,
-              color: const Color(0xFFE6E6E6),
-            )
-                : null,  // ← properly close the ternary
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (widget.leading != null) ...[widget.leading!, const SizedBox(width: 15)],
-              Text(
-                widget.buttonText,
-                style: TextStyle(
-                  color: widget.textColor,
-                  fontSize: widget.buttonTextSize,
-                  fontFamily: 'Poppins',
-                  fontWeight: widget.fontWeight,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+    final fill = buttonColor;
+    final isBrandOverride = fill != null && !_themedFills.contains(fill);
+    final variant = (withBorder && gradient == null && fill == null)
+        ? AppButtonVariant.secondary
+        : AppButtonVariant.primary;
+
+    final button = AppButton(
+      label: buttonText,
+      onPressed: buttonOnTap,
+      variant: variant,
+      leading: leading,
+      backgroundColor: isBrandOverride ? fill : null,
+      foregroundColor: isBrandOverride ? textColor : null,
     );
+
+    if (buttonWidth.isFinite) {
+      return SizedBox(width: buttonWidth, child: button);
+    }
+    return button;
   }
 }
