@@ -53,5 +53,14 @@ Panels below the hero: with a live/soon/upcoming hero show "Înscrierile tale" a
 
 Romanian copy is fixed as written above (sentence case, diacritics with comma-below ș ț).
 
+## Admin Home (no approved design yet, must be accounted for)
+The approved mockups cover the **player** Home only. Admin Home is designed later (plan Phase 7) and implemented after the player Home (plan Phase 8). Consequences for everything built before then:
+- `lib/ui/` is **role-neutral**: no player-only or admin-only copy or logic. Role-specific compositions (hero variants, panels) live in `lib/features/<area>/widgets/`.
+- Components must be reusable by an admin Home: `HeroCardFrame`, `SectionCard`, `StatusPill`, `PosterCard`, plus generic `StatTile` (value + label + optional icon) and `ActionTile` (icon + label + tap) which the admin Home needs for team/person counts and quick actions.
+- The navigation shell is generic (`AppShell` with a list of tabs) so an `AdminShell` can reuse it with its own tabs.
+- Theme (dark mode, tokens) and the migrated admin screens (plan Phase 3c) apply to admins from the start. Until the admin shell exists, the theme toggle also sits in the admin Home app bar menu.
+- Inputs for the future admin mockup (what exists today): "Eveniment live" card with "Gestionează eveniment" (`EventList.liveEvents`), per-event stats `nrTeams`/`nrPerson` (`TeamRepo.getAllTeamsForEvent`), upcoming events carousel with stats, news carousel, quick actions (create event, create news, send notification), and the dedicated screens event management (notification, map, chat, stop event), registered teams, team chats, builder.
+- Likely admin hero states (to confirm in the mockup): live event (management shortcut + teams started/finished), event starting within 24 h, none.
+
 ## Out of scope for this plan
-Event details, game mission list, auth and admin screen redesigns (separate plans), a `maxTeams` field on `Event`, enforcement of the enrollment window on the register button, Firestore security rules.
+Event details, game mission list, auth and the other admin screen redesigns (separate plans; Admin Home itself is Phases 7-8), a `maxTeams` field on `Event`, enforcement of the enrollment window on the register button, Firestore security rules.
