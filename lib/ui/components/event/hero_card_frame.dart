@@ -16,40 +16,51 @@ class HeroCardFrame extends StatelessWidget {
     final url = imageUrl;
     final fallback = ColoredBox(color: colors.navy);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadius.hero),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: (url == null || url.isEmpty)
-                ? fallback
-                : CachedNetworkImage(
-                    imageUrl: url,
-                    fit: BoxFit.cover,
-                    placeholder: (_, __) => fallback,
-                    errorWidget: (_, __, ___) => fallback,
-                  ),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppRadius.hero),
+        border: Border.all(color: colors.border, width: 1.5),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x33000000),
+            blurRadius: 14,
+            offset: Offset(0, 4),
           ),
-          const Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0x1F0C092A), Color(0xEB0C092A)],
-                  stops: [0.0, 0.8],
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppRadius.hero),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child:
+                  (url == null || url.isEmpty)
+                      ? fallback
+                      : CachedNetworkImage(
+                        imageUrl: url,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => fallback,
+                        errorWidget: (_, __, ___) => fallback,
+                      ),
+            ),
+            const Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color(0x1F0C092A), Color(0xEB0C092A)],
+                    stops: [0.0, 0.8],
+                  ),
                 ),
               ),
             ),
-          ),
-          ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 210),
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: child,
+            ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 210),
+              child: Padding(padding: const EdgeInsets.all(14), child: child),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -45,7 +45,7 @@ Every folder under `lib/features/` follows `controller/` + `screen/` (+ `widgets
 - `splash`, `log-in`, `sign-up` (+`register.dart` chooser), `forgot-password`. Services: `LogInService` / `SignUpService` call `AuthenticationRepository`, then fetch an FCM token (`FCMService.getFCMToken`) and write it to `users/{uid}.fcmToken`. Google sign-in creates the `users` doc on first login. Registered users always get `Role.USER`; **admins are made by editing `users/{uid}.role` in Firestore** (no in-app way).
 
 ### Player
-- `home` — `Consumer3<EventList, NewsList, UserEventsProvider>`: active-event card ("play"), upcoming events carousel, registered events, latest news. `HomeController` (plain class) handles logout (clears `EventList`/`NewsList`, signs out) and navigation.
+- `home` — `Consumer3<EventList, NewsList, UserEventsProvider>` inside a `ClockBuilder` (1 s). `resolveHomeHero` (`logic/home_hero.dart`) picks the hero (Live, Starting soon, Upcoming, Recommended, none), `HomeHeroSection` renders it with the shared `EventHeroCard`, then panels: `PreparationPanel` (upcoming), `HowItWorksPanel` (recommended/none), `RegistrationsPanel`, `EventsPanel`, `NewsPanel`. `HomeController` (plain class) handles navigation, team lookup and sharing.
 - `events_dashboard/events_dashboard_user` — list/search/filter of upcoming events; `events_filter_service.dart` (`FilterService`) is shared with the admin dashboard.
 - `event_details` — event info; register/"already registered" (`already_registered_card`), admin variant shows management actions.
 - `register_team` — 3-step wizard (`widgets/step1..3`, `StepRegisterWidget` indicator); step 3 = mandatory agreements.
