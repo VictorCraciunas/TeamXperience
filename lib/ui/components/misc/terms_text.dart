@@ -1,17 +1,18 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import '../../theme/theme_context.dart';
+
 class TermsText extends StatelessWidget {
   const TermsText({super.key});
 
   @override
   Widget build(BuildContext context) {
     final baseStyle = TextStyle(
-      color: Colors.grey.shade600,
+      color: context.colors.muted,
       fontSize: 14,
-      fontFamily: 'Poppins',
     );
-    final linkStyle = baseStyle.copyWith(color: Colors.black);
+    final linkStyle = baseStyle.copyWith(color: context.colors.text);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 30.0,),

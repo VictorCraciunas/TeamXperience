@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/model/event.dart';
 
 import 'package:teamxperience/ui/components/navigation/menu.dart';
@@ -105,40 +105,38 @@ class _MyAppBarState extends State<MyAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
       surfaceTintColor: Colors.transparent,
-      elevation: 3,
-      shadowColor: const Color(0x1A000000),
-      backgroundColor: MyColors.barColor,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      shape: Border(bottom: BorderSide(color: context.colors.border)),
+      backgroundColor: context.colors.panel,
       title: widget.subtitle != null
           ? Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   widget.appBarText,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
-                    fontFamily: 'Poppins',
                     fontWeight: FontWeight.w600,
-                    color: MyColors.blackColor,
+                    color: context.colors.text,
                   ),
                 ),
                 Text(
                   widget.subtitle!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11.5,
-                    fontFamily: 'Poppins',
                     fontWeight: FontWeight.w500,
-                    color: MyColors.greyText,
+                    color: context.colors.muted,
                   ),
                 ),
               ],
             )
           : Text(
               widget.appBarText,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 24,
-                fontFamily: 'Poppins',
                 fontWeight: FontWeight.w500,
-                color: MyColors.blackColor,
+                color: context.colors.text,
               ),
             ),
       centerTitle: true,
@@ -159,8 +157,8 @@ class _MyAppBarState extends State<MyAppBar> {
                 height: 45,
                 decoration: BoxDecoration(
                   color: _isMenuOpen
-                      ? MyColors.transparentLightBlue.withValues(alpha: 0.8)
-                      : MyColors.transparentLightBlue,
+                      ? context.colors.iconButtonBg.withValues(alpha: 0.8)
+                      : context.colors.iconButtonBg,
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: Center(

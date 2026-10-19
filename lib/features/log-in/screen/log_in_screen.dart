@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/routes.dart';
@@ -18,7 +19,7 @@ class LogInScreen extends StatelessWidget {
     LogInController controller = LogInController();
 
     return Scaffold(
-      backgroundColor: MyColors.backgroundColor,
+      backgroundColor: context.colors.page,
       appBar: const MyAppBar(appBarText: "Logare"),
       body: SingleChildScrollView(
         child: Padding(
@@ -56,22 +57,21 @@ class LogInScreen extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: Divider(color: Colors.grey.shade300, thickness: 1),
+                      child: Divider(color: context.colors.border, thickness: 1),
                     ),
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.symmetric(horizontal: 12.0),
                       child: Text(
                         'SAU',
                         style: TextStyle(
-                          fontFamily: 'Poppins',
-                          color: MyColors.greyText,
+                          color: context.colors.muted,
                           fontSize: 16,
                         ),
                       ),
                     ),
 
                     Expanded(
-                      child: Divider(color: Colors.grey.shade300, thickness: 1),
+                      child: Divider(color: context.colors.border, thickness: 1),
                     ),
                   ],
                 ),
@@ -81,7 +81,6 @@ class LogInScreen extends StatelessWidget {
                   controller: controller.emailController,
                   labelText: "Adresa de email",
                   labelFontSize: 14,
-                  borderColor: const Color(0xFFE6E6E6),
                   hintText: 'exemplu@gmail.com',
                   leading: SvgPicture.asset(
                     'assets/images/email.svg',
@@ -100,7 +99,6 @@ class LogInScreen extends StatelessWidget {
                   controller: controller.passwordController,
                   labelText: "Parola",
                   labelFontSize: 14,
-                  borderColor: const Color(0xFFE6E6E6),
                   hintText: 'Parola ta',
                   leading: SvgPicture.asset(
                     'assets/images/pass.svg',
@@ -135,13 +133,12 @@ class LogInScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.pushNamed(context, Routes.forgotPassword);
                   },
-                  child: const Text(
+                  child: Text(
                     "Ai uitat parola?",
                     style: TextStyle(
                       fontSize: 16,
-                      fontFamily: 'Poppins',
                       fontWeight: FontWeight.w500,
-                      color: MyColors.yellow,
+                      color: context.colors.accent,
                     ),
                   ),
                 ),
