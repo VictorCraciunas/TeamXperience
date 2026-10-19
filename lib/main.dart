@@ -31,6 +31,7 @@ import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
 import 'package:teamxperience/service/FCMService.dart';
 import 'package:teamxperience/ui/ui.dart';
+import 'package:teamxperience/features/shell/screen/user_shell.dart';
 import 'package:teamxperience/utils/auth_util.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'backend/authentication/AuthenticationRepository.dart';
@@ -39,7 +40,6 @@ import 'features/admin/create_event/create_event_landing/screen/create_event_scr
 import 'features/events_dashboard/events_dashboard_admin/screen/events_dasboard_screen.dart';
 import 'features/events_dashboard/events_dashboard_user/screen/events_dashboard_screen.dart';
 import 'features/filter/filter_events/screen/filter_events_screen.dart';
-import 'features/home/screen/home.dart';
 import 'features/loader_page/landing_page.dart';
 import 'features/log-in/screen/log_in_screen.dart';
 import 'features/sign-up/screen/sign_up.dart';
@@ -143,7 +143,7 @@ class MyApp extends StatelessWidget {
                 Routes.register: (_) => const Register(),
                 Routes.signup: (_) => const RegisterScreen(),
                 Routes.login: (_) => const LogInScreen(),
-                Routes.home: (_) => const Home(),
+                Routes.home: (_) => const UserShell(),
                 Routes.createEvent: (_) => const CreateEventPage(),
                 Routes.addMissions: (_) => const AddMissionsPage(),
                 Routes.adminHome: (_) => const AdminHome(),

@@ -9,10 +9,10 @@ import '../../events_filter_service.dart';
 
 class EventsDashboardUserController extends ChangeNotifier {
   final FilterService _filterService = FilterService();
-  final TeamRepo _teamRepo = TeamRepo();
+  late final TeamRepo _teamRepo = TeamRepo();
 
   // Original events passed to the controller
-  final List<Event> _allEvents;
+  List<Event> _allEvents;
   late final List<Event> registeredEvents;
   AppUser? user;
 
@@ -36,6 +36,12 @@ class EventsDashboardUserController extends ChangeNotifier {
     else {
       registeredEvents = []; // ← Initialize to empty list if no user
     }
+  }
+
+  /// Replaces the events shown (used when the shared event list refreshes).
+  void updateEvents(List<Event> events) {
+    _allEvents = events;
+    notifyListeners();
   }
 
   // Getters
