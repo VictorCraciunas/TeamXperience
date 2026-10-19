@@ -346,6 +346,8 @@ Measured before this phase (after Phase 3): about 205 raw `TextStyle(...)`, 139 
 **Optional, only if the owner asks:** move Romanian strings into localisation files (separate project); fix the mixed file naming (`FCMService.dart`, `log-in/`, `component-type.dart`).
 
 ## Follow-up plans (not in this plan)
+Deferred on purpose (owner, 2026-10-19): the **splash screen** and the **game screens** (mission list, puzzle screen, geolocation and photo-upload widgets) are redesigned later and get their dark-mode treatment then, so they are not polished for dark mode in Phase 4 (known gaps: splash logo on a dark background, game screens keep their own backgrounds and colours).
+
 Event details, game mission list, register-team steps, auth screens and the remaining admin screens (dashboards, event management, builder) each get their own plan after Phase 6; Admin Home is Phases 7-8 of this plan. Separately: enforce the enrollment window on the register button, add `Event.maxTeams`, safe package bumps (`chore/deps-safe-bumps`), then the major Firebase upgrades one family at a time.
 
 ## Git workflow (applies to every phase)
