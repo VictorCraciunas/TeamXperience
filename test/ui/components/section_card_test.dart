@@ -58,4 +58,15 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+  testWidgets('a count label replaces the numeric badge', (tester) async {
+    await pumpUi(
+      tester,
+      const SectionCard(
+        title: 'Pregătirea echipei',
+        countLabel: '2 din 3',
+        child: SizedBox(),
+      ),
+    );
+    expect(find.text('2 din 3'), findsOneWidget);
+  });
 }

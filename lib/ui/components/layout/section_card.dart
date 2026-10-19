@@ -10,6 +10,7 @@ class SectionCard extends StatelessWidget {
     required this.title,
     required this.child,
     this.count,
+    this.countLabel,
     this.tickColor,
     this.actionLabel = 'Vezi toate',
     this.onAction,
@@ -18,6 +19,9 @@ class SectionCard extends StatelessWidget {
   final String title;
   final Widget child;
   final int? count;
+
+  /// Text for the badge, used instead of [count] when given (for example `2 din 3`).
+  final String? countLabel;
   final Color? tickColor;
   final String actionLabel;
   final VoidCallback? onAction;
@@ -25,7 +29,7 @@ class SectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final countValue = count;
+    final badgeText = countLabel ?? (count == null ? null : '$count');
     final action = onAction;
 
     return Container(
@@ -63,7 +67,7 @@ class SectionCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (countValue != null) ...[
+                if (badgeText != null) ...[
                   const SizedBox(width: 8),
                   DecoratedBox(
                     decoration: BoxDecoration(
@@ -74,7 +78,7 @@ class SectionCard extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
                       child: Text(
-                        '$countValue',
+                        badgeText,
                         style: TextStyle(
                           color: colors.muted,
                           fontSize: 11,
