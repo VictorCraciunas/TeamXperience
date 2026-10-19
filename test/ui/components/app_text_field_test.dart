@@ -93,4 +93,22 @@ void main() {
     expect(find.byKey(const ValueKey('app-text-field-label')), findsNothing);
     expect(find.byType(TextField), findsOneWidget);
   });
+  testWidgets('leading and trailing icons are limited to 20dp', (tester) async {
+    await pumpUi(
+      tester,
+      const AppTextField(
+        label: 'Email',
+        leading: SizedBox(width: 40, height: 40),
+        trailing: SizedBox(width: 40, height: 40),
+      ),
+    );
+    expect(
+      tester.getSize(find.byKey(const ValueKey('app-text-field-leading'))),
+      const Size(20, 20),
+    );
+    expect(
+      tester.getSize(find.byKey(const ValueKey('app-text-field-trailing'))),
+      const Size(20, 20),
+    );
+  });
 }

@@ -65,6 +65,28 @@ class _AppTextFieldState extends State<AppTextField> {
         borderSide: BorderSide(color: color, width: width),
       );
 
+  Widget _icon(Key key, Widget icon, EdgeInsets padding) {
+    return Padding(
+      padding: padding,
+      child: SizedBox(
+        key: key,
+        width: 20,
+        height: 20,
+        child: FittedBox(fit: BoxFit.contain, child: icon),
+      ),
+    );
+  }
+
+  Widget? _leading() {
+    final leading = widget.leading;
+    if (leading == null) return null;
+    return _icon(
+      const ValueKey('app-text-field-leading'),
+      leading,
+      const EdgeInsets.only(left: 14, right: 10),
+    );
+  }
+
   Widget? _suffix() {
     final colors = context.colors;
     if (widget.obscure) {
@@ -79,7 +101,13 @@ class _AppTextFieldState extends State<AppTextField> {
     if (_error != null) {
       return Icon(Icons.error_outline, color: colors.live);
     }
-    return widget.trailing;
+    final trailing = widget.trailing;
+    if (trailing == null) return null;
+    return _icon(
+      const ValueKey('app-text-field-trailing'),
+      trailing,
+      const EdgeInsets.only(left: 10, right: 14),
+    );
   }
 
   @override
@@ -130,8 +158,12 @@ class _AppTextFieldState extends State<AppTextField> {
             errorStyle: TextStyle(color: colors.live, fontSize: 11),
             filled: true,
             fillColor: colors.panel,
-            prefixIcon: widget.leading,
+            prefixIcon: _leading(),
+            prefixIconConstraints:
+                const BoxConstraints(minWidth: 0, minHeight: 0),
             suffixIcon: _suffix(),
+            suffixIconConstraints:
+                const BoxConstraints(minWidth: 0, minHeight: 0),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             border: _border(colors.border, 1.5),
