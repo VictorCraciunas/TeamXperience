@@ -3,14 +3,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/events_dashboard/events_dashboard_user/controller/events_dash_user_controller.dart';
-import 'package:teamxperience/widgets/CustomIconDashboard.dart';
-import 'package:teamxperience/widgets/registered_events/registered_events_list.dart';
+import 'package:teamxperience/ui/components/misc/custom_icon_dashboard.dart';
+import 'package:teamxperience/ui/components/event/registered_events_list.dart';
 
 import '../../../../constants/colors.dart';
 import '../../../../constants/routes.dart';
 import '../../../../model/event.dart';
 import '../../../../state_management/user_registered_events.dart';
-import '../../../../widgets/event_card/events_list.dart';
+import 'package:teamxperience/ui/components/event/events_list.dart';
 
 class FilterEventsUser extends StatefulWidget {
   const FilterEventsUser({super.key});

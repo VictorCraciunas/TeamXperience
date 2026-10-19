@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/backend/repo/teamRepo.dart';
 import 'package:teamxperience/model/user.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
-import 'package:teamxperience/utils/snackbars.dart';
+import 'package:teamxperience/ui/components/feedback/snackbars.dart';
 
 import '../../../model/event.dart';
 import '../../../model/team.dart';

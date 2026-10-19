@@ -8,7 +8,7 @@ import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/puzzle.dart';
-import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
 import '../../controller/add_missions_controller.dart';
 import '../create_components/add_component_widget.dart';

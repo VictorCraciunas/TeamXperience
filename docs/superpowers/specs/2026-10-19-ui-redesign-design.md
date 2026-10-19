@@ -39,7 +39,7 @@ Approved by the owner through mockups in conversation on 2026-10-19. This is the
 Radii: panel 20, hero 22, card/row 14, button 12, pill 99. Spacing: panel outer margin 14, panel inner padding 12, gap between panels 12. Borders are 1px.
 
 ## Components (all in `lib/ui/components/`)
-AppButton (primary/secondary/ghost, loading, disabled), AppTextField (focus, error, helper, required marker), SectionCard, StatusPill, AppBottomNav (+AppNavItem with badge dot), HeroCardFrame + four hero variants, CountdownTiles, ChecklistRow, PosterCard.
+AppButton (primary/secondary/ghost, loading, disabled), AppTextField (focus, error, helper, required marker), SectionCard, StatusPill, AppBottomNav (+AppNavItem with badge dot), HeroCardFrame, EventHeroCard (one configurable hero for all states), CountdownTiles, ChecklistRow, PosterCard, StatTile, ActionTile, AppShell.
 
 ## Home screen
 Top to bottom: top bar (wordmark + bell), **hero card**, then panels. States chosen by priority:
@@ -53,5 +53,15 @@ Panels below the hero: with a live/soon/upcoming hero show "Înscrierile tale" a
 
 Romanian copy is fixed as written above (sentence case, diacritics with comma-below ș ț).
 
+## Admin Home (no approved design yet, must be accounted for)
+The approved mockups cover the **player** Home only. Admin Home is designed later (plan Phase 7) and implemented after the player Home (plan Phase 8). Consequences for everything built before then:
+- UI elements are **shared between player and admin**. `lib/ui/` is role-neutral: components take their content (texts, counts, callbacks) through parameters and contain no role-specific copy or logic. Player and admin screens use the *same* components and differ only in the data and labels they pass in; the mapping from domain objects to component parameters lives in `lib/features/<area>/`.
+- One generic `EventHeroCard` (status pill + title + subtitle + optional time chip, segmented progress, countdown tiles + primary action + optional secondary icon action) serves every hero state: the player's live / starting soon / upcoming / recommended and the admin's live / soon.
+- Other shared components for both roles: `HeroCardFrame`, `SectionCard`, `StatusPill`, `PosterCard`, `ChecklistRow`, `CountdownTiles`, plus generic `StatTile` (value + label + optional icon) and `ActionTile` (icon + label + tap), which the admin Home needs for team/person counts and quick actions.
+- The navigation shell is generic (`AppShell` with a list of tabs) so an `AdminShell` can reuse it with its own tabs.
+- Theme (dark mode, tokens) and the migrated admin screens (plan Phase 3c) apply to admins from the start. Until the admin shell exists, the theme toggle also sits in the admin Home app bar menu.
+- Inputs for the future admin mockup (what exists today): "Eveniment live" card with "Gestionează eveniment" (`EventList.liveEvents`), per-event stats `nrTeams`/`nrPerson` (`TeamRepo.getAllTeamsForEvent`), upcoming events carousel with stats, news carousel, quick actions (create event, create news, send notification), and the dedicated screens event management (notification, map, chat, stop event), registered teams, team chats, builder.
+- Likely admin hero states (to confirm in the mockup): live event (management shortcut + teams started/finished), event starting within 24 h, none.
+
 ## Out of scope for this plan
-Event details, game mission list, auth and admin screen redesigns (separate plans), a `maxTeams` field on `Event`, enforcement of the enrollment window on the register button, Firestore security rules.
+Event details, game mission list, auth and the other admin screen redesigns (separate plans; Admin Home itself is Phases 7-8), a `maxTeams` field on `Event`, enforcement of the enrollment window on the register button, Firestore security rules.

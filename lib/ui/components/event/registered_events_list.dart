@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:teamxperience/widgets/registered_events/registered_event_card.dart';
+import 'package:teamxperience/ui/components/event/registered_event_card.dart';
 
-import '../../model/event.dart';
+import 'package:teamxperience/model/event.dart';
 
 class RegisteredEventsList extends StatelessWidget {
   final List<Event> events;

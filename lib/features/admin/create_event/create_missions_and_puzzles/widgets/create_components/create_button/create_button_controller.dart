@@ -5,8 +5,8 @@ import '../../../../../../../constants/colors.dart';
 import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/puzzle.dart';
 import '../../../../../../../utils/component_conversion/component_to_widget.dart';
-import '../../../../../../../widgets/color_picker_dialog.dart';
-import '../../../../../../../widgets/my_text_field.dart';
+import 'package:teamxperience/ui/components/misc/color_picker_dialog.dart';
+import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
 
 class ButtonComponentController {
   // UI State

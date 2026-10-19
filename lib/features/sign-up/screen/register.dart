@@ -3,11 +3,11 @@ import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/sign-up/controller/signup_controller.dart';
-import 'package:teamxperience/widgets/my_button.dart';
-import 'package:teamxperience/widgets/terms_text.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/misc/terms_text.dart';
 
 import '../../../constants/padding.dart';
-import '../../../widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 class Register extends StatelessWidget {
   const Register({super.key});

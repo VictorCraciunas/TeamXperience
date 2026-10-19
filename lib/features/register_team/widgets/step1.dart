@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../../constants/colors.dart';
-import '../../../widgets/my_text_field.dart';
+import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
 
 class Step1 extends StatelessWidget {
   final numeEchipaController;

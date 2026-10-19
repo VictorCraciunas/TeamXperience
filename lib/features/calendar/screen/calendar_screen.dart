@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import '../../../constants/colors.dart';
 import '../../../utils/calendar_helper.dart';
-import '../../../widgets/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
 class DateRangeSelectionScreen extends StatefulWidget {
   final DateTime? initialStartDate;

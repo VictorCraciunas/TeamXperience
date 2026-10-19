@@ -8,7 +8,7 @@ import 'package:teamxperience/features/event_game/widgets/image_upload/image_upl
 import 'package:teamxperience/features/event_game/widgets/image_upload/image_upload_status_banner.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
-import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
 class ImageUploadPuzzleWidget extends StatefulWidget {
   final String eventId;

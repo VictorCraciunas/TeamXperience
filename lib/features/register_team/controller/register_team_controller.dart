@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
-import 'package:teamxperience/utils/snackbars.dart'; // Add this import
+import 'package:teamxperience/ui/components/feedback/snackbars.dart'; // Add this import
 
 import '../../../constants/routes.dart';
 import '../../../model/user.dart';

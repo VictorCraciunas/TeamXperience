@@ -18,6 +18,7 @@
 - Romanian copy exactly as in the spec; sentence case; comma-below `ș ț`.
 - Never `x!` in new code; use local variable promotion or a fallback (user convention). One widget per file; one `*Controller` per screen; screens stay thin.
 - `Component`/`component_conversion` widgets are not themed.
+- UI elements are shared by player and admin screens. `lib/ui/` is role-neutral: components receive content via parameters (no role-specific copy or logic inside them); `lib/features/<area>/` maps domain objects to component parameters. Admin Home has no approved design yet (spec section "Admin Home"); no shared component may assume a player.
 - A phase merges to `main` only when: `flutter analyze` shows **0 errors and no more warnings than baseline (25)**, `flutter test` passes, and the manual smoke list for that phase passes on a device.
 - Baseline before phase 1: `flutter analyze` = 0 errors, 25 warnings, 192 infos (see `baseline.txt`; it dropped from 28 after merging `chat_new_design`).
 
@@ -29,7 +30,9 @@ Failure modes the spec implies but tasks could miss (each has a test in the owni
 3. Event crosses the 3 h mark while Home is open: hero must switch away from Live without a manual refresh (Task 12).
 4. Text scale 1.5 and long Romanian titles: hero, panel header and nav labels must not overflow (Tasks 3, 4, 6).
 5. Android back button inside the tab shell: back on Evenimente/Știri/Profil returns to Acasă; back on Acasă exits; tab state is kept (Task 10).
-6. User with no registrations and no future public events with open enrollment: Home shows the no-hero layout, not an error (Task 11).
+6. User with no registrations and no future public events with open enrollment: Home shows the no-hero layout, not an error (Task 14).
+7. Admin account after the player shell lands: login still reaches the existing admin Home (`Routes.adminHome` untouched until Phase 8), it is themed, dark mode works, and the theme toggle is reachable from the admin app bar menu (Tasks 11, 12).
+8. Shared components used by both roles (`EventHeroCard`, `StatTile`, `ActionTile`, `AppShell`) work with admin-style content as well as player content: long event names, zero counts, no image, no progress, no countdown (Tasks 7, 12).
 
 ---
 
@@ -51,15 +54,16 @@ lib/ui/
     inputs/app_text_field.dart
     layout/section_card.dart
     feedback/status_pill.dart
-    navigation/app_bottom_nav.dart, app_nav_item.dart
-    event/hero_card_frame.dart, live_hero_card.dart, starting_soon_hero_card.dart,
-          upcoming_hero_card.dart, recommended_hero_card.dart,
-          countdown_tiles.dart, checklist_row.dart, poster_card.dart
-lib/features/home/logic/home_hero.dart            sealed class + resolveHomeHero
-lib/features/shell/screen/user_shell.dart         tab shell
-lib/features/shell/controller/user_shell_controller.dart
-lib/features/profile/screen/profile_screen.dart   + controller/
-test/ui/..., test/features/home/home_hero_test.dart, test/theme/...
+    layout/stat_tile.dart, action_tile.dart
+    navigation/app_bottom_nav.dart, app_nav_item.dart, app_shell.dart, shell_controller.dart
+    event/hero_card_frame.dart, event_hero_card.dart, countdown_tiles.dart, checklist_row.dart,
+          poster_card.dart, format_remaining.dart
+lib/features/home/logic/home_hero.dart            sealed class + resolveHomeHero (player)
+lib/features/home/widgets/                        home_hero_section.dart (HomeHero -> EventHeroCard), preparation_panel.dart, how_it_works_panel.dart
+lib/features/shell/screen/user_shell.dart         AppShell with the 4 player tabs
+lib/features/profile/screen/profile_screen.dart   + controller/ (role-aware: logout + theme toggle)
+(Phase 8) lib/features/admin/home/logic/admin_hero.dart, lib/features/admin/home/widgets/admin_hero_section.dart (AdminHero -> EventHeroCard), lib/features/admin/shell/screen/admin_shell.dart
+test/ui/..., test/features/home/..., test/theme/...
 ```
 
 ---
@@ -147,21 +151,21 @@ All tests use a helper `test/ui/pump_ui.dart`: `Future<void> pumpUi(WidgetTester
 - [ ] **Step 1: Failing tests:** SectionCard `shows title, count badge text, and action link that fires onAction`; `hides the link when onAction is null`; `title ellipsizes at text scale 1.5`. StatusPill `live kind uses live colour background`; AppBottomNav `tapping an item calls onSelected with its index`; `active item has the active pill`; `badge dot shown only when showBadge`; `labels remain visible at text scale 1.5 without overflow`.
 - [ ] **Step 2:** FAIL. **Step 3:** Implement (panel: `Container` with `panel` fill, 1px `border`, `AppRadius.panel`, 12 padding; nav: `SafeArea` bottom, 68dp tall, top border). **Step 4:** PASS. Commit per widget group.
 
-### Task 7: Event cards: hero frame, variants, countdown, checklist, poster
+### Task 7: Generic event/overview components
 
-**Files:** `event/hero_card_frame.dart`, `live_hero_card.dart`, `starting_soon_hero_card.dart`, `upcoming_hero_card.dart`, `recommended_hero_card.dart`, `countdown_tiles.dart`, `checklist_row.dart`, `poster_card.dart`; Tests `test/ui/components/event_cards_test.dart`.
-**Produces:**
-- `HeroCardFrame({super.key, required this.child, this.imageUrl})`: cover image (cached network) under a scrim gradient `transparent → #0C092A @ 0.92`; if `imageUrl` is null/empty or fails to load, paints a solid `navy` fallback (no asset dependency).
-- `LiveHeroCard({required String title, required String subtitle, required Duration remaining, required int missionsDone, required int missionsTotal, String? imageUrl, required VoidCallback onContinue, required VoidCallback onChat})`.
-- `StartingSoonHeroCard({required String title, required String subtitle, required int minutesLeftToEnter, String? imageUrl, required VoidCallback onEnterCode})`.
-- `UpcomingHeroCard({required String title, required String placeAndTime, required Duration untilStart, String? imageUrl, required VoidCallback onDetails, required VoidCallback onShare})`.
-- `RecommendedHeroCard({required String title, required String facts, String? imageUrl, required VoidCallback onRegister})`.
+**Files:** `lib/ui/components/event/{hero_card_frame,event_hero_card,hero_action,countdown_tiles,checklist_row,poster_card,format_remaining}.dart`, `lib/ui/components/layout/{stat_tile,action_tile}.dart`; Test `test/ui/components/overview_components_test.dart`.
+**Produces (all role-neutral, no Firebase imports):**
+- `HeroCardFrame({super.key, required this.child, this.imageUrl})`: cover image (cached network) under a scrim gradient `transparent -> #0C092A @ 0.92`; if `imageUrl` is null/empty or fails to load, paints a solid `navy` fallback (no asset dependency).
+- `enum HeroStatus { live, soon, upcoming, recommended }` (drives the pill colour: live = red `live`, soon = amber `soon`, upcoming/recommended = teal `tick`); `class HeroAction { const HeroAction({required this.label, required this.onTap, this.icon}); final String label; final VoidCallback onTap; final IconData? icon; }`.
+- `EventHeroCard({super.key, required this.status, required this.statusLabel, required this.title, this.subtitle, this.timeChip, this.imageUrl, this.progressDone, this.progressTotal, this.countdown, required this.primary, this.secondaryIcon, this.onSecondary})`: one configurable hero for every state and both roles. `timeChip` (e.g. `2:14:09 rămase`, `Mai ai 47 min să intri`) shows top right; segmented progress renders only when `progressTotal` is non-null; `CountdownTiles` render only when `countdown` is non-null; the secondary icon button renders only when both `secondaryIcon` and `onSecondary` are set. All texts come from the caller.
 - `CountdownTiles({required Duration remaining})` showing `zile`, `ore`, `min` (zero-padded two digits).
-- `ChecklistRow({required String title, required String subtitle, required bool done})`; `PosterCard({required String title, required String dateLabel, required String place, String? imageUrl, VoidCallback? onTap})`.
-- Remaining time format helper: `String formatRemaining(Duration d)` → `h:mm:ss` (`2:14:09`), negative clamps to `0:00:00`.
+- `ChecklistRow({required String title, required String subtitle, required bool done})`.
+- `PosterCard({required String title, required String dateLabel, required String place, String? imageUrl, VoidCallback? onTap})`.
+- `StatTile({required String label, required String value, IconData? icon})` and `ActionTile({required IconData icon, required String label, required VoidCallback onTap})` (admin Home needs team/person counts and quick actions; player Home may use them too).
+- `String formatRemaining(Duration d)` -> `h:mm:ss` (`2:14:09`), negative clamps to `0:00:00`.
 
-- [ ] **Step 1: Failing tests:** `formatRemaining(Duration(hours:2,minutes:14,seconds:9)) == '2:14:09'`; `formatRemaining(Duration(seconds:-5)) == '0:00:00'`; `CountdownTiles(Duration(days:3,hours:14,minutes:22))` shows `03`,`14`,`22`; `LiveHeroCard` shows `LIVE`, `Continuă jocul`, taps fire `onContinue`/`onChat`, renders 5 progress segments with 1 done for `missionsDone:1, missionsTotal:5`; `StartingSoonHeroCard` shows `Mai ai 47 min să intri` for 47; `RecommendedHeroCard` shows `Înscrie-ți echipa`; every card pumps with `imageUrl: null` and `imageUrl: ''` without exceptions (Review Focus 1); `LiveHeroCard` at text scale 1.5 has no overflow (Review Focus 4).
-- [ ] **Step 2:** FAIL. **Step 3:** Implement; no Firebase imports in `lib/ui`. **Step 4:** PASS. Commit `Add event hero cards and related components`.
+- [ ] **Step 1: Failing tests:** `formatRemaining(Duration(hours:2,minutes:14,seconds:9)) == '2:14:09'`; `formatRemaining(Duration(seconds:-5)) == '0:00:00'`; `CountdownTiles(Duration(days:3,hours:14,minutes:22))` shows `03`,`14`,`22`; `HeroCardFrame` pumps with `imageUrl: null` and `imageUrl: ''` showing its child and no exception (Review Focus 1); `PosterCard` pumps with a null image and a 60-character title at text scale 1.5 without overflow (Review Focus 4, 8); `StatTile(label:'Echipe', value:'0')` shows both texts; `ActionTile` fires `onTap`; `ChecklistRow(done:true)` shows a check icon, `done:false` a lock icon; `EventHeroCard`: shows `statusLabel`, `title`, `subtitle` and `timeChip` as passed; tapping the primary action fires its `onTap`; with `progressTotal:5, progressDone:1` renders 5 segments of which 1 is filled; without `progressTotal` renders no segments; with `countdown` shows the tiles, without it none; the secondary button appears only when both its fields are set and fires `onSecondary`; pumps with `imageUrl: null`/`''`, no subtitle and a 60-character title at text scale 1.5 without overflow (Review Focus 1, 4, 8).
+- [ ] **Step 2:** FAIL. **Step 3:** Implement. **Step 4:** PASS. Commit `Add generic overview components`.
 
 **Merge:** analyze/tests/smoke (nothing visible changed), `--no-ff` merge, tag `ui-phase-2`, push.
 
@@ -203,7 +207,7 @@ For each batch below, per file: replace `Colors.white`/`Color(0x…)`/`MyColors.
 
 ### Task 11: Dark pass over all screens and Settings toggle
 
-- [ ] **Step 1:** In the (future) Profil screen task a `SegmentedButton<ThemeMode>` with `Sistem / Luminos / Întunecat`. Until the shell exists, put a temporary toggle on the user Home app bar menu.
+- [ ] **Step 1:** In the (future) Profil screen task a `SegmentedButton<ThemeMode>` with `Sistem / Luminos / Întunecat`. Until the shells exist, put a temporary toggle on the user Home app bar menu **and** the admin Home app bar menu (admins get no Profil tab until Phase 8).
 - [ ] **Step 2:** Walk every screen in dark: fix leftover white patches (grep `Colors.white` again), tint SVG icons via `ColorFilter.mode(context.colors.text, BlendMode.srcIn)` for single-colour icons, status bar icon brightness via `AnnotatedRegion<SystemUiOverlayStyle>`.
 - [ ] **Step 3:** Map screen keeps OSM light tiles (documented limitation). Game screens render admin colours unchanged.
 - [ ] **Step 4:** `flutter analyze`, smoke all in both modes; commit; merge, tag `ui-phase-4`.
@@ -212,18 +216,22 @@ For each batch below, per file: replace `Colors.white`/`Color(0x…)`/`MyColors.
 
 ## Phase 5: Navigation shell (branch `ui/05-nav-shell`)
 
-### Task 12: UserShell with four tabs
+### Task 12: Generic AppShell and the player tab shell
 
-**Files:** `lib/features/shell/screen/user_shell.dart`, `controller/user_shell_controller.dart`, `lib/features/profile/screen/profile_screen.dart` (+ `controller/`), `lib/constants/routes.dart` (`Routes.home` now points at the shell), `lib/main.dart`; Modify `events_dashboard_user/screen/events_dashboard_screen.dart` and `news_dashboard/screen/stiri_dashboard_screen.dart` to read their lists from `EventList`/`NewsList` instead of route arguments (the shell has none); Test `test/features/shell/user_shell_test.dart`.
-**Produces:** `class UserShellController extends ChangeNotifier { int get index; void select(int i); bool handleBack(); }` where `handleBack()` returns `true` when it consumed the back press (index ≠ 0 → select 0).
+**Files:** `lib/ui/components/navigation/{app_shell,shell_controller}.dart`, `lib/features/shell/screen/user_shell.dart`, `lib/features/profile/screen/profile_screen.dart` (+ `controller/`), `lib/constants/routes.dart` (`Routes.home` now points at `UserShell`; `Routes.adminHome` is **unchanged**), `lib/main.dart`; Modify `events_dashboard_user/screen/events_dashboard_screen.dart` and `news_dashboard/screen/stiri_dashboard_screen.dart` to read their lists from `EventList`/`NewsList` instead of route arguments (the shell has none); Tests `test/ui/components/shell_controller_test.dart`, `test/ui/components/app_shell_test.dart`.
+**Produces (role-neutral, reusable by the admin shell in Phase 8):**
+- `class ShellController extends ChangeNotifier { ShellController(this.tabCount); final int tabCount; int get index; void select(int i); bool handleBack(); }` where `handleBack()` returns `true` when it consumed the back press (index != 0 -> select 0).
+- `class AppShellTab { const AppShellTab({required this.item, required this.builder}); final AppNavItem item; final WidgetBuilder builder; }`
+- `AppShell({super.key, required List<AppShellTab> tabs, ShellController? controller})`: `IndexedStack` of the tab bodies + `AppBottomNav` + `PopScope(canPop: false)` delegating to `handleBack`.
+- `UserShell` = `AppShell` with tabs Acasă (`Home`), Evenimente (user events dashboard), Știri (news dashboard), Profil (`ProfileScreen`). Badge dot on Evenimente when a hero is live (wired in Task 14).
 
-- [ ] **Step 1: Failing tests (controller):** `starts at 0`; `select changes index and notifies`; `handleBack from tab 2 selects 0 and returns true`; `handleBack at 0 returns false`; `select out of range is ignored`. Widget test with stub tab bodies: `tapping Evenimente shows the second body and keeps the first body state alive` (IndexedStack with a counter) (Review Focus 5).
-- [ ] **Step 2:** FAIL. **Step 3:** Implement with `IndexedStack` (note commit `de1ca5a` fixed an IndexedStack crash in `mission_widget.dart`; verify no nested-key collisions) and `PopScope(canPop: false)` delegating to `handleBack`. `AppBottomNav` shows the red badge dot on Evenimente when a hero is live (wired in Phase 6). Profil: user name, email, theme toggle (`Sistem/Luminos/Întunecat`), `Deconectare` (existing `HomeController.logout` logic).
-- [ ] **Step 4:** PASS; smoke on device including the Android back gesture. Commit; merge; tag `ui-phase-5`.
+- [ ] **Step 1: Failing tests (controller):** `starts at 0`; `select changes index and notifies`; `handleBack from tab 2 selects 0 and returns true`; `handleBack at 0 returns false`; `select out of range is ignored`. Widget test with stub tab bodies (including a 2-tab shell, proving it is not hard-wired to 4): `tapping the second tab shows its body and keeps the first body's state alive` (IndexedStack with a counter) (Review Focus 5).
+- [ ] **Step 2:** FAIL. **Step 3:** Implement (note commit `de1ca5a` fixed an IndexedStack crash in `mission_widget.dart`; verify no nested-key collisions). Profil: user name, email, theme toggle (`Sistem/Luminos/Întunecat`), `Deconectare` (existing `HomeController.logout` logic; role-aware so the admin shell can reuse it).
+- [ ] **Step 4:** PASS; smoke on device including the Android back gesture, and log in as an admin to confirm the old admin Home still opens (Review Focus 7). Commit; merge; tag `ui-phase-5`.
 
 ---
 
-## Phase 6: Home redesign and logic (branch `ui/06-home`)
+## Phase 6: Player Home redesign and logic (branch `ui/06-home`)
 
 ### Task 13: resolveHomeHero (pure logic)
 
@@ -252,23 +260,52 @@ Rules (priority): Live (activeEvent+activeTeam non-null, team `hasStarted && !ha
 
 ### Task 14: Home screen on new components
 
-**Files:** Modify `lib/features/home/screen/home.dart`, `controller/home_controller.dart`; Create `lib/features/home/widgets/home_hero_section.dart`, `preparation_panel.dart`, `how_it_works_panel.dart`; Test `test/features/home/home_hero_section_test.dart`.
-**Interfaces:** `HomeHeroSection({required HomeHero hero, required HomeController controller})` returns the matching hero card or `SizedBox.shrink()` for `NoHero`. Preparation checklist rule (pure, in `home_hero.dart`): `List<PreparationStep> preparationSteps(Event event, Team? team, DateTime now)` → `[Înscriere confirmată: team != null; Detalii echipă complete: name, captainName, phoneNumber, captainEmail all non-empty; Codul de start: done when now >= event day start]`.
+**Files:** Modify `lib/features/home/screen/home.dart`, `controller/home_controller.dart`; Create in `lib/features/home/widgets/`: `home_hero_section.dart`, `preparation_panel.dart`, `how_it_works_panel.dart`; Tests `test/features/home/home_hero_section_test.dart`, `test/features/home/preparation_steps_test.dart`. The hero itself is the shared `EventHeroCard` from Task 7; this task only maps `HomeHero` to its parameters.
+**Interfaces:** `HomeHeroSection({required HomeHero hero, required HomeController controller})` returns an `EventHeroCard` configured per state or `SizedBox.shrink()` for `NoHero`. Mapping (copy as in the spec): `LiveHero` -> `status: live`, `statusLabel: 'LIVE'`, `timeChip: '<formatRemaining> rămase'`, `progressDone/Total` from the team's `missionProgress` and `event.nrMissions`, `primary: 'Continuă jocul'`, secondary chat icon; `StartingSoonHero` -> `status: soon`, `'A început'`, `timeChip: 'Mai ai N min să intri'`, `primary: 'Introdu codul de start'`; `UpcomingHero` -> `status: upcoming`, `'Următorul eveniment'`, `countdown: untilStart`, `primary: 'Detalii înscriere'`, secondary share icon; `RecommendedHero` -> `status: recommended`, `'Recomandat pentru tine'`, `primary: 'Înscrie-ți echipa'`. Preparation checklist rule (pure, in `home_hero.dart`): `List<PreparationStep> preparationSteps(Event event, Team? team, DateTime now)` → `[Înscriere confirmată: team != null; Detalii echipă complete: name, captainName, phoneNumber, captainEmail all non-empty; Codul de start: done when now >= event day start]`.
 
-- [ ] **Step 1: Failing tests:** `preparationSteps` returns 2 done + 1 pending for a complete team before the event day; widget test `HomeHeroSection(LiveHero)` shows `Continuă jocul`; `NoHero` renders nothing; refresh timer test: with `fakeAsync`, a `LiveHero` built 1 s before the 3 h mark re-resolves to non-live after 2 s (`HomeController` owns a 30 s `Timer.periodic` that calls `notifyListeners`) (Review Focus 3).
+- [ ] **Step 1: Failing tests:** `HomeHeroSection(LiveHero)` shows `LIVE` and `Continuă jocul` and 5 progress segments with 1 done for `missionProgress: 1, nrMissions: 5`; `StartingSoonHero(47)` shows `Mai ai 47 min să intri` and `Introdu codul de start`; `UpcomingHero` shows the countdown tiles and `Detalii înscriere`; `RecommendedHero` shows `Înscrie-ți echipa`; an event with an empty `landingImageUrl` renders without exception (Review Focus 1); `preparationSteps` returns 2 done + 1 pending for a complete team before the event day; `NoHero` renders nothing; refresh timer test: with `fakeAsync`, a `LiveHero` built 1 s before the 3 h mark re-resolves to non-live after 2 s (`HomeController` owns a 30 s `Timer.periodic` that calls `notifyListeners`) (Review Focus 3).
 - [ ] **Step 2:** FAIL. **Step 3:** Wire `Consumer3<EventList, NewsList, UserEventsProvider>` through `resolveHomeHero`; panels: Înscrierile tale, Pregătirea echipei (upcoming only), Cum funcționează (recommended only), Evenimente (posters), Noutăți. Event image from `landingImageUrl`; recommended facts line: `'<d MMM> · <lungimeTraseu> · <n> echipe'` where the team count is one `TeamService.getTeams` call for that single event.
 - [ ] **Step 4:** PASS; smoke the five states by editing event dates in a test project. Commit; merge; tag `ui-phase-6`; push.
 
 ---
 
-## Phase 7: Cleanup (branch `ui/07-cleanup`)
+## Phase 7: Admin Home design (no app code; branch `docs/admin-home-design`)
+
+The approved mockups only cover the player Home. This phase produces the admin equivalent before any admin code is written.
+
+### Task 15: Admin Home mockup and spec addendum
+
+- [ ] **Step 1:** Collect the real admin Home content from `lib/features/admin/home/` and the existing admin screens (list in the spec section "Admin Home"); capture a screenshot of the current admin Home from the device.
+- [ ] **Step 2:** Mock up the admin Home (light and dark) using the approved tokens and the generic components: hero states live / starting within 24 h / none, `StatTile` rows (teams, people), `ActionTile` quick actions (Creează eveniment, Creează știre, Trimite notificare), events with stats, news. Decide the admin tab set (proposal: Acasă, Evenimente, Știri, Profil).
+- [ ] **Step 3:** Owner approves; append a section "Admin Home (approved)" to the spec with the hero rules, copy, tabs and any new tokens. Commit `Add admin Home design to spec`; merge.
+
+---
+
+## Phase 8: Admin shell and Admin Home (branch `ui/08-admin-home`), needs Phases 5, 6, 7
+
+### Task 16: resolveAdminHero (pure logic)
+
+**Files:** `lib/features/admin/home/logic/admin_hero.dart`; Test `test/features/admin/home/admin_hero_test.dart`.
+**Produces:** `sealed class AdminHero`; `AdminLiveHero(Event event)`, `AdminSoonHero(Event event, Duration untilStart)`, `NoAdminHero()`; `AdminHero resolveAdminHero({required DateTime now, required List<Event> events})` (final rules fixed by the Task 15 addendum; provisional: live = started and `!event.isOver`; soon = starts within 24 h; ties -> earliest start).
+- [ ] **Step 1: Failing tests:** `started and not over -> AdminLiveHero`; `stopped event is not live`; `event past 3 h is not live`; `starts in 2 h -> AdminSoonHero(untilStart: 2h)`; `starts in 30 h -> NoAdminHero`; `null dateEvent ignored`; `two live events -> earliest start wins`; `empty list -> NoAdminHero`.
+- [ ] **Step 2:** FAIL. **Step 3:** Implement as a pure function. **Step 4:** PASS. Commit.
+
+### Task 17: AdminShell and Admin Home on the new components
+
+**Files:** Create `lib/features/admin/shell/screen/admin_shell.dart` (an `AppShell` with the Task 15 tabs, Profil reused with the logout and theme toggle), `lib/features/admin/home/widgets/` (`admin_hero_section.dart` mapping `AdminHero` to the shared `EventHeroCard`, a stats row of shared `StatTile`s, a quick-actions row of shared `ActionTile`s); Modify `lib/features/admin/home/screen/admin_home.dart`, `admin_controller.dart`, `lib/constants/routes.dart` (`Routes.adminHome` -> `AdminShell`), admin dashboards that take route arguments (read from `EventList`/`NewsList`); Tests `test/features/admin/home/admin_hero_section_test.dart`.
+- [ ] **Step 1: Failing tests:** `AdminHeroSection(AdminLiveHero)` shows `LIVE` + `Gestionează eveniment` and fires its callback; `AdminSoonHero` shows the soon pill and the time chip; the stats row shows `nrTeams`/`nrPerson` from the passed values and renders `0`; a null image and a 60-character event name at text scale 1.5 render without overflow (Review Focus 8).
+- [ ] **Step 2:** FAIL. **Step 3:** Implement; wire `resolveAdminHero` into `AdminController` with the same 30 s refresh timer as the player Home. **Step 4:** PASS; smoke the admin flows (create event, event management, map, chat, stop event) in light and dark. Commit; merge; tag `ui-phase-8`; push.
+
+---
+
+## Phase 9: Cleanup (branch `ui/09-cleanup`)
 
 - [ ] Remove `MyButton`/`MyTextField` shims and `MyColors`/`MyPaddings` once `grep` shows no uses; migrate stragglers.
 - [ ] Update `CLAUDE.md`, `docs/ui-and-theme.md`, `docs/screens.md`, `docs/known-issues.md` (remove resolved items).
 - [ ] Final `flutter analyze` ≤ baseline; `flutter test` green; merge; tag `ui-v1`.
 
 ## Follow-up plans (not in this plan)
-Event details, game mission list, register-team steps, auth screens and the admin home each get their own plan after Phase 6. Separately: enforce the enrollment window on the register button, add `Event.maxTeams`, safe package bumps (`chore/deps-safe-bumps`), then the major Firebase upgrades one family at a time.
+Event details, game mission list, register-team steps, auth screens and the remaining admin screens (dashboards, event management, builder) each get their own plan after Phase 6; Admin Home is Phases 7-8 of this plan. Separately: enforce the enrollment window on the register button, add `Event.maxTeams`, safe package bumps (`chore/deps-safe-bumps`), then the major Firebase upgrades one family at a time.
 
 ## Git workflow (applies to every phase)
 
@@ -277,9 +314,10 @@ Event details, game mission list, register-team steps, auth screens and the admi
 3. Never commit to `main` directly. Merge with `git merge --no-ff ui/0N-name` so each phase is one revertable merge commit; tag `ui-phase-N`; push main and tags.
 4. Rollback of a phase: `git revert -m 1 <merge-commit>`.
 5. Phases are merged sequentially (no stacked branches). Any other feature branch must merge `main` before continuing, to avoid drift in `lib/widgets/` paths after Phase 1.
-6. Hard dependencies: Phase 3 needs 1–2; Phase 4 needs 3; Phase 5 needs 2 (and 4 for the theme toggle on Profil); Phase 6 needs 2, 3b, 5.
+6. Hard dependencies: Phase 3 needs 1–2; Phase 4 needs 3; Phase 5 needs 2 (and 4 for the theme toggle on Profil); Phase 6 needs 2, 3b, 5; Phase 7 needs only the approved tokens (design only, can run any time after Phase 2); Phase 8 needs 5, 6, 7; Phase 9 is last.
 
 ## Self-review notes
-- Spec coverage: tokens (Task 2), components (Tasks 4–7), dark mode (Tasks 10–11), nav shell (Task 12), Home states 1–5 (Tasks 13–14), copy strings (Tasks 4, 7, 12, 14). Out-of-scope items are listed.
-- Type names are consistent across tasks (`AppColors`, `AppButton`, `HomeHero`, `UserShellController`).
+- Spec coverage: tokens (Task 2), components (Tasks 4–7), dark mode (Tasks 10–11), generic shell (Task 12), player Home states 1–5 (Tasks 13–14), admin Home (Tasks 15–17), copy strings (Tasks 4, 12, 14). Out-of-scope items are listed.
+- Type names are consistent across tasks (`AppColors`, `AppButton`, `HomeHero`, `AdminHero`, `ShellController`, `AppShell`, `AppShellTab`).
+- Shared UI: one generic `EventHeroCard` (Task 7) is configured by player mapping (Task 14) and admin mapping (Task 17); no role-specific widgets live in `lib/ui/`.
 - One open risk: Task 14's recommended-hero team count adds one Firestore read per Home load; acceptable for a single event, cache it in `HomeController` if it shows up in profiling.

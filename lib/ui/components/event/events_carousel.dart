@@ -1,29 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/colors.dart';
-import '../../model/stire.dart';
-import '../../widgets/stire_card/stire_card.dart';
+import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/ui/components/event/event_card.dart';
 
-class StiriCarousel extends StatefulWidget {
-  final List<Stire> stiri;
-  final Function(Stire) onStireTap;
+class EventsCarousel extends StatefulWidget {
+  final List<Event> events;
+  final Function(Event) onEventTap;
   final bool isAdmin;
-  final bool showBadge;
+  final Map<String, Map<String, int>> eventStats;
 
-
-  const StiriCarousel({
+  const EventsCarousel({
     super.key,
-    required this.stiri,
-    required this.onStireTap,
+    required this.events,
+    required this.onEventTap,
     this.isAdmin = false,
-    required this.showBadge
-
+    required this.eventStats,
   });
 
   @override
-  State<StiriCarousel> createState() => _StiriCarouselState();
+  State<EventsCarousel> createState() => _EventsCarouselState();
 }
 
-class _StiriCarouselState extends State<StiriCarousel> {
+class _EventsCarouselState extends State<EventsCarousel> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
 
@@ -35,18 +33,18 @@ class _StiriCarouselState extends State<StiriCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.stiri.isEmpty) {
+    if (widget.events.isEmpty) {
       return const Center(
-        child: Text('No news available'),
+        child: Text('Încă nu sunt evenimente programate'),
       );
     }
 
     return Column(
       children: [
-        // Horizontal scrollable news cards
+        // Horizontal scrollable event cards - let the card determine its own height
         SizedBox(
           width: double.infinity,
-          height: 220, // Same height as your StireCard
+          height: 282, // Increased height to accommodate your EventCard's natural size
           child: PageView.builder(
             controller: _pageController,
             onPageChanged: (index) {
@@ -54,17 +52,17 @@ class _StiriCarouselState extends State<StiriCarousel> {
                 _currentIndex = index;
               });
             },
-            itemCount: widget.stiri.length,
+            itemCount: widget.events.length,
             itemBuilder: (context, index) {
-              final stire = widget.stiri[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 3.0),
-                child: StireCard(
-                  stire: stire,
-                  onTap: () => widget.onStireTap(stire),
-                  isAdmin: widget.isAdmin,
-                  showBadge: widget.showBadge,
-                ),
+              final event = widget.events[index];
+              final stats = widget.eventStats[event.eventId] ?? {'nrTeams': 0, 'nrPerson': 0};
+
+              return EventCard(
+                event: event,
+                onTap: () => widget.onEventTap(event),
+                isAdmin: widget.isAdmin,
+                nrTeams: stats['nrTeams'] ?? 0,
+                nrPerson: stats['nrPerson'] ?? 0,
               );
             },
           ),
@@ -82,7 +80,7 @@ class _StiriCarouselState extends State<StiriCarousel> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
-        widget.stiri.length,
+        widget.events.length,
             (index) => AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
@@ -91,8 +89,8 @@ class _StiriCarouselState extends State<StiriCarousel> {
           height: 8.0,
           decoration: BoxDecoration(
             color: _currentIndex == index
-                ? Color(0xFF222F62)
-                : const Color(0xFF222F623B),
+                ? MyColors.lightBlue
+                : const Color(0x2453C4C7),
             borderRadius: BorderRadius.circular(4.0),
           ),
         ),

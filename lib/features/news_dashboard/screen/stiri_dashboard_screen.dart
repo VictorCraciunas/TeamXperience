@@ -4,11 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/stire.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import '../../../constants/routes.dart';
 import '../../../state_management/news_state_management.dart';
-import '../../../widgets/stire_card/stire_card.dart';
+import 'package:teamxperience/ui/components/news/stire_card.dart';
 import '../controller/stiri_dashboard_controller.dart';
 
 class StiriDashboard extends StatefulWidget {

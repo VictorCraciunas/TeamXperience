@@ -30,6 +30,7 @@ import 'package:teamxperience/state_management/news_state_management.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
 import 'package:teamxperience/service/FCMService.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/utils/auth_util.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'backend/authentication/AuthenticationRepository.dart';
@@ -128,13 +129,13 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        theme: ThemeData(
-          useMaterial3: true,
+        theme: AppTheme.light.copyWith(
           primaryColor: Colors.white,
-          fontFamily: 'Poppins',
           scaffoldBackgroundColor: Colors.white,
           canvasColor: Colors.white,
         ),
+        darkTheme: AppTheme.dark,
+        themeMode: ThemeMode.light,
         title: 'Treasure Hunt',
         initialRoute: Routes.redirect,
         routes: {

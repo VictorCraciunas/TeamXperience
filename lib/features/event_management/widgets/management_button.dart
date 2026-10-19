@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
-import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
 class ManagementButton extends StatelessWidget {
   final String text;

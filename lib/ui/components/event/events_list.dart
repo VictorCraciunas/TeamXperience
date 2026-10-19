@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../model/event.dart';
-import '../../widgets/event_card/event_card.dart';
+import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/ui/components/event/event_card.dart';
 
 class EventsList extends StatelessWidget {
   final List<Event> events;

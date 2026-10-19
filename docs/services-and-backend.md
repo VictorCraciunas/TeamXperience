@@ -40,7 +40,7 @@ Registered in `main.dart`:
 - `UserEventsProvider` — listens to `UserProvider` + `EventList`; `registeredEvents`, `upcomingRegisteredEvents`, `pastRegisteredEvents`, `nextEventWithinHour`, `loadActiveEvent()` (async scan of started-and-not-finished teams — one Firestore query per past registered event on every change), `activeEvent`, `activeTeam`.
 
 ## utils/
-`auth_util.dart` (role redirect), `calendar_helper.dart` (Romanian date/time formatting + date-picker helper), `color_conversion.dart` (hex ↔ Color), `image_helper.dart` (gallery picker + `eventImageCache` CacheManager), `link_util.dart` (open URLs), `snackbars.dart` (`MySnackBars.success/error/warning/infoSnackBar(context, title:, message:)`), `component_conversion/` (`Component` → runtime widgets, see `ui-and-theme.md`).
+`auth_util.dart` (role redirect), `calendar_helper.dart` (Romanian date/time formatting + date-picker helper), `color_conversion.dart` (hex ↔ Color), `image_helper.dart` (gallery picker + `eventImageCache` CacheManager), `link_util.dart` (open URLs), `component_conversion/` (`Component` → runtime widgets, see `ui-and-theme.md`).
 
 ## functions/ (Firebase Cloud Functions v2, Node 20, TypeScript, `functions/src/index.ts`)
 - `testEndpoint` (HTTP) — health check.

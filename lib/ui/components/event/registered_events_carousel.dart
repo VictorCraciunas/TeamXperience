@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/colors.dart';
-import '../../model/event.dart';
-import 'registered_event_card.dart';
+import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/ui/components/event/registered_event_card.dart';
 
 class RegisteredEventsCarousel extends StatefulWidget {
   final List<Event> events;

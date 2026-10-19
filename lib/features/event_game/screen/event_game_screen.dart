@@ -5,8 +5,8 @@ import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/enums/missions_state.dart';
 import 'package:teamxperience/model/team.dart';
-import 'package:teamxperience/widgets/misison_state_widget.dart';
-import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/ui/components/event/mission_state_widget.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
 import '../../../constants/routes.dart';
 import '../../../model/event.dart';

@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/stire.dart';
-import 'package:teamxperience/widgets/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
 import '../../constants/routes.dart';
 import '../../utils/calendar_helper.dart';

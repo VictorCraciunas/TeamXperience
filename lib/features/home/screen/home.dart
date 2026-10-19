@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/features/home/controller/home_controller.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import 'package:teamxperience/constants/padding.dart';
 import '../../../constants/colors.dart';
@@ -12,10 +12,10 @@ import '../../../state_management/events_state_management.dart';
 import '../../../state_management/news_state_management.dart';
 import '../../../state_management/user_provider.dart';
 import '../../../state_management/user_registered_events.dart'; // Add this import
-import '../../../widgets/event_card/events_carousel.dart';
-import '../../../widgets/registered_events/registered_event_card.dart';
-import '../../../widgets/registered_events/registered_events_carousel.dart';
-import '../../../widgets/stire_card/stiri_carousel.dart';
+import 'package:teamxperience/ui/components/event/events_carousel.dart';
+import 'package:teamxperience/ui/components/event/registered_event_card.dart';
+import 'package:teamxperience/ui/components/event/registered_events_carousel.dart';
+import 'package:teamxperience/ui/components/news/stiri_carousel.dart';
 import '../../admin/home/widgets/title_carousel.dart';
 
 class Home extends StatefulWidget {

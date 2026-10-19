@@ -5,7 +5,7 @@ import 'package:teamxperience/features/chat/controller/chat_controller.dart';
 import 'package:teamxperience/features/chat/widgets/chat_composer.dart';
 import 'package:teamxperience/features/chat/widgets/message_stream.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import '../../../model/team.dart';
 

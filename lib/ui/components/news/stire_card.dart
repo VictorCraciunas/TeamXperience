@@ -7,7 +7,7 @@ import 'package:teamxperience/model/stire.dart';
 import 'package:teamxperience/utils/image_helper.dart';
 import 'package:intl/intl.dart';
 
-import '../../utils/calendar_helper.dart';
+import 'package:teamxperience/utils/calendar_helper.dart';
 
 class StireCard extends StatelessWidget {
   final Stire stire;

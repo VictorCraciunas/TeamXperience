@@ -34,6 +34,7 @@ Firebase project id: `teamxperience-dadc6` (`firebase.json`, `lib/firebase_optio
 - Avoid `x!` null-forcing in new code; use local-variable promotion (`final t = team; if (t != null) ...`).
 - One `*Controller` per screen, next to it; screens stay thin and logic lives in the controller.
 - One widget per file; split sub-widgets out instead of piling `_buildX` helpers.
+- Where a widget lives: generic widgets, or ones used by two or more areas (player, admin, auth), go in `lib/ui/components/` and take their content (texts, counts, callbacks) through parameters, with no role-specific copy or logic. Widgets only one flow uses stay in `lib/features/<area>/widgets/`. Promote a feature widget into `lib/ui/` when a second area needs it. `lib/ui/` never imports from `lib/features/`.
 
 ## Detailed docs (read the relevant one before working in that area)
 
@@ -60,8 +61,8 @@ backend/           Raw Firebase access: authentication/, repo/*_repo.dart (Fires
 service/           Business logic over repos: event_service/, team_service/, news_service/, message_service, FCMService, LocationService, RouteService, share_service
 state_management/  ChangeNotifier providers: UserProvider, EventList, NewsList, UserEventsProvider
 features/          One folder per screen/flow: controller/ + screen/ (+ widgets/, service/)
-widgets/           Shared widgets (MyButton, MyTextField, MyAppBar, EventCard, StireCard, MyDropdown, ...)
-utils/             AuthUtil, calendar_helper, image_helper, snackbars, color_conversion, component_conversion/
+ui/                Shared UI layer: theme/ (AppColors tokens, AppTheme, radius/spacing) and components/ (buttons, inputs, navigation, event, news, feedback, misc: MyButton, MyTextField, MyAppBar, EventCard, StireCard, MyDropdown, MySnackBars, ...)
+utils/             AuthUtil, calendar_helper, image_helper, color_conversion, component_conversion/
 ```
 
 Flow: `screen -> *Controller -> service -> repo -> Firestore`. Not every feature follows it strictly (some controllers instantiate `EventService()`/`TeamService()` directly rather than reading from Provider).

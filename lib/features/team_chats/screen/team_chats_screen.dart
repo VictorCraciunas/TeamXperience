@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/features/team_chats/controller/team_chats_controller.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import '../../../constants/routes.dart';
 import '../../../model/event.dart';

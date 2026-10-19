@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/colors.dart';
 
-import '../constants/routes.dart';
-import '../model/event.dart';
-import '../state_management/events_state_management.dart';
+import 'package:teamxperience/constants/routes.dart';
+import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/state_management/events_state_management.dart';
 
 class MenuWidget extends StatelessWidget {
   final VoidCallback onClose;

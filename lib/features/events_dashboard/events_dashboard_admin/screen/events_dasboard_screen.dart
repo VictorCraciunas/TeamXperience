@@ -4,13 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/event.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import '../../../../constants/routes.dart';
 import '../../../../enums/event_type.dart';
 import '../../../../state_management/events_state_management.dart';
-import '../../../../widgets/CustomIconDashboard.dart';
-import '../../../../widgets/event_card/events_list.dart';
+import 'package:teamxperience/ui/components/misc/custom_icon_dashboard.dart';
+import 'package:teamxperience/ui/components/event/events_list.dart';
 import '../controller/events_dashboard_controller.dart';
 
 class EventsDashboard extends StatefulWidget {

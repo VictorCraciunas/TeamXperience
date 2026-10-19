@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../constants/colors.dart';
+import 'package:teamxperience/constants/colors.dart';
 
 class StepRegisterWidget extends StatelessWidget {
   const StepRegisterWidget({super.key, required this.text, required this.isEnabled});
