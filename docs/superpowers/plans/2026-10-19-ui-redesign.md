@@ -18,8 +18,8 @@
 - Romanian copy exactly as in the spec; sentence case; comma-below `ș ț`.
 - Never `x!` in new code; use local variable promotion or a fallback (user convention). One widget per file; one `*Controller` per screen; screens stay thin.
 - `Component`/`component_conversion` widgets are not themed.
-- A phase merges to `main` only when: `flutter analyze` shows **0 errors and no more warnings than baseline (28)**, `flutter test` passes, and the manual smoke list for that phase passes on a device.
-- Baseline before phase 1: `flutter analyze` = 0 errors, 28 warnings, 210 infos.
+- A phase merges to `main` only when: `flutter analyze` shows **0 errors and no more warnings than baseline (25)**, `flutter test` passes, and the manual smoke list for that phase passes on a device.
+- Baseline before phase 1: `flutter analyze` = 0 errors, 25 warnings, 192 infos (see `baseline.txt`; it dropped from 28 after merging `chat_new_design`).
 
 ## Review Focus
 

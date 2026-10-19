@@ -1,0 +1,6 @@
+flutter analyze baseline (main at 48178e6 + phase 0 test replacement), 2026-10-19
+errors: 0
+warnings: 25
+infos: 192
+total issues: 217
+flutter test: 1 passing (test/smoke_test.dart)
