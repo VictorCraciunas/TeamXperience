@@ -39,3 +39,6 @@ Verify before fixing; none of these were reproduced. Roughly ordered by impact.
 
 ## Dark mode gaps (deferred on purpose)
 - Splash screen and game screens (mission list, puzzle screen, geolocation and photo-upload widgets) are not polished for dark mode: they are redesigned later (UI plan, follow-up plans). The map keeps its light OpenStreetMap tiles.
+
+## UI polish backlog (owner, 2026-10-19)
+- Evenimente tab (user events dashboard): the unselected Evenimente/Înscrieri toggle has low contrast; fix when this screen is redesigned.

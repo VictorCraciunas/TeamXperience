@@ -183,8 +183,8 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Back button
-                          if (!_isSearchExpanded)
+                          // Back button (only when this screen was pushed, not as a tab)
+                          if (!_isSearchExpanded && Navigator.of(context).canPop())
                             GestureDetector(
                               onTap: () => Navigator.pop(context),
                               child: AppSvgIcon('assets/images/back.svg', width: 24, height: 24),
