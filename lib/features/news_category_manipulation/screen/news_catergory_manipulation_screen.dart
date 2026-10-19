@@ -162,7 +162,7 @@ class _NewsCategoryManipulationScreenState
                                           color:
                                               isSelected
                                                   ? context.colors.accent
-                                                  : Colors.black,
+                                                  : context.colors.text,
                                         ),
                                       ),
                                       onTap: () {

@@ -241,7 +241,7 @@ class _ActionButton extends StatelessWidget {
         height: 40,
         decoration: BoxDecoration(
           gradient: filled ? context.colors.ctaGradient : null,
-          color: filled ? null : Colors.white,
+          color: filled ? null : context.colors.panel,
           border: filled
               ? null
               : Border.all(color: context.colors.border, width: 2),
