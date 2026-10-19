@@ -4,6 +4,7 @@ import '../../theme/theme_context.dart';
 import 'app_nav_item.dart';
 
 class AppBottomNav extends StatelessWidget {
+  // ignore: prefer_const_constructors_in_immutables -- the assert reads items.length, which is not const-evaluable
   AppBottomNav({
     super.key,
     required this.currentIndex,
