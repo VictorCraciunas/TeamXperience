@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/utils/image_helper.dart';
 import 'package:teamxperience/utils/calendar_helper.dart';
 import 'package:teamxperience/model/event.dart';
@@ -94,11 +94,7 @@ class EventCard extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            SvgPicture.asset(
-                              'assets/images/location.svg',
-                              width: 14,
-                              height: 14,
-                            ),
+                            AppSvgIcon('assets/images/location.svg', width: 14, height: 14),
                             const SizedBox(width: 5),
                             Expanded(
                               child: Text(

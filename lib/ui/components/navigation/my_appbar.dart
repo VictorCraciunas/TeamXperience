@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/model/event.dart';
 
 import 'package:teamxperience/ui/components/navigation/menu.dart';
@@ -162,11 +162,7 @@ class _MyAppBarState extends State<MyAppBar> {
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: Center(
-                  child: SvgPicture.asset(
-                    widget.iconString!,
-                    width: 24,
-                    height: 24,
-                  ),
+                  child: AppSvgIcon(widget.iconString!, width: 24, height: 24),
                 ),
               ),
             ),

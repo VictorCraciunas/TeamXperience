@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -175,11 +176,7 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      SvgPicture.asset(
-                                        'assets/images/add_icon.svg',
-                                        width: 20,
-                                        height: 20,
-                                      ),
+                                      AppSvgIcon('assets/images/add_icon.svg', width: 20, height: 20, color: context.colors.accent),
                                       const SizedBox(width: 8),
                                       Text(
                                         "Creează știre",
@@ -205,11 +202,7 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                                 child: Center(
-                                  child: SvgPicture.asset(
-                                    'assets/images/add_icon.svg',
-                                    width: 20,
-                                    height: 20,
-                                  ),
+                                  child: AppSvgIcon('assets/images/add_icon.svg', width: 20, height: 20, color: context.colors.accent),
                                 ),
                               ),
                             ),
@@ -307,11 +300,7 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                                 child: Center(
-                                  child: SvgPicture.asset(
-                                    'assets/images/search.svg',
-                                    width: 24,
-                                    height: 24,
-                                  ),
+                                  child: AppSvgIcon('assets/images/search.svg', width: 24, height: 24),
                                 ),
                               ),
                             ),

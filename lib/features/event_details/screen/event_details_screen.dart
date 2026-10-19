@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart'; // Add this import
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
@@ -100,11 +100,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               padding: const EdgeInsets.all(16),
               child: MyButton(
                 buttonText: !isRegistered ? "Înscrie-ți echipa" : "Vezi detalii înscriere",
-                leading: SvgPicture.asset(
-                  'assets/images/user_icon.svg',
-                  width: 19,
-                  height: 19,
-                ),
+                leading: AppSvgIcon('assets/images/user_icon.svg', width: 19, height: 19),
                 textColor: Colors.white,
                 buttonOnTap: () {
                   if (!isAdmin) {
@@ -224,11 +220,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         },
                         withBorder: false,
                         buttonColor: MyColors.transparentLightBlue,
-                        leading: SvgPicture.asset(
-                          'assets/images/notification2.svg',
-                          width: 24,
-                          height: 24,
-                        ),
+                        leading: AppSvgIcon('assets/images/notification2.svg', width: 24, height: 24),
                         buttonTextSize: 15,
                       ),
                   ],
