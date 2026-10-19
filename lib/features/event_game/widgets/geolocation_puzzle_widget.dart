@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/service/LocationService.dart';
 import 'package:teamxperience/service/route_service.dart';
@@ -203,14 +203,14 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
                         child: Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: MyColors.lightBlue.withValues(alpha: 0.25),
+                            color: context.colors.accent.withValues(alpha: 0.25),
                             border: Border.all(
-                              color: MyColors.lightBlue,
+                              color: context.colors.accent,
                               width: 3,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: MyColors.lightBlue.withValues(alpha: 0.4),
+                                color: context.colors.accent.withValues(alpha: 0.4),
                                 blurRadius: 12,
                                 spreadRadius: 4,
                               ),
@@ -231,7 +231,7 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
                         Polyline(
                           points: _routePoints,
                           strokeWidth: 4.0,
-                          color: MyColors.lightBlue,
+                          color: context.colors.accent,
                         ),
                       ],
                     ),
@@ -273,7 +273,7 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
               textColor: Colors.white,
               buttonOnTap: widget.onSolved,
               withBorder: false,
-              gradient: MyColors.myGradient,
+              gradient: context.colors.ctaGradient,
               buttonTextSize: 15,
             ),
           ),

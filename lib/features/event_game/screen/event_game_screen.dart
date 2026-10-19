@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/enums/missions_state.dart';
 import 'package:teamxperience/model/team.dart';
@@ -202,7 +202,7 @@ class _EventGameScreenState extends State<EventGameScreen> {
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(20),
                                       ),
-                                      color: MyColors.lightBlue,
+                                      color: context.colors.accent,
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -237,7 +237,7 @@ class _EventGameScreenState extends State<EventGameScreen> {
                                         borderRadius: BorderRadius.all(
                                           Radius.circular(20),
                                         ),
-                                        color: MyColors.lightBlue,
+                                        color: context.colors.accent,
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.all(8),

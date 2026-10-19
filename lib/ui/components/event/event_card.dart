@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/utils/image_helper.dart';
 import 'package:teamxperience/utils/calendar_helper.dart';
 import 'package:teamxperience/model/event.dart';
@@ -31,7 +31,7 @@ class EventCard extends StatelessWidget {
 
     return Card(
       shadowColor: const Color(0xFF0B2F63).withValues(alpha: 0.1),
-      color: Colors.white,
+      color: context.colors.panel,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: InkWell(
@@ -60,7 +60,7 @@ class EventCard extends StatelessWidget {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: MyColors.transparentLightBlue,
+                      color: context.colors.iconButtonBg,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     width: 60,
@@ -70,18 +70,18 @@ class EventCard extends StatelessWidget {
                       children: [
                         Text(
                           month,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 13,
-                            color: MyColors.blackColor,
+                            color: context.colors.text,
                           ),
                         ),
                         Text(
                           day,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 15,
-                            color: MyColors.blackColor,
+                            color: context.colors.text,
                           ),
                         ),
                       ],
@@ -103,9 +103,9 @@ class EventCard extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 event.location ?? "No Location",
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 13,
-                                  color: Color(0xFF545454),
+                                  color: context.colors.muted,
                                 ),
                               ),
                             ),
@@ -114,10 +114,10 @@ class EventCard extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           event.name ?? "No Title",
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: MyColors.blackColor,
+                            color: context.colors.text,
                           ),
                         ),
                       ],

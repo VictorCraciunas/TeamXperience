@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/model/stire.dart';
 import 'package:teamxperience/ui/components/news/stire_card.dart';
 
@@ -91,8 +91,8 @@ class _StiriCarouselState extends State<StiriCarousel> {
           height: 8.0,
           decoration: BoxDecoration(
             color: _currentIndex == index
-                ? Color(0xFF222F62)
-                : const Color(0xFF222F623B),
+                ? context.colors.navy
+                : context.colors.insetBorder,
             borderRadius: BorderRadius.circular(4.0),
           ),
         ),

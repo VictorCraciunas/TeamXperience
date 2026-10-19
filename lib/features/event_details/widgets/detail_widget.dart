@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../constants/colors.dart';
 
 class DetailWidget extends StatelessWidget {
   final String text1;
@@ -25,7 +25,7 @@ class DetailWidget extends StatelessWidget {
           width: 56,
           height: 51,
           decoration: BoxDecoration(
-            color: MyColors.transparentLightBlue,
+            color: context.colors.iconButtonBg,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Center(
@@ -43,19 +43,19 @@ class DetailWidget extends StatelessWidget {
             children: [
               Text(
                 text1,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black,
+                  color: context.colors.text,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 text2,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w300,
-                  color: Colors.black
+                  color: context.colors.text
                 ),
               ),
             ],

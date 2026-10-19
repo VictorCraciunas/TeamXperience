@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/enums/missions_state.dart';
 
-import 'package:teamxperience/constants/colors.dart';
 
 class MissionStateWidget extends StatelessWidget {
   final MissionState missionState;
@@ -26,7 +26,7 @@ class MissionStateWidget extends StatelessWidget {
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(20)),
-            border: Border.all(color: Color(0xFFE4E4E4), width: 1),
+            border: Border.all(color: context.colors.border, width: 1),
           ),
           child: Padding(
             padding: const EdgeInsets.all(15.0),
@@ -42,10 +42,10 @@ class MissionStateWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                           color:
                               missionState == MissionState.finalizata
-                                  ? MyColors.lightBlue
+                                  ? context.colors.accent
                                   : missionState == MissionState.deblcata
-                                  ? MyColors.transparentLightBlue
-                                  : Color(0xFFFFC4C4),
+                                  ? context.colors.iconButtonBg
+                                  : context.colors.insetBorder,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Padding(
@@ -73,13 +73,13 @@ class MissionStateWidget extends StatelessWidget {
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 15,
-                              color: MyColors.blackColor,
+                              color: context.colors.text,
                             ),
                           ),
                           SizedBox(height: 5),
                           Text(
                             missionState == MissionState.finalizata ? "Finalizată" : missionState == MissionState.deblcata ? "Deblocată" : "Blocată",
-                            style: TextStyle(fontSize: 12, color: Color(0xFF858493)),
+                            style: TextStyle(fontSize: 12, color: context.colors.muted),
                           ),
                         ],
                       ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 
 class SliderWidget extends StatelessWidget {
   final String title;
@@ -28,7 +28,6 @@ class SliderWidget extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            fontFamily: 'Poppins',
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
@@ -38,8 +37,8 @@ class SliderWidget extends StatelessWidget {
           width: double.infinity,
           height: 50,
           decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: MyColors.lightBlue, width: 1.5),
+            color: context.colors.panel,
+            border: Border.all(color: context.colors.accent, width: 1.5),
             borderRadius: BorderRadius.circular(15),
           ),
           child: Slider(
@@ -48,8 +47,8 @@ class SliderWidget extends StatelessWidget {
             divisions: divisions,
             value: value,
             label: label,
-            activeColor: MyColors.lightBlue,
-            inactiveColor: MyColors.greyText.withValues(alpha: 0.3),
+            activeColor: context.colors.accent,
+            inactiveColor: context.colors.muted.withValues(alpha: 0.3),
             onChanged: onChanged,
           ),
         ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
 import 'package:teamxperience/features/chat/widgets/full_screen_image.dart';
 import 'bubble_position.dart';
@@ -42,11 +42,11 @@ class ImageMessageBubble extends StatelessWidget {
             ),
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              gradient: isMe ? MyColors.myGradient : null,
-              color: isMe ? null : MyColors.barColor,
+              gradient: isMe ? context.colors.ctaGradient : null,
+              color: isMe ? null : context.colors.panel,
               border: isMe
                   ? null
-                  : Border.all(color: const Color(0xFFE6E6E6), width: 1.5),
+                  : Border.all(color: context.colors.border, width: 1.5),
               borderRadius: bubbleRadius(isMe, position),
               boxShadow: [
                 if (isMe)
@@ -86,8 +86,8 @@ class ImageMessageBubble extends StatelessWidget {
                               return Container(
                                 color: const Color(0xFFD9E4E6),
                                 alignment: Alignment.center,
-                                child: const CircularProgressIndicator(
-                                  color: MyColors.lightBlue,
+                                child: CircularProgressIndicator(
+                                  color: context.colors.accent,
                                 ),
                               );
                             },
@@ -148,11 +148,10 @@ class ImageMessageBubble extends StatelessWidget {
               ),
               child: Text(
                 time!,
-                style: const TextStyle(
-                  fontFamily: 'Poppins',
+                style: TextStyle(
                   fontSize: 10.5,
                   fontWeight: FontWeight.w500,
-                  color: MyColors.greyText,
+                  color: context.colors.muted,
                 ),
               ),
             ),
@@ -171,13 +170,13 @@ class _StatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final (Color bg, Color fg, String label, IconData icon) = switch (status) {
       PhotoApprovalStatus.pending => (
-        MyColors.transparentYellow,
+        context.colors.border,
         const Color(0xFFB97A00),
         'În așteptare',
         Icons.access_time_rounded,
       ),
       PhotoApprovalStatus.approved => (
-        MyColors.transparentLightBlue,
+        context.colors.iconButtonBg,
         const Color(0xFF1F8F92),
         'Aprobat',
         Icons.check_rounded,
@@ -209,7 +208,6 @@ class _StatusChip extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              fontFamily: 'Poppins',
               fontSize: 11,
               fontWeight: FontWeight.w600,
               color: fg,
@@ -242,11 +240,11 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         height: 40,
         decoration: BoxDecoration(
-          gradient: filled ? MyColors.myGradient : null,
+          gradient: filled ? context.colors.ctaGradient : null,
           color: filled ? null : Colors.white,
           border: filled
               ? null
-              : Border.all(color: const Color(0xFFE6E6E6), width: 2),
+              : Border.all(color: context.colors.border, width: 2),
           borderRadius: BorderRadius.circular(50),
           boxShadow: filled
               ? const [
@@ -261,15 +259,14 @@ class _ActionButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 14, color: filled ? Colors.white : MyColors.blackColor),
+            Icon(icon, size: 14, color: filled ? Colors.white : context.colors.text),
             const SizedBox(width: 6),
             Text(
               label,
               style: TextStyle(
-                fontFamily: 'Poppins',
                 fontSize: 13.5,
                 fontWeight: FontWeight.w600,
-                color: filled ? Colors.white : MyColors.blackColor,
+                color: filled ? Colors.white : context.colors.text,
               ),
             ),
           ],

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
@@ -88,9 +89,9 @@ class _NewsScreenState extends State<NewsScreen> {
       return Container(
         height: 317,
         width: double.infinity,
-        color: Colors.grey[300],
-        child: const Center(
-          child: Icon(Icons.image_not_supported, color: Colors.grey, size: 50),
+        color: context.colors.inset,
+        child: Center(
+          child: Icon(Icons.image_not_supported, color: context.colors.muted, size: 50),
         ),
       );
     }
@@ -117,17 +118,17 @@ class _NewsScreenState extends State<NewsScreen> {
                   fit: BoxFit.cover,
                   width: double.infinity,
                   progressIndicatorBuilder: (context, url, progress) => Container(
-                    color: Colors.grey[300],
+                    color: context.colors.inset,
                     child: Center(
                       child: CircularProgressIndicator(value: progress.progress),
                     ),
                   ),
                   errorWidget: (context, url, error) => Container(
-                    color: Colors.grey[300],
-                    child: const Center(
+                    color: context.colors.inset,
+                    child: Center(
                       child: Icon(
                         Icons.error_outline,
-                        color: Colors.grey,
+                        color: context.colors.muted,
                         size: 50,
                       ),
                     ),
@@ -280,7 +281,7 @@ class _NewsScreenState extends State<NewsScreen> {
                           width: 205,
                           height: 24,
                           decoration: BoxDecoration(
-                            color: MyColors.transparentLightBlue,
+                            color: context.colors.iconButtonBg,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
@@ -290,8 +291,8 @@ class _NewsScreenState extends State<NewsScreen> {
                                 'assets/images/folder-search.svg',
                                 width: 14,
                                 height: 14,
-                                colorFilter: const ColorFilter.mode(
-                                  Color(0xFF0B2F63),
+                                colorFilter: ColorFilter.mode(
+                                  context.colors.text,
                                   BlendMode.srcIn,
                                 ),
                               ),
@@ -299,9 +300,9 @@ class _NewsScreenState extends State<NewsScreen> {
                               Text(
                                 stire.category?.name ?? 'No Category',
                                 // Now using NewsCategory name
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
-                                  color: Color(0xFF0B2F63),
+                                  color: context.colors.text,
                                 ),
                               ),
                               const SizedBox(width: 4),
@@ -309,8 +310,8 @@ class _NewsScreenState extends State<NewsScreen> {
                                 'assets/images/punct.svg',
                                 height: 3,
                                 width: 3,
-                                colorFilter: const ColorFilter.mode(
-                                  Color(0xFF0B2F63),
+                                colorFilter: ColorFilter.mode(
+                                  context.colors.text,
                                   BlendMode.srcIn,
                                 ),
                               ),
@@ -320,9 +321,9 @@ class _NewsScreenState extends State<NewsScreen> {
                                   stire.publicationDate,
                                 ),
                                 // Now using NewsCategory name
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
-                                  color: Color(0xFF0B2F63),
+                                  color: context.colors.text,
                                 ),
                               ),
                             ],
@@ -332,9 +333,9 @@ class _NewsScreenState extends State<NewsScreen> {
                         Text(
                           stire.title ?? 'Fara titlu',
                           textAlign: TextAlign.left,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 19,
-                            color: MyColors.blackColor,
+                            color: context.colors.text,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -342,10 +343,10 @@ class _NewsScreenState extends State<NewsScreen> {
                         Text(
                           stire.description ?? "No description",
                           textAlign: TextAlign.left,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w300,
-                            color: Colors.black,
+                            color: context.colors.text,
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -373,7 +374,7 @@ class _NewsScreenState extends State<NewsScreen> {
                             withBorder: false,
                             buttonTextSize: 16,
                             fontWeight: FontWeight.w600,
-                            gradient: MyColors.myGradient,
+                            gradient: context.colors.ctaGradient,
                           ),
                       ],
                     ),

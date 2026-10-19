@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_svg/svg.dart';
 
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/model/event.dart';
 
@@ -52,10 +52,10 @@ class EventImage extends StatelessWidget {
               )
               : Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: context.colors.inset,
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: const Icon(Icons.event, size: 50, color: Colors.grey),
+                child: Icon(Icons.event, size: 50, color: context.colors.muted),
               ),
 
           // Blue containers overlay
@@ -69,7 +69,7 @@ class EventImage extends StatelessWidget {
                     width: 78,
                     height: 20,
                     decoration: BoxDecoration(
-                      color: MyColors.lightBlue,
+                      color: context.colors.accent,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -106,7 +106,7 @@ class EventImage extends StatelessWidget {
                   width: 78,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: event.type == EventType.PUBLIC || isAdmin == false ? MyColors.lightBlue : const Color(0xFF1C1243),
+                    color: event.type == EventType.PUBLIC || isAdmin == false ? context.colors.accent : context.colors.navy,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Center(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
-import '../../../constants/colors.dart';
 import '../../../utils/calendar_helper.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
@@ -128,14 +128,14 @@ class _DateRangeSelectionScreenState extends State<DateRangeSelectionScreen> {
             decoration: BoxDecoration(
               color:
                   isStart || isEnd
-                      ? const Color(0xFF4DD0E1)
+                      ? context.colors.tick
                       : isInRange
-                      ? const Color(0xFF4DD0E1).withOpacity(0.3)
+                      ? context.colors.tick.withValues(alpha: 0.25)
                       : Colors.transparent,
               borderRadius: BorderRadius.circular(20),
               border:
                   isToday && !isInRange
-                      ? Border.all(color: const Color(0xFF4DD0E1), width: 1)
+                      ? Border.all(color: context.colors.tick, width: 1)
                       : null,
             ),
             child: Center(
@@ -149,10 +149,10 @@ class _DateRangeSelectionScreenState extends State<DateRangeSelectionScreen> {
                       isStart || isEnd
                           ? Colors.white
                           : isInRange
-                          ? const Color(0xFF4DD0E1)
+                          ? context.colors.tick
                           : isToday
-                          ? const Color(0xFF4DD0E1)
-                          : Colors.black87,
+                          ? context.colors.tick
+                          : context.colors.text,
                 ),
               ),
             ),
@@ -168,10 +168,10 @@ class _DateRangeSelectionScreenState extends State<DateRangeSelectionScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           child: Text(
             '${CalendarHelper.romanianMonthsUpper[month.month]} ${month.year}',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              color: context.colors.text,
             ),
           ),
         ),
@@ -187,10 +187,10 @@ class _DateRangeSelectionScreenState extends State<DateRangeSelectionScreen> {
                 (day) => Center(
                   child: Text(
                     day,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: Colors.grey,
+                      color: context.colors.muted,
                     ),
                   ),
                 ),
@@ -226,7 +226,7 @@ class _DateRangeSelectionScreenState extends State<DateRangeSelectionScreen> {
     final months = generateMonths();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.page,
       appBar: const MyAppBar(appBarText: "Selectează Perioada"),
       body: SafeArea(
         child: Padding(
@@ -246,7 +246,7 @@ class _DateRangeSelectionScreenState extends State<DateRangeSelectionScreen> {
                     color: Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: const Color(0xFF4DD0E1),
+                      color: context.colors.tick,
                       width: 1.5,
                     ),
                   ),
@@ -255,10 +255,10 @@ class _DateRangeSelectionScreenState extends State<DateRangeSelectionScreen> {
                       Expanded(
                         child: Text(
                           getSelectedPeriodText(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
-                            color: Colors.black87,
+                            color: context.colors.text,
                           ),
                         ),
                       ),
@@ -266,10 +266,10 @@ class _DateRangeSelectionScreenState extends State<DateRangeSelectionScreen> {
                         onTap: clearSelection,
                         child: Container(
                           padding: const EdgeInsets.all(4),
-                          child: const Icon(
+                          child: Icon(
                             Icons.close,
                             size: 20,
-                            color: Color(0xFF4DD0E1),
+                            color: context.colors.tick,
                           ),
                         ),
                       ),
@@ -302,7 +302,7 @@ class _DateRangeSelectionScreenState extends State<DateRangeSelectionScreen> {
                   }
                 },
                 withBorder: false,
-                gradient: MyColors.myGradient,
+                gradient: context.colors.ctaGradient,
                 radius: 30,
                 leading: SvgPicture.asset(
                   'assets/images/calendar.svg',

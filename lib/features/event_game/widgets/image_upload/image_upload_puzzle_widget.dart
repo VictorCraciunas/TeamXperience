@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:provider/provider.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/event_game/controller/image_upload_puzzle_controller.dart';
 import 'package:teamxperience/features/event_game/widgets/image_upload/image_upload_action_button.dart';
 import 'package:teamxperience/features/event_game/widgets/image_upload/image_upload_picker.dart';
@@ -71,7 +71,7 @@ class _ImageUploadPuzzleWidgetState extends State<ImageUploadPuzzleWidget> {
             textColor: Colors.white,
             buttonOnTap: widget.onSolved,
             withBorder: false,
-            gradient: MyColors.myGradient,
+            gradient: context.colors.ctaGradient,
             buttonTextSize: 15,
           ),
         ),
@@ -83,8 +83,8 @@ class _ImageUploadPuzzleWidgetState extends State<ImageUploadPuzzleWidget> {
       builder: (context, snapshot) {
         final team = snapshot.data;
         if (team == null) {
-          return const Center(
-            child: CircularProgressIndicator(color: MyColors.lightBlue),
+          return Center(
+            child: CircularProgressIndicator(color: context.colors.accent),
           );
         }
 

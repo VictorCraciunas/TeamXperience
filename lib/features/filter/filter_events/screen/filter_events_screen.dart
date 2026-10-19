@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/enums/event_type.dart';
@@ -73,7 +73,7 @@ class _FilterEventsScreenState extends State<FilterEventsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.backgroundColor,
+      backgroundColor: context.colors.page,
       appBar: const MyAppBar(appBarText: "Filtrare"),
       body: SafeArea(
         child: Padding(
@@ -103,15 +103,14 @@ class _FilterEventsScreenState extends State<FilterEventsScreen> {
                     onChanged: (value) {
                       controller.setEventType(value);
                     },
-                    hint: const Text(
+                    hint: Text(
                       "Selectează tipul de eveniment",
                       style: TextStyle(
                         fontSize: 14,
-                        fontFamily: 'Poppins',
-                        color: MyColors.greyText,
+                        color: context.colors.muted,
                       ),
                     ),
-                    borderColor: MyColors.lightBlue,
+                    borderColor: context.colors.accent,
                     borderWidth: 1.5,
                     radius: 20,
                     contentPadding: const EdgeInsets.symmetric(
@@ -129,11 +128,11 @@ class _FilterEventsScreenState extends State<FilterEventsScreen> {
                 hintText: 'Selectează perioadă',
                 readOnly: true,
                 onTap: _navigateToPeriodSelection,
-                trailing: const Icon(
+                trailing: Icon(
                   Icons.chevron_right,
-                  color: MyColors.lightBlue,
+                  color: context.colors.accent,
                 ),
-                borderColor: MyColors.lightBlue,
+                borderColor: context.colors.accent,
                 borderWidth: 1.5,
                 radius: 20,
                 controller: _periodController,
@@ -147,7 +146,7 @@ class _FilterEventsScreenState extends State<FilterEventsScreen> {
                 textColor: Colors.white,
                 buttonOnTap: _applyFilters,
                 withBorder: false,
-                gradient: MyColors.myGradient,
+                gradient: context.colors.ctaGradient,
                 fontWeight: FontWeight.w600,
                 radius: 30,
               ),

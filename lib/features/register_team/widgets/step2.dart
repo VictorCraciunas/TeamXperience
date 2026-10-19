@@ -1,8 +1,8 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../constants/colors.dart';
 import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
 
 class Step2 extends StatelessWidget {
@@ -25,7 +25,7 @@ class Step2 extends StatelessWidget {
               'assets/images/user.svg',
               width: 24,
               height: 24,
-              colorFilter: const ColorFilter.mode(MyColors.yellow, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(context.colors.tick, BlendMode.srcIn),
             ),
           ), // ← close SvgPicture.asset
         ),
@@ -40,7 +40,7 @@ class Step2 extends StatelessWidget {
               'assets/images/user_icon.svg',
               width: 24,
               height: 24,
-              colorFilter: const ColorFilter.mode(MyColors.yellow, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(context.colors.tick, BlendMode.srcIn),
             ),
           ), // ← close SvgPicture.asset
         ),
@@ -55,7 +55,7 @@ class Step2 extends StatelessWidget {
               'assets/images/user_icon.svg',
               width: 24,
               height: 24,
-              colorFilter: const ColorFilter.mode(MyColors.yellow, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(context.colors.tick, BlendMode.srcIn),
             ),
           ), // ← close SvgPicture.asset
         ),

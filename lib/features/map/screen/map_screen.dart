@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/map/controller/map_controller.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
@@ -111,12 +111,12 @@ class _MapScreenState extends State<MapScreen> {
             ),
             child: CircleAvatar(
               radius: 25,
-              backgroundColor: Colors.white,
+              backgroundColor: context.colors.panel,
               child: Container(
                 width: 45,
                 height: 45,
                 decoration: BoxDecoration(
-                  color: MyColors.lightBlue,
+                  color: context.colors.accent,
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -159,7 +159,7 @@ class _MapScreenState extends State<MapScreen> {
           children: [
             CircleAvatar(
               radius: 30,
-              backgroundColor: MyColors.lightBlue,
+              backgroundColor: context.colors.accent,
               child: Text(
                 team.name[0].toUpperCase(),
                 style: const TextStyle(
@@ -182,7 +182,7 @@ class _MapScreenState extends State<MapScreen> {
               team.captainName,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: context.colors.muted,
               ),
             ),
             const SizedBox(height: 8),
@@ -192,7 +192,7 @@ class _MapScreenState extends State<MapScreen> {
                 'Distance: ${distance < 1000 ? '${distance.toInt()}m' : '${(distance / 1000).toStringAsFixed(1)}km'}',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey[600],
+                  color: context.colors.muted,
                 ),
               ),
             ],

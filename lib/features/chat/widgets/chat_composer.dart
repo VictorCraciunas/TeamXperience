@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 
 class ChatComposer extends StatelessWidget {
   final TextEditingController controller;
@@ -17,8 +17,8 @@ class ChatComposer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-      decoration: const BoxDecoration(
-        color: MyColors.barColor,
+      decoration: BoxDecoration(
+        color: context.colors.panel,
         border: Border(top: BorderSide(color: Color(0x0A0C092A))),
       ),
       child: SafeArea(
@@ -31,9 +31,9 @@ class ChatComposer extends StatelessWidget {
                 duration: const Duration(milliseconds: 150),
                 constraints: const BoxConstraints(minHeight: 50),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.colors.panel,
                   border: Border.all(
-                    color: hasText ? MyColors.lightBlue : const Color(0xFFE6E6E6),
+                    color: hasText ? context.colors.accent : context.colors.border,
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(26),
@@ -44,17 +44,15 @@ class ChatComposer extends StatelessWidget {
                   maxLines: 4,
                   minLines: 1,
                   textCapitalization: TextCapitalization.sentences,
-                  style: const TextStyle(
-                    fontFamily: 'Poppins',
+                  style: TextStyle(
                     fontSize: 14,
-                    color: MyColors.blackColor,
+                    color: context.colors.text,
                   ),
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     hintText: 'Trimite un mesaj…',
                     hintStyle: TextStyle(
-                      fontFamily: 'Poppins',
                       fontSize: 14,
-                      color: MyColors.greyText,
+                      color: context.colors.muted,
                     ),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(vertical: 14),
@@ -70,8 +68,8 @@ class ChatComposer extends StatelessWidget {
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  gradient: hasText ? MyColors.myGradient : null,
-                  color: hasText ? null : const Color(0xFFE6E6E6),
+                  gradient: hasText ? context.colors.ctaGradient : null,
+                  color: hasText ? null : context.colors.border,
                   shape: BoxShape.circle,
                   boxShadow: hasText
                       ? const [

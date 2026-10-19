@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
 
 /// A reusable labeled dropdown field that displays a label above
@@ -100,7 +100,7 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>>
     final borderColor = _errorText != null
         ? const Color(0xFFE03A3A)
         : _isOpen
-            ? MyColors.lightBlue
+            ? context.colors.accent
             : widget.borderColor;
     final borderWidth = _isOpen ? 3.0 : widget.borderWidth;
 
@@ -110,10 +110,9 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>>
         Text(
           widget.labelText,
           style: TextStyle(
-            fontFamily: 'Poppins',
             fontSize: widget.labelFontSize,
             fontWeight: widget.labelFontWeight,
-            color: MyColors.blackColor,
+            color: context.colors.text,
           ),
         ),
         const SizedBox(height: 8),
@@ -139,9 +138,9 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>>
                 widget.dropdownIcon ??
                     RotationTransition(
                       turns: _chevronTurns,
-                      child: const Icon(
+                      child: Icon(
                         Icons.keyboard_arrow_down,
-                        color: MyColors.blackColor,
+                        color: context.colors.text,
                       ),
                     ),
               ],
@@ -157,7 +156,6 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>>
               style: const TextStyle(
                 color: Color(0xFFE03A3A),
                 fontSize: 12,
-                fontFamily: 'Poppins',
               ),
             ),
           ),
@@ -174,22 +172,20 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>>
       );
       return Text(
         selectedItem.label,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 14,
-          fontFamily: 'Poppins',
-          color: MyColors.blackColor,
+          color: context.colors.text,
           fontWeight: FontWeight.w500,
         ),
         overflow: TextOverflow.ellipsis,
       );
     }
     return widget.hint ??
-        const Text(
+        Text(
           'Selectează o opțiune',
           style: TextStyle(
             fontSize: 14,
-            fontFamily: 'Poppins',
-            color: MyColors.greyText,
+            color: context.colors.muted,
           ),
         );
   }
@@ -248,21 +244,21 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>>
               child: Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.colors.panel,
                   borderRadius: BorderRadius.circular(28),
                   border: Border.all(
-                    color: MyColors.lightBlue.withValues(alpha: 0.18),
+                    color: context.colors.accent.withValues(alpha: 0.18),
                   ),
                   boxShadow: [
                     BoxShadow(
                       blurRadius: 24,
                       offset: const Offset(0, 8),
-                      color: MyColors.lightBlue.withValues(alpha: 0.18),
+                      color: context.colors.accent.withValues(alpha: 0.18),
                     ),
                     BoxShadow(
                       blurRadius: 6,
                       offset: const Offset(0, 2),
-                      color: MyColors.blackColor.withValues(alpha: 0.06),
+                      color: context.colors.text.withValues(alpha: 0.06),
                     ),
                   ],
                 ),
@@ -280,7 +276,7 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>>
                         ),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? MyColors.transparentLightBlue
+                              ? context.colors.iconButtonBg
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(22),
                         ),
@@ -291,18 +287,17 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>>
                                 item.label,
                                 style: TextStyle(
                                   fontSize: 15,
-                                  fontFamily: 'Poppins',
                                   fontWeight: isSelected
                                       ? FontWeight.w600
                                       : FontWeight.w400,
-                                  color: MyColors.blackColor,
+                                  color: context.colors.text,
                                 ),
                               ),
                             ),
                             if (isSelected)
-                              const Icon(
+                              Icon(
                                 Icons.check_rounded,
-                                color: MyColors.lightBlue,
+                                color: context.colors.accent,
                                 size: 18,
                               ),
                           ],

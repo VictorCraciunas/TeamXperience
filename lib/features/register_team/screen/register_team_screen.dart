@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/register_team/controller/register_team_controller.dart';
@@ -47,8 +48,8 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                       child: Divider(
                         color:
                             !controller.secondStep
-                                ? MyColors.transparentYellow
-                                : MyColors.yellow, // line color
+                                ? context.colors.border
+                                : context.colors.tick, // line color
                         thickness: 2, // line height
                         indent: 10, // space to the left of the line
                         endIndent: 10, // space to the right of the line
@@ -62,8 +63,8 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                       child: Divider(
                         color:
                             !controller.thirdStep
-                                ? MyColors.transparentYellow
-                                : MyColors.yellow, // line color
+                                ? context.colors.border
+                                : context.colors.tick, // line color
                         thickness: 2, // line height
                         indent: 10, // space to the left of the line
                         endIndent: 10, // space to the right of the line
@@ -109,24 +110,24 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                                   (value) => setState(
                                     () => controller.checkBox1 = value!,
                                   ),
-                              activeColor: MyColors.yellow,
+                              activeColor: context.colors.tick,
                               checkColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              side: const BorderSide(
+                              side: BorderSide(
                                 width: 1.5,
-                                color: Color(0xFFE6E6E6),
+                                color: context.colors.border,
                               ),
                             ),
                           ),
                           const SizedBox(width: 5),
-                          const Expanded(
+                          Expanded(
                             child: Text(
                               "Sunt de acord cu Regulamentul Specific al activității.",
                               style: TextStyle(
                                 fontSize: 13,
-                                color: MyColors.blackColor,
+                                color: context.colors.text,
                               ),
                             ),
                           ),
@@ -143,24 +144,24 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                                   (value) => setState(
                                     () => controller.checkBox2 = value!,
                                   ),
-                              activeColor: MyColors.yellow,
+                              activeColor: context.colors.tick,
                               checkColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              side: const BorderSide(
+                              side: BorderSide(
                                 width: 1.5,
-                                color: Color(0xFFE6E6E6),
+                                color: context.colors.border,
                               ),
                             ),
                           ),
                           const SizedBox(width: 5),
-                          const Expanded(
+                          Expanded(
                             child: Text(
                               "Sunt de acord cu folosirea datelor cu caracter personal.",
                               style: TextStyle(
                                 fontSize: 13,
-                                color: MyColors.blackColor,
+                                color: context.colors.text,
                               ),
                             ),
                           ),
@@ -178,24 +179,24 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                                   (value) => setState(
                                     () => controller.checkBox3 = value!,
                                   ),
-                              activeColor: MyColors.yellow,
+                              activeColor: context.colors.tick,
                               checkColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              side: const BorderSide(
+                              side: BorderSide(
                                 width: 1.5,
-                                color: Color(0xFFE6E6E6),
+                                color: context.colors.border,
                               ),
                             ),
                           ),
                           const SizedBox(width: 5),
-                          const Expanded(
+                          Expanded(
                             child: Text(
                               "Sunt de acord ca imaginile și  video-urile care sunt realizate de organizatori sau de membrii echipei  mele în timpul activității să îmi fie trimise după eveniment. În același timp ASOCIAȚIA VBE SIBIU poate folosi aceste resurse pentru promovare.",
                               style: TextStyle(
                                 fontSize: 14,
-                                color: MyColors.blackColor,
+                                color: context.colors.text,
                               ),
                             ),
                           ),

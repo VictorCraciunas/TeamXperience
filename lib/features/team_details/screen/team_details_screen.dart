@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/user.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
-import '../../../constants/colors.dart';
 import '../../../model/event.dart';
 import '../../../utils/calendar_helper.dart';
 import '../../../utils/image_helper.dart';
@@ -124,10 +124,10 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                     Center(
                       child: Text(
                         controller.event.name ?? "Nu avem nume eveniment",
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 19,
                           fontWeight: FontWeight.w600,
-                          color: MyColors.blackColor,
+                          color: context.colors.text,
                         ),
                       ),
                     ),
@@ -148,22 +148,22 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
+                        Text(
                           "Detalii înscriere",
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w500,
-                            color: MyColors.blackColor,
+                            color: context.colors.text,
                           ),
                         ),
                         GestureDetector(
                           onTap: controller.isSaving ? null : _toggleEditMode,
                           child: Text(
                             controller.isEditing ? "Anulează" : "Editează",
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
-                              color: MyColors.lightBlue,
+                              color: context.colors.accent,
                             ),
                           ),
                         ),
@@ -214,7 +214,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                         textColor: Colors.white,
                         buttonOnTap: controller.isSaving ? () {} : _saveChanges,
                         withBorder: false,
-                        gradient: MyColors.myGradient,
+                        gradient: context.colors.ctaGradient,
                         buttonTextSize: 15,
                       )
                     else
@@ -223,7 +223,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                         textColor: Colors.white,
                         buttonOnTap: () => controller.shareTeamRegistration(context),
                         withBorder: false,
-                        gradient: MyColors.myGradient,
+                        gradient: context.colors.ctaGradient,
                         buttonTextSize: 15,
                         leading: SvgPicture.asset(
                           'assets/images/download.svg',

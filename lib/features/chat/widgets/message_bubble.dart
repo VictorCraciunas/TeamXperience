@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'bubble_position.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -32,11 +32,11 @@ class MessageBubble extends StatelessWidget {
             ),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
-              gradient: isMe ? MyColors.myGradient : null,
-              color: isMe ? null : MyColors.barColor,
+              gradient: isMe ? context.colors.ctaGradient : null,
+              color: isMe ? null : context.colors.panel,
               border: isMe
                   ? null
-                  : Border.all(color: const Color(0xFFE6E6E6), width: 1.5),
+                  : Border.all(color: context.colors.border, width: 1.5),
               borderRadius: bubbleRadius(isMe, position),
               boxShadow: [
                 if (isMe)
@@ -56,10 +56,9 @@ class MessageBubble extends StatelessWidget {
             child: Text(
               text,
               style: TextStyle(
-                fontFamily: 'Poppins',
                 fontSize: 14.5,
                 fontWeight: FontWeight.w400,
-                color: isMe ? Colors.white : MyColors.blackColor,
+                color: isMe ? Colors.white : context.colors.text,
                 height: 1.45,
               ),
             ),
@@ -73,11 +72,10 @@ class MessageBubble extends StatelessWidget {
               ),
               child: Text(
                 time!,
-                style: const TextStyle(
-                  fontFamily: 'Poppins',
+                style: TextStyle(
                   fontSize: 10.5,
                   fontWeight: FontWeight.w500,
-                  color: MyColors.greyText,
+                  color: context.colors.muted,
                 ),
               ),
             ),
