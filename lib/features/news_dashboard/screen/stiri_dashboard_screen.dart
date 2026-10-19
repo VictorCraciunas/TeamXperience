@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/stire.dart';
@@ -222,17 +221,7 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: Center(
-                                child: SvgPicture.asset(
-                                  'assets/images/filter.svg',
-                                  width: 24,
-                                  height: 24,
-                                  colorFilter: controller.hasActiveFilters
-                                      ? const ColorFilter.mode(
-                                    Colors.white,
-                                    BlendMode.srcIn,
-                                  )
-                                      : null,
-                                ),
+                                child: AppSvgIcon('assets/images/filter.svg', width: 24, height: 24, color: controller.hasActiveFilters ? Colors.white : null),
                               ),
                             ),
                           ),
