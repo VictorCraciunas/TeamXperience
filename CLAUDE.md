@@ -71,7 +71,7 @@ Flow: `screen -> *Controller -> service -> repo -> Firestore`. Not every feature
 
 - No router package. Named routes live in `MaterialApp.routes` in `main.dart`, keyed by `Routes.*` in `lib/constants/routes.dart`. **Adding a screen = add const to `Routes` + entry in `main.dart`.**
 - Route arguments are passed via `Navigator.pushNamed(..., arguments:)` and read with `ModalRoute.of(context)!.settings.arguments`. Shapes vary per route: a bare `Event`, a `List<Event>`, or a `Map` like `{'event': ..., 'mode': ..., 'isBlueprint': ...}`. Check both the pusher (usually a controller) and the receiving screen when changing them.
-- Start: `Routes.redirect` -> `LandingPage(authUtil)` -> `AuthUtil.checkUserAndRedirect` loads `AppUser` by email via `UserRepo`, stores it in `UserProvider`, then `pushNamedAndRemoveUntil` to `Routes.adminHome` (ADMIN) or `Routes.home` (USER), or `Routes.splash` if signed out. Auth is email/password + Google Sign-In (`backend/authentication/AuthenticationRepository.dart`).
+- Start: `Routes.redirect` -> `LandingPage(authUtil)` -> `AuthUtil.checkUserAndRedirect` loads `AppUser` by email via `UserRepo`, stores it in `UserProvider`, then `pushNamedAndRemoveUntil` to `Routes.adminHome` (ADMIN) or `Routes.home` (USER, which is now `UserShell`: a tab shell with Acasă, Evenimente, Știri and Profil built on `AppShell` + `ShellController` from `lib/ui/components/navigation/`; tabs are built on first visit and kept alive, back returns to Acasă), or `Routes.splash` if signed out. Auth is email/password + Google Sign-In (`backend/authentication/AuthenticationRepository.dart`).
 
 ### State management (provider)
 
@@ -117,7 +117,7 @@ Event lifecycle: players register for events (`registeredEventIds`), enter the e
 
 ### Theme
 
-Theme lives in `lib/ui/theme/`: `AppColors` (a `ThemeExtension` with light and dark tokens: page, panel, border, inset, text, muted, accent, tick, navy, ...), `AppTheme.light/dark` (Material 3, Poppins, scaffold = page colour, canvas = panel colour), `AppRadius`, `AppSpacing`, and `context.colors` to read the tokens. `MaterialApp` currently pins `themeMode: ThemeMode.light`. Screens and shared widgets read colours from `context.colors`; `constants/colors.dart` (`MyColors`) only remains for legacy values and is removed in the cleanup phase. Fonts: `Poppins` (weights 300–800) and `Monospace` (SpaceMono) in `assets/fonts/`. Lottie loader at `assets/loader/loader.json`; images in `assets/images/`.
+Theme lives in `lib/ui/theme/`: `AppColors` (a `ThemeExtension` with light and dark tokens: page, panel, border, inset, text, muted, accent, tick, navy, ...), `AppTheme.light/dark` (Material 3, Poppins, scaffold = page colour, canvas = panel colour), `AppRadius`, `AppSpacing`, and `context.colors` to read the tokens. `themeMode` comes from `ThemeController` (saved choice: Sistem / Luminos / Întunecat, default Luminos). Screens and shared widgets read colours from `context.colors`; `constants/colors.dart` (`MyColors`) only remains for legacy values and is removed in the cleanup phase. Fonts: `Poppins` (weights 300–800) and `Monospace` (SpaceMono) in `assets/fonts/`. Lottie loader at `assets/loader/loader.json`; images in `assets/images/`.
 
 ## Gotchas
 

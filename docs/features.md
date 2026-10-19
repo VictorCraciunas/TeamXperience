@@ -12,7 +12,7 @@ Every folder under `lib/features/` follows `controller/` + `screen/` (+ `widgets
 | `signup` | `RegisterScreen` (email sign-up form) | – |
 | `login` | `LogInScreen` | – |
 | `forgotPassword` | `ForgotPasswordScreen` | – |
-| `home` | `Home` (player) | – |
+| `home` | `UserShell` (tabs: `Home`, `FilterEventsUser`, `StiriDashboard`, `ProfileScreen`) | – |
 | `adminHome` | `AdminHome` | – |
 | `eventDetails` | `EventDetailsScreen` | `{'event': Event, 'isAdmin': bool}` |
 | `registerTeam` | `RegisterTeamScreen` | `Event` |

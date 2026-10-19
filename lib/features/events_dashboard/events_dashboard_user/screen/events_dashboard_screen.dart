@@ -9,6 +9,7 @@ import 'package:teamxperience/ui/components/event/registered_events_list.dart';
 
 import '../../../../constants/routes.dart';
 import '../../../../model/event.dart';
+import '../../../../state_management/events_state_management.dart';
 import '../../../../state_management/user_registered_events.dart';
 import 'package:teamxperience/ui/components/event/events_list.dart';
 
@@ -54,10 +55,14 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final routeArguments = ModalRoute.of(context)?.settings.arguments;
+    final routeEvents = routeArguments is List<Event> ? routeArguments : null;
+    final events = routeEvents ?? Provider.of<EventList>(context).upcomingEvents;
     if (!_isControllerInitialized) {
-      final events = ModalRoute.of(context)?.settings.arguments as List<Event>;
       controller = EventsDashboardUserController(events, context);
       _isControllerInitialized = true;
+    } else if (routeEvents == null) {
+      controller.updateEvents(events);
     }
   }
 
@@ -178,8 +183,8 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Back button
-                          if (!_isSearchExpanded)
+                          // Back button (only when this screen was pushed, not as a tab)
+                          if (!_isSearchExpanded && Navigator.of(context).canPop())
                             GestureDetector(
                               onTap: () => Navigator.pop(context),
                               child: AppSvgIcon('assets/images/back.svg', width: 24, height: 24),

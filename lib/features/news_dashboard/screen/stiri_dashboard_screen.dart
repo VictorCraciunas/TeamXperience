@@ -3,11 +3,13 @@ import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/padding.dart';
+import 'package:teamxperience/enums/role.dart';
 import 'package:teamxperience/model/stire.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import '../../../constants/routes.dart';
 import '../../../state_management/news_state_management.dart';
+import '../../../state_management/user_provider.dart';
 import 'package:teamxperience/ui/components/news/stire_card.dart';
 import '../controller/stiri_dashboard_controller.dart';
 
@@ -85,13 +87,16 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
     controller.clearSearch();
   }
 
+  bool get _isAdmin =>
+      context.read<UserProvider>().currentUser?.role == Role.ADMIN;
+
   void navigateToStireDetails(BuildContext context, Stire stire) {
     Navigator.pushNamed(
       context,
       Routes.newsDetails,
       arguments: {
         'stire': stire,
-        'isAdmin': true,
+        'isAdmin': _isAdmin,
       },
     );
   }
@@ -128,7 +133,7 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
             child: StireCard(
               stire: stire,
               onTap: () => navigateToStireDetails(context, stire),
-              isAdmin: true,
+              isAdmin: _isAdmin,
               showBadge: true,
             ),
           ),
@@ -160,8 +165,12 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                     builder: (context, child) {
                       return Row(
                         children: [
-                          // Create stire button - can be 45 width or expanded
-                          if (!_isSearchExpanded)
+                          // Create stire button (admins only) - can be 45 width or expanded
+                          if (!_isAdmin)
+                            _isSearchExpanded
+                                ? const SizedBox.shrink()
+                                : const Spacer()
+                          else if (!_isSearchExpanded)
                             Expanded(
                               child: InkWell(
                                 splashFactory: InkSplash.splashFactory,
