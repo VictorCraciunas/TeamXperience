@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:teamxperience/utils/color_conversion.dart';
 
-import 'package:teamxperience/constants/colors.dart';
 
 class ColorPickerDialog {
   static Future<void> show(BuildContext context, String title, Color initialColor, Function(String) onColorChanged) async {
@@ -16,7 +16,7 @@ class ColorPickerDialog {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: context.colors.panel,
           title: Text(title),
           content: StatefulBuilder(
             builder: (context, setState) {
@@ -40,13 +40,13 @@ class ColorPickerDialog {
                     ),
                     Row(
                       children: [
-                        Expanded(child: _buildInputField('R', rController)),
+                        Expanded(child: _buildInputField(context, 'R', rController)),
                         const SizedBox(width: 8),
-                        Expanded(child: _buildInputField('G', gController)),
+                        Expanded(child: _buildInputField(context, 'G', gController)),
                         const SizedBox(width: 8),
-                        Expanded(child: _buildInputField('B', bController)),
+                        Expanded(child: _buildInputField(context, 'B', bController)),
                         const SizedBox(width: 8),
-                        Expanded(child: _buildInputField('A', aController)),
+                        Expanded(child: _buildInputField(context, 'A', aController)),
                       ],
                     ),
                   ],
@@ -92,14 +92,14 @@ class ColorPickerDialog {
     );
   }
 
-  static Widget _buildInputField(String hint, TextEditingController controller) {
+  static Widget _buildInputField(BuildContext context, String hint, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(hint, style: const TextStyle(fontSize: 20, color: MyColors.blackColor)),
+        Text(hint, style: TextStyle(fontSize: 20, color: context.colors.text)),
         Container(
           decoration: BoxDecoration(
-            border: Border.all(color: MyColors.lightBlue, width: 1.5),
+            border: Border.all(color: context.colors.accent, width: 1.5),
             borderRadius: BorderRadius.circular(20),
           ),
           child: TextField(

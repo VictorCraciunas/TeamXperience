@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
@@ -68,16 +69,15 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
 
   Widget _buildPreviewSection() {
     if (!controller.canShowPreview) {
-      return const Column(
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Previzualizare',
             style: TextStyle(
-              fontFamily: 'Poppins',
               fontSize: 15,
               fontWeight: FontWeight.w500,
-              color: MyColors.blackColor,
+              color: context.colors.text,
             ),
           ),
           SizedBox(height: 15),
@@ -98,13 +98,12 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Previzualizare',
           style: TextStyle(
-            fontFamily: 'Poppins',
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: MyColors.blackColor,
+            color: context.colors.text,
           ),
         ),
         const SizedBox(height: 15),
@@ -139,15 +138,14 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
       value: controller.codeLength,
       onChanged: (value) => setState(() => controller.codeLength = value),
       validator: (value) => value == null ? 'Selectează numărul de caractere' : null,
-      borderColor: MyColors.lightBlue,
+      borderColor: context.colors.accent,
       borderWidth: 1.5,
       radius: 20,
-      hint: const Text(
+      hint: Text(
         'Selectează numărul de caractere',
         style: TextStyle(
-          fontFamily: 'Poppins',
           fontSize: 14,
-          color: MyColors.greyText,
+          color: context.colors.muted,
         ),
       ),
     );
@@ -163,15 +161,14 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
       value: controller.inputType,
       onChanged: (value) => setState(() => controller.inputType = value),
       validator: (value) => value == null ? 'Selectează tipul de cod' : null,
-      borderColor: MyColors.lightBlue,
+      borderColor: context.colors.accent,
       borderWidth: 1.5,
       radius: 20,
-      hint: const Text(
+      hint: Text(
         'Selectează tipul de cod',
         style: TextStyle(
-          fontFamily: 'Poppins',
           fontSize: 14,
-          color: MyColors.greyText,
+          color: context.colors.muted,
         ),
       ),
     );
@@ -187,15 +184,14 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
       value: controller.capsLock,
       onChanged: (value) => setState(() => controller.capsLock = value),
       validator: (value) => value == null ? 'Selectează tipul de cod' : null,
-      borderColor: MyColors.lightBlue,
+      borderColor: context.colors.accent,
       borderWidth: 1.5,
       radius: 20,
-      hint: const Text(
+      hint: Text(
         'Selectează tipul de cod',
         style: TextStyle(
-          fontFamily: 'Poppins',
           fontSize: 14,
-          color: MyColors.greyText,
+          color: context.colors.muted,
         ),
       ),
     );
@@ -321,15 +317,14 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
       value: controller.fontFamily,
       onChanged: (value) => setState(() => controller.fontFamily = value),
       validator: (value) => value == null ? 'Selectează tipul de font' : null,
-      borderColor: MyColors.lightBlue,
+      borderColor: context.colors.accent,
       borderWidth: 1.5,
       radius: 20,
-      hint: const Text(
+      hint: Text(
         'Selectează tipul de font',
         style: TextStyle(
-          fontFamily: 'Poppins',
           fontSize: 14,
-          color: MyColors.greyText,
+          color: context.colors.muted,
         ),
       ),
     );
@@ -374,22 +369,21 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
           child: Checkbox(
             value: controller.enableGlow,
             onChanged: (value) => setState(() => controller.enableGlow = value!),
-            activeColor: MyColors.lightBlue,
+            activeColor: context.colors.accent,
             checkColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),
             ),
-            side: const BorderSide(width: 1.5, color: MyColors.lightBlue),
+            side: BorderSide(width: 1.5, color: context.colors.accent),
           ),
         ),
         const SizedBox(width: 16),
-        const Text(
+        Text(
           'Glow Chenar',
           style: TextStyle(
-            fontFamily: 'Poppins',
             fontSize: 16,
             fontWeight: FontWeight.w500,
-            color: MyColors.blackColor,
+            color: context.colors.text,
           ),
         ),
       ],

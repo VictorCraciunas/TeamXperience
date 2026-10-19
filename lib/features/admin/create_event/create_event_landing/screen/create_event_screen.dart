@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/admin/create_event/common_widgets/upload_image.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
@@ -60,7 +60,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.backgroundColor,
+      backgroundColor: context.colors.page,
       appBar: MyAppBar(
         appBarText:
             mode == 'edit'
@@ -105,7 +105,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     hintText: 'Numele evenimentului',
                     radius: 20,
                     borderWidth: 1.5,
-                    borderColor: MyColors.lightBlue,
+                    borderColor: context.colors.accent,
                     validator:
                         (v) => v!.isEmpty ? 'Introdu nume eveniment' : null,
                   ),
@@ -118,7 +118,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     hintText: 'Locația evenimentului',
                     radius: 20,
                     borderWidth: 1.5,
-                    borderColor: MyColors.lightBlue,
+                    borderColor: context.colors.accent,
                     validator:
                         (v) => v!.isEmpty ? 'Introdu locație eveniment' : null,
                   ),
@@ -130,7 +130,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     hintText: 'Punctul de start al evenimentului',
                     radius: 20,
                     borderWidth: 1.5,
-                    borderColor: MyColors.lightBlue,
+                    borderColor: context.colors.accent,
                     validator:
                         (v) => v!.isEmpty ? 'Introdu Punctul de start' : null,
                   ),
@@ -143,7 +143,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     hintText: 'Descrierea evenimentului',
                     radius: 20,
                     borderWidth: 1.5,
-                    borderColor: MyColors.lightBlue,
+                    borderColor: context.colors.accent,
                     maxLines: null,
                     keyboardType: TextInputType.multiline,
                     validator:
@@ -159,7 +159,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     hintText: 'Selectează data și ora',
                     radius: 20,
                     borderWidth: 1.5,
-                    borderColor: MyColors.lightBlue,
+                    borderColor: context.colors.accent,
                     readOnly: true,
                     trailing: SvgPicture.asset(
                       'assets/images/calendar.svg',
@@ -192,7 +192,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     hintText: 'Selectează data și ora',
                     radius: 20,
                     borderWidth: 1.5,
-                    borderColor: MyColors.lightBlue,
+                    borderColor: context.colors.accent,
                     readOnly: true,
                     trailing: SvgPicture.asset(
                       'assets/images/calendar.svg',
@@ -224,7 +224,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     hintText: 'Selectează data și ora',
                     radius: 20,
                     borderWidth: 1.5,
-                    borderColor: MyColors.lightBlue,
+                    borderColor: context.colors.accent,
                     readOnly: true,
                     trailing: SvgPicture.asset(
                       'assets/images/calendar.svg',
@@ -265,14 +265,13 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         controller.selectedType = value;
                       });
                     },
-                    hint: const Padding(
+                    hint: Padding(
                       padding: EdgeInsets.only(left: 10),
                       child: Text(
                         "Selectează tipul de eveniment",
                         style: TextStyle(
                           fontSize: 14,
-                          fontFamily: 'Poppins',
-                          color: MyColors.greyText,
+                          color: context.colors.muted,
                         ),
                       ),
                     ),
@@ -281,7 +280,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                             value == null
                                 ? 'Selectează tipul de eveniment'
                                 : null,
-                    borderColor: MyColors.lightBlue,
+                    borderColor: context.colors.accent,
                     borderWidth: 1.5,
                     radius: 20,
                   ),
@@ -294,7 +293,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     hintText: 'Introdu codul de start al evenimentului',
                     radius: 20,
                     borderWidth: 1.5,
-                    borderColor: MyColors.lightBlue,
+                    borderColor: context.colors.accent,
                     validator: (v) => v!.isEmpty ? 'Introdu cod start' : null,
                   ),
 
@@ -322,7 +321,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     hintText: 'Lungimea traseului',
                     radius: 20,
                     borderWidth: 1.5,
-                    borderColor: MyColors.lightBlue,
+                    borderColor: context.colors.accent,
                     validator:
                         (v) => v!.isEmpty ? 'Introdu lungime traseu' : null,
                   ),
@@ -335,7 +334,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     hintText: 'Durata evenimentului',
                     radius: 20,
                     borderWidth: 1.5,
-                    borderColor: MyColors.lightBlue,
+                    borderColor: context.colors.accent,
                     validator: (v) => v!.isEmpty ? 'Introdu durata' : null,
                   ),
                   const SizedBox(height: 20),
@@ -347,7 +346,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     hintText: 'Dificultatea evenimentului',
                     radius: 20,
                     borderWidth: 1.5,
-                    borderColor: MyColors.lightBlue,
+                    borderColor: context.colors.accent,
                     validator: (v) => v!.isEmpty ? 'Introdu dificultate' : null,
                   ),
 
@@ -360,7 +359,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     textColor: Colors.white,
                     buttonOnTap: () => controller.createEvent(context, mode),
                     withBorder: false,
-                    gradient: MyColors.myGradient,
+                    gradient: context.colors.ctaGradient,
                     fontWeight: FontWeight.w600,
                   ),
                   const SizedBox(height: 40),

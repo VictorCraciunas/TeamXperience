@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 
 class MyListComponent extends StatelessWidget {
   final int index;
@@ -26,11 +26,11 @@ class MyListComponent extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
           color: isSelected
-                  ? MyColors.lightBlue
-                  : (isDone ? MyColors.yellow : Colors.white),
+                  ? context.colors.accent
+                  : (isDone ? context.colors.tick : context.colors.panel),
           borderRadius: BorderRadius.circular(15),
           border: isSelected == false && isDone == false
-                  ? Border.all(width: 1.5, color: MyColors.lightBlue)
+                  ? Border.all(width: 1.5, color: context.colors.accent)
                   : null,
         ),
         child: Center(
@@ -38,8 +38,7 @@ class MyListComponent extends StatelessWidget {
             '$type ${index + 1}',
             style: TextStyle(
               fontSize: 15,
-              fontFamily: 'Poppins',
-              color: isSelected || isDone ? Colors.white : MyColors.greyText,
+              color: isSelected || isDone ? Colors.white : context.colors.muted,
             ),
           ),
         ),

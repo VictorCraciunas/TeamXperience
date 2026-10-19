@@ -1,7 +1,7 @@
 # UI, theme & shared widgets
 
 ## Theme (`lib/main.dart`, `lib/constants/`)
-- `MaterialApp` uses `AppTheme.light` (from `lib/ui/theme/`) with `primaryColor`/`scaffoldBackgroundColor`/`canvasColor` overridden to white for now (keeps today's look until screens move onto tokens), `darkTheme: AppTheme.dark` and `themeMode: ThemeMode.light`. No custom `ColorScheme` yet. App title "Treasure Hunt".
+- `MaterialApp` uses `AppTheme.light` / `AppTheme.dark` from `lib/ui/theme/` with `themeMode: ThemeMode.light` for now (the toggle comes with the dark-mode phase). Scaffold = `AppColors.page`, canvas = `AppColors.panel`. No custom `ColorScheme` yet. App title "Treasure Hunt". Screens read colours with `context.colors`.
 - Fonts (`pubspec.yaml`, `assets/fonts/`): **Poppins** 300/400/500/600/700/800; **Monospace** family = SpaceMono Regular/Bold (used for code-input components).
 - `MyColors` (`constants/colors.dart`): `lightBlue #53C4C7` (primary accent), `transparentLightBlue`, `facebookBlue`, `yellow #F6AF1A`, `transparentYellow`, `greyText #858494`, `blackColor #0C092A`, `backgroundColor` white, `myGradient` (horizontal `lightBlue → #222F62`, used for primary buttons).
 - `MyPaddings.appHorizontalPadding = 25.0`. Some screens still hardcode colours (e.g. `Color(0xFF001833)` for headings) and padding.

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/utils/color_conversion.dart';
-import '../../../../../../../constants/colors.dart';
 import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';
@@ -138,10 +138,10 @@ class CodeComponentController {
     return MyTextField(
       hinttextWeight: FontWeight.w500,
       hintTextSize: 15,
-      hintTextColor: MyColors.blackColor,
+      hintTextColor: context.colors.text,
       controller: TextEditingController(),
       hintText: title,
-      borderColor: MyColors.lightBlue,
+      borderColor: context.colors.accent,
       radius: 15,
       readOnly: true,
       onTap: () => ColorPickerDialog.show(context, title, currentColor, onColorChanged),
@@ -150,7 +150,7 @@ class CodeComponentController {
         height: 25,
         decoration: BoxDecoration(
           color: currentColor,
-          border: Border.all(color: Colors.grey),
+          border: Border.all(color: context.colors.border),
           borderRadius: BorderRadius.circular(5),
         ),
       ),

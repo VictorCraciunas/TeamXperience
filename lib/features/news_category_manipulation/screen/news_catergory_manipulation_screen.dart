@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
@@ -55,7 +55,7 @@ class _NewsCategoryManipulationScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.page,
       appBar: const MyAppBar(appBarText: "Categorii"),
       body: SafeArea(
         child:
@@ -77,13 +77,13 @@ class _NewsCategoryManipulationScreenState
                           'assets/images/search.svg',
                           height: 24,
                           width: 24,
-                          colorFilter: const ColorFilter.mode(
-                            MyColors.lightBlue,
+                          colorFilter: ColorFilter.mode(
+                            context.colors.accent,
                             BlendMode.srcIn,
                           ),
                         ),
                         radius: 15,
-                        borderColor: MyColors.lightBlue,
+                        borderColor: context.colors.accent,
                         borderWidth: 1.5,
                         onChanged: (value) {
                           controller.filterCategories(value);
@@ -96,12 +96,11 @@ class _NewsCategoryManipulationScreenState
                       Expanded(
                         child:
                             controller.filteredCategories.isEmpty
-                                ? const Center(
+                                ? Center(
                                   child: Text(
                                     'Nu există categorii',
                                     style: TextStyle(
-                                      fontFamily: 'Poppins',
-                                      color: MyColors.greyText,
+                                      color: context.colors.muted,
                                     ),
                                   ),
                                 )
@@ -109,8 +108,8 @@ class _NewsCategoryManipulationScreenState
                                   itemCount:
                                       controller.filteredCategories.length,
                                   separatorBuilder:
-                                      (context, index) => const Divider(
-                                        color: MyColors.lightBlue,
+                                      (context, index) => Divider(
+                                        color: context.colors.accent,
                                         thickness: 1,
                                         height: 1,
                                       ),
@@ -143,27 +142,26 @@ class _NewsCategoryManipulationScreenState
                                               }
                                             });
                                           },
-                                          activeColor: MyColors.lightBlue,
+                                          activeColor: context.colors.accent,
                                           checkColor: Colors.white,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
                                               6,
                                             ),
                                           ),
-                                          side: const BorderSide(
+                                          side: BorderSide(
                                             width: 1.5,
-                                            color: MyColors.lightBlue,
+                                            color: context.colors.accent,
                                           ),
                                         ),
                                       ),
                                       title: Text(
                                         category.name,
                                         style: TextStyle(
-                                          fontFamily: 'Poppins',
                                           fontWeight: FontWeight.w500,
                                           color:
                                               isSelected
-                                                  ? MyColors.lightBlue
+                                                  ? context.colors.accent
                                                   : Colors.black,
                                         ),
                                       ),
@@ -186,12 +184,12 @@ class _NewsCategoryManipulationScreenState
                         controller: controller.newCategoryController,
                         labelText: 'Adaugă categorie',
                         hintText: 'Categorie noua',
-                        borderColor: MyColors.lightBlue,
+                        borderColor: context.colors.accent,
                         radius: 15,
                         borderWidth: 1.5,
                         trailing: Icon(
                           Icons.add,
-                          color: MyColors.lightBlue,
+                          color: context.colors.accent,
                           size: 24,
                         ),
                         onTap: () async {
@@ -217,7 +215,7 @@ class _NewsCategoryManipulationScreenState
                           Navigator.of(context).pop(controller.selectedCategory);
                         },
                         withBorder: false,
-                        gradient: MyColors.myGradient,
+                        gradient: context.colors.ctaGradient,
                         buttonTextSize: 16,
                         fontWeight: FontWeight.w600,
                       ),

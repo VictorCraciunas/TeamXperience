@@ -40,4 +40,10 @@ void main() {
     ));
     expect(seen, AppColors.light);
   });
+  test('themes use the page colour for scaffolds and the panel colour for canvas', () {
+    expect(AppTheme.light.scaffoldBackgroundColor, AppColors.light.page);
+    expect(AppTheme.light.canvasColor, AppColors.light.panel);
+    expect(AppTheme.dark.scaffoldBackgroundColor, AppColors.dark.page);
+    expect(AppTheme.dark.canvasColor, AppColors.dark.panel);
+  });
 }

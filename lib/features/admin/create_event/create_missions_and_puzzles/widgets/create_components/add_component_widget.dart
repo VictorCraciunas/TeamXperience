@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/puzzle.dart';
 
-import '../../../../../../constants/colors.dart';
 import '../../../../../../constants/padding.dart';
 import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
 import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
@@ -46,7 +46,7 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.page,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -74,15 +74,14 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
                 validator:
                     (value) =>
                 value == null ? 'Please select a component type' : null,
-                hint: const Text(
+                hint: Text(
                   "Selecteaza tipul de componenta",
                   style: TextStyle(
                     fontSize: 14,
-                    fontFamily: 'Poppins',
-                    color: MyColors.greyText,
+                    color: context.colors.muted,
                   ),
                 ),
-                borderColor: MyColors.lightBlue,
+                borderColor: context.colors.accent,
                 borderWidth: 1.5,
                 radius: 20,
               ),

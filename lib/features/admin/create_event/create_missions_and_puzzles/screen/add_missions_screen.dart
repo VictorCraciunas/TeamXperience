@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/controller/add_missions_controller.dart';
 import 'package:teamxperience/model/event.dart';
@@ -47,7 +47,7 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.page,
       // resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
@@ -71,7 +71,7 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  backgroundColor: Colors.white,
+                                  backgroundColor: context.colors.panel,
                                   content: TextButton(
                                     onPressed: () {
                                       setState(() {
@@ -119,13 +119,13 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: MyColors.lightBlue,
+                                color: context.colors.accent,
                                 width: 2,
                               ),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.add,
-                              color: MyColors.lightBlue,
+                              color: context.colors.accent,
                               size: 24,
                             ),
                           ),
@@ -150,7 +150,7 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                     Navigator.pushNamedAndRemoveUntil(context, Routes.adminHome, (Route<dynamic> route) => false);
                   },
                   withBorder: false,
-                  gradient: MyColors.myGradient,
+                  gradient: context.colors.ctaGradient,
                   fontWeight: FontWeight.w600,
                 ),
                 const SizedBox(height: 30),

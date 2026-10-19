@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/enums/animation_type.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
@@ -104,7 +105,6 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
         const Text(
           'Previzualizare',
           style: TextStyle(
-            fontFamily: 'Poppins',
             fontSize: 15,
             fontWeight: FontWeight.w500,
           ),
@@ -113,8 +113,8 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
         Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: MyColors.lightBlue, width: 1.5),
+            color: context.colors.panel,
+            border: Border.all(color: context.colors.accent, width: 1.5),
             borderRadius: BorderRadius.circular(15),
           ),
           padding: const EdgeInsets.all(12),
@@ -131,7 +131,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
       },
       controller: controller.textController,
       labelText: 'Conținut Text',
-      borderColor: MyColors.lightBlue,
+      borderColor: context.colors.accent,
       borderWidth: 1.5,
       radius: 20,
       maxLines: null,
@@ -158,15 +158,14 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
         });
       },
       validator: (value) => value == null ? 'Selectează animația' : null,
-      borderColor: MyColors.lightBlue,
+      borderColor: context.colors.accent,
       borderWidth: 1.5,
       radius: 20,
-      hint: const Text(
+      hint: Text(
         'Selectează animația',
         style: TextStyle(
-          fontFamily: 'Poppins',
           fontSize: 14,
-          color: MyColors.greyText,
+          color: context.colors.muted,
         ),
       ),
     );
@@ -208,15 +207,14 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
         });
       },
       validator: (value) => value == null ? 'Selectează tipul de font' : null,
-      borderColor: MyColors.lightBlue,
+      borderColor: context.colors.accent,
       borderWidth: 1.5,
       radius: 20,
-      hint: const Text(
+      hint: Text(
         'Selectează tipul de font',
         style: TextStyle(
-          fontFamily: 'Poppins',
           fontSize: 14,
-          color: MyColors.greyText,
+          color: context.colors.muted,
         ),
       ),
     );
@@ -238,15 +236,14 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
         });
       },
       validator: (value) => value == null ? 'Selectează grosimea fontului' : null,
-      borderColor: MyColors.lightBlue,
+      borderColor: context.colors.accent,
       borderWidth: 1.5,
       radius: 20,
-      hint: const Text(
+      hint: Text(
         'Selectează grosimea fontului',
         style: TextStyle(
-          fontFamily: 'Poppins',
           fontSize: 14,
-          color: MyColors.greyText,
+          color: context.colors.muted,
         ),
       ),
     );
@@ -272,10 +269,10 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
     return MyTextField(
       hinttextWeight: FontWeight.w500,
       hintTextSize: 15,
-      hintTextColor: MyColors.blackColor,
+      hintTextColor: context.colors.text,
       controller: controller.textColorController,
       hintText: 'Culoare Text',
-      borderColor: MyColors.lightBlue,
+      borderColor: context.colors.accent,
       radius: 15,
       readOnly: true,
       onTap: () {
@@ -295,7 +292,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
         height: 25,
         decoration: BoxDecoration(
           color: controller.hexToColor(controller.textColor),
-          border: Border.all(color: Colors.grey),
+          border: Border.all(color: context.colors.border),
           borderRadius: BorderRadius.circular(5),
         ),
       ),
@@ -317,15 +314,14 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
           controller.textAlign = value ?? 'center';
         });
       },
-      borderColor: MyColors.lightBlue,
+      borderColor: context.colors.accent,
       borderWidth: 1.5,
       radius: 20,
-      hint: const Text(
+      hint: Text(
         'Selectează alinierea',
         style: TextStyle(
-          fontFamily: 'Poppins',
           fontSize: 14,
-          color: MyColors.greyText,
+          color: context.colors.muted,
         ),
       ),
     );

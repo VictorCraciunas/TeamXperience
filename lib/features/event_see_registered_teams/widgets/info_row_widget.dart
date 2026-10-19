@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 
 class InfoRowWidget extends StatelessWidget {
   final IconData icon;
@@ -18,23 +18,23 @@ class InfoRowWidget extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 16, color: MyColors.greyText),
+        Icon(icon, size: 16, color: context.colors.muted),
         const SizedBox(width: 8),
         Text(
           "$label: ",
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w500,
-            color: MyColors.greyText,
+            color: context.colors.muted,
           ),
         ),
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w400,
-              color: MyColors.blackColor,
+              color: context.colors.text,
             ),
           ),
         ),

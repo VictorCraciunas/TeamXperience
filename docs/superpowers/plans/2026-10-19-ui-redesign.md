@@ -275,9 +275,9 @@ The approved mockups only cover the player Home. This phase produces the admin e
 
 ### Task 15: Admin Home mockup and spec addendum
 
-- [ ] **Step 1:** Collect the real admin Home content from `lib/features/admin/home/` and the existing admin screens (list in the spec section "Admin Home"); capture a screenshot of the current admin Home from the device.
-- [ ] **Step 2:** Mock up the admin Home (light and dark) using the approved tokens and the generic components: hero states live / starting within 24 h / none, `StatTile` rows (teams, people), `ActionTile` quick actions (Creează eveniment, Creează știre, Trimite notificare), events with stats, news. Decide the admin tab set (proposal: Acasă, Evenimente, Știri, Profil).
-- [ ] **Step 3:** Owner approves; append a section "Admin Home (approved)" to the spec with the hero rules, copy, tabs and any new tokens. Commit `Add admin Home design to spec`; merge.
+- [x] **Step 1:** Collect the real admin Home content from `lib/features/admin/home/` and the existing admin screens (list in the spec section "Admin Home"); capture a screenshot of the current admin Home from the device.
+- [x] **Step 2:** Mock up the admin Home (light and dark) using the approved tokens and the generic components: hero states live / starting within 24 h / none, `StatTile` rows (teams, people), `ActionTile` quick actions (Creează eveniment, Creează știre, Trimite notificare), events with stats, news. Decide the admin tab set (proposal: Acasă, Evenimente, Știri, Profil).
+- [x] **Step 3:** Owner approves (2026-10-19); append a section "Admin Home (approved)" to the spec with the hero rules, copy, tabs and any new tokens. Commit `Add admin Home design to spec`; merge.
 
 ---
 
@@ -300,9 +300,50 @@ The approved mockups only cover the player Home. This phase produces the admin e
 
 ## Phase 9: Cleanup (branch `ui/09-cleanup`)
 
-- [ ] Remove `MyButton`/`MyTextField` shims and `MyColors`/`MyPaddings` once `grep` shows no uses; migrate stragglers.
-- [ ] Update `CLAUDE.md`, `docs/ui-and-theme.md`, `docs/screens.md`, `docs/known-issues.md` (remove resolved items).
-- [ ] Final `flutter analyze` ≤ baseline; `flutter test` green; merge; tag `ui-v1`.
+Measured before this phase (after Phase 3): about 205 raw `TextStyle(...)`, 139 `BorderRadius.circular(...)`, 27 `MyColors.*` uses, 42 `MyButton(` and 47 `MyTextField(` call sites, about 200 `Colors.*` and 55 `Color(0x...)` literals (mostly intentional: white over photos, map markers, button label colours).
+
+### Task 18: Text theme
+
+**Files:** `lib/ui/theme/app_text_styles.dart`, `lib/ui/theme/app_theme.dart` (TextTheme), `test/ui/theme/app_text_styles_test.dart`; then replace hand-written `TextStyle(...)` in `lib/features/` and `lib/ui/components/` batch by batch.
+**Produces:** `abstract class AppTextStyles { static TextStyle headline(BuildContext c); sectionTitle; title; body; bodyMuted; caption; label; button; }` (each reads `context.colors` and uses Poppins weights 400/500/600/700; sizes from the approved screens: section title 15/600, body 12-14/400, caption 11, button 14/600, wordmark 18/700) and the same set registered in `AppTheme` `TextTheme`.
+- [ ] **Step 1: Failing tests:** each style has the spec size and weight (`sectionTitle.fontSize == 15`, `fontWeight == FontWeight.w600`); `bodyMuted` uses `AppColors.light.muted` in the light theme and `AppColors.dark.muted` in the dark theme; styles never set a `fontFamily` (the theme provides Poppins).
+- [ ] **Step 2:** FAIL. **Step 3:** Implement and register in `TextTheme`. **Step 4:** PASS. Commit.
+- [ ] **Step 5:** Migrate screens in the same batches as Phase 3 (auth, player, admin); a `TextStyle(` that only sets colour and size from the token list becomes `AppTextStyles.x(context)`. Smoke each batch.
+
+### Task 19: Spacing and radius tokens
+
+**Files:** `lib/ui/theme/app_spacing.dart`, `lib/ui/theme/app_radius.dart`; tests `test/ui/theme/app_spacing_test.dart`.
+**Produces:** extend `AppSpacing` with `xs=4, sm=8, md=12, lg=16, xl=24, page=16`; keep `AppRadius`; `MyPaddings.appHorizontalPadding` (25) is replaced by `AppSpacing.page`.
+- [ ] **Step 1: Failing tests:** the scale values above; `AppSpacing.page` replaces the 25 px side padding (decide in the plan review: the approved mockups use 14-16 px panel margins).
+- [ ] **Step 2:** FAIL. **Step 3:** Implement. **Step 4:** PASS. **Step 5:** Replace `MyPaddings.appHorizontalPadding` and obvious fixed paddings/radii per batch; do not touch one-off layout values that are not on the scale.
+
+### Task 20: Remove legacy wrappers and `MyColors`
+
+- [ ] **Step 1:** Add `AppDropdown<T>` (+ `AppDropdownItem<T>`) in `lib/ui/components/inputs/` on the theme tokens, with tests: shows label and selected item, opens a list in the panel colour, reports selection, shows an error state. Replace `MyDropdownField`/`DropdownItem` (create event, create news, filters) and delete them.
+- [ ] **Step 2:** Replace each `MyButton(` with `AppButton(` and each `MyTextField(` with `AppTextField(` (map `buttonText -> label`, `buttonOnTap -> onPressed`, gradient/themed fills -> primary, `withBorder:true` -> secondary, brand colours -> `backgroundColor`/`foregroundColor`; `labelText -> label`, `hintText -> hint`, `obscureText -> obscure`, drop all ignored style parameters; for fields that relied on the automatic "Introdu ..." message pass an explicit validator). Delete `my_button.dart`, `my_text_field.dart`, `legacy_wrappers_test.dart`.
+- [ ] **Step 3:** `grep -rn "MyColors\." lib` must return nothing but intentional brand constants moved into `AppColors` (Facebook blue). Delete `lib/constants/colors.dart` and `lib/constants/padding.dart`.
+- [ ] **Step 4:** `flutter analyze` <= baseline, `flutter test` green, smoke every screen. Commit per sub-step.
+
+### Task 21: Semantic colour tokens and feedback components
+
+**Files:** `lib/ui/theme/app_colors.dart` (add `success`, `warning`, `danger` plus their soft backgrounds), `lib/ui/components/feedback/snackbars.dart`, `lib/ui/components/feedback/app_dialog.dart`, `lib/ui/components/feedback/async_state.dart`; tests `test/ui/components/feedback_components_test.dart`.
+**Produces:** `AppColors.success/warning/danger` (+ `successSoft/warningSoft/dangerSoft`) for light and dark; `showAppDialog(BuildContext, {required String title, String? message, required String confirmLabel, String? cancelLabel, bool destructive})` returning `Future<bool>`; `AsyncState({required bool isLoading, Object? error, required bool isEmpty, required Widget child, VoidCallback? onRetry, String emptyMessage})` that shows a spinner, an error with a retry button, an empty message, or the child.
+- [ ] **Step 1: Failing tests:** `AsyncState` shows a spinner while loading, an error with a `Reîncearcă` button that fires `onRetry`, the empty message when `isEmpty`, and the child otherwise; `showAppDialog` returns true on confirm and false on cancel, the destructive confirm uses `danger`; `MySnackBars` success/error/warning/info use the matching semantic tokens (assert on the rendered `SnackBar` background).
+- [ ] **Step 2:** FAIL. **Step 3:** Implement; replace the red delete icons, the photo-approval banner colours (`image_upload_status_banner`) and the hand-built `AlertDialog`s with these. **Step 4:** PASS. Commit.
+
+### Task 22: Icon tinting, accessibility and a colour guard test
+
+- [ ] **Step 1: Failing tests:** `AppSvgIcon('assets/images/chat.svg', size: 24)` applies a `ColorFilter` with `context.colors.text` by default and with a given colour when passed; a guard test `test/ui/no_hardcoded_colors_test.dart` scans `lib/features/**` and fails on `Color(0x`/`Colors.` outside an allow-list file `test/ui/colour_allowlist.txt` (white over photos, map markers, admin puzzle colours); passes today with the allow-list generated from the then-current code.
+- [ ] **Step 2:** FAIL. **Step 3:** Implement `lib/ui/components/misc/app_svg_icon.dart` and switch single-colour SVG usages to it (dark mode needs it; Phase 4 starts this, this task finishes it). **Step 4:** PASS.
+- [ ] **Step 5:** Accessibility pass: contrast check of `AppColors` pairs in both themes (a test computing WCAG ratios, text on page/panel >= 4.5), 48 dp tap targets on icon-only buttons, `semanticLabel`/tooltips on icon-only buttons, no overflow at text scale 1.5 on the Home screens.
+
+### Task 23: Housekeeping and docs
+
+- [ ] Remove leftover `fontFamily: 'Poppins'` strings, the duplicate `NewsList` provider registration in `main.dart`, and stray debug `print(...)` calls in files touched by this plan.
+- [ ] Update `CLAUDE.md`, `docs/ui-and-theme.md`, `docs/screens.md`, `docs/known-issues.md` (remove resolved items) and the plan's own checkboxes.
+- [ ] Final `flutter analyze` <= baseline; `flutter test` green; merge; tag `ui-v1`.
+
+**Optional, only if the owner asks:** move Romanian strings into localisation files (separate project); fix the mixed file naming (`FCMService.dart`, `log-in/`, `component-type.dart`).
 
 ## Follow-up plans (not in this plan)
 Event details, game mission list, register-team steps, auth screens and the remaining admin screens (dashboards, event management, builder) each get their own plan after Phase 6; Admin Home is Phases 7-8 of this plan. Separately: enforce the enrollment window on the register button, add `Event.maxTeams`, safe package bumps (`chore/deps-safe-bumps`), then the major Firebase upgrades one family at a time.

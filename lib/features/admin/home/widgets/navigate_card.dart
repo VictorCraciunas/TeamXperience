@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../../constants/colors.dart';
 
 class NavigateCard extends StatelessWidget {
   final String text1;
@@ -20,7 +20,7 @@ class NavigateCard extends StatelessWidget {
         width: 154,
         height: 115,
         decoration: BoxDecoration(
-          color: const Color(0x2453C4C7),
+          color: context.colors.iconButtonBg,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -33,8 +33,8 @@ class NavigateCard extends StatelessWidget {
               height: 32,
             ),
             const SizedBox(height: 15,),
-            Text(text1,style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: MyColors.blackColor),),
-            Text(text2,style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: MyColors.blackColor),)
+            Text(text1,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: context.colors.text),),
+            Text(text2,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: context.colors.text),)
 
           ],
         ),

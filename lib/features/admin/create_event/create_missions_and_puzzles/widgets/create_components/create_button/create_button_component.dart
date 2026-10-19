@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
@@ -101,7 +102,6 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
         const Text(
           'Previzualizare',
           style: TextStyle(
-            fontFamily: 'Poppins',
             fontSize: 15,
             fontWeight: FontWeight.w500,
           ),
@@ -112,8 +112,8 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
           height: 100,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: MyColors.lightBlue, width: 1.5),
+            color: context.colors.panel,
+            border: Border.all(color: context.colors.accent, width: 1.5),
             borderRadius: BorderRadius.circular(15),
           ),
           child: previewWidget,
@@ -126,7 +126,7 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
     return MyTextField(
       controller: controller.labelController,
       labelText: 'Text',
-      borderColor: MyColors.lightBlue,
+      borderColor: context.colors.accent,
       borderWidth: 1.5,
       radius: 20,
       validator: (value) =>
@@ -150,15 +150,14 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
       value: controller.fontFamily,
       onChanged: (value) => setState(() => controller.fontFamily = value),
       validator: (value) => value == null ? 'Selectează tipul de font' : null,
-      borderColor: MyColors.lightBlue,
+      borderColor: context.colors.accent,
       borderWidth: 1.5,
       radius: 20,
-      hint: const Text(
+      hint: Text(
         'Selectează tipul de font',
         style: TextStyle(
-          fontFamily: 'Poppins',
           fontSize: 14,
-          color: MyColors.greyText,
+          color: context.colors.muted,
         ),
       ),
     );
@@ -176,15 +175,14 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
       value: controller.fontWeight,
       onChanged: (value) => setState(() => controller.fontWeight = value),
       validator: (value) => value == null ? 'Selectează grosimea fontului' : null,
-      borderColor: MyColors.lightBlue,
+      borderColor: context.colors.accent,
       borderWidth: 1.5,
       radius: 20,
-      hint: const Text(
+      hint: Text(
         'Selectează grosimea fontului',
         style: TextStyle(
-          fontFamily: 'Poppins',
           fontSize: 14,
-          color: MyColors.greyText,
+          color: context.colors.muted,
         ),
       ),
     );
@@ -250,14 +248,14 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
           scale: 1.5,
           child: Checkbox(
             value: controller.enableFlicker,
-            activeColor: MyColors.lightBlue,
+            activeColor: context.colors.accent,
             onChanged: (value) => setState(() => controller.enableFlicker = value ?? false),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),
             ),
-            side: const BorderSide(
+            side: BorderSide(
               width: 1.5,
-              color: MyColors.lightBlue,
+              color: context.colors.accent,
             ),
           ),
         ),
@@ -265,7 +263,6 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
         const Text(
           'Animatie Flicker',
           style: TextStyle(
-            fontFamily: 'Poppins',
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
@@ -282,14 +279,14 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
           child: Checkbox(
             value: controller.enableGlow,
             onChanged: (v) => setState(() => controller.enableGlow = v!),
-            activeColor: MyColors.lightBlue,
+            activeColor: context.colors.accent,
             checkColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),
             ),
-            side: const BorderSide(
+            side: BorderSide(
               width: 1.5,
-              color: MyColors.lightBlue,
+              color: context.colors.accent,
             ),
           ),
         ),
@@ -297,7 +294,6 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
         const Text(
           'Glow buton',
           style: TextStyle(
-            fontFamily: 'Poppins',
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),

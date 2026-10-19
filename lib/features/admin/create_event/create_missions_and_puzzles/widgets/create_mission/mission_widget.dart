@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/controller/add_missions_controller.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_mission/mission_controller.dart';
 import 'package:teamxperience/model/mission.dart';
@@ -43,10 +43,9 @@ class _MissionWidgetState extends State<MissionWidget> {
         const SizedBox(height: 20),
         Text(
           'Detalii Misunea ${int.parse(widget.currentMission.id) + 1}',
-          style: const TextStyle(
-            fontFamily: 'Poppins',
+          style: TextStyle(
             fontSize: 22,
-            color: MyColors.blackColor,
+            color: context.colors.text,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -70,7 +69,7 @@ class _MissionWidgetState extends State<MissionWidget> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            backgroundColor: Colors.white,
+                            backgroundColor: context.colors.panel,
                             content: TextButton(
                               onPressed: () {
                                 setState(() {
@@ -119,11 +118,11 @@ class _MissionWidgetState extends State<MissionWidget> {
                     height: 40,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: MyColors.lightBlue, width: 2),
+                      border: Border.all(color: context.colors.accent, width: 2),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.add,
-                      color: MyColors.lightBlue,
+                      color: context.colors.accent,
                       size: 24,
                     ),
                   ),);
