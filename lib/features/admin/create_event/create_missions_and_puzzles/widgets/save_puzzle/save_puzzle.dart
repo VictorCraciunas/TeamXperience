@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/save_puzzle/save_puzzle_controller.dart';
@@ -68,15 +69,14 @@ class _SavePuzzleState extends State<SavePuzzle> {
               validator:
                   (value) =>
               value == null ? 'Selectează tipul de puzzle' : null,
-              borderColor: MyColors.lightBlue,
+              borderColor: context.colors.accent,
               borderWidth: 1.5,
               radius: 20,
-              hint: const Text(
+              hint: Text(
                 'Selectează tipul de puzzle',
                 style: TextStyle(
-                  fontFamily: 'Poppins',
                   fontSize: 14,
-                  color: MyColors.greyText,
+                  color: context.colors.muted,
                 ),
               ),
             ),
@@ -87,8 +87,8 @@ class _SavePuzzleState extends State<SavePuzzle> {
                 controller:controller.textColorController,
                 labelText: 'Introdu Cod',
                 hintText: 'Introdu codul',
-                hintTextColor: MyColors.greyText,
-                borderColor: MyColors.lightBlue,
+                hintTextColor: context.colors.muted,
+                borderColor: context.colors.accent,
                 borderWidth: 1.5,
                 radius: 20,
                 validator:
@@ -104,8 +104,8 @@ class _SavePuzzleState extends State<SavePuzzle> {
                 controller: controller.latitudeController,
                 labelText: 'Latitudine',
                 hintText: 'Ex: 45.7833',
-                hintTextColor: MyColors.greyText,
-                borderColor: MyColors.lightBlue,
+                hintTextColor: context.colors.muted,
+                borderColor: context.colors.accent,
                 borderWidth: 1.5,
                 radius: 20,
                 validator: (value) =>
@@ -116,8 +116,8 @@ class _SavePuzzleState extends State<SavePuzzle> {
                 controller: controller.longitudeController,
                 labelText: 'Longitudine',
                 hintText: 'Ex: 24.1500',
-                hintTextColor: MyColors.greyText,
-                borderColor: MyColors.lightBlue,
+                hintTextColor: context.colors.muted,
+                borderColor: context.colors.accent,
                 borderWidth: 1.5,
                 radius: 20,
                 validator: (value) =>
@@ -128,8 +128,8 @@ class _SavePuzzleState extends State<SavePuzzle> {
             MyTextField(
               controller: controller.indiciuController,
               labelText: 'Indiciu',
-              hintTextColor: MyColors.greyText,
-              borderColor: MyColors.lightBlue,
+              hintTextColor: context.colors.muted,
+              borderColor: context.colors.accent,
               borderWidth: 1.5,
               radius: 20,
               maxLines: null,

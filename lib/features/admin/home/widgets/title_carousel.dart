@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 
-import '../../../../constants/colors.dart';
 
 class TitleCarousel extends StatelessWidget {
   final String text;
@@ -15,10 +15,10 @@ class TitleCarousel extends StatelessWidget {
       children: [
         Text(
           text,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.w500,
-            color: MyColors.blackColor,
+            color: context.colors.text,
           ),
         ),
         InkWell(
@@ -26,12 +26,12 @@ class TitleCarousel extends StatelessWidget {
           onTap:onTap,
           child: Container(
             padding: const EdgeInsets.all(5),
-            child: const Text(
+            child: Text(
               "Vezi mai multe >",
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: MyColors.lightBlue,
+                color: context.colors.accent,
               ),
             ),
           ),

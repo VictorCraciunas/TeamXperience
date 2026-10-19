@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
@@ -91,10 +91,10 @@ class _EventRegisteredTeamsState extends State<EventRegisteredTeams> {
       body: controller.isLoading
           ? const Center(child: CircularProgressIndicator())
           : controller.teams.isEmpty
-              ? const Center(
+              ? Center(
                   child: Text(
                     "Nicio echipă înscrisă",
-                    style: TextStyle(fontSize: 16, color: MyColors.greyText),
+                    style: TextStyle(fontSize: 16, color: context.colors.muted),
                   ),
                 )
               : ListView.separated(

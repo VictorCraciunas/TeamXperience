@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
-import '../../../../constants/colors.dart';
 
 class UploadImage extends StatelessWidget {
   final String labelText;
@@ -26,11 +26,10 @@ class UploadImage extends StatelessWidget {
       children: [
         Text(
           labelText,
-          style: const TextStyle(
-            fontFamily: 'Poppins',
+          style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
-            color: MyColors.blackColor,
+            color: context.colors.text,
           ),
         ),
         const SizedBox(height: 8),
@@ -53,7 +52,6 @@ class UploadImage extends StatelessWidget {
               const Text(
                 "Încarcă imaginea",
                 style: TextStyle(
-                  fontFamily: 'Poppins',
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
                 ),

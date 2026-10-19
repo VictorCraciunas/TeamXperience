@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/features/team_chats/controller/team_chats_controller.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
@@ -106,7 +107,7 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
                     Text(
                       "Captain: ${team.captainName}",
                       style: TextStyle(
-                        color: Colors.grey[600],
+                        color: context.colors.muted,
                         fontSize: 14,
                       ),
                     ),
@@ -114,7 +115,7 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
                     Text(
                       "Members: ${team.teamMembers}",
                       style: TextStyle(
-                        color: Colors.grey[600],
+                        color: context.colors.muted,
                         fontSize: 12,
                       ),
                       maxLines: 1,

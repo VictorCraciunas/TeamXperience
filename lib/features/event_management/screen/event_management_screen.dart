@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
@@ -54,10 +54,10 @@ class _EventManagementScreenState extends State<EventManagementScreen> {
                   const SizedBox(height: 30),
                   Text(
                     event.name ?? "",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
-                      color: MyColors.blackColor,
+                      color: context.colors.text,
                     ),
                   ),
                   const SizedBox(height: 30),

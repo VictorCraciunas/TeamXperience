@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/notification/controller/notification_controller.dart';
 import 'package:teamxperience/model/event.dart';
@@ -50,15 +50,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   decoration: BoxDecoration(
-                    color: MyColors.transparentLightBlue,
+                    color: context.colors.iconButtonBg,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     "Această notificare va fi trimisă doar participanților înscriși la acest eveniment.",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
-                      color: MyColors.blackColor,
-                      fontFamily: 'Poppins',
+                      color: context.colors.text,
                     ),
                   ),
                 ),
@@ -66,14 +65,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ],
               MyTextField(
                 labelText: "Titlu",
-                borderColor: MyColors.lightBlue,
+                borderColor: context.colors.accent,
                 hintText: "Titlu notificare...",
                 controller: controller.titluNotificareController,
               ),
               const SizedBox(height: 15),
               MyTextField(
                 labelText: "Descriere",
-                borderColor: MyColors.lightBlue,
+                borderColor: context.colors.accent,
                 hintText: "Descriere notificare...",
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
@@ -87,7 +86,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   controller.sendNotification();
                 },
                 withBorder: false,
-                gradient: MyColors.myGradient,
+                gradient: context.colors.ctaGradient,
               ),
             ],
           ),

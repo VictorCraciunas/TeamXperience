@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 
 class InfoBanner extends StatelessWidget {
   final String text;
@@ -12,7 +12,7 @@ class InfoBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: MyColors.transparentYellow,
+        color: context.colors.border,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

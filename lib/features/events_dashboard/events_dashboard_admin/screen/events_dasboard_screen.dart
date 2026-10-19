@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
@@ -142,7 +142,7 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
             child: Container(
               height: 2,
               decoration: BoxDecoration(
-                color: MyColors.lightBlue,
+                color: context.colors.accent,
                 borderRadius: BorderRadius.circular(1),
               ),
             ),
@@ -150,11 +150,10 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
           const SizedBox(width: 12),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: MyColors.blackColor,
-              fontFamily: 'Poppins',
+              color: context.colors.text,
             ),
           ),
           const SizedBox(width: 12),
@@ -162,7 +161,7 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
             child: Container(
               height: 2,
               decoration: BoxDecoration(
-                color: MyColors.lightBlue,
+                color: context.colors.accent,
                 borderRadius: BorderRadius.circular(1),
               ),
             ),
@@ -227,7 +226,7 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                     child: Container(
                                       height: 45,
                                       decoration: BoxDecoration(
-                                        color: MyColors.transparentLightBlue,
+                                        color: context.colors.iconButtonBg,
                                         borderRadius: BorderRadius.circular(50),
                                       ),
                                       child: Row(
@@ -239,11 +238,11 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                             height: 20,
                                           ),
                                           const SizedBox(width: 8),
-                                          const Text(
+                                          Text(
                                             "Creează eveniment",
                                             style: TextStyle(
                                               fontSize: 15,
-                                              color: MyColors.blackColor,
+                                              color: context.colors.text,
                                             ),
                                           ),
                                         ],
@@ -259,7 +258,7 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                     width: 45,
                                     height: 45,
                                     decoration: BoxDecoration(
-                                      color: MyColors.transparentLightBlue,
+                                      color: context.colors.iconButtonBg,
                                       borderRadius: BorderRadius.circular(50),
                                     ),
                                     child: Center(
@@ -287,7 +286,7 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                   child: Container(
                                     height: 45,
                                     decoration: BoxDecoration(
-                                      color: MyColors.transparentLightBlue,
+                                      color: context.colors.iconButtonBg,
                                       borderRadius: BorderRadius.circular(50),
                                     ),
                                     child: Row(
@@ -297,19 +296,17 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                           child: TextField(
                                             controller: _searchController,
                                             focusNode: _searchFocusNode,
-                                            decoration: const InputDecoration(
+                                            decoration: InputDecoration(
                                               hintText: 'Caută evenimente...',
                                               hintStyle: TextStyle(
                                                 fontSize: 14,
-                                                fontFamily: 'Poppins',
-                                                color: MyColors.greyText,
+                                                color: context.colors.muted,
                                               ),
                                               border: InputBorder.none,
                                             ),
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 14,
-                                              fontFamily: 'Poppins',
-                                              color: MyColors.blackColor,
+                                              color: context.colors.text,
                                             ),
                                           ),
                                         ),
@@ -320,11 +317,11 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                             width: 45,
                                             height: 45,
                                             decoration: const BoxDecoration(),
-                                            child: const Center(
+                                            child: Center(
                                               child: Icon(
                                                 Icons.close,
                                                 size: 24,
-                                                color: MyColors.blackColor,
+                                                color: context.colors.text,
                                               ),
                                             ),
                                           ),
@@ -358,7 +355,7 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: MyColors.transparentLightBlue,
+                                  color: context.colors.iconButtonBg,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Row(
@@ -366,19 +363,18 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                   children: [
                                     Text(
                                       _getEventTypeDisplayName(controller.selectedEventType!),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 12,
-                                        fontFamily: 'Poppins',
-                                        color: MyColors.blackColor,
+                                        color: context.colors.text,
                                       ),
                                     ),
                                     const SizedBox(width: 8),
                                     GestureDetector(
                                       onTap: () => controller.clearEventTypeFilter(),
-                                      child: const Icon(
+                                      child: Icon(
                                         Icons.close,
                                         size: 16,
-                                        color: MyColors.blackColor,
+                                        color: context.colors.text,
                                       ),
                                     ),
                                   ],
@@ -391,7 +387,7 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: MyColors.transparentLightBlue,
+                                  color: context.colors.iconButtonBg,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Row(
@@ -399,19 +395,18 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                   children: [
                                     Text(
                                       '${_formatDate(controller.startDate!)} - ${_formatDate(controller.endDate!)}',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 12,
-                                        fontFamily: 'Poppins',
-                                        color: MyColors.blackColor,
+                                        color: context.colors.text,
                                       ),
                                     ),
                                     const SizedBox(width: 8),
                                     GestureDetector(
                                       onTap: () => controller.clearDateFilter(),
-                                      child: const Icon(
+                                      child: Icon(
                                         Icons.close,
                                         size: 16,
-                                        color: MyColors.blackColor,
+                                        color: context.colors.text,
                                       ),
                                     ),
                                   ],
@@ -430,33 +425,32 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: MyColors.transparentLightBlue,
+                            color: context.colors.iconButtonBg,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.search,
                                 size: 14,
-                                color: MyColors.blackColor,
+                                color: context.colors.text,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 '"${controller.searchQuery}"',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
-                                  fontFamily: 'Poppins',
-                                  color: MyColors.blackColor,
+                                  color: context.colors.text,
                                 ),
                               ),
                               const SizedBox(width: 8),
                               GestureDetector(
                                 onTap: _clearSearchQuery,
-                                child: const Icon(
+                                child: Icon(
                                   Icons.close,
                                   size: 16,
-                                  color: MyColors.blackColor,
+                                  color: context.colors.text,
                                 ),
                               ),
                             ],
@@ -515,7 +509,7 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                               Icon(
                                 Icons.event_busy,
                                 size: 64,
-                                color: MyColors.greyText.withOpacity(0.5),
+                                color: context.colors.muted.withOpacity(0.5),
                               ),
                               const SizedBox(height: 16),
                               Text(
@@ -524,8 +518,7 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                     : 'Nu există evenimente',
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: MyColors.greyText.withOpacity(0.7),
-                                  fontFamily: 'Poppins',
+                                  color: context.colors.muted.withOpacity(0.7),
                                 ),
                               ),
                               if (!eventList.isLoading)

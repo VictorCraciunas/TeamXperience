@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/model/team.dart';
 
 import 'info_row_widget.dart';
@@ -32,7 +32,7 @@ class TeamCardWidget extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundColor: MyColors.lightBlue,
+                backgroundColor: context.colors.accent,
                 child: Text(
                   team.name.isNotEmpty ? team.name[0].toUpperCase() : 'T',
                   style: const TextStyle(
@@ -46,10 +46,10 @@ class TeamCardWidget extends StatelessWidget {
               Expanded(
                 child: Text(
                   team.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w600,
-                    color: MyColors.blackColor,
+                    color: context.colors.text,
                   ),
                 ),
               ),
@@ -76,9 +76,9 @@ class TeamCardWidget extends StatelessWidget {
             alignment: Alignment.bottomRight,
             child: Text(
               "${team.numberOfMembers} membri",
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: MyColors.greyText,
+                color: context.colors.muted,
               ),
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/routes.dart';
@@ -139,7 +140,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.backgroundColor,
+      backgroundColor: context.colors.page,
       appBar: const MyAppBar(appBarText: 'Adaugă știre'),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -229,12 +230,12 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                               width: 60,
                               height: 60,
                               decoration: BoxDecoration(
-                                color: MyColors.transparentLightBlue,
+                                color: context.colors.iconButtonBg,
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.add,
-                                color: Colors.black,
+                                color: context.colors.text,
                                 size: 30,
                               ),
                             ),
@@ -250,7 +251,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                         hintText: 'Titlul știrii',
                         radius: 20,
                         borderWidth: 1.5,
-                        borderColor: MyColors.lightBlue,
+                        borderColor: context.colors.accent,
                         validator: (v) => v!.isEmpty ? 'Introdu titlul știrii' : null,
                       ),
                       const SizedBox(height: 20),
@@ -262,7 +263,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                         hintText: 'Descrierea știrii',
                         radius: 20,
                         borderWidth: 1.5,
-                        borderColor: MyColors.lightBlue,
+                        borderColor: context.colors.accent,
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
                         validator: (v) => v!.isEmpty ? 'Introdu descrierea știrii' : null,
@@ -276,7 +277,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                         hintText: 'Selectează data și ora',
                         radius: 20,
                         borderWidth: 1.5,
-                        borderColor: MyColors.lightBlue,
+                        borderColor: context.colors.accent,
                         readOnly: true,
                         trailing: SvgPicture.asset(
                           'assets/images/calendar.svg',
@@ -314,19 +315,18 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                             controller.selectedType = value;
                           });
                         },
-                        hint: const Padding(
+                        hint: Padding(
                           padding: EdgeInsets.only(left: 10),
                           child: Text(
                             "Selectează tipul de știre",
                             style: TextStyle(
                               fontSize: 14,
-                              fontFamily: 'Poppins',
-                              color: MyColors.greyText,
+                              color: context.colors.muted,
                             ),
                           ),
                         ),
                         validator: (value) => value == null ? 'Selectează tipul de știre' : null,
-                        borderColor: MyColors.lightBlue,
+                        borderColor: context.colors.accent,
                         borderWidth: 1.5,
                         radius: 20,
                       ),
@@ -339,7 +339,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                         hintText: 'Selectează categoria',
                         radius: 20,
                         borderWidth: 1.5,
-                        borderColor: MyColors.lightBlue,
+                        borderColor: context.colors.accent,
                         readOnly: true,
                         onTap: () async {
                           _selectCategory();
@@ -357,7 +357,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                   hintText: 'Text buton',
                   radius: 20,
                   borderWidth: 1.5,
-                  borderColor: MyColors.lightBlue,
+                  borderColor: context.colors.accent,
                 ),
                 const SizedBox(height: 20),
 
@@ -368,7 +368,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                   hintText: 'Link buton',
                   radius: 20,
                   borderWidth: 1.5,
-                  borderColor: MyColors.lightBlue,
+                  borderColor: context.colors.accent,
                 ),
                 const SizedBox(height: 30),
 
@@ -378,7 +378,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                   textColor: Colors.white,
                   buttonOnTap: () => controller.createStire(context, mode),
                   withBorder: false,
-                  gradient: MyColors.myGradient,
+                  gradient: context.colors.ctaGradient,
                   fontWeight: FontWeight.w600,
                 ),
                 const SizedBox(height: 40),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:provider/provider.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/admin/home/widgets/navigate_card.dart';
 import 'package:teamxperience/features/admin/home/widgets/title_carousel.dart';
@@ -36,7 +36,7 @@ class _AdminHomeState extends State<AdminHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.backgroundColor,
+      backgroundColor: context.colors.page,
       appBar: MyAppBar(
         appBarText: "TeamXperience",
         trailing: GestureDetector(
@@ -45,11 +45,11 @@ class _AdminHomeState extends State<AdminHome> {
             width: 45,
             height: 45,
             decoration: BoxDecoration(
-              color: MyColors.transparentLightBlue,
+              color: context.colors.iconButtonBg,
               borderRadius: BorderRadius.circular(50),
             ),
-            child: const Center(
-              child: Icon(Icons.logout_rounded, size: 22, color: MyColors.lightBlue),
+            child: Center(
+              child: Icon(Icons.logout_rounded, size: 22, color: context.colors.accent),
             ),
           ),
         ),
@@ -142,10 +142,10 @@ class _AdminHomeState extends State<AdminHome> {
                                 children: [
                                   Text(
                                     event.name ?? "",
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
-                                      color: MyColors.blackColor,
+                                      color: context.colors.text,
                                     ),
                                   ),
                                   const SizedBox(height: 12),
