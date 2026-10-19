@@ -69,7 +69,7 @@ class _MissionWidgetState extends State<MissionWidget> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            backgroundColor: Colors.white,
+                            backgroundColor: context.colors.panel,
                             content: TextButton(
                               onPressed: () {
                                 setState(() {

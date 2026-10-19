@@ -73,7 +73,7 @@ class ButtonComponentController {
         height: 25,
         decoration: BoxDecoration(
           color: currentColor,
-          border: Border.all(color: Colors.grey),
+          border: Border.all(color: context.colors.border),
           borderRadius: BorderRadius.circular(5),
         ),
       ),

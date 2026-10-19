@@ -81,7 +81,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                backgroundColor: Colors.white,
+                backgroundColor: context.colors.panel,
                 content: MyButton(
                   buttonText: "Șterge",
                   textColor: MyColors.blackColor,
@@ -107,13 +107,13 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
           placeholder: (context, url) => Container(
             width: 60,
             height: 60,
-            color: Colors.grey[300],
+            color: context.colors.inset,
             child: const CircularProgressIndicator(),
           ),
           errorWidget: (context, url, error) => Container(
             width: 60,
             height: 60,
-            color: Colors.grey[300],
+            color: context.colors.inset,
             child: const Icon(Icons.error, color: Colors.red),
           ),
         ),
@@ -129,7 +129,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
           return Container(
             width: 60,
             height: 60,
-            color: Colors.grey[300],
+            color: context.colors.inset,
             child: const Icon(Icons.error, color: Colors.red),
           );
         },

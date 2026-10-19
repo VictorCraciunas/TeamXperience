@@ -16,7 +16,7 @@ class ColorPickerDialog {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: context.colors.panel,
           title: Text(title),
           content: StatefulBuilder(
             builder: (context, setState) {

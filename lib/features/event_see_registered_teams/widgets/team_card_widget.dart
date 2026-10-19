@@ -14,7 +14,7 @@ class TeamCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.panel,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(

@@ -20,7 +20,7 @@ class NavigateCard extends StatelessWidget {
         width: 154,
         height: 115,
         decoration: BoxDecoration(
-          color: const Color(0x2453C4C7),
+          color: context.colors.iconButtonBg,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(

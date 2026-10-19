@@ -55,7 +55,7 @@ class _NewsCategoryManipulationScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.page,
       appBar: const MyAppBar(appBarText: "Categorii"),
       body: SafeArea(
         child:

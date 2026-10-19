@@ -112,7 +112,7 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
           height: 100,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.colors.panel,
             border: Border.all(color: context.colors.accent, width: 1.5),
             borderRadius: BorderRadius.circular(15),
           ),

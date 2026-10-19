@@ -46,7 +46,7 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.page,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(

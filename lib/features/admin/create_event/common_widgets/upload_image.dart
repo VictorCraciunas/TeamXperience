@@ -37,7 +37,7 @@ class UploadImage extends StatelessWidget {
           width: double.infinity,
           height: 200,
           decoration: BoxDecoration(
-            color: imageUrl == null ? const Color(0xFFE7F7F7) : null,
+            color: imageUrl == null ? context.colors.iconButtonBg : null,
             borderRadius: const BorderRadius.all(Radius.circular(20.0)),
             image: imageUrl != null ? _getDecorationImage() : null,
           ),

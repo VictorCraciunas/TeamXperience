@@ -47,7 +47,7 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.page,
       // resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
@@ -71,7 +71,7 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  backgroundColor: Colors.white,
+                                  backgroundColor: context.colors.panel,
                                   content: TextButton(
                                     onPressed: () {
                                       setState(() {

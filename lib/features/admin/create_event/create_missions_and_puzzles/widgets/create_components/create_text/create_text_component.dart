@@ -113,7 +113,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
         Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.colors.panel,
             border: Border.all(color: context.colors.accent, width: 1.5),
             borderRadius: BorderRadius.circular(15),
           ),
@@ -292,7 +292,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
         height: 25,
         decoration: BoxDecoration(
           color: controller.hexToColor(controller.textColor),
-          border: Border.all(color: Colors.grey),
+          border: Border.all(color: context.colors.border),
           borderRadius: BorderRadius.circular(5),
         ),
       ),

@@ -27,7 +27,7 @@ class MyListComponent extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
                   ? context.colors.accent
-                  : (isDone ? context.colors.tick : Colors.white),
+                  : (isDone ? context.colors.tick : context.colors.panel),
           borderRadius: BorderRadius.circular(15),
           border: isSelected == false && isDone == false
                   ? Border.all(width: 1.5, color: context.colors.accent)

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_puzzle/puzzle_controller.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/save_puzzle/save_puzzle.dart';
@@ -46,7 +47,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: context.colors.panel,
           content: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [

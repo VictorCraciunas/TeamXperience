@@ -107,18 +107,18 @@ class _AdminHomeState extends State<AdminHome> {
                             Container(
                               width: 10,
                               height: 10,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFE53935),
+                              decoration: BoxDecoration(
+                                color: context.colors.live,
                                 shape: BoxShape.circle,
                               ),
                             ),
                             const SizedBox(width: 8),
-                            const Text(
+                            Text(
                               "Eveniment live",
                               style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w500,
-                                color: Color(0xFFE53935),
+                                color: context.colors.live,
                               ),
                             ),
                           ],
@@ -130,10 +130,10 @@ class _AdminHomeState extends State<AdminHome> {
                             child: Container(
                               padding: const EdgeInsets.all(15),
                               decoration: BoxDecoration(
-                                color: const Color(0x1AE53935),
+                                color: context.colors.live.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(15),
                                 border: Border.all(
-                                  color: const Color(0xFFE53935),
+                                  color: context.colors.live,
                                   width: 1.5,
                                 ),
                               ),
