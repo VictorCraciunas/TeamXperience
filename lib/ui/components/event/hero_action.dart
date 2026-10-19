@@ -7,3 +7,11 @@ class HeroAction {
   final VoidCallback onTap;
   final IconData? icon;
 }
+
+/// An icon-only button next to the primary action of a hero card.
+class HeroIconAction {
+  const HeroIconAction({required this.icon, required this.onTap});
+
+  final IconData icon;
+  final VoidCallback onTap;
+}

@@ -24,6 +24,7 @@ class EventHeroCard extends StatelessWidget {
     this.countdown,
     this.secondaryIcon,
     this.onSecondary,
+    this.moreActions = const [],
   });
 
   final HeroStatus status;
@@ -38,6 +39,9 @@ class EventHeroCard extends StatelessWidget {
   final HeroAction primary;
   final IconData? secondaryIcon;
   final VoidCallback? onSecondary;
+
+  /// Further icon buttons shown after [secondaryIcon].
+  final List<HeroIconAction> moreActions;
 
   StatusPillKind get _pillKind {
     switch (status) {
@@ -115,6 +119,10 @@ class EventHeroCard extends StatelessWidget {
                   if (secondary != null && onSecondaryTap != null) ...[
                     const SizedBox(width: 8),
                     _SecondaryButton(icon: secondary, onTap: onSecondaryTap),
+                  ],
+                  for (final action in moreActions) ...[
+                    const SizedBox(width: 8),
+                    _SecondaryButton(icon: action.icon, onTap: action.onTap),
                   ],
                 ],
               ),
