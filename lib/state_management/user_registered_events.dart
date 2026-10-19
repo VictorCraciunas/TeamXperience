@@ -3,6 +3,7 @@ import '../model/event.dart';
 import '../model/team.dart';
 import '../service/event_service/event_service.dart';
 import '../service/team_service/team_service.dart';
+import '../features/home/logic/home_hero.dart' as hero;
 import 'user_provider.dart';
 import 'events_state_management.dart';
 
@@ -51,6 +52,9 @@ class UserEventsProvider extends ChangeNotifier {
       return date != null && date.isBefore(now);
     }).toList()..sort((a, b) => b.dateEvent!.compareTo(a.dateEvent!));
   }
+
+  /// A registered event whose start code can still be entered.
+  Event? get recentlyStartedEvent => hero.recentlyStartedEvent(registeredEvents, DateTime.now());
 
   Event? get nextEventWithinHour {
     if (_activeEvent != null) return _activeEvent;

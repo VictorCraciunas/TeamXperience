@@ -59,6 +59,7 @@ HomeHero _resolve({
 }
 
 void main() {
+  recentlyStartedTests();
   final inOneHour = _now.add(const Duration(hours: 1));
 
   group('live', () {
@@ -194,5 +195,37 @@ void main() {
 
   test('nothing available gives no hero', () {
     expect(_resolve(), isA<NoHero>());
+  });
+}
+
+void recentlyStartedTests() {
+  final now = DateTime(2026, 10, 20, 12);
+  Event at(String id, Duration ago, {bool stopped = false}) => Event(
+        eventId: id,
+        name: id,
+        dateEvent: now.subtract(ago),
+        isStopped: stopped,
+      );
+
+  group('recentlyStartedEvent', () {
+    test('picks the oldest event inside the entry window', () {
+      final result = recentlyStartedEvent(
+        [at('b', const Duration(minutes: 10)), at('a', const Duration(minutes: 40))],
+        now,
+      );
+      expect(result?.eventId, 'a');
+    });
+
+    test('ignores future, expired and stopped events', () {
+      final result = recentlyStartedEvent(
+        [
+          at('future', const Duration(minutes: -5)),
+          at('old', const Duration(minutes: 90)),
+          at('stopped', const Duration(minutes: 5), stopped: true),
+        ],
+        now,
+      );
+      expect(result, isNull);
+    });
   });
 }

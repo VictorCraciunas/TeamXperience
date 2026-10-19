@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/ui/ui.dart';
 import 'package:provider/provider.dart';
-import 'package:teamxperience/features/home/controller/home_controller.dart';
-import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-
 import 'package:teamxperience/constants/padding.dart';
-import '../../../constants/routes.dart';
-import '../../../model/team.dart';
-import '../../../model/user.dart';
-import '../../../state_management/events_state_management.dart';
-import '../../../state_management/news_state_management.dart';
-import '../../../state_management/user_provider.dart';
-import '../../../state_management/user_registered_events.dart'; // Add this import
-import 'package:teamxperience/ui/components/event/events_carousel.dart';
-import 'package:teamxperience/ui/components/event/registered_event_card.dart';
-import 'package:teamxperience/ui/components/event/registered_events_carousel.dart';
-import 'package:teamxperience/ui/components/news/stiri_carousel.dart';
-import '../../admin/home/widgets/title_carousel.dart';
+import 'package:teamxperience/features/home/controller/home_controller.dart';
+import 'package:teamxperience/features/home/logic/home_hero.dart';
+import 'package:teamxperience/features/home/logic/preparation_steps.dart';
+import 'package:teamxperience/features/home/widgets/events_panel.dart';
+import 'package:teamxperience/features/home/widgets/home_hero_actions.dart';
+import 'package:teamxperience/features/home/widgets/home_hero_section.dart';
+import 'package:teamxperience/features/home/widgets/how_it_works_panel.dart';
+import 'package:teamxperience/features/home/widgets/news_panel.dart';
+import 'package:teamxperience/features/home/widgets/preparation_panel.dart';
+import 'package:teamxperience/features/home/widgets/registrations_panel.dart';
+import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/model/team.dart';
+import 'package:teamxperience/state_management/events_state_management.dart';
+import 'package:teamxperience/state_management/news_state_management.dart';
+import 'package:teamxperience/state_management/user_registered_events.dart';
+import 'package:teamxperience/ui/components/misc/clock_builder.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
+import 'package:teamxperience/ui/ui.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -26,7 +28,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late HomeController controller;
+  late final HomeController controller;
+
+  /// Extra data the hero needs, loaded once per hero event.
+  String? _extrasFor;
+  Team? _heroTeam;
+  int? _heroTeamCount;
 
   @override
   void initState() {
@@ -38,6 +45,45 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Event? _heroEvent(HomeHero hero) {
+    return switch (hero) {
+      LiveHero() => hero.event,
+      StartingSoonHero() => hero.event,
+      UpcomingHero() => hero.event,
+      RecommendedHero() => hero.event,
+      NoHero() => null,
+    };
+  }
+
+  void _loadExtras(HomeHero hero) {
+    final event = _heroEvent(hero);
+    if (event == null || _extrasFor == event.eventId) return;
+    _extrasFor = event.eventId;
+    _heroTeam = null;
+    _heroTeamCount = null;
+
+    if (hero is UpcomingHero) {
+      controller.teamFor(event).then((team) {
+        if (mounted && _extrasFor == event.eventId) setState(() => _heroTeam = team);
+      });
+    } else if (hero is RecommendedHero) {
+      controller.teamCountFor(event).then((count) {
+        if (mounted && _extrasFor == event.eventId) setState(() => _heroTeamCount = count);
+      });
+    }
+  }
+
+  HomeHeroActions _actions() {
+    return HomeHeroActions(
+      onContinue: controller.openGame,
+      onChat: controller.openChat,
+      onEnterCode: controller.navigateToEnterCodeScreen,
+      onDetails: controller.navigateToTeamDetails,
+      onShare: (event) => controller.shareRegistration(event),
+      onRegister: controller.navigateToRegisterTeam,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,8 +91,7 @@ class _HomeState extends State<Home> {
       appBar: const MyAppBar(appBarText: "TeamXperience"),
       body: SafeArea(
         child: Consumer3<EventList, NewsList, UserEventsProvider>(
-          builder: (context, eventList, newsList, userEventsProvider, child) {
-            final nextEvent = userEventsProvider.nextEventWithinHour;
+          builder: (context, eventList, newsList, userEvents, child) {
             if ((eventList.isLoading && !eventList.hasData) ||
                 (newsList.isLoading && !newsList.hasData)) {
               return const Center(child: CircularProgressIndicator());
@@ -56,92 +101,86 @@ class _HomeState extends State<Home> {
               onRefresh: controller.refreshData,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: MyPaddings.appHorizontalPadding,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: MyPaddings.topPaddingHome),
-                    child: Column(
-                      children: [
-                        // News Section
-                        StiriCarousel(
-                          stiri: newsList.getLatestNews(5),
-                          onStireTap: controller.navigateToStireDetails,
-                          showBadge: false,
-                        ),
-                        const SizedBox(height: 30),
-                        if (nextEvent != null)
-                          RegisteredEventCard(
-                            event: nextEvent,
-                            onEventTap: (event) async {
-                              // Use cached active team if available
-                              Team? team = userEventsProvider.activeTeam;
-                              if (team == null) {
-                                AppUser? currentUser =
-                                    context.read<UserProvider>().currentUser;
-                                team = await controller.teamService
-                                    .getUserTeamForEvent(
-                                      event.eventId,
-                                      currentUser!.uid,
-                                    );
-                              }
-                              if (team == null) {
-                                print("nu trebuia sa ajunga aci wtf");
-                              } else if (!team.hasStarted) {
-                                controller.navigateToEnterCodeScreen(event);
-                              } else {
-                                Navigator.pushNamed(
-                                  context,
-                                  Routes.eventGame,
-                                  arguments: {'event': event, 'team': team},
-                                );
-                              }
-                            },
-                            upComingRegisteredEvent: true,
-                          ),
-                        const SizedBox(height: 30),
-
-                        // Registered Events Section (show only if user has registered events)
-                        if (userEventsProvider
-                            .upcomingRegisteredEvents
-                            .isNotEmpty) ...[
-                          TitleCarousel(
-                            text: "Înscrierile tale",
-                            onTap: controller.navigateToEventDashboard,
-                          ),
-                          const SizedBox(height: 20),
-                          RegisteredEventsCarousel(
-                            events: userEventsProvider.upcomingRegisteredEvents,
-                            onEventTap:
-                                (event) =>
-                                    controller.navigateToTeamDetails(event),
-                          ),
-                          const SizedBox(height: 30),
-                        ],
-
-                        // All Events Section
-                        TitleCarousel(
-                          text: "Evenimente",
-                          onTap: controller.navigateToEventDashboard,
-                        ),
-                        const SizedBox(height: 20),
-                        EventsCarousel(
-                          events: eventList.upcomingEvents,
-                          onEventTap: controller.navigateToEventDetails,
-                          isAdmin: false,
-                          eventStats: const {},
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
-                  ),
+                padding: const EdgeInsets.fromLTRB(
+                  MyPaddings.appHorizontalPadding,
+                  MyPaddings.topPaddingHome,
+                  MyPaddings.appHorizontalPadding,
+                  24,
+                ),
+                child: ClockBuilder(
+                  builder: (context, now) => _content(now, eventList, newsList, userEvents),
                 ),
               ),
             );
           },
         ),
       ),
+    );
+  }
+
+  Widget _content(
+    DateTime now,
+    EventList eventList,
+    NewsList newsList,
+    UserEventsProvider userEvents,
+  ) {
+    final registered = userEvents.registeredEvents;
+    final upcomingRegistered = userEvents.upcomingRegisteredEvents;
+    final hero = resolveHomeHero(
+      now: now,
+      activeEvent: userEvents.activeEvent,
+      activeTeam: userEvents.activeTeam,
+      startedRecently: userEvents.recentlyStartedEvent,
+      startedRecentlyTeam: null,
+      registeredUpcoming: upcomingRegistered,
+      allEvents: eventList.events,
+      registeredIds: registered.map((e) => e.eventId).toSet(),
+    );
+    _loadExtras(hero);
+
+    final heroEvent = _heroEvent(hero);
+    final events = eventList.upcomingEvents;
+    final registrations = upcomingRegistered
+        .where((e) => e.eventId != heroEvent?.eventId || hero is! UpcomingHero)
+        .toList();
+
+    return Column(
+      children: [
+        HomeHeroSection(
+          hero: hero,
+          now: now,
+          actions: _actions(),
+          recommendedTeamCount: _heroTeamCount,
+        ),
+        if (hero is! NoHero) const SizedBox(height: 14),
+        if (hero is UpcomingHero && heroEvent != null) ...[
+          PreparationPanel(steps: preparationSteps(heroEvent, _heroTeam, now)),
+          const SizedBox(height: 14),
+        ],
+        if (hero is RecommendedHero || hero is NoHero) ...[
+          const HowItWorksPanel(),
+          const SizedBox(height: 14),
+        ],
+        if (registrations.isNotEmpty) ...[
+          RegistrationsPanel(
+            events: registrations,
+            onTap: controller.navigateToTeamDetails,
+            onSeeAll: controller.navigateToEventDashboard,
+          ),
+          const SizedBox(height: 14),
+        ],
+        EventsPanel(
+          events: events,
+          onTap: controller.navigateToEventDetails,
+          onSeeAll: controller.navigateToEventDashboard,
+        ),
+        const SizedBox(height: 14),
+        NewsPanel(
+          news: newsList.getLatestNews(5),
+          onTap: controller.navigateToStireDetails,
+          onSeeAll: controller.navigateToNewsTab,
+        ),
+      ],
     );
   }
 }

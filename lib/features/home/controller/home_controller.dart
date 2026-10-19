@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/model/user.dart';
+import 'package:teamxperience/service/share_service.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
 import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 
@@ -30,6 +32,10 @@ class HomeController {
   void navigateToEventDashboard() {
     context.read<ShellController>().select(1);
   }
+  void navigateToNewsTab() {
+    context.read<ShellController>().select(2);
+  }
+
   void navigateToEnterCodeScreen(Event event) {
     Navigator.pushNamed(
       context,
@@ -59,6 +65,44 @@ class HomeController {
         'user': user
       },
     );
+  }
+
+  Future<Team?> teamFor(Event event) async {
+    final user = context.read<UserProvider>().currentUser;
+    if (user == null) return null;
+    return teamService.getUserTeamForEvent(event.eventId, user.uid);
+  }
+
+  Future<int?> teamCountFor(Event event) async {
+    try {
+      return (await teamService.getTeams(event.eventId)).length;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void navigateToRegisterTeam(Event event) => navigateToEventDetails(event);
+
+  void openGame(Event event, Team team) {
+    Navigator.pushNamed(
+      context,
+      Routes.eventGame,
+      arguments: {'event': event, 'team': team},
+    );
+  }
+
+  void openChat(Event event, Team team) {
+    Navigator.pushNamed(
+      context,
+      Routes.chatScreen,
+      arguments: {'eventId': event.eventId, 'team': team},
+    );
+  }
+
+  Future<void> shareRegistration(Event event) async {
+    final team = await teamFor(event);
+    if (team == null || !context.mounted) return;
+    await ShareService().shareTeamRegistration(team, event, context);
   }
 
   void loadInitialData() {

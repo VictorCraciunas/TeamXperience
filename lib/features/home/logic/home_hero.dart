@@ -123,3 +123,18 @@ HomeHero? _recommended(DateTime now, List<Event> allEvents, Set<String> register
   final chosen = earliest;
   return chosen == null ? null : RecommendedHero(chosen);
 }
+
+/// The registered event that started within [enterCodeWindow] and is not over,
+/// oldest first, so the player can still enter its start code.
+Event? recentlyStartedEvent(List<Event> registered, DateTime now) {
+  Event? chosen;
+  for (final event in registered) {
+    final start = event.dateEvent;
+    if (start == null || _isOver(event, now)) continue;
+    final since = now.difference(start);
+    if (since.isNegative || since > enterCodeWindow) continue;
+    final current = chosen?.dateEvent;
+    if (current == null || start.isBefore(current)) chosen = event;
+  }
+  return chosen;
+}
