@@ -129,11 +129,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        theme: AppTheme.light.copyWith(
-          primaryColor: Colors.white,
-          scaffoldBackgroundColor: Colors.white,
-          canvasColor: Colors.white,
-        ),
+        theme: AppTheme.light,
         darkTheme: AppTheme.dark,
         themeMode: ThemeMode.light,
         title: 'Treasure Hunt',

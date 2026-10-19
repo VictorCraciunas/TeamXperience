@@ -14,8 +14,8 @@ Two roles (`lib/enums/role.dart`): `USER` (players) and `ADMIN` (event organiser
 flutter pub get
 flutter run                      # run on device/emulator
 flutter analyze                  # lint (flutter_lints + prefer_const_constructors)
-flutter test                     # only test/widget_test.dart exists (default template, effectively unused)
-flutter test test/widget_test.dart --plain-name "<name>"   # single test
+flutter test                     # widget/unit tests under test/ (ui components, theme, wrappers)
+flutter test test/ui/components/app_button_test.dart --plain-name "<name>"   # single test
 flutter build apk
 ```
 
@@ -117,7 +117,7 @@ Event lifecycle: players register for events (`registeredEventIds`), enter the e
 
 ### Theme
 
-No central `ThemeData` beyond `main.dart`: Material 3, white scaffold/canvas, font `Poppins` (weights 300–800) and `Monospace` (SpaceMono), both in `assets/fonts/`. Brand colours/gradient are static consts in `constants/colors.dart` (`MyColors.lightBlue`, `yellow`, `blackColor`, `myGradient`, ...); horizontal page padding is `MyPaddings.appHorizontalPadding` (25). Lottie loader at `assets/loader/loader.json`; images in `assets/images/`.
+Theme lives in `lib/ui/theme/`: `AppColors` (a `ThemeExtension` with light and dark tokens: page, panel, border, inset, text, muted, accent, tick, navy, ...), `AppTheme.light/dark` (Material 3, Poppins, scaffold = page colour, canvas = panel colour), `AppRadius`, `AppSpacing`, and `context.colors` to read the tokens. `MaterialApp` currently pins `themeMode: ThemeMode.light`. Screens and shared widgets read colours from `context.colors`; `constants/colors.dart` (`MyColors`) only remains for legacy values and is removed in the cleanup phase. Fonts: `Poppins` (weights 300–800) and `Monospace` (SpaceMono) in `assets/fonts/`. Lottie loader at `assets/loader/loader.json`; images in `assets/images/`.
 
 ## Gotchas
 

@@ -12,6 +12,7 @@ abstract class AppTheme {
       brightness: brightness,
       fontFamily: 'Poppins',
       scaffoldBackgroundColor: colors.page,
+      canvasColor: colors.panel,
       extensions: [colors],
     );
   }
