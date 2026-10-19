@@ -34,6 +34,7 @@ Firebase project id: `teamxperience-dadc6` (`firebase.json`, `lib/firebase_optio
 - Avoid `x!` null-forcing in new code; use local-variable promotion (`final t = team; if (t != null) ...`).
 - One `*Controller` per screen, next to it; screens stay thin and logic lives in the controller.
 - One widget per file; split sub-widgets out instead of piling `_buildX` helpers.
+- Where a widget lives: generic widgets, or ones used by two or more areas (player, admin, auth), go in `lib/ui/components/` and take their content (texts, counts, callbacks) through parameters, with no role-specific copy or logic. Widgets only one flow uses stay in `lib/features/<area>/widgets/`. Promote a feature widget into `lib/ui/` when a second area needs it. `lib/ui/` never imports from `lib/features/`.
 
 ## Detailed docs (read the relevant one before working in that area)
 
