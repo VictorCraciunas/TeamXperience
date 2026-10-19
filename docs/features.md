@@ -13,7 +13,7 @@ Every folder under `lib/features/` follows `controller/` + `screen/` (+ `widgets
 | `login` | `LogInScreen` | – |
 | `forgotPassword` | `ForgotPasswordScreen` | – |
 | `home` | `UserShell` (tabs: `Home`, `FilterEventsUser`, `StiriDashboard`, `ProfileScreen`) | – |
-| `adminHome` | `AdminHome` | – |
+| `adminHome` | `AdminShell` (tabs: `AdminHome`, `EventsDashboard`, `StiriDashboard`, `ProfileScreen`) | – |
 | `eventDetails` | `EventDetailsScreen` | `{'event': Event, 'isAdmin': bool}` |
 | `registerTeam` | `RegisterTeamScreen` | `Event` |
 | `registerTeamDetails` | `TeamDetailsScreen` | `{'event': Event, 'user': AppUser}` |
@@ -60,7 +60,7 @@ Every folder under `lib/features/` follows `controller/` + `screen/` (+ `widgets
 `ImageUploadPuzzleController.pickAndUpload`: pick (gallery) → upload to Storage → `MessageService.sendImageMessage` (chat image bubble, text "Fotografie încărcată pentru aprobare") → `TeamService.setPhotoApproval(key, pending)`. Admin opens `ChatScreen`, `ChatController.pendingApprovalKey` finds the first `pending` entry in `team.photoApprovals` and Aprobă/Respinge write `approved`/`denied`. Player widget listens to `getStreamTeam` and shows `image_upload_status_banner`; `approved` enables Continue (`onSolved` → `PuzzleGameController.navigate`), `denied` allows re-upload. Widget parts in `event_game/widgets/image_upload/`: `_picker`, `_preview`, `_status_banner`, `_action_button`.
 
 ### Admin
-- `admin/home` — `AdminHomeController` (ChangeNotifier) loads events+news and per-event stats (`nrTeams`, `nrPerson` via `TeamRepo.getAllTeamsForEvent`); `navigate_card`, `title_carousel` widgets.
+- `admin/home` — `resolveAdminHero` (`logic/admin_hero.dart`: live, starting soon within 24 h, none) drives `AdminHeroSection` (shared `EventHeroCard`), `AdminStatsPanel`, `AdminQuickActionsPanel`, `AdminUpcomingPanel`. `AdminHomeController` (ChangeNotifier) loads events + per-event `AdminEventStats` (teams, persons, finished, in play), refreshed every 30 s, and handles navigation. Wrapped by `admin/shell/AdminShell`.
 - `admin/create_event/create_event_landing` — event form (`CreateEventController`); `mode` is `create`, `blueprint` (copy of an existing event whose puzzle data is cleared, `MissionController._clearPuzzleDataForDuplication`) or `edit`. Requires both images selected.
 - `admin/create_event/create_missions_and_puzzles` — builder. Tree: `AddMissionsController` → `MissionWidget`/`MissionController` → `PuzzleWidget`/`PuzzleController` → `SavePuzzle`/`SavePuzzleController` (type, code, lat/lng, hint) and `create_components/{create_text,create_button,create_image,create_code}/` (each a widget + controller editing a `Component`; `add_component_widget` picks the kind; `common_widgets/upload_image.dart`, `widgets/color_picker_dialog.dart` shared). Save → `EventList.createEvent/updateEvent`. "Mission done" = has puzzles and every puzzle has a `type`.
 - `events_dashboard/events_dashboard_admin` — upcoming/past lists with search + filter (`EventsDashboardController`, shows team/person counts).
