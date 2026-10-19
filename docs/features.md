@@ -70,7 +70,7 @@ Every folder under `lib/features/` follows `controller/` + `screen/` (+ `widgets
 - `map` — `flutter_map` with OSM tiles, a marker per team from `Stream<List<Team>>` (live lat/lng), call team (`tel:`), open chat.
 - `notification` — title/description form → `NetworkAPI.sendNotification` (HTTP to Cloud Function). `event` arg scopes recipients to registrants.
 - `admin/create_news` (+`create_news_service.dart`) — news form (main + secondary images, type, category, optional button text/link). `news_category_manipulation` — create/select categories.
-- `widgets/menu.dart` (`MenuWidget`) — overlay menu in `MyAppBar` dropdown: edit event (→ `createEvent`), duplicate as blueprint, "start game" (→ `eventGame`, admin preview).
+- `ui/components/navigation/menu.dart` (`MenuWidget`) — overlay menu in `MyAppBar` dropdown: edit event (→ `createEvent`), duplicate as blueprint, "start game" (→ `eventGame`, admin preview).
 
 ## Duplicated/overlapping code worth knowing
 - Event stats loading (`nrTeams`/`nrPerson`) is copy-pasted in `AdminHomeController`, `EventsDashboardController`, `EventsDashboardUserController` (the user one counts `userIds.length`, admin ones sum `numberOfMembers`).

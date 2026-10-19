@@ -60,8 +60,8 @@ backend/           Raw Firebase access: authentication/, repo/*_repo.dart (Fires
 service/           Business logic over repos: event_service/, team_service/, news_service/, message_service, FCMService, LocationService, RouteService, share_service
 state_management/  ChangeNotifier providers: UserProvider, EventList, NewsList, UserEventsProvider
 features/          One folder per screen/flow: controller/ + screen/ (+ widgets/, service/)
-widgets/           Shared widgets (MyButton, MyTextField, MyAppBar, EventCard, StireCard, MyDropdown, ...)
-utils/             AuthUtil, calendar_helper, image_helper, snackbars, color_conversion, component_conversion/
+ui/                Shared UI layer: theme/ (AppColors tokens, AppTheme, radius/spacing) and components/ (buttons, inputs, navigation, event, news, feedback, misc: MyButton, MyTextField, MyAppBar, EventCard, StireCard, MyDropdown, MySnackBars, ...)
+utils/             AuthUtil, calendar_helper, image_helper, color_conversion, component_conversion/
 ```
 
 Flow: `screen -> *Controller -> service -> repo -> Firestore`. Not every feature follows it strictly (some controllers instantiate `EventService()`/`TeamService()` directly rather than reading from Provider).
