@@ -28,7 +28,7 @@ class RegisteredEventCard extends StatelessWidget {
 
     return Card(
       shadowColor: const Color(0xFF0B2F63).withValues(alpha: 0.1),
-      color: upComingRegisteredEvent ? const Color(0xFF222F62) : Colors.white,
+      color: upComingRegisteredEvent ? context.colors.navy : context.colors.panel,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
@@ -78,7 +78,7 @@ class RegisteredEventCard extends StatelessWidget {
                             width: 14,
                             height: 14,
                             colorFilter: ColorFilter.mode(
-                              upComingRegisteredEvent ? Colors.white70 : Color(0xFF545454),
+                              upComingRegisteredEvent ? Colors.white70 : context.colors.muted,
                               BlendMode.srcIn,
                             ),
                           ),
@@ -88,7 +88,7 @@ class RegisteredEventCard extends StatelessWidget {
                               event.location ?? "No Location",
                               style:  TextStyle(
                                 fontSize: 13,
-                                color: upComingRegisteredEvent ? Colors.white70 : const Color(0xFF545454),
+                                color: upComingRegisteredEvent ? Colors.white70 : context.colors.muted,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),

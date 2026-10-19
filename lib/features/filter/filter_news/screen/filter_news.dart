@@ -89,7 +89,7 @@ class _FilterStiriScreenState extends State<FilterStiriScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.page,
       appBar: const MyAppBar(appBarText: "Filtrare Știri"),
       body: SafeArea(
         child: Padding(

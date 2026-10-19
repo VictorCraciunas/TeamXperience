@@ -31,7 +31,7 @@ class EventCard extends StatelessWidget {
 
     return Card(
       shadowColor: const Color(0xFF0B2F63).withValues(alpha: 0.1),
-      color: Colors.white,
+      color: context.colors.panel,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: InkWell(
@@ -103,9 +103,9 @@ class EventCard extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 event.location ?? "No Location",
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 13,
-                                  color: Color(0xFF545454),
+                                  color: context.colors.muted,
                                 ),
                               ),
                             ),

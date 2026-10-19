@@ -89,9 +89,9 @@ class _NewsScreenState extends State<NewsScreen> {
       return Container(
         height: 317,
         width: double.infinity,
-        color: Colors.grey[300],
-        child: const Center(
-          child: Icon(Icons.image_not_supported, color: Colors.grey, size: 50),
+        color: context.colors.inset,
+        child: Center(
+          child: Icon(Icons.image_not_supported, color: context.colors.muted, size: 50),
         ),
       );
     }
@@ -118,17 +118,17 @@ class _NewsScreenState extends State<NewsScreen> {
                   fit: BoxFit.cover,
                   width: double.infinity,
                   progressIndicatorBuilder: (context, url, progress) => Container(
-                    color: Colors.grey[300],
+                    color: context.colors.inset,
                     child: Center(
                       child: CircularProgressIndicator(value: progress.progress),
                     ),
                   ),
                   errorWidget: (context, url, error) => Container(
-                    color: Colors.grey[300],
-                    child: const Center(
+                    color: context.colors.inset,
+                    child: Center(
                       child: Icon(
                         Icons.error_outline,
-                        color: Colors.grey,
+                        color: context.colors.muted,
                         size: 50,
                       ),
                     ),
@@ -291,8 +291,8 @@ class _NewsScreenState extends State<NewsScreen> {
                                 'assets/images/folder-search.svg',
                                 width: 14,
                                 height: 14,
-                                colorFilter: const ColorFilter.mode(
-                                  Color(0xFF0B2F63),
+                                colorFilter: ColorFilter.mode(
+                                  context.colors.text,
                                   BlendMode.srcIn,
                                 ),
                               ),
@@ -300,9 +300,9 @@ class _NewsScreenState extends State<NewsScreen> {
                               Text(
                                 stire.category?.name ?? 'No Category',
                                 // Now using NewsCategory name
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
-                                  color: Color(0xFF0B2F63),
+                                  color: context.colors.text,
                                 ),
                               ),
                               const SizedBox(width: 4),
@@ -310,8 +310,8 @@ class _NewsScreenState extends State<NewsScreen> {
                                 'assets/images/punct.svg',
                                 height: 3,
                                 width: 3,
-                                colorFilter: const ColorFilter.mode(
-                                  Color(0xFF0B2F63),
+                                colorFilter: ColorFilter.mode(
+                                  context.colors.text,
                                   BlendMode.srcIn,
                                 ),
                               ),
@@ -321,9 +321,9 @@ class _NewsScreenState extends State<NewsScreen> {
                                   stire.publicationDate,
                                 ),
                                 // Now using NewsCategory name
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
-                                  color: Color(0xFF0B2F63),
+                                  color: context.colors.text,
                                 ),
                               ),
                             ],

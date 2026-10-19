@@ -111,7 +111,7 @@ class _MapScreenState extends State<MapScreen> {
             ),
             child: CircleAvatar(
               radius: 25,
-              backgroundColor: Colors.white,
+              backgroundColor: context.colors.panel,
               child: Container(
                 width: 45,
                 height: 45,

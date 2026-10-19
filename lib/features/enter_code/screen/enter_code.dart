@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/enter_code/controller/enter_code_controller.dart';
@@ -38,7 +39,7 @@ class _EnterCodeState extends State<EnterCode> {
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: Color(0xFF222F62),
+                color: context.colors.navy,
               ),
               padding: const EdgeInsets.all(20.0), // Use padding instead of Padding widget
               child: Column(

@@ -50,13 +50,13 @@ class StireCard extends StatelessWidget {
             )
                 : Container(
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: context.colors.inset,
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.article,
                 size: 50,
-                color: Colors.grey,
+                color: context.colors.muted,
               ),
             ),
 
@@ -97,7 +97,7 @@ class StireCard extends StatelessWidget {
                     width: 78,
                     height: 20,
                     decoration: BoxDecoration(
-                      color: stire.type == StireType.PUBLICA ? context.colors.accent : const Color(0xFF0B2F63),
+                      color: stire.type == StireType.PUBLICA ? context.colors.accent : context.colors.navy,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Center(

@@ -52,10 +52,10 @@ class EventImage extends StatelessWidget {
               )
               : Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: context.colors.inset,
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: const Icon(Icons.event, size: 50, color: Colors.grey),
+                child: Icon(Icons.event, size: 50, color: context.colors.muted),
               ),
 
           // Blue containers overlay
@@ -106,7 +106,7 @@ class EventImage extends StatelessWidget {
                   width: 78,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: event.type == EventType.PUBLIC || isAdmin == false ? context.colors.accent : const Color(0xFF1C1243),
+                    color: event.type == EventType.PUBLIC || isAdmin == false ? context.colors.accent : context.colors.navy,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Center(

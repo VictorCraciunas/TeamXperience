@@ -52,10 +52,10 @@ class DetailWidget extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 text2,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w300,
-                  color: Colors.black
+                  color: context.colors.text
                 ),
               ),
             ],

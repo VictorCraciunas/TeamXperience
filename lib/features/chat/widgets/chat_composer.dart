@@ -31,9 +31,9 @@ class ChatComposer extends StatelessWidget {
                 duration: const Duration(milliseconds: 150),
                 constraints: const BoxConstraints(minHeight: 50),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.colors.panel,
                   border: Border.all(
-                    color: hasText ? context.colors.accent : const Color(0xFFE6E6E6),
+                    color: hasText ? context.colors.accent : context.colors.border,
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(26),
@@ -69,7 +69,7 @@ class ChatComposer extends StatelessWidget {
                 height: 50,
                 decoration: BoxDecoration(
                   gradient: hasText ? context.colors.ctaGradient : null,
-                  color: hasText ? null : const Color(0xFFE6E6E6),
+                  color: hasText ? null : context.colors.border,
                   shape: BoxShape.circle,
                   boxShadow: hasText
                       ? const [

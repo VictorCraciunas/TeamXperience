@@ -244,7 +244,7 @@ class _MyDropdownFieldState<T> extends State<MyDropdownField<T>>
               child: Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.colors.panel,
                   borderRadius: BorderRadius.circular(28),
                   border: Border.all(
                     color: context.colors.accent.withValues(alpha: 0.18),

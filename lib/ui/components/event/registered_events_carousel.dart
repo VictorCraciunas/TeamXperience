@@ -81,7 +81,7 @@ class _RegisteredEventsCarouselState extends State<RegisteredEventsCarousel> {
           decoration: BoxDecoration(
             color: _currentIndex == index
                 ? context.colors.accent
-                : const Color(0x2453C4C7),
+                : context.colors.insetBorder,
             borderRadius: BorderRadius.circular(4.0),
           ),
         ),

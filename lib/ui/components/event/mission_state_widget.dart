@@ -26,7 +26,7 @@ class MissionStateWidget extends StatelessWidget {
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(20)),
-            border: Border.all(color: Color(0xFFE4E4E4), width: 1),
+            border: Border.all(color: context.colors.border, width: 1),
           ),
           child: Padding(
             padding: const EdgeInsets.all(15.0),
@@ -79,7 +79,7 @@ class MissionStateWidget extends StatelessWidget {
                           SizedBox(height: 5),
                           Text(
                             missionState == MissionState.finalizata ? "Finalizată" : missionState == MissionState.deblcata ? "Deblocată" : "Blocată",
-                            style: TextStyle(fontSize: 12, color: Color(0xFF858493)),
+                            style: TextStyle(fontSize: 12, color: context.colors.muted),
                           ),
                         ],
                       ),

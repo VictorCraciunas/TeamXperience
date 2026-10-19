@@ -21,7 +21,7 @@ class MenuWidget extends StatelessWidget {
     return Container(
       width: 250,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.panel,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           const BoxShadow(
@@ -123,7 +123,7 @@ class MenuWidget extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: context.colors.panel,
           title: const Text('Confirmare ștergere'),
           content: const Text('Ești sigur că vrei să ștergi acest eveniment?'),
           actions: [
