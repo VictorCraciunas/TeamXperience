@@ -67,4 +67,29 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+  testWidgets('custom colours override the variant colours', (tester) async {
+    await pumpUi(
+      tester,
+      AppButton(
+        label: 'Logare cu Facebook',
+        onPressed: () {},
+        backgroundColor: const Color(0xFF0056B2),
+        foregroundColor: Colors.white,
+      ),
+    );
+    final ink = tester.widget<Ink>(find.byType(Ink));
+    expect((ink.decoration as BoxDecoration).color, const Color(0xFF0056B2));
+    expect((ink.decoration as BoxDecoration).gradient, isNull);
+    final text = tester.widget<Text>(find.text('Logare cu Facebook'));
+    expect(text.style?.color, Colors.white);
+  });
+
+  testWidgets('a fixed width keeps the button at that width when not expanded',
+      (tester) async {
+    await pumpUi(
+      tester,
+      Center(child: AppButton(label: 'Adaugă', expand: false, onPressed: () {})),
+    );
+    expect(tester.getSize(find.byType(AppButton)).width, lessThan(200));
+  });
 }

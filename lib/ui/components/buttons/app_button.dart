@@ -14,6 +14,8 @@ class AppButton extends StatelessWidget {
     this.leading,
     this.isLoading = false,
     this.expand = true,
+    this.backgroundColor,
+    this.foregroundColor,
   });
 
   final String label;
@@ -22,6 +24,8 @@ class AppButton extends StatelessWidget {
   final Widget? leading;
   final bool isLoading;
   final bool expand;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +33,7 @@ class AppButton extends StatelessWidget {
     final enabled = onPressed != null && !isLoading;
     final radius = BorderRadius.circular(AppRadius.button);
 
+    final customBackground = backgroundColor;
     final Color foreground;
     BoxDecoration decoration;
     if (!enabled && onPressed == null) {
@@ -37,6 +42,9 @@ class AppButton extends StatelessWidget {
         color: colors.insetBorder,
         borderRadius: radius,
       );
+    } else if (customBackground != null) {
+      foreground = foregroundColor ?? Colors.white;
+      decoration = BoxDecoration(color: customBackground, borderRadius: radius);
     } else {
       switch (variant) {
         case AppButtonVariant.primary:

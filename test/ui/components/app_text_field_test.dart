@@ -8,6 +8,7 @@ void main() {
   testWidgets('shows plain label when not required', (tester) async {
     await pumpUi(tester, const AppTextField(label: 'Nume echipă'));
     expect(find.text('Nume echipă'), findsOneWidget);
+    expect(find.byKey(const ValueKey('app-text-field-label')), findsOneWidget);
   });
 
   testWidgets('marks the label with an asterisk when required', (tester) async {
@@ -86,5 +87,10 @@ void main() {
     await pumpUi(tester, AppTextField(label: 'Nume', onChanged: (v) => last = v));
     await tester.enterText(find.byType(TextField), 'Vulturii');
     expect(last, 'Vulturii');
+  });
+  testWidgets('renders no label when none is given', (tester) async {
+    await pumpUi(tester, const AppTextField(hint: 'Caută eveniment'));
+    expect(find.byKey(const ValueKey('app-text-field-label')), findsNothing);
+    expect(find.byType(TextField), findsOneWidget);
   });
 }

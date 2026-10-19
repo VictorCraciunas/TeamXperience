@@ -8,7 +8,7 @@ class AppTextField extends StatefulWidget {
   const AppTextField({
     super.key,
     this.controller,
-    required this.label,
+    this.label,
     this.hint,
     this.helper,
     this.required = false,
@@ -26,7 +26,7 @@ class AppTextField extends StatefulWidget {
   });
 
   final TextEditingController? controller;
-  final String label;
+  final String? label;
   final String? hint;
   final String? helper;
   final bool required;
@@ -91,20 +91,25 @@ class _AppTextFieldState extends State<AppTextField> {
       fontWeight: FontWeight.w600,
     );
 
+    final label = widget.label;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text.rich(
-          TextSpan(
-            text: widget.label,
-            style: labelStyle,
-            children: [
-              if (widget.required)
-                TextSpan(text: ' *', style: TextStyle(color: colors.live)),
-            ],
+        if (label != null) ...[
+          Text.rich(
+            TextSpan(
+              text: label,
+              style: labelStyle,
+              children: [
+                if (widget.required)
+                  TextSpan(text: ' *', style: TextStyle(color: colors.live)),
+              ],
+            ),
+            key: const ValueKey('app-text-field-label'),
           ),
-        ),
-        const SizedBox(height: 6),
+          const SizedBox(height: 6),
+        ],
         TextFormField(
           controller: widget.controller,
           keyboardType: widget.keyboardType,
