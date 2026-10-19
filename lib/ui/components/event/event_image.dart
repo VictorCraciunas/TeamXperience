@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../constants/colors.dart';
-import '../enums/event_type.dart';
-import '../model/event.dart';
+import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/enums/event_type.dart';
+import 'package:teamxperience/model/event.dart';
 
 class EventImage extends StatelessWidget {
   const EventImage({

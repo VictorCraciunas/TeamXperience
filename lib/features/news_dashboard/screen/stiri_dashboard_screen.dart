@@ -8,7 +8,7 @@ import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import '../../../constants/routes.dart';
 import '../../../state_management/news_state_management.dart';
-import '../../../widgets/stire_card/stire_card.dart';
+import 'package:teamxperience/ui/components/news/stire_card.dart';
 import '../controller/stiri_dashboard_controller.dart';
 
 class StiriDashboard extends StatefulWidget {

@@ -7,10 +7,10 @@ import 'package:teamxperience/features/admin/home/widgets/title_carousel.dart';
 import 'package:teamxperience/features/event_management/widgets/management_button.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
-import 'package:teamxperience/widgets/stire_card/stiri_carousel.dart';
+import 'package:teamxperience/ui/components/news/stiri_carousel.dart';
 import '../../../../state_management/events_state_management.dart';
 import '../../../../state_management/news_state_management.dart';
-import '../../../../widgets/event_card/events_carousel.dart';
+import 'package:teamxperience/ui/components/event/events_carousel.dart';
 import '../controller/admin_controller.dart';
 
 class AdminHome extends StatefulWidget {

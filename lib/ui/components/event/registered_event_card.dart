@@ -4,8 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
-import '../../constants/colors.dart';
-import '../../utils/calendar_helper.dart';
+import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/utils/calendar_helper.dart';
 
 class RegisteredEventCard extends StatelessWidget {
   final Event event;

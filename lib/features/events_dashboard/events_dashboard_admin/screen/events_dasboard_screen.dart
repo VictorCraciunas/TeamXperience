@@ -10,7 +10,7 @@ import '../../../../constants/routes.dart';
 import '../../../../enums/event_type.dart';
 import '../../../../state_management/events_state_management.dart';
 import '../../../../widgets/CustomIconDashboard.dart';
-import '../../../../widgets/event_card/events_list.dart';
+import 'package:teamxperience/ui/components/event/events_list.dart';
 import '../controller/events_dashboard_controller.dart';
 
 class EventsDashboard extends StatefulWidget {

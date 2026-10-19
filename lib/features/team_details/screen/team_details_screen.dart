@@ -10,7 +10,7 @@ import '../../../constants/colors.dart';
 import '../../../model/event.dart';
 import '../../../utils/calendar_helper.dart';
 import '../../../utils/image_helper.dart';
-import '../../../widgets/EventImage.dart';
+import 'package:teamxperience/ui/components/event/event_image.dart';
 import '../../event_details/widgets/detail_widget.dart';
 import '../controller/team_details_controller.dart';
 import '../widgets/team_detail_widget.dart';

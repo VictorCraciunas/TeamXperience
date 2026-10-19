@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/enums/missions_state.dart';
 
-import '../constants/colors.dart';
+import 'package:teamxperience/constants/colors.dart';
 
 class MissionStateWidget extends StatelessWidget {
   final MissionState missionState;

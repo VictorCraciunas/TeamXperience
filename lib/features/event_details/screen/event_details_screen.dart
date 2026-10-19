@@ -11,7 +11,7 @@ import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/state_management/user_provider.dart'; // Add this import
 import 'package:teamxperience/utils/calendar_helper.dart';
 import 'package:teamxperience/utils/image_helper.dart';
-import 'package:teamxperience/widgets/EventImage.dart';
+import 'package:teamxperience/ui/components/event/event_image.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 

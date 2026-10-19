@@ -3,8 +3,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/utils/image_helper.dart';
 import 'package:teamxperience/utils/calendar_helper.dart';
-import '../../../model/event.dart';
-import '../EventImage.dart';
+import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/ui/components/event/event_image.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
