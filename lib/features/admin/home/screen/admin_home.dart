@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
+import 'package:teamxperience/ui/components/misc/theme_mode_button.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/admin/home/widgets/navigate_card.dart';
@@ -39,7 +40,12 @@ class _AdminHomeState extends State<AdminHome> {
       backgroundColor: context.colors.page,
       appBar: MyAppBar(
         appBarText: "TeamXperience",
-        trailing: GestureDetector(
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const ThemeModeButton(),
+            const SizedBox(width: 8),
+            GestureDetector(
           onTap: controller.logout,
           child: Container(
             width: 45,
@@ -52,6 +58,8 @@ class _AdminHomeState extends State<AdminHome> {
               child: Icon(Icons.logout_rounded, size: 22, color: context.colors.accent),
             ),
           ),
+        ),
+          ],
         ),
       ),
       body: SafeArea(

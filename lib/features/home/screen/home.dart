@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
+import 'package:teamxperience/ui/components/misc/theme_mode_button.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/features/home/controller/home_controller.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
@@ -44,7 +45,12 @@ class _HomeState extends State<Home> {
       backgroundColor: context.colors.page,
       appBar: MyAppBar(
         appBarText: "TeamXperience",
-        trailing: GestureDetector(
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const ThemeModeButton(),
+            const SizedBox(width: 8),
+            GestureDetector(
           onTap: controller.logout,
           child: Container(
             width: 45,
@@ -57,6 +63,8 @@ class _HomeState extends State<Home> {
               child: Icon(Icons.logout_rounded, size: 22, color: context.colors.accent),
             ),
           ),
+        ),
+          ],
         ),
       ),
       body: SafeArea(
