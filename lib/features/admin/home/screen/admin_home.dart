@@ -5,6 +5,7 @@ import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/admin/home/widgets/navigate_card.dart';
 import 'package:teamxperience/features/admin/home/widgets/title_carousel.dart';
 import 'package:teamxperience/features/event_management/widgets/management_button.dart';
+import 'package:teamxperience/widgets/my_appbar.dart';
 import 'package:teamxperience/widgets/my_button.dart';
 import 'package:teamxperience/widgets/stire_card/stiri_carousel.dart';
 import '../../../../state_management/events_state_management.dart';
@@ -35,16 +36,23 @@ class _AdminHomeState extends State<AdminHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text("Admin Home"),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: controller.logout,
+      backgroundColor: MyColors.backgroundColor,
+      appBar: MyAppBar(
+        appBarText: "TeamXperience",
+        trailing: GestureDetector(
+          onTap: controller.logout,
+          child: Container(
+            width: 45,
+            height: 45,
+            decoration: BoxDecoration(
+              color: MyColors.transparentLightBlue,
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: const Center(
+              child: Icon(Icons.logout_rounded, size: 22, color: MyColors.lightBlue),
+            ),
           ),
-        ],
+        ),
       ),
       body: SafeArea(
         child: Consumer2<EventList, NewsList>(
@@ -60,6 +68,7 @@ class _AdminHomeState extends State<AdminHome> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: MyPaddings.appHorizontalPadding,
+                    vertical: MyPaddings.topPaddingHome
                   ),
                   child: Column(
                     children: [

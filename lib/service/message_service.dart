@@ -24,14 +24,16 @@ class MessageService{
     String eventId,
     String teamName,
     String imageUrl,
-    AppUser user,
-  ) async {
+    AppUser user, {
+    String? approvalKey,
+  }) async {
     final message = Message(
       sender: user.role == Role.ADMIN ? Role.ADMIN : Role.USER,
       text: 'Fotografie încărcată pentru aprobare',
       timestamp: DateTime.now(),
       type: MessageType.image,
       imageUrl: imageUrl,
+      approvalKey: approvalKey,
     );
     await repo.sendMessage(message, eventId, teamName);
   }

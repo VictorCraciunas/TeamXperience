@@ -32,31 +32,20 @@ class ChatController{
     return teamService.getStreamTeam(eventId, team.name);
   }
 
-  String? pendingApprovalKey(Team currentTeam) {
-    for (final entry in currentTeam.photoApprovals.entries) {
-      if (entry.value == PhotoApprovalStatus.pending) return entry.key;
-    }
-    return null;
-  }
-
-  Future<void> approveCurrentPhoto(Team currentTeam) async {
-    final key = pendingApprovalKey(currentTeam);
-    if (key == null) return;
+  Future<void> approvePhoto(Team currentTeam, String approvalKey) async {
     await teamService.setPhotoApproval(
       eventId,
       team.name,
-      key,
+      approvalKey,
       PhotoApprovalStatus.approved,
     );
   }
 
-  Future<void> denyCurrentPhoto(Team currentTeam) async {
-    final key = pendingApprovalKey(currentTeam);
-    if (key == null) return;
+  Future<void> denyPhoto(Team currentTeam, String approvalKey) async {
     await teamService.setPhotoApproval(
       eventId,
       team.name,
-      key,
+      approvalKey,
       PhotoApprovalStatus.denied,
     );
   }

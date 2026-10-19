@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/features/home/controller/home_controller.dart';
+import 'package:teamxperience/widgets/my_appbar.dart';
 
+import 'package:teamxperience/constants/padding.dart';
 import '../../../constants/colors.dart';
-import '../../../constants/padding.dart';
 import '../../../constants/routes.dart';
 import '../../../model/team.dart';
 import '../../../model/user.dart';
@@ -41,16 +42,22 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyColors.backgroundColor,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text("User Home"),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: controller.logout,
+      appBar: MyAppBar(
+        appBarText: "TeamXperience",
+        trailing: GestureDetector(
+          onTap: controller.logout,
+          child: Container(
+            width: 45,
+            height: 45,
+            decoration: BoxDecoration(
+              color: MyColors.transparentLightBlue,
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: const Center(
+              child: Icon(Icons.logout_rounded, size: 22, color: MyColors.lightBlue),
+            ),
           ),
-        ],
+        ),
       ),
       body: SafeArea(
         child: Consumer3<EventList, NewsList, UserEventsProvider>(
@@ -69,78 +76,81 @@ class _HomeState extends State<Home> {
                   padding: const EdgeInsets.symmetric(
                     horizontal: MyPaddings.appHorizontalPadding,
                   ),
-                  child: Column(
-                    children: [
-                      // News Section
-                      StiriCarousel(
-                        stiri: newsList.getLatestNews(5),
-                        onStireTap: controller.navigateToStireDetails,
-                        showBadge: false,
-                      ),
-                      const SizedBox(height: 30),
-                      if (nextEvent != null)
-                        RegisteredEventCard(
-                          event: nextEvent,
-                          onEventTap: (event) async {
-                            // Use cached active team if available
-                            Team? team = userEventsProvider.activeTeam;
-                            if (team == null) {
-                              AppUser? currentUser =
-                                  context.read<UserProvider>().currentUser;
-                              team = await controller.teamService
-                                  .getUserTeamForEvent(
-                                    event.eventId,
-                                    currentUser!.uid,
-                                  );
-                            }
-                            if (team == null) {
-                              print("nu trebuia sa ajunga aci wtf");
-                            } else if (!team.hasStarted) {
-                              controller.navigateToEnterCodeScreen(event);
-                            } else {
-                              Navigator.pushNamed(
-                                context,
-                                Routes.eventGame,
-                                arguments: {'event': event, 'team': team},
-                              );
-                            }
-                          },
-                          upComingRegisteredEvent: true,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: MyPaddings.topPaddingHome),
+                    child: Column(
+                      children: [
+                        // News Section
+                        StiriCarousel(
+                          stiri: newsList.getLatestNews(5),
+                          onStireTap: controller.navigateToStireDetails,
+                          showBadge: false,
                         ),
-                      const SizedBox(height: 30),
+                        const SizedBox(height: 30),
+                        if (nextEvent != null)
+                          RegisteredEventCard(
+                            event: nextEvent,
+                            onEventTap: (event) async {
+                              // Use cached active team if available
+                              Team? team = userEventsProvider.activeTeam;
+                              if (team == null) {
+                                AppUser? currentUser =
+                                    context.read<UserProvider>().currentUser;
+                                team = await controller.teamService
+                                    .getUserTeamForEvent(
+                                      event.eventId,
+                                      currentUser!.uid,
+                                    );
+                              }
+                              if (team == null) {
+                                print("nu trebuia sa ajunga aci wtf");
+                              } else if (!team.hasStarted) {
+                                controller.navigateToEnterCodeScreen(event);
+                              } else {
+                                Navigator.pushNamed(
+                                  context,
+                                  Routes.eventGame,
+                                  arguments: {'event': event, 'team': team},
+                                );
+                              }
+                            },
+                            upComingRegisteredEvent: true,
+                          ),
+                        const SizedBox(height: 30),
 
-                      // Registered Events Section (show only if user has registered events)
-                      if (userEventsProvider
-                          .upcomingRegisteredEvents
-                          .isNotEmpty) ...[
+                        // Registered Events Section (show only if user has registered events)
+                        if (userEventsProvider
+                            .upcomingRegisteredEvents
+                            .isNotEmpty) ...[
+                          TitleCarousel(
+                            text: "Înscrierile tale",
+                            onTap: controller.navigateToEventDashboard,
+                          ),
+                          const SizedBox(height: 20),
+                          RegisteredEventsCarousel(
+                            events: userEventsProvider.upcomingRegisteredEvents,
+                            onEventTap:
+                                (event) =>
+                                    controller.navigateToTeamDetails(event),
+                          ),
+                          const SizedBox(height: 30),
+                        ],
+
+                        // All Events Section
                         TitleCarousel(
-                          text: "Înscrierile tale",
+                          text: "Evenimente",
                           onTap: controller.navigateToEventDashboard,
                         ),
                         const SizedBox(height: 20),
-                        RegisteredEventsCarousel(
-                          events: userEventsProvider.upcomingRegisteredEvents,
-                          onEventTap:
-                              (event) =>
-                                  controller.navigateToTeamDetails(event),
+                        EventsCarousel(
+                          events: eventList.upcomingEvents,
+                          onEventTap: controller.navigateToEventDetails,
+                          isAdmin: false,
+                          eventStats: const {},
                         ),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 20),
                       ],
-
-                      // All Events Section
-                      TitleCarousel(
-                        text: "Evenimente",
-                        onTap: controller.navigateToEventDashboard,
-                      ),
-                      const SizedBox(height: 20),
-                      EventsCarousel(
-                        events: eventList.upcomingEvents,
-                        onEventTap: controller.navigateToEventDetails,
-                        isAdmin: false,
-                        eventStats: const {},
-                      ),
-                      const SizedBox(height: 20),
-                    ],
+                    ),
                   ),
                 ),
               ),

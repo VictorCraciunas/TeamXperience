@@ -7,16 +7,20 @@ import 'menu.dart';
 
 class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String appBarText;
+  final String? subtitle;
   final String? iconString;
   final bool showDropdown;
   final Event? event;
+  final Widget? trailing;
 
   const MyAppBar({
     super.key,
     required this.appBarText,
+    this.subtitle,
     this.iconString,
     this.showDropdown = false,
-    this.event
+    this.event,
+    this.trailing,
   });
 
   @override
@@ -101,20 +105,50 @@ class _MyAppBarState extends State<MyAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
       surfaceTintColor: Colors.transparent,
-      elevation: 4,
-      backgroundColor: MyColors.backgroundColor,
-      title: Text(
-        widget.appBarText,
-        style:  const TextStyle(
-          fontSize: 24,
-          fontFamily: 'Poppins',
-          fontWeight: FontWeight.w500,
-          color: MyColors.blackColor,
-        ),
-      ),
+      elevation: 3,
+      shadowColor: const Color(0x1A000000),
+      backgroundColor: MyColors.barColor,
+      title: widget.subtitle != null
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  widget.appBarText,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    color: MyColors.blackColor,
+                  ),
+                ),
+                Text(
+                  widget.subtitle!,
+                  style: const TextStyle(
+                    fontSize: 11.5,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                    color: MyColors.greyText,
+                  ),
+                ),
+              ],
+            )
+          : Text(
+              widget.appBarText,
+              style: const TextStyle(
+                fontSize: 24,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+                color: MyColors.blackColor,
+              ),
+            ),
       centerTitle: true,
       actions: [
-        if (widget.iconString != null)
+        if (widget.trailing != null)
+          Padding(
+            padding: const EdgeInsets.only(right: 15.0),
+            child: widget.trailing!,
+          )
+        else if (widget.iconString != null)
           Padding(
             padding: const EdgeInsets.only(right: 15.0),
             child: GestureDetector(

@@ -8,7 +8,8 @@ class MyColors{
   static const transparentYellow = Color(0xA8FFDA8C);
 
   static const greyText = Color(0xFF858494);
-  static const backgroundColor = Colors.white;
+  static const backgroundColor = Color(0xFFF6F7FB);
+  static const barColor = Colors.white;
   static const blackColor = Color(0xFF0C092A);
 
   static const myGradient =  LinearGradient(
