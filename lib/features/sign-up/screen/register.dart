@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/routes.dart';
@@ -17,7 +18,7 @@ class Register extends StatelessWidget {
     SignUpController controller = SignUpController();
 
     return Scaffold(
-      backgroundColor: MyColors.backgroundColor,
+      backgroundColor: context.colors.page,
       appBar: const MyAppBar(appBarText: "Inregistrare"),
       body: SingleChildScrollView(
         child: Padding(
@@ -68,9 +69,9 @@ class Register extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       "Ai deja un cont?",
-                      style: TextStyle(fontSize: 14, fontFamily: 'Poppins', color: MyColors.greyText),
+                      style: TextStyle(fontSize: 14, color: context.colors.muted),
                     ),
                     const SizedBox(width: 5.0),
                     GestureDetector(
@@ -80,12 +81,11 @@ class Register extends StatelessWidget {
                           Routes.login,
                         );
                       },
-                      child: const Text(
+                      child: Text(
                         "Logheaza-te",
                         style: TextStyle(
                           fontSize: 14,
-                          fontFamily: 'Poppins',
-                          color: MyColors.yellow,
+                          color: context.colors.accent,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

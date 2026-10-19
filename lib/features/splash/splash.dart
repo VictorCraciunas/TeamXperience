@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
@@ -13,7 +13,7 @@ class SplashScreen extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: MyColors.backgroundColor,
+      backgroundColor: context.colors.page,
       body: Stack(
         children: [
           Positioned.fill(
@@ -37,20 +37,19 @@ class SplashScreen extends StatelessWidget {
               Container(
                 width: double.infinity,
                 margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                decoration: BoxDecoration(
+                  color: context.colors.panel,
+                  borderRadius: BorderRadius.circular(AppRadius.panel),
                 ),
                 child: Column(
                   children: [
                     const SizedBox(height: 20.0),
-                    const Text(
+                    Text(
                       "Bine ai venit!",
                       style: TextStyle(
                         fontSize: 24,
-                        fontFamily: 'Poppins',
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF001833),
+                        color: context.colors.text,
                       ),
                     ),
                     const SizedBox(height: 10.0),
@@ -61,7 +60,7 @@ class SplashScreen extends StatelessWidget {
                         buttonOnTap: () {
                           Navigator.pushNamed(context, Routes.login);
                         },
-                        gradient: MyColors.myGradient,
+                        gradient: context.colors.ctaGradient,
                         textColor: Colors.white,
                         withBorder: false,
                       ),
@@ -72,7 +71,7 @@ class SplashScreen extends StatelessWidget {
                       children: [
                         const Text(
                           "Nu ai cont?",
-                          style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
+                          style: TextStyle(fontSize: 14),
                         ),
                         const SizedBox(width: 5.0),
                         GestureDetector(
@@ -82,12 +81,11 @@ class SplashScreen extends StatelessWidget {
                               Routes.register,
                             );
                           },
-                          child: const Text(
+                          child: Text(
                             "Inregistrează-te",
                             style: TextStyle(
                               fontSize: 14,
-                              fontFamily: 'Poppins',
-                              color: MyColors.lightBlue,
+                              color: context.colors.accent,
                               fontWeight: FontWeight.w600,
                             ),
                           ),

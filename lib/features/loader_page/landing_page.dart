@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:lottie/lottie.dart';
 
-import '../../constants/colors.dart';
 import '../../utils/auth_util.dart';
 
 class LandingPage extends StatefulWidget {
@@ -28,7 +28,7 @@ class _LandingPageState extends State<LandingPage> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      backgroundColor: MyColors.backgroundColor,
+      backgroundColor: context.colors.page,
       body: Center(child: Lottie.asset('assets/loader/loader.json', width: 700, height: 700),),
     );
   }

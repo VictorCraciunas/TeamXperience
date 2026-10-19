@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/features/sign-up/controller/signup_controller.dart';
 
@@ -20,7 +21,7 @@ class RegisterScreen extends StatelessWidget {
     SignUpController controller = SignUpController();
 
     return Scaffold(
-      backgroundColor: MyColors.backgroundColor,
+      backgroundColor: context.colors.page,
       appBar: const MyAppBar(appBarText: "Inregistrare"),
       body: SingleChildScrollView(
         child:Padding(
@@ -34,7 +35,6 @@ class RegisterScreen extends StatelessWidget {
                   controller: controller.emailController,
                   labelText: "Adresa de email",
                   labelFontSize: 14,
-                  borderColor: const Color(0xFFE6E6E6),
                   hintText: 'exemplu@gmail.com',
                   leading: SvgPicture.asset(
                     'assets/images/email.svg',
@@ -57,7 +57,6 @@ class RegisterScreen extends StatelessWidget {
                   controller: controller.firstNameController,
                   labelText: "Prenume",
                   labelFontSize: 14,
-                  borderColor: const Color(0xFFE6E6E6),
                   hintText: 'Prenume',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -71,7 +70,6 @@ class RegisterScreen extends StatelessWidget {
                   controller: controller.lastNameController,
                   labelText: "Nume de familie",
                   labelFontSize: 14,
-                  borderColor: const Color(0xFFE6E6E6),
                   hintText: 'Nume de familie',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -85,7 +83,6 @@ class RegisterScreen extends StatelessWidget {
                   controller: controller.passwordController,
                   labelText: "Parola",
                   labelFontSize: 14,
-                  borderColor: const Color(0xFFE6E6E6),
                   hintText: 'Parola ta',
                   leading: SvgPicture.asset(
                     'assets/images/pass.svg',
@@ -115,7 +112,6 @@ class RegisterScreen extends StatelessWidget {
                   controller: controller.confirmPasswordController,
                   labelText: "Confirmă parola",
                   labelFontSize: 14,
-                  borderColor: const Color(0xFFE6E6E6),
                   hintText: 'Confirmă parola',
                   leading: SvgPicture.asset(
                     'assets/images/pass.svg',
@@ -153,9 +149,9 @@ class RegisterScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       "Ai deja un cont?",
-                      style: TextStyle(fontSize: 14, fontFamily: 'Poppins', color: MyColors.greyText),
+                      style: TextStyle(fontSize: 14, color: context.colors.muted),
                     ),
                     const SizedBox(width: 5.0),
                     GestureDetector(
@@ -165,12 +161,11 @@ class RegisterScreen extends StatelessWidget {
                           Routes.login,
                         );
                       },
-                      child: const Text(
+                      child: Text(
                         "Loghează-te",
                         style: TextStyle(
                           fontSize: 14,
-                          fontFamily: 'Poppins',
-                          color: MyColors.yellow,
+                          color: context.colors.accent,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
