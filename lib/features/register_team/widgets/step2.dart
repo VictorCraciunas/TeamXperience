@@ -1,7 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/svg.dart';
 
 import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
 
@@ -21,12 +21,7 @@ class Step2 extends StatelessWidget {
           hintText: 'Nume ',
           leading: Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: SvgPicture.asset(
-              'assets/images/user.svg',
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(context.colors.tick, BlendMode.srcIn),
-            ),
+            child: AppSvgIcon('assets/images/user.svg', width: 24, height: 24, color: context.colors.tick),
           ), // ← close SvgPicture.asset
         ),
         const SizedBox(height: 20),
@@ -36,12 +31,7 @@ class Step2 extends StatelessWidget {
           hintText: '0712 456 789',
           leading: Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: SvgPicture.asset(
-              'assets/images/user_icon.svg',
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(context.colors.tick, BlendMode.srcIn),
-            ),
+            child: AppSvgIcon('assets/images/user_icon.svg', width: 24, height: 24, color: context.colors.tick),
           ), // ← close SvgPicture.asset
         ),
         const SizedBox(height: 20),
@@ -51,12 +41,7 @@ class Step2 extends StatelessWidget {
           hintText: 'exemplu@gmail.com',
           leading: Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: SvgPicture.asset(
-              'assets/images/user_icon.svg',
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(context.colors.tick, BlendMode.srcIn),
-            ),
+            child: AppSvgIcon('assets/images/user_icon.svg', width: 24, height: 24, color: context.colors.tick),
           ), // ← close SvgPicture.asset
         ),
         const SizedBox(height: 20),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/forgot-password/controller/forgot_password_controller.dart';
 
@@ -38,11 +38,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                 labelText: "Adresa de email",
                 labelFontSize: 14,
                 hintText: 'exemplu@gmail.com',
-                leading: SvgPicture.asset(
-                  'assets/images/email.svg',
-                  height: 24,
-                  width: 24,
-                ),
+                leading: AppSvgIcon('assets/images/email.svg', width: 24, height: 24, color: context.colors.accent),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Te rugăm să introduci adresa de email';

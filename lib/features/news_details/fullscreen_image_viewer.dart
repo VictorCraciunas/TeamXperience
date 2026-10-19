@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 
 class FullscreenImageViewer extends StatefulWidget {
   final List<String> images;
@@ -82,11 +82,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                     color: const Color(0x90FFFFFF),
                     borderRadius: BorderRadius.circular(50),
                   ),
-                  child: SvgPicture.asset(
-                    'assets/images/back_icon.svg',
-                    width: 24,
-                    height: 24,
-                  ),
+                  child: AppSvgIcon('assets/images/back_icon.svg', width: 24, height: 24),
                 ),
               ),
             ),

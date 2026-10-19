@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/event.dart';
@@ -232,11 +232,7 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          SvgPicture.asset(
-                                            'assets/images/add_icon.svg',
-                                            width: 20,
-                                            height: 20,
-                                          ),
+                                          AppSvgIcon('assets/images/add_icon.svg', width: 20, height: 20, color: context.colors.accent),
                                           const SizedBox(width: 8),
                                           Text(
                                             "Creează eveniment",
@@ -262,11 +258,7 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                                       borderRadius: BorderRadius.circular(50),
                                     ),
                                     child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/images/add_icon.svg',
-                                        width: 20,
-                                        height: 20,
-                                      ),
+                                      child: AppSvgIcon('assets/images/add_icon.svg', width: 20, height: 20, color: context.colors.accent),
                                     ),
                                   ),
                                 ),

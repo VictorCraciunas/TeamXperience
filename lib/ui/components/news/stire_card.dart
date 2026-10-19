@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/enums/stire_type.dart';
@@ -159,11 +160,7 @@ class StireCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 4),
-                      SvgPicture.asset(
-                        'assets/images/punct.svg',
-                        height: 2,
-                        width: 2,
-                      ),
+                      AppSvgIcon('assets/images/punct.svg', width: 2, height: 2),
                       const SizedBox(width: 4),
                       Text(
                         CalendarHelper.formatDate(stire.publicationDate),

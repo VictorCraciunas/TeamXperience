@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/svg.dart';
 
 
 class CustomIconDashBoard extends StatelessWidget {
@@ -31,17 +31,7 @@ class CustomIconDashBoard extends StatelessWidget {
           borderRadius: BorderRadius.circular(50),
         ),
         child: Center(
-          child: SvgPicture.asset(
-            iconString,
-            width: 24,
-            height: 24,
-            colorFilter: activeFilter
-                ? const ColorFilter.mode(
-              Colors.white,
-              BlendMode.srcIn,
-            )
-                : null,
-          ),
+          child: AppSvgIcon(iconString, width: 24, height: 24, color: activeFilter ? Colors.white : null),
         ),
       ),
     );

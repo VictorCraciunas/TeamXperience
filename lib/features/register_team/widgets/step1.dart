@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/svg.dart';
 
 import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
 
@@ -20,12 +20,7 @@ class Step1 extends StatelessWidget {
           hintText: 'Nume echipă',
           leading: Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: SvgPicture.asset(
-              'assets/images/user_icon.svg',
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(context.colors.tick, BlendMode.srcIn),
-            ),
+            child: AppSvgIcon('assets/images/user_icon.svg', width: 24, height: 24, color: context.colors.tick),
           ),
           // ← close SvgPicture.asset
         ),
@@ -36,12 +31,7 @@ class Step1 extends StatelessWidget {
           hintText: '1.  Nume prenume\n2. Nume Prenume ',
           leading: Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: SvgPicture.asset(
-              'assets/images/user-group.svg',
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(context.colors.tick, BlendMode.srcIn),
-            ),
+            child: AppSvgIcon('assets/images/user-group.svg', width: 24, height: 24, color: context.colors.tick),
           ),
           maxLines: null,
           keyboardType: TextInputType.multiline,
@@ -54,12 +44,7 @@ class Step1 extends StatelessWidget {
           hintText: 'Ex: 4',
           leading: Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: SvgPicture.asset(
-              'assets/images/user-group.svg',
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(context.colors.tick, BlendMode.srcIn),
-            ),
+            child: AppSvgIcon('assets/images/user-group.svg', width: 24, height: 24, color: context.colors.tick),
           ),
           keyboardType: TextInputType.number,
         ),

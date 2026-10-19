@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
@@ -171,11 +172,7 @@ class _NewsScreenState extends State<NewsScreen> {
                         color: const Color(0x90FFFFFF),
                         borderRadius: BorderRadius.circular(50),
                       ),
-                      child: SvgPicture.asset(
-                        'assets/images/back_icon.svg',
-                        width: 24,
-                        height: 24,
-                      ),
+                      child: AppSvgIcon('assets/images/back_icon.svg', width: 24, height: 24),
                     ),
                     onTap: () {
                       Navigator.pop(context);
@@ -189,11 +186,7 @@ class _NewsScreenState extends State<NewsScreen> {
                         color: const Color(0x90FFFFFF),
                         borderRadius: BorderRadius.circular(50),
                       ),
-                      child: SvgPicture.asset(
-                        'assets/images/download.svg',
-                        width: 24,
-                        height: 24,
-                      ),
+                      child: AppSvgIcon('assets/images/download.svg', width: 24, height: 24),
                     ),
                   ),
                 ],

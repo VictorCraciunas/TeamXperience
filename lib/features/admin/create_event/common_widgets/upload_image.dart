@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/svg.dart';
 
 class UploadImage extends StatelessWidget {
   final String labelText;
@@ -44,11 +44,7 @@ class UploadImage extends StatelessWidget {
           child: imageUrl == null ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset(
-                'assets/images/upload_image.svg',
-                width: 64,
-                height: 64,
-              ),
+              AppSvgIcon('assets/images/upload_image.svg', width: 64, height: 64),
               const Text(
                 "Încarcă imaginea",
                 style: TextStyle(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
@@ -82,11 +83,7 @@ class LogInScreen extends StatelessWidget {
                   labelText: "Adresa de email",
                   labelFontSize: 14,
                   hintText: 'exemplu@gmail.com',
-                  leading: SvgPicture.asset(
-                    'assets/images/email.svg',
-                    height: 24,
-                    width: 24,
-                  ),
+                  leading: AppSvgIcon('assets/images/email.svg', width: 24, height: 24, color: context.colors.accent),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Te rugăm să introduci adresa de email';
@@ -100,17 +97,9 @@ class LogInScreen extends StatelessWidget {
                   labelText: "Parola",
                   labelFontSize: 14,
                   hintText: 'Parola ta',
-                  leading: SvgPicture.asset(
-                    'assets/images/pass.svg',
-                    height: 24,
-                    width: 24,
-                  ),
+                  leading: AppSvgIcon('assets/images/pass.svg', width: 24, height: 24, color: context.colors.accent),
                   obscureText: true,
-                  trailing: SvgPicture.asset(
-                    'assets/images/show_pass.svg',
-                    height: 24,
-                    width: 24,
-                  ),
+                  trailing: AppSvgIcon('assets/images/show_pass.svg', width: 24, height: 24, color: context.colors.muted),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Te rugăm să introduci parola';

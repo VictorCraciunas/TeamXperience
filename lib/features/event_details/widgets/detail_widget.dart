@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 
 class DetailWidget extends StatelessWidget {
@@ -29,11 +29,7 @@ class DetailWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           child: Center(
-            child: SvgPicture.asset(
-              iconPath,
-              width: 36,
-              height: 36,
-            ),
+            child: AppSvgIcon(iconPath, width: 36, height: 36),
           ),
         ),
         const SizedBox(width: 12),

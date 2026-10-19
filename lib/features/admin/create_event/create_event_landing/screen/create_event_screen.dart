@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:teamxperience/features/admin/create_event/common_widgets/upload_image.dart';
 import 'package:teamxperience/model/event.dart';
@@ -161,11 +161,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     borderWidth: 1.5,
                     borderColor: context.colors.accent,
                     readOnly: true,
-                    trailing: SvgPicture.asset(
-                      'assets/images/calendar.svg',
-                      height: 24,
-                      width: 24,
-                    ),
+                    trailing: AppSvgIcon('assets/images/calendar.svg', width: 24, height: 24, color: context.colors.accent),
                     onTap: () async {
                       final picked = await controller.selectDate(context);
                       if (picked != null) {
@@ -194,11 +190,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     borderWidth: 1.5,
                     borderColor: context.colors.accent,
                     readOnly: true,
-                    trailing: SvgPicture.asset(
-                      'assets/images/calendar.svg',
-                      height: 24,
-                      width: 24,
-                    ),
+                    trailing: AppSvgIcon('assets/images/calendar.svg', width: 24, height: 24, color: context.colors.accent),
                     onTap: () async {
                       final picked = await controller.selectDate(context);
                       if (picked != null) {
@@ -226,11 +218,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     borderWidth: 1.5,
                     borderColor: context.colors.accent,
                     readOnly: true,
-                    trailing: SvgPicture.asset(
-                      'assets/images/calendar.svg',
-                      height: 24,
-                      width: 24,
-                    ),
+                    trailing: AppSvgIcon('assets/images/calendar.svg', width: 24, height: 24, color: context.colors.accent),
                     onTap: () async {
                       final picked = await controller.selectDate(context);
                       if (picked != null) {

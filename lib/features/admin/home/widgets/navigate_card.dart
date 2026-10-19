@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/svg.dart';
 
 
 class NavigateCard extends StatelessWidget {
@@ -27,11 +27,7 @@ class NavigateCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SvgPicture.asset(
-              'assets/images/add_icon.svg',
-              width: 32,
-              height: 32,
-            ),
+            AppSvgIcon('assets/images/add_icon.svg', width: 32, height: 32, color: context.colors.accent),
             const SizedBox(height: 15,),
             Text(text1,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: context.colors.text),),
             Text(text2,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color: context.colors.text),)

@@ -36,3 +36,6 @@ Verify before fixing; none of these were reproduced. Roughly ordered by impact.
 - Admin = `users/{uid}.role == "ADMIN"`, checked only client-side at login. Without Firestore rules (none in repo) any signed-in user could write that field or any event/team data. Rules must be reviewed in the Firebase console.
 - `sendNotification` HTTP function has no authentication (anyone with the URL can POST and push to all users).
 - `firebase_options.dart` / `google-services.json` are public client config by design, but the project's rules decide what they can access.
+
+## Dark mode gaps (deferred on purpose)
+- Splash screen and game screens (mission list, puzzle screen, geolocation and photo-upload widgets) are not polished for dark mode: they are redesigned later (UI plan, follow-up plans). The map keeps its light OpenStreetMap tiles.

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/user.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
@@ -225,11 +225,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                         withBorder: false,
                         gradient: context.colors.ctaGradient,
                         buttonTextSize: 15,
-                        leading: SvgPicture.asset(
-                          'assets/images/download.svg',
-                          width: 19,
-                          height: 19,
-                        ),
+                        leading: AppSvgIcon('assets/images/download.svg', width: 19, height: 19),
                       ),
                     const SizedBox(height: 30),
                   ],

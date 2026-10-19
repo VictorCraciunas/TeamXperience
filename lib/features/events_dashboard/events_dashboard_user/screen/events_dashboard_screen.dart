@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/events_dashboard/events_dashboard_user/controller/events_dash_user_controller.dart';
@@ -182,11 +182,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                           if (!_isSearchExpanded)
                             GestureDetector(
                               onTap: () => Navigator.pop(context),
-                              child: SvgPicture.asset(
-                                'assets/images/back.svg',
-                                width: 24,
-                                height: 24,
-                              ),
+                              child: AppSvgIcon('assets/images/back.svg', width: 24, height: 24),
                             )
                           else
                             const SizedBox(width: 24),

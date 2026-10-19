@@ -46,4 +46,28 @@ void main() {
     expect(AppTheme.dark.scaffoldBackgroundColor, AppColors.dark.page);
     expect(AppTheme.dark.canvasColor, AppColors.dark.panel);
   });
+  test('colour scheme follows the tokens in both themes', () {
+    for (final entry in {
+      AppTheme.light: AppColors.light,
+      AppTheme.dark: AppColors.dark,
+    }.entries) {
+      final scheme = entry.key.colorScheme;
+      final colors = entry.value;
+      expect(scheme.primary, colors.accent);
+      expect(scheme.surface, colors.panel);
+      expect(scheme.onSurface, colors.text);
+      expect(scheme.outline, colors.border);
+      expect(scheme.error, colors.live);
+    }
+  });
+
+  test('dialogs and bottom sheets use the panel colour', () {
+    for (final entry in {
+      AppTheme.light: AppColors.light,
+      AppTheme.dark: AppColors.dark,
+    }.entries) {
+      expect(entry.key.dialogTheme.backgroundColor, entry.value.panel);
+      expect(entry.key.bottomSheetTheme.backgroundColor, entry.value.panel);
+    }
+  });
 }

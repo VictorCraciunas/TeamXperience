@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:flutter_svg/svg.dart';
 
 import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/model/event.dart';
@@ -75,11 +75,7 @@ class EventImage extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SvgPicture.asset(
-                          'assets/images/user-group.svg',
-                          width: 18,
-                          height: 18,
-                        ),
+                        AppSvgIcon('assets/images/user-group.svg', width: 18, height: 18),
                         const SizedBox(width: 2.0),
                         Text(
                           "$nrTeams",

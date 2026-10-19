@@ -52,33 +52,32 @@ import 'package:teamxperience/service/team_service/team_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseFirestore.instance.settings = const Settings(
     persistenceEnabled: true,
   );
   await FCMService.initNotifications();
-  runApp(const MyApp());
+  final themeController = ThemeController(SharedPrefsThemeModeStore());
+  await themeController.load();
+  runApp(MyApp(themeController: themeController));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.themeController});
+
+  final ThemeController themeController;
 
   @override
   Widget build(BuildContext context) {
     // Wrap MaterialApp with MultiProvider
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider<ThemeController>.value(value: themeController),
         // User authentication provider (should be first)
-        ChangeNotifierProvider<UserProvider>(
-          create: (_) => UserProvider(),
-        ),
+        ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
 
         // Core services (no state management)
-        Provider<UserRepo>(
-          create: (_) => UserRepo(),
-        ),
+        Provider<UserRepo>(create: (_) => UserRepo()),
 
         Provider<AuthenticationRepository>(
           create: (_) => AuthenticationRepository(),
@@ -86,90 +85,95 @@ class MyApp extends StatelessWidget {
 
         // AuthUtil with dependencies
         Provider<AuthUtil>(
-          create: (context) => AuthUtil(
-            Provider.of<UserRepo>(context, listen: false),
-            Provider.of<AuthenticationRepository>(context, listen: false),
-            Provider.of<UserProvider>(context, listen: false),
-          ),
+          create:
+              (context) => AuthUtil(
+                Provider.of<UserRepo>(context, listen: false),
+                Provider.of<AuthenticationRepository>(context, listen: false),
+                Provider.of<UserProvider>(context, listen: false),
+              ),
         ),
 
-        Provider<EventService>(
-          create: (_) => EventService(),
-        ),
+        Provider<EventService>(create: (_) => EventService()),
 
-        Provider<NewsService>(
-          create: (_) => NewsService(),
-        ),
+        Provider<NewsService>(create: (_) => NewsService()),
 
         // State management providers
         ChangeNotifierProvider<EventList>(
-          create: (context) => EventList(
-            Provider.of<EventService>(context, listen: false),
-          ),
+          create:
+              (context) =>
+                  EventList(Provider.of<EventService>(context, listen: false)),
         ),
 
         ChangeNotifierProvider<NewsList>(
-          create: (context) => NewsList(
-            Provider.of<NewsService>(context, listen: false),
-          ),
+          create:
+              (context) =>
+                  NewsList(Provider.of<NewsService>(context, listen: false)),
         ),
         ChangeNotifierProvider<UserEventsProvider>(
-          create: (context) => UserEventsProvider(
-            Provider.of<UserProvider>(context, listen: false),
-            Provider.of<EventList>(context, listen: false),
-            Provider.of<EventService>(context, listen: false),
-            TeamService(),
-          ),
+          create:
+              (context) => UserEventsProvider(
+                Provider.of<UserProvider>(context, listen: false),
+                Provider.of<EventList>(context, listen: false),
+                Provider.of<EventService>(context, listen: false),
+                TeamService(),
+              ),
         ),
 
         ChangeNotifierProvider<NewsList>(
-          create: (context) => NewsList(
-            Provider.of<NewsService>(context, listen: false),
-          ),
+          create:
+              (context) =>
+                  NewsList(Provider.of<NewsService>(context, listen: false)),
         ),
       ],
-      child: MaterialApp(
-        theme: AppTheme.light,
-        darkTheme: AppTheme.dark,
-        themeMode: ThemeMode.light,
-        title: 'Treasure Hunt',
-        initialRoute: Routes.redirect,
-        routes: {
-          Routes.redirect: (_) => Consumer<AuthUtil>(
-            builder: (context, authUtil, child) => LandingPage(authUtil: authUtil),
-          ),
-          Routes.register: (_) => const Register(),
-          Routes.signup: (_) => const RegisterScreen(),
-          Routes.login: (_) => const LogInScreen(),
-          Routes.home: (_) => const Home(),
-          Routes.createEvent: (_) => const CreateEventPage(),
-          Routes.addMissions: (_) => const AddMissionsPage(),
-          Routes.adminHome: (_) => const AdminHome(),
-          Routes.splash: (_) => const SplashScreen(),
-          Routes.forgotPassword: (_) => const ForgotPasswordScreen(),
-          Routes.eventDetails: (_) => const EventDetailsScreen(),
-          Routes.eventGame: (_) => const EventGameScreen(),
-          Routes.puzzleGame: (_) => const PuzzleGameScreen(),
-          Routes.eventDashboard: (_) => const EventsDashboard(),
-          Routes.filter: (_) => const FilterEventsScreen(),
-          Routes.createNews: (_) => const CreateStireScreen(),
-          Routes.newsDetails: (_) => const NewsScreen(),
-          Routes.newsDashboard: (_) => const StiriDashboard(),
-          Routes.chooseNewsType: (_) => const NewsCategoryManipulationScreen(),
-          Routes.filterStiri: (_) => const FilterStiriScreen(),
-          Routes.calendar: (_) => const DateRangeSelectionScreen(),
-          Routes.eventDashboardUser: (_) => const FilterEventsUser(),
-          Routes.registerTeam: (_) => const RegisterTeamScreen(),
-          Routes.registerTeamDetails: (_) => const TeamDetailsScreen(),
-          Routes.enterCodeScreen: (_) => const EnterCode(),
-          Routes.chatScreen: (_) => const ChatScreen(),
-          Routes.teamConversations: (_) => const TeamChatsScreen(),
-          Routes.map: (_) => const MapScreen(),
-          Routes.sendNotification: (_) => const NotificationScreen(),
-          Routes.eventRegisteredTeams: (_) => const EventRegisteredTeams(),
-          Routes.eventManagement: (_) => const EventManagementScreen(),
-
-        },
+      child: Consumer<ThemeController>(
+        builder:
+            (context, themeController, _) => MaterialApp(
+              theme: AppTheme.light,
+              darkTheme: AppTheme.dark,
+              themeMode: themeController.mode,
+              title: 'Treasure Hunt',
+              initialRoute: Routes.redirect,
+              routes: {
+                Routes.redirect:
+                    (_) => Consumer<AuthUtil>(
+                      builder:
+                          (context, authUtil, child) =>
+                              LandingPage(authUtil: authUtil),
+                    ),
+                Routes.register: (_) => const Register(),
+                Routes.signup: (_) => const RegisterScreen(),
+                Routes.login: (_) => const LogInScreen(),
+                Routes.home: (_) => const Home(),
+                Routes.createEvent: (_) => const CreateEventPage(),
+                Routes.addMissions: (_) => const AddMissionsPage(),
+                Routes.adminHome: (_) => const AdminHome(),
+                Routes.splash: (_) => const SplashScreen(),
+                Routes.forgotPassword: (_) => const ForgotPasswordScreen(),
+                Routes.eventDetails: (_) => const EventDetailsScreen(),
+                Routes.eventGame: (_) => const EventGameScreen(),
+                Routes.puzzleGame: (_) => const PuzzleGameScreen(),
+                Routes.eventDashboard: (_) => const EventsDashboard(),
+                Routes.filter: (_) => const FilterEventsScreen(),
+                Routes.createNews: (_) => const CreateStireScreen(),
+                Routes.newsDetails: (_) => const NewsScreen(),
+                Routes.newsDashboard: (_) => const StiriDashboard(),
+                Routes.chooseNewsType:
+                    (_) => const NewsCategoryManipulationScreen(),
+                Routes.filterStiri: (_) => const FilterStiriScreen(),
+                Routes.calendar: (_) => const DateRangeSelectionScreen(),
+                Routes.eventDashboardUser: (_) => const FilterEventsUser(),
+                Routes.registerTeam: (_) => const RegisterTeamScreen(),
+                Routes.registerTeamDetails: (_) => const TeamDetailsScreen(),
+                Routes.enterCodeScreen: (_) => const EnterCode(),
+                Routes.chatScreen: (_) => const ChatScreen(),
+                Routes.teamConversations: (_) => const TeamChatsScreen(),
+                Routes.map: (_) => const MapScreen(),
+                Routes.sendNotification: (_) => const NotificationScreen(),
+                Routes.eventRegisteredTeams:
+                    (_) => const EventRegisteredTeams(),
+                Routes.eventManagement: (_) => const EventManagementScreen(),
+              },
+            ),
       ),
     );
   }
