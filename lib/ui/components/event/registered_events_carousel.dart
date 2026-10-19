@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/event/registered_event_card.dart';
 
@@ -80,7 +80,7 @@ class _RegisteredEventsCarouselState extends State<RegisteredEventsCarousel> {
           height: 8.0,
           decoration: BoxDecoration(
             color: _currentIndex == index
-                ? MyColors.lightBlue
+                ? context.colors.accent
                 : const Color(0x2453C4C7),
             borderRadius: BorderRadius.circular(4.0),
           ),

@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/utils/calendar_helper.dart';
 
 class RegisteredEventCard extends StatelessWidget {
@@ -41,7 +41,7 @@ class RegisteredEventCard extends StatelessWidget {
                   height: 60,
                   width: 60,
                   decoration: BoxDecoration(
-                    color: upComingRegisteredEvent ? Colors.white : MyColors.transparentLightBlue,
+                    color: upComingRegisteredEvent ? Colors.white : context.colors.iconButtonBg,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
@@ -49,18 +49,18 @@ class RegisteredEventCard extends StatelessWidget {
                     children: [
                       Text(
                         month,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 13,
-                          color: MyColors.blackColor,
+                          color: context.colors.text,
                         ),
                       ),
                       Text(
                         day,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 15,
-                          color: MyColors.blackColor,
+                          color: context.colors.text,
                         ),
                       ),
                     ],
@@ -101,7 +101,7 @@ class RegisteredEventCard extends StatelessWidget {
                         style:  TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: upComingRegisteredEvent ? Colors.white : MyColors.blackColor,
+                          color: upComingRegisteredEvent ? Colors.white : context.colors.text,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -113,16 +113,16 @@ class RegisteredEventCard extends StatelessWidget {
             SizedBox(height: 10),
             MyButton(
               buttonText: upComingRegisteredEvent ? "Începe jocul" : "Detalii înscriere",
-              textColor: upComingRegisteredEvent ? const Color(0xFF222F62) : MyColors.blackColor,
+              textColor: upComingRegisteredEvent ? const Color(0xFF222F62) : context.colors.text,
               buttonOnTap: () => onEventTap(event),
               withBorder: false,
-              buttonColor: upComingRegisteredEvent ? Colors.white : MyColors.transparentLightBlue,
+              buttonColor: upComingRegisteredEvent ? Colors.white : context.colors.iconButtonBg,
               leading: SvgPicture.asset(
                 upComingRegisteredEvent ? 'assets/images/incepe_jocul.svg' : 'assets/images/user_icon.svg',
                 width: 19,
                 height: 19,
                 colorFilter:  ColorFilter.mode(
-                  upComingRegisteredEvent ? const Color(0xFF222F62) : MyColors.blackColor,
+                  upComingRegisteredEvent ? const Color(0xFF222F62) : context.colors.text,
                   BlendMode.srcIn,
                 ),
               ),

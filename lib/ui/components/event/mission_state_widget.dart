@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/enums/missions_state.dart';
 
-import 'package:teamxperience/constants/colors.dart';
 
 class MissionStateWidget extends StatelessWidget {
   final MissionState missionState;
@@ -42,10 +42,10 @@ class MissionStateWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                           color:
                               missionState == MissionState.finalizata
-                                  ? MyColors.lightBlue
+                                  ? context.colors.accent
                                   : missionState == MissionState.deblcata
-                                  ? MyColors.transparentLightBlue
-                                  : Color(0xFFFFC4C4),
+                                  ? context.colors.iconButtonBg
+                                  : context.colors.insetBorder,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Padding(
@@ -73,7 +73,7 @@ class MissionStateWidget extends StatelessWidget {
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 15,
-                              color: MyColors.blackColor,
+                              color: context.colors.text,
                             ),
                           ),
                           SizedBox(height: 5),

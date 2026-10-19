@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:provider/provider.dart';
-import 'package:teamxperience/constants/colors.dart';
 
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/model/event.dart';
@@ -46,7 +46,7 @@ class MenuWidget extends StatelessWidget {
               );
             },
           ),
-          _buildDivider(),
+          _buildDivider(context),
           _buildMenuItem(
             context,
             'Duplică eveniment',
@@ -60,7 +60,7 @@ class MenuWidget extends StatelessWidget {
               );
             },
           ),
-          _buildDivider(),
+          _buildDivider(context),
           _buildMenuItem(
             context,
             'Șterge eveniment',
@@ -70,7 +70,7 @@ class MenuWidget extends StatelessWidget {
               _showDeleteConfirmation(context);
             },
           ),
-          _buildDivider(),
+          _buildDivider(context),
           _buildMenuItem(
             context,
             'Vezi Eveniment',
@@ -100,10 +100,9 @@ class MenuWidget extends StatelessWidget {
         child: Center(
           child: Text(
             title,
-            style:  const TextStyle(
+            style:  TextStyle(
               fontSize: 16,
-              fontFamily: 'Poppins',
-              color: MyColors.blackColor,
+              color: context.colors.text,
             ),
           ),
         ),
@@ -111,10 +110,10 @@ class MenuWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider() {
+  Widget _buildDivider(BuildContext context) {
     return Container(
       height: 1,
-      color: MyColors.transparentLightBlue,
+      color: context.colors.iconButtonBg,
       margin: const EdgeInsets.symmetric(horizontal: 8),
     );
   }

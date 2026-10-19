@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
@@ -29,13 +30,13 @@ class AlreadyRegisteredCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 10),
-            const Text(
+            Text(
               "Ți-ai înscris deja echipa la acest eveniment!",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: MyColors.blackColor,
+                color: context.colors.text,
               ),
             ),
             const SizedBox(height: 25),
@@ -49,8 +50,8 @@ class AlreadyRegisteredCard extends StatelessWidget {
                 'assets/images/user_icon.svg',
                 width: 19,
                 height: 19,
-                colorFilter: const ColorFilter.mode(
-                  MyColors.blackColor,
+                colorFilter: ColorFilter.mode(
+                  context.colors.text,
                   BlendMode.srcIn,
                 ),
               ),

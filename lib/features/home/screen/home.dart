@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/features/home/controller/home_controller.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import 'package:teamxperience/constants/padding.dart';
-import '../../../constants/colors.dart';
 import '../../../constants/routes.dart';
 import '../../../model/team.dart';
 import '../../../model/user.dart';
@@ -41,7 +41,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.backgroundColor,
+      backgroundColor: context.colors.page,
       appBar: MyAppBar(
         appBarText: "TeamXperience",
         trailing: GestureDetector(
@@ -50,11 +50,11 @@ class _HomeState extends State<Home> {
             width: 45,
             height: 45,
             decoration: BoxDecoration(
-              color: MyColors.transparentLightBlue,
+              color: context.colors.iconButtonBg,
               borderRadius: BorderRadius.circular(50),
             ),
-            child: const Center(
-              child: Icon(Icons.logout_rounded, size: 22, color: MyColors.lightBlue),
+            child: Center(
+              child: Icon(Icons.logout_rounded, size: 22, color: context.colors.accent),
             ),
           ),
         ),

@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 
-import 'package:teamxperience/constants/colors.dart';
 
 class CustomIconDashBoard extends StatelessWidget {
   const CustomIconDashBoard({
@@ -26,8 +26,8 @@ class CustomIconDashBoard extends StatelessWidget {
         height: 45,
         decoration: BoxDecoration(
           color: activeFilter
-              ? MyColors.lightBlue
-              : MyColors.transparentLightBlue,
+              ? context.colors.accent
+              : context.colors.iconButtonBg,
           borderRadius: BorderRadius.circular(50),
         ),
         child: Center(

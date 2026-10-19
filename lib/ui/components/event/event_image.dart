@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_svg/svg.dart';
 
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/model/event.dart';
 
@@ -69,7 +69,7 @@ class EventImage extends StatelessWidget {
                     width: 78,
                     height: 20,
                     decoration: BoxDecoration(
-                      color: MyColors.lightBlue,
+                      color: context.colors.accent,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -106,7 +106,7 @@ class EventImage extends StatelessWidget {
                   width: 78,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: event.type == EventType.PUBLIC || isAdmin == false ? MyColors.lightBlue : const Color(0xFF1C1243),
+                    color: event.type == EventType.PUBLIC || isAdmin == false ? context.colors.accent : const Color(0xFF1C1243),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Center(

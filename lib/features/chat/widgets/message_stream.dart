@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/enums/message_type.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
@@ -9,7 +10,6 @@ import 'package:teamxperience/features/chat/widgets/bubble_position.dart';
 import 'package:teamxperience/features/chat/widgets/day_separator.dart';
 import 'package:teamxperience/features/chat/widgets/image_message_bubble.dart';
 import 'package:teamxperience/features/chat/widgets/message_bubble.dart';
-import 'package:teamxperience/constants/colors.dart';
 
 import '../../../model/team.dart';
 import '../../../state_management/user_provider.dart';
@@ -49,10 +49,10 @@ class MessagesStream extends StatelessWidget {
           stream: controller.getMessages(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return const Expanded(
+              return Expanded(
                 child: Center(
                   child: CircularProgressIndicator(
-                    color: MyColors.lightBlue,
+                    color: context.colors.accent,
                   ),
                 ),
               );

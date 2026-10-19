@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
-import '../../../constants/colors.dart';
 import '../../../utils/calendar_helper.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
@@ -302,7 +302,7 @@ class _DateRangeSelectionScreenState extends State<DateRangeSelectionScreen> {
                   }
                 },
                 withBorder: false,
-                gradient: MyColors.myGradient,
+                gradient: context.colors.ctaGradient,
                 radius: 30,
                 leading: SvgPicture.asset(
                   'assets/images/calendar.svg',

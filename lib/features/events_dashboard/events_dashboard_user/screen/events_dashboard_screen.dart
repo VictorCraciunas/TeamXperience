@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/padding.dart';
@@ -6,7 +7,6 @@ import 'package:teamxperience/features/events_dashboard/events_dashboard_user/co
 import 'package:teamxperience/ui/components/misc/custom_icon_dashboard.dart';
 import 'package:teamxperience/ui/components/event/registered_events_list.dart';
 
-import '../../../../constants/colors.dart';
 import '../../../../constants/routes.dart';
 import '../../../../model/event.dart';
 import '../../../../state_management/user_registered_events.dart';
@@ -132,7 +132,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
             child: Container(
               height: 2,
               decoration: BoxDecoration(
-                color: MyColors.lightBlue,
+                color: context.colors.accent,
                 borderRadius: BorderRadius.circular(1),
               ),
             ),
@@ -140,11 +140,10 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
           const SizedBox(width: 12),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: MyColors.blackColor,
-              fontFamily: 'Poppins',
+              color: context.colors.text,
             ),
           ),
           const SizedBox(width: 12),
@@ -152,7 +151,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
             child: Container(
               height: 2,
               decoration: BoxDecoration(
-                color: MyColors.lightBlue,
+                color: context.colors.accent,
                 borderRadius: BorderRadius.circular(1),
               ),
             ),
@@ -212,7 +211,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                                       height: 45,
                                       margin: const EdgeInsets.only(left: 16, right: 8),
                                       decoration: BoxDecoration(
-                                        color: MyColors.transparentLightBlue,
+                                        color: context.colors.iconButtonBg,
                                         borderRadius: BorderRadius.circular(50),
                                       ),
                                       child: Row(
@@ -222,19 +221,17 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                                             child: TextField(
                                               controller: _searchController,
                                               focusNode: _searchFocusNode,
-                                              decoration: const InputDecoration(
+                                              decoration: InputDecoration(
                                                 hintText: 'Caută evenimente...',
                                                 hintStyle: TextStyle(
                                                   fontSize: 14,
-                                                  fontFamily: 'Poppins',
-                                                  color: MyColors.greyText,
+                                                  color: context.colors.muted,
                                                 ),
                                                 border: InputBorder.none,
                                               ),
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 14,
-                                                fontFamily: 'Poppins',
-                                                color: MyColors.blackColor,
+                                                color: context.colors.text,
                                               ),
                                             ),
                                           ),
@@ -245,11 +242,11 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                                               width: 45,
                                               height: 45,
                                               decoration: const BoxDecoration(),
-                                              child: const Center(
+                                              child: Center(
                                                 child: Icon(
                                                   Icons.close,
                                                   size: 24,
-                                                  color: MyColors.blackColor,
+                                                  color: context.colors.text,
                                                 ),
                                               ),
                                             ),
@@ -288,7 +285,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: MyColors.transparentLightBlue,
+                              color: context.colors.iconButtonBg,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
@@ -296,19 +293,18 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                               children: [
                                 Text(
                                   '${_formatDate(controller.startDate!)} - ${_formatDate(controller.endDate!)}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
-                                    fontFamily: 'Poppins',
-                                    color: MyColors.blackColor,
+                                    color: context.colors.text,
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 GestureDetector(
                                   onTap: () => controller.clearDateFilter(),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.close,
                                     size: 16,
-                                    color: MyColors.blackColor,
+                                    color: context.colors.text,
                                   ),
                                 ),
                               ],
@@ -326,33 +322,32 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: MyColors.transparentLightBlue,
+                        color: context.colors.iconButtonBg,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.search,
                             size: 14,
-                            color: MyColors.blackColor,
+                            color: context.colors.text,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             '"${controller.searchQuery}"',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              fontFamily: 'Poppins',
-                              color: MyColors.blackColor,
+                              color: context.colors.text,
                             ),
                           ),
                           const SizedBox(width: 8),
                           GestureDetector(
                             onTap: _clearSearchQuery,
-                            child: const Icon(
+                            child: Icon(
                               Icons.close,
                               size: 16,
-                              color: MyColors.blackColor,
+                              color: context.colors.text,
                             ),
                           ),
                         ],
@@ -367,7 +362,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                     height: 50,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: MyColors.transparentLightBlue,
+                      color: context.colors.iconButtonBg,
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Row(
@@ -386,7 +381,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                                 width: double.infinity,
                                 decoration: isEvenimente
                                     ? BoxDecoration(
-                                  color: MyColors.lightBlue,
+                                  color: context.colors.accent,
                                   borderRadius: BorderRadius.circular(30),
                                 )
                                     : null,
@@ -396,7 +391,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
-                                      color: isEvenimente ? Colors.white : MyColors.blackColor,
+                                      color: isEvenimente ? Colors.white : context.colors.text,
                                     ),
                                   ),
                                 ),
@@ -416,7 +411,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                               width: double.infinity,
                               decoration: !isEvenimente
                                   ? BoxDecoration(
-                                color: MyColors.lightBlue,
+                                color: context.colors.accent,
                                 borderRadius: BorderRadius.circular(30),
                               )
                                   : null,
@@ -426,7 +421,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
-                                    color: !isEvenimente ? Colors.white : MyColors.blackColor,
+                                    color: !isEvenimente ? Colors.white : context.colors.text,
                                   ),
                                 ),
                               ),
@@ -459,7 +454,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                             Icon(
                               Icons.event_busy,
                               size: 64,
-                              color: MyColors.greyText.withValues(alpha: 0.5),
+                              color: context.colors.muted.withValues(alpha: 0.5),
                             ),
                             const SizedBox(height: 16),
                             Text(
@@ -468,8 +463,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                                   : 'Nu există evenimente',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: MyColors.greyText.withValues(alpha: 0.7),
-                                fontFamily: 'Poppins',
+                                color: context.colors.muted.withValues(alpha: 0.7),
                               ),
                             ),
                           ],
@@ -498,7 +492,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                                   Icon(
                                     Icons.event_available,
                                     size: 64,
-                                    color: MyColors.greyText.withValues(alpha: 0.5),
+                                    color: context.colors.muted.withValues(alpha: 0.5),
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
@@ -507,8 +501,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
                                         : 'Nu există înscrieri',
                                     style: TextStyle(
                                       fontSize: 16,
-                                      color: MyColors.greyText.withValues(alpha: 0.7),
-                                      fontFamily: 'Poppins',
+                                      color: context.colors.muted.withValues(alpha: 0.7),
                                     ),
                                   ),
                                 ],

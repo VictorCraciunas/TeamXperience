@@ -28,24 +28,24 @@
 //                     (value) => setState(
 //                       () => controller.checkBox1 = value!,
 //                 ),
-//                 activeColor: MyColors.yellow,
+//                 activeColor: context.colors.tick,
 //                 checkColor: Colors.white,
 //                 shape: RoundedRectangleBorder(
 //                   borderRadius: BorderRadius.circular(6),
 //                 ),
-//                 side: const BorderSide(
+//                 side: BorderSide(
 //                   width: 1.5,
-//                   color: Color(0xFFE6E6E6),
+//                   color: context.colors.border,
 //                 ),
 //               ),
 //             ),
 //             const SizedBox(width: 5),
-//             const Expanded(
+//             Expanded(
 //               child: Text(
 //                 "Sunt de acord cu Regulamentul Specific al activității.",
 //                 style: TextStyle(
 //                   fontSize: 13,
-//                   color: MyColors.blackColor,
+//                   color: context.colors.text,
 //                 ),
 //               ),
 //             ),
@@ -62,24 +62,24 @@
 //                     (value) => setState(
 //                       () => controller.checkBox2 = value!,
 //                 ),
-//                 activeColor: MyColors.yellow,
+//                 activeColor: context.colors.tick,
 //                 checkColor: Colors.white,
 //                 shape: RoundedRectangleBorder(
 //                   borderRadius: BorderRadius.circular(6),
 //                 ),
-//                 side: const BorderSide(
+//                 side: BorderSide(
 //                   width: 1.5,
-//                   color: Color(0xFFE6E6E6),
+//                   color: context.colors.border,
 //                 ),
 //               ),
 //             ),
 //             const SizedBox(width: 5),
-//             const Expanded(
+//             Expanded(
 //               child: Text(
 //                 "Sunt de acord cu folosirea datelor cu caracter personal.",
 //                 style: TextStyle(
 //                   fontSize: 13,
-//                   color: MyColors.blackColor,
+//                   color: context.colors.text,
 //                 ),
 //               ),
 //             ),
@@ -97,24 +97,24 @@
 //                     (value) => setState(
 //                       () => controller.checkBox3 = value!,
 //                 ),
-//                 activeColor: MyColors.yellow,
+//                 activeColor: context.colors.tick,
 //                 checkColor: Colors.white,
 //                 shape: RoundedRectangleBorder(
 //                   borderRadius: BorderRadius.circular(6),
 //                 ),
-//                 side: const BorderSide(
+//                 side: BorderSide(
 //                   width: 1.5,
-//                   color: Color(0xFFE6E6E6),
+//                   color: context.colors.border,
 //                 ),
 //               ),
 //             ),
 //             const SizedBox(width: 5),
-//             const Expanded(
+//             Expanded(
 //               child: Text(
 //                 "Sunt de acord ca imaginile și  video-urile care sunt realizate de organizatori sau de membrii echipei  mele în timpul activității să îmi fie trimise după eveniment. În același timp ASOCIAȚIA VBE SIBIU poate folosi aceste resurse pentru promovare.",
 //                 style: TextStyle(
 //                   fontSize: 14,
-//                   color: MyColors.blackColor,
+//                   color: context.colors.text,
 //                 ),
 //               ),
 //             ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
@@ -28,7 +28,7 @@ class ImageUploadActionButton extends StatelessWidget {
           textColor: Colors.white,
           buttonOnTap: onContinue,
           withBorder: false,
-          gradient: MyColors.myGradient,
+          gradient: context.colors.ctaGradient,
           buttonTextSize: 15,
         );
       case PhotoApprovalStatus.denied:
@@ -37,7 +37,7 @@ class ImageUploadActionButton extends StatelessWidget {
           textColor: Colors.white,
           buttonOnTap: onReupload,
           withBorder: false,
-          gradient: MyColors.myGradient,
+          gradient: context.colors.ctaGradient,
           buttonTextSize: 15,
         );
       case PhotoApprovalStatus.pending:

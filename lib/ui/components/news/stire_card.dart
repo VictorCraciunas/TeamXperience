@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/enums/stire_type.dart';
 import 'package:teamxperience/model/stire.dart';
 import 'package:teamxperience/utils/image_helper.dart';
@@ -97,7 +97,7 @@ class StireCard extends StatelessWidget {
                     width: 78,
                     height: 20,
                     decoration: BoxDecoration(
-                      color: stire.type == StireType.PUBLICA ? MyColors.lightBlue : const Color(0xFF0B2F63),
+                      color: stire.type == StireType.PUBLICA ? context.colors.accent : const Color(0xFF0B2F63),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Center(
@@ -130,7 +130,6 @@ class StireCard extends StatelessWidget {
                       color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      fontFamily: 'Poppins',
                       height: 1.2,
                     ),
                     maxLines: 10,
@@ -157,7 +156,6 @@ class StireCard extends StatelessWidget {
                         style: const TextStyle(
                           color: Colors.white70,
                           fontSize: 10,
-                          fontFamily: 'Poppins',
                         ),
                       ),
                       const SizedBox(width: 4),
@@ -172,7 +170,6 @@ class StireCard extends StatelessWidget {
                         style: const TextStyle(
                           color: Colors.white70,
                           fontSize: 10,
-                          fontFamily: 'Poppins',
                         ),
                       ),
                     ],

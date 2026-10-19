@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart'; // Add this import
 import 'package:teamxperience/constants/colors.dart';
@@ -89,7 +90,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   );
                 },
                 withBorder: false,
-                gradient: MyColors.myGradient,
+                gradient: context.colors.ctaGradient,
                 buttonTextSize: 15,
               ),
             ),
@@ -115,7 +116,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   }
                 },
                 withBorder: false,
-                gradient: MyColors.myGradient,
+                gradient: context.colors.ctaGradient,
                 buttonTextSize: 15,
               ),
             ),
@@ -151,10 +152,10 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     const SizedBox(height: 10),
                     Text(
                       controller.event.name ?? "Nu avem nume eveniment",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.w600,
-                        color: MyColors.blackColor,
+                        color: context.colors.text,
                       ),
                     ),
                     if(isRegistered == true)
@@ -174,21 +175,21 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     const SizedBox(height: 30),
                     Text(
                       controller.event.description ?? "No description",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w300,
-                        color: Colors.black,
+                        color: context.colors.text,
                       ),
                     ),
                     const SizedBox(height: 30),
 
                     // ------ Detalii ------
-                    const Text(
+                    Text(
                       "Detalii",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
-                        color: MyColors.blackColor,
+                        color: context.colors.text,
                       ),
                     ),
                     const SizedBox(height: 12),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
 
 class ImageUploadStatusBanner extends StatelessWidget {
@@ -15,7 +15,7 @@ class ImageUploadStatusBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isUploading) {
-      return const CircularProgressIndicator(color: MyColors.lightBlue);
+      return CircularProgressIndicator(color: context.colors.accent);
     }
 
     switch (status) {

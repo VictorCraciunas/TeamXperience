@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/model/stire.dart';
 import 'package:teamxperience/ui/components/news/stire_card.dart';
 

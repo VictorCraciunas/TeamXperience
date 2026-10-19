@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/stire.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
@@ -169,7 +169,7 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                                 child: Container(
                                   height: 45,
                                   decoration: BoxDecoration(
-                                    color: MyColors.transparentLightBlue,
+                                    color: context.colors.iconButtonBg,
                                     borderRadius: BorderRadius.circular(50),
                                   ),
                                   child: Row(
@@ -181,11 +181,11 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                                         height: 20,
                                       ),
                                       const SizedBox(width: 8),
-                                      const Text(
+                                      Text(
                                         "Creează știre",
                                         style: TextStyle(
                                           fontSize: 15,
-                                          color: MyColors.blackColor,
+                                          color: context.colors.text,
                                         ),
                                       ),
                                     ],
@@ -201,7 +201,7 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                                 width: 45,
                                 height: 45,
                                 decoration: BoxDecoration(
-                                  color: MyColors.transparentLightBlue,
+                                  color: context.colors.iconButtonBg,
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                                 child: Center(
@@ -224,8 +224,8 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                               height: 45,
                               decoration: BoxDecoration(
                                 color: controller.hasActiveFilters
-                                    ? MyColors.lightBlue
-                                    : MyColors.transparentLightBlue,
+                                    ? context.colors.accent
+                                    : context.colors.iconButtonBg,
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: Center(
@@ -251,7 +251,7 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                               child: Container(
                                 height: 45,
                                 decoration: BoxDecoration(
-                                  color: MyColors.transparentLightBlue,
+                                  color: context.colors.iconButtonBg,
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                                 child: Row(
@@ -261,19 +261,17 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                                       child: TextField(
                                         controller: _searchController,
                                         focusNode: _searchFocusNode,
-                                        decoration: const InputDecoration(
+                                        decoration: InputDecoration(
                                           hintText: 'Caută știri...',
                                           hintStyle: TextStyle(
                                             fontSize: 14,
-                                            fontFamily: 'Poppins',
-                                            color: MyColors.greyText,
+                                            color: context.colors.muted,
                                           ),
                                           border: InputBorder.none,
                                         ),
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 14,
-                                          fontFamily: 'Poppins',
-                                          color: MyColors.blackColor,
+                                          color: context.colors.text,
                                         ),
                                       ),
                                     ),
@@ -284,11 +282,11 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                                         width: 45,
                                         height: 45,
                                         decoration: const BoxDecoration(),
-                                        child: const Center(
+                                        child: Center(
                                           child: Icon(
                                             Icons.close,
                                             size: 24,
-                                            color: MyColors.blackColor,
+                                            color: context.colors.text,
                                           ),
                                         ),
                                       ),
@@ -305,7 +303,7 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                                 width: 45,
                                 height: 45,
                                 decoration: BoxDecoration(
-                                  color: MyColors.transparentLightBlue,
+                                  color: context.colors.iconButtonBg,
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                                 child: Center(
@@ -336,7 +334,7 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: MyColors.transparentLightBlue,
+                              color: context.colors.iconButtonBg,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
@@ -344,19 +342,18 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                               children: [
                                 Text(
                                   controller.selectedStireType!.displayName.toUpperCase(),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
-                                    fontFamily: 'Poppins',
-                                    color: MyColors.blackColor,
+                                    color: context.colors.text,
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 GestureDetector(
                                   onTap: () => controller.clearStireTypeFilter(),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.close,
                                     size: 16,
-                                    color: MyColors.blackColor,
+                                    color: context.colors.text,
                                   ),
                                 ),
                               ],
@@ -369,7 +366,7 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: MyColors.transparentLightBlue,
+                              color: context.colors.iconButtonBg,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
@@ -377,19 +374,18 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                               children: [
                                 Text(
                                   controller.selectedCategory!.name,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
-                                    fontFamily: 'Poppins',
-                                    color: MyColors.blackColor,
+                                    color: context.colors.text,
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 GestureDetector(
                                   onTap: () => controller.clearCategoryFilter(),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.close,
                                     size: 16,
-                                    color: MyColors.blackColor,
+                                    color: context.colors.text,
                                   ),
                                 ),
                               ],
@@ -402,7 +398,7 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: MyColors.transparentLightBlue,
+                              color: context.colors.iconButtonBg,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
@@ -410,19 +406,18 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                               children: [
                                 Text(
                                   '${_formatDate(controller.startDate!)} - ${_formatDate(controller.endDate!)}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
-                                    fontFamily: 'Poppins',
-                                    color: MyColors.blackColor,
+                                    color: context.colors.text,
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 GestureDetector(
                                   onTap: () => controller.clearDateFilter(),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.close,
                                     size: 16,
-                                    color: MyColors.blackColor,
+                                    color: context.colors.text,
                                   ),
                                 ),
                               ],
@@ -441,33 +436,32 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: MyColors.transparentLightBlue,
+                        color: context.colors.iconButtonBg,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.search,
                             size: 14,
-                            color: MyColors.blackColor,
+                            color: context.colors.text,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             '"${controller.searchQuery}"',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              fontFamily: 'Poppins',
-                              color: MyColors.blackColor,
+                              color: context.colors.text,
                             ),
                           ),
                           const SizedBox(width: 8),
                           GestureDetector(
                             onTap: _clearSearchQuery,
-                            child: const Icon(
+                            child: Icon(
                               Icons.close,
                               size: 16,
-                              color: MyColors.blackColor,
+                              color: context.colors.text,
                             ),
                           ),
                         ],
@@ -487,7 +481,7 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                           Icon(
                             Icons.article_outlined,
                             size: 64,
-                            color: MyColors.greyText.withOpacity(0.5),
+                            color: context.colors.muted.withOpacity(0.5),
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -496,8 +490,7 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
                                 : 'Nu există știri',
                             style: TextStyle(
                               fontSize: 16,
-                              color: MyColors.greyText.withOpacity(0.7),
-                              fontFamily: 'Poppins',
+                              color: context.colors.muted.withOpacity(0.7),
                             ),
                           ),
                         ],
