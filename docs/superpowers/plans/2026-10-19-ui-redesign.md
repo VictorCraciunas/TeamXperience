@@ -275,9 +275,9 @@ The approved mockups only cover the player Home. This phase produces the admin e
 
 ### Task 15: Admin Home mockup and spec addendum
 
-- [ ] **Step 1:** Collect the real admin Home content from `lib/features/admin/home/` and the existing admin screens (list in the spec section "Admin Home"); capture a screenshot of the current admin Home from the device.
-- [ ] **Step 2:** Mock up the admin Home (light and dark) using the approved tokens and the generic components: hero states live / starting within 24 h / none, `StatTile` rows (teams, people), `ActionTile` quick actions (Creează eveniment, Creează știre, Trimite notificare), events with stats, news. Decide the admin tab set (proposal: Acasă, Evenimente, Știri, Profil).
-- [ ] **Step 3:** Owner approves; append a section "Admin Home (approved)" to the spec with the hero rules, copy, tabs and any new tokens. Commit `Add admin Home design to spec`; merge.
+- [x] **Step 1:** Collect the real admin Home content from `lib/features/admin/home/` and the existing admin screens (list in the spec section "Admin Home"); capture a screenshot of the current admin Home from the device.
+- [x] **Step 2:** Mock up the admin Home (light and dark) using the approved tokens and the generic components: hero states live / starting within 24 h / none, `StatTile` rows (teams, people), `ActionTile` quick actions (Creează eveniment, Creează știre, Trimite notificare), events with stats, news. Decide the admin tab set (proposal: Acasă, Evenimente, Știri, Profil).
+- [x] **Step 3:** Owner approves (2026-10-19); append a section "Admin Home (approved)" to the spec with the hero rules, copy, tabs and any new tokens. Commit `Add admin Home design to spec`; merge.
 
 ---
 

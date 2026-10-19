@@ -65,3 +65,19 @@ The approved mockups cover the **player** Home only. Admin Home is designed late
 
 ## Out of scope for this plan
 Event details, game mission list, auth and the other admin screen redesigns (separate plans; Admin Home itself is Phases 7-8), a `maxTeams` field on `Event`, enforcement of the enrollment window on the register button, Firestore security rules.
+
+## Admin Home (approved)
+Approved by the owner on 2026-10-19 from the mockup "Live event / Event starting soon". Same tokens and components as the player Home (`EventHeroCard`, `SectionCard`, `StatTile`, `ActionTile`, `AppShell`).
+
+Layout top to bottom: top bar (wordmark + bell), hero card, state panel, "Acțiuni rapide" panel, "Evenimente viitoare" panel, bottom bar (Acasă, Evenimente, Știri, Profil; red dot on Evenimente while an event is live). The "Noutăți" panel of today's admin Home is dropped (news stays reachable through the Știri tab).
+
+Hero states (priority order):
+1. **Live**: an event that started and is not over (`Event.isOver` false). Red `LIVE` pill, time chip `h:mm:ss rămase`, title = event name, subtitle `N echipe · X au terminat · Y în joc`, primary action "Gestionează eveniment" (-> `Routes.eventManagement`), secondary icon buttons for the map (-> `Routes.map`) and team chats (-> `Routes.teamConversations`). State panel "În acest moment" with three `StatTile`s: Echipe, Persoane, Au terminat.
+2. **Starting soon**: next event starting within 24 h. Amber pill "Urmează", time chip `Începe în H h M min`, subtitle `N echipe înscrise · P persoane`, primary action "Vezi echipele înscrise" (-> `Routes.eventRegisteredTeams`), secondary icon button "Trimite notificare" (-> `Routes.sendNotification` with the event). State panel "Pregătire" with `StatTile`s: Echipe înscrise, Persoane (the third tile of the mockup, "Cod de start trimis", is dropped: no such data exists).
+3. **None**: no hero and no state panel.
+
+"Acțiuni rapide" panel: three `ActionTile`s: Creează eveniment (-> `Routes.createEvent`), Creează știre (-> `Routes.createNews`), Trimite notificare (-> `Routes.sendNotification`).
+
+"Evenimente viitoare" panel (`SectionCard`, count badge = number of future events, link "Vezi toate" -> admin events dashboard): rows with date block (navy), event name, place, and `N echipe` / `P pers.` from `TeamRepo.getAllTeamsForEvent` (persons = sum of `numberOfMembers`).
+
+Data notes: teams finished = count of teams with `hasFinished`, teams in play = started and not finished; both need one team query for the live event (the stats loader in `AdminHomeController` already reads teams per upcoming event). Same 30 s refresh timer as the player Home so the hero leaves the live state when the 3 h mark passes.
