@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
-import 'package:teamxperience/widgets/slider_widget.dart';
+import 'package:teamxperience/ui/components/misc/slider_widget.dart';
 import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';

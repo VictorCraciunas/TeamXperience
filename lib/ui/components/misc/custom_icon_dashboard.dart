@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../constants/colors.dart';
-import '../features/events_dashboard/events_dashboard_admin/controller/events_dashboard_controller.dart';
+import 'package:teamxperience/constants/colors.dart';
+import 'package:teamxperience/features/events_dashboard/events_dashboard_admin/controller/events_dashboard_controller.dart';
 
 class CustomIconDashBoard extends StatelessWidget {
   const CustomIconDashBoard({

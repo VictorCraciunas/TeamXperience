@@ -5,7 +5,7 @@ import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';
 import '../../../../../../../utils/component_conversion/component_to_widget.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
-import '../../../../../../../widgets/slider_widget.dart';
+import 'package:teamxperience/ui/components/misc/slider_widget.dart';
 import '../../../../common_widgets/upload_image.dart';
 import '../../../controller/add_missions_controller.dart';
 import 'create_image_controller.dart';

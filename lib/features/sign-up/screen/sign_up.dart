@@ -8,7 +8,7 @@ import '../../../constants/routes.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
-import '../../../widgets/terms_text.dart';
+import 'package:teamxperience/ui/components/misc/terms_text.dart';
 
 
 class RegisterScreen extends StatelessWidget {

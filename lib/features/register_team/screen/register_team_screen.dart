@@ -3,7 +3,7 @@ import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/register_team/controller/register_team_controller.dart';
 import 'package:teamxperience/model/event.dart';
-import 'package:teamxperience/widgets/StepRegisterIcon.dart';
+import 'package:teamxperience/ui/components/misc/step_register_icon.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 

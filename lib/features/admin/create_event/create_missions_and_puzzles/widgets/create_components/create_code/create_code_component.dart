@@ -8,7 +8,7 @@ import '../../../../../../../model/puzzle.dart';
 import '../../../../../../../utils/component_conversion/component_to_widget.dart';
 import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
 import 'code_component_controller.dart';
-import '../../../../../../../widgets/slider_widget.dart';
+import 'package:teamxperience/ui/components/misc/slider_widget.dart';
 
 class CodeComponentFieldsWidget extends StatefulWidget {
   final Function(Widget) refreshUI;

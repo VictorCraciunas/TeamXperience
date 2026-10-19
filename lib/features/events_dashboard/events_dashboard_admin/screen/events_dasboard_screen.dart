@@ -9,7 +9,7 @@ import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import '../../../../constants/routes.dart';
 import '../../../../enums/event_type.dart';
 import '../../../../state_management/events_state_management.dart';
-import '../../../../widgets/CustomIconDashboard.dart';
+import 'package:teamxperience/ui/components/misc/custom_icon_dashboard.dart';
 import 'package:teamxperience/ui/components/event/events_list.dart';
 import '../controller/events_dashboard_controller.dart';
 

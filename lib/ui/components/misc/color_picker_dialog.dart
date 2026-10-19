@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:teamxperience/utils/color_conversion.dart';
 
-import '../../../../../../../constants/colors.dart';
+import 'package:teamxperience/constants/colors.dart';
 
 class ColorPickerDialog {
   static Future<void> show(BuildContext context, String title, Color initialColor, Function(String) onColorChanged) async {
