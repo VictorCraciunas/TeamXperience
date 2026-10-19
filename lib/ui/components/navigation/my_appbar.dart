@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/model/event.dart';
 
-import 'menu.dart';
+import 'package:teamxperience/ui/components/navigation/menu.dart';
 
 class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String appBarText;

@@ -7,7 +7,7 @@ import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import 'package:teamxperience/widgets/terms_text.dart';
 
 import '../../../constants/padding.dart';
-import '../../../widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
 
 class LogInScreen extends StatelessWidget {

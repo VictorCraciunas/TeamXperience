@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/user.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
 import '../../../constants/colors.dart';

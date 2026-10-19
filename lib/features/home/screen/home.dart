@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/features/home/controller/home_controller.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import 'package:teamxperience/constants/padding.dart';
 import '../../../constants/colors.dart';

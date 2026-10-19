@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import '../../../constants/colors.dart';
 import '../../../utils/calendar_helper.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/event.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import '../controller/event_management_controller.dart';
 import '../widgets/info_banner.dart';

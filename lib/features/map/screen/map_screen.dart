@@ -6,7 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/map/controller/map_controller.dart';
 import 'package:teamxperience/model/team.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});

@@ -4,7 +4,7 @@ import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/register_team/controller/register_team_controller.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/widgets/StepRegisterIcon.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
 import '../widgets/step1.dart';

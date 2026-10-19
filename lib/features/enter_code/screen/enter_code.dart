@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/enter_code/controller/enter_code_controller.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import '../../../model/event.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';

@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/admin/create_event/common_widgets/upload_image.dart';
 import 'package:teamxperience/model/event.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import '../../../../../constants/padding.dart';
 import '../../../../../enums/event_type.dart';

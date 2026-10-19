@@ -4,7 +4,7 @@ import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/notification/controller/notification_controller.dart';
 import 'package:teamxperience/model/event.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
 

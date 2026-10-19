@@ -3,7 +3,7 @@ import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/enums/event_type.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
 import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';

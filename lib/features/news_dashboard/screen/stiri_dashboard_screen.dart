@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/stire.dart';
-import 'package:teamxperience/widgets/my_appbar.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import '../../../constants/routes.dart';
 import '../../../state_management/news_state_management.dart';
