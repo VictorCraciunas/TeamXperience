@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/model/event.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
 import 'package:teamxperience/utils/calendar_helper.dart';
 
@@ -111,22 +111,23 @@ class RegisteredEventCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: 10),
-            MyButton(
-              buttonText: upComingRegisteredEvent ? "Începe jocul" : "Detalii înscriere",
-              textColor: upComingRegisteredEvent ? const Color(0xFF222F62) : context.colors.text,
-              buttonOnTap: () => onEventTap(event),
-              withBorder: false,
-              buttonColor: upComingRegisteredEvent ? Colors.white : context.colors.iconButtonBg,
+            AppButton(
+              label: upComingRegisteredEvent ? 'Începe jocul' : 'Detalii înscriere',
+              onPressed: () => onEventTap(event),
+              backgroundColor: upComingRegisteredEvent ? Colors.white : null,
+              foregroundColor:
+                  upComingRegisteredEvent ? context.colors.navy : null,
               leading: SvgPicture.asset(
-                upComingRegisteredEvent ? 'assets/images/incepe_jocul.svg' : 'assets/images/user_icon.svg',
+                upComingRegisteredEvent
+                    ? 'assets/images/incepe_jocul.svg'
+                    : 'assets/images/user_icon.svg',
                 width: 19,
                 height: 19,
-                colorFilter:  ColorFilter.mode(
-                  upComingRegisteredEvent ? const Color(0xFF222F62) : context.colors.text,
+                colorFilter: ColorFilter.mode(
+                  upComingRegisteredEvent ? context.colors.navy : Colors.white,
                   BlendMode.srcIn,
                 ),
               ),
-              buttonTextSize: 15,
             ),
           ],
         ),
