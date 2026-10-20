@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
+import 'app_text_styles.dart';
 
 abstract class AppTheme {
   static ThemeData get light => _build(AppColors.light, Brightness.light);
@@ -25,6 +26,7 @@ abstract class AppTheme {
       brightness: brightness,
       fontFamily: 'Poppins',
       colorScheme: scheme,
+      textTheme: AppTextStyles.textTheme(colors),
       scaffoldBackgroundColor: colors.page,
       canvasColor: colors.panel,
       dialogTheme: DialogThemeData(
