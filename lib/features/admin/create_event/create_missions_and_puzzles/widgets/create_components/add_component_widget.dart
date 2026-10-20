@@ -4,7 +4,6 @@ import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/puzzle.dart';
 
-import '../../../../../../constants/padding.dart';
 import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
 import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
 import '../../controller/add_missions_controller.dart';
@@ -50,7 +49,7 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: MyPaddings.appHorizontalPadding,
+            horizontal: AppSpacing.page,
           ),
           child: Column(
             children: [

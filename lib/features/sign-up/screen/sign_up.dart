@@ -4,7 +4,6 @@ import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/features/sign-up/controller/signup_controller.dart';
 
 import '../../../constants/colors.dart';
-import '../../../constants/padding.dart';
 import '../../../constants/routes.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
@@ -25,7 +24,7 @@ class RegisterScreen extends StatelessWidget {
       appBar: const MyAppBar(appBarText: "Inregistrare"),
       body: SingleChildScrollView(
         child:Padding(
-          padding: const EdgeInsets.symmetric(horizontal: MyPaddings.appHorizontalPadding),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
           child: Form(
             key: controller.formKey,
             child: Column(

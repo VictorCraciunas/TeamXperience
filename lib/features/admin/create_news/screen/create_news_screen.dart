@@ -8,7 +8,6 @@ import 'package:teamxperience/features/admin/create_event/common_widgets/upload_
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import 'package:teamxperience/enums/stire_type.dart';
-import '../../../../../constants/padding.dart';
 import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
 import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
 import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
@@ -146,7 +145,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: MyPaddings.appHorizontalPadding,
+              horizontal: AppSpacing.page,
             ),
             child: Column(
               children: [

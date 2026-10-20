@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/user.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
@@ -107,7 +106,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
             return SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: MyPaddings.appHorizontalPadding,
+                  horizontal: AppSpacing.page,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

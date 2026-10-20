@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/home/controller/home_controller.dart';
 import 'package:teamxperience/features/home/logic/home_hero.dart';
 import 'package:teamxperience/features/home/logic/preparation_steps.dart';
@@ -102,9 +101,9 @@ class _HomeState extends State<Home> {
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(
-                  MyPaddings.appHorizontalPadding,
-                  MyPaddings.topPaddingHome,
-                  MyPaddings.appHorizontalPadding,
+                  AppSpacing.page,
+                  AppSpacing.lg,
+                  AppSpacing.page,
                   24,
                 ),
                 child: ClockBuilder(

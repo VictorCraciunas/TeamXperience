@@ -3,7 +3,6 @@ import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:provider/provider.dart'; // Add this import
 import 'package:teamxperience/constants/colors.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/event_details/controller/event_details_controller.dart';
 import 'package:teamxperience/features/event_details/widgets/already_registered_card.dart';
@@ -120,7 +119,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           body: SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                horizontal: MyPaddings.appHorizontalPadding,
+                horizontal: AppSpacing.page,
               ),
               child: SingleChildScrollView(
                 child: Column(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
@@ -78,7 +77,7 @@ class _FilterEventsScreenState extends State<FilterEventsScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: MyPaddings.appHorizontalPadding,
+            horizontal: AppSpacing.page,
             vertical: 20,
           ),
           child: Column(

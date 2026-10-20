@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/enums/missions_state.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/ui/components/event/mission_state_widget.dart';
@@ -140,7 +139,7 @@ class _EventGameScreenState extends State<EventGameScreen> {
                       child: SafeArea(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: MyPaddings.appHorizontalPadding,
+                            horizontal: AppSpacing.page,
                           ),
                           child: Column(
                             children: [

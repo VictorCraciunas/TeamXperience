@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
@@ -43,7 +42,7 @@ class _EventManagementScreenState extends State<EventManagementScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: MyPaddings.appHorizontalPadding,
+            horizontal: AppSpacing.page,
           ),
           child: AnimatedBuilder(
             animation: controller,

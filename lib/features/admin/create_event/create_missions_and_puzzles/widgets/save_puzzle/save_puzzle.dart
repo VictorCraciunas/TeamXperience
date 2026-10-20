@@ -8,7 +8,6 @@ import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
 import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
-import '../../../../../../constants/padding.dart';
 import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
 import '../../controller/add_missions_controller.dart';
 
@@ -43,7 +42,7 @@ class _SavePuzzleState extends State<SavePuzzle> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: MyPaddings.appHorizontalPadding,
+          horizontal: AppSpacing.page,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/admin/home/controller/admin_controller.dart';
 import 'package:teamxperience/features/admin/home/logic/admin_hero.dart';
 import 'package:teamxperience/features/admin/home/widgets/admin_hero_actions.dart';
@@ -81,9 +80,9 @@ class _AdminHomeState extends State<AdminHome> {
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(
-                  MyPaddings.appHorizontalPadding,
-                  MyPaddings.topPaddingHome,
-                  MyPaddings.appHorizontalPadding,
+                  AppSpacing.page,
+                  AppSpacing.lg,
+                  AppSpacing.page,
                   24,
                 ),
                 child: ClockBuilder(

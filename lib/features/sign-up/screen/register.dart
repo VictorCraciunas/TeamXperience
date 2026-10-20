@@ -7,7 +7,6 @@ import 'package:teamxperience/features/sign-up/controller/signup_controller.dart
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import 'package:teamxperience/ui/components/misc/terms_text.dart';
 
-import '../../../constants/padding.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 class Register extends StatelessWidget {
@@ -22,7 +21,7 @@ class Register extends StatelessWidget {
       appBar: const MyAppBar(appBarText: "Inregistrare"),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: MyPaddings.appHorizontalPadding),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [

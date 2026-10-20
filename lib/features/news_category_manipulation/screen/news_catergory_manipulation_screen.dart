@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
@@ -63,7 +62,7 @@ class _NewsCategoryManipulationScreenState
                 ? const Center(child: CircularProgressIndicator())
                 : Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: MyPaddings.appHorizontalPadding,
+                    horizontal: AppSpacing.page,
                   ),
                   child: Column(
                     children: [

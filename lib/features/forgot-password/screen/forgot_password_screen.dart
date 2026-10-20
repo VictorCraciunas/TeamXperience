@@ -4,7 +4,6 @@ import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/forgot-password/controller/forgot_password_controller.dart';
 
-import '../../../constants/padding.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
@@ -21,7 +20,7 @@ class ForgotPasswordScreen extends StatelessWidget {
       appBar: const MyAppBar(appBarText: "Resetare parola"),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: MyPaddings.appHorizontalPadding),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [

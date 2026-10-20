@@ -5,7 +5,6 @@ import 'package:teamxperience/features/admin/create_event/create_missions_and_pu
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
-import '../../../../../constants/padding.dart';
 import '../widgets/my_list_component.dart';
 
 class AddMissionsPage extends StatefulWidget {
@@ -52,7 +51,7 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: MyPaddings.appHorizontalPadding,
+            horizontal: AppSpacing.page,
           ),
           child: SingleChildScrollView(
             child: Column(

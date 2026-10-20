@@ -4,7 +4,6 @@ import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/constants/colors.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/stire.dart';
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 
@@ -264,7 +263,7 @@ class _NewsScreenState extends State<NewsScreen> {
                 child: SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: MyPaddings.appHorizontalPadding,
+                      horizontal: AppSpacing.page,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

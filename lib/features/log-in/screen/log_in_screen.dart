@@ -8,7 +8,6 @@ import 'package:teamxperience/features/log-in/controller/log_in_controller.dart'
 import 'package:teamxperience/ui/components/buttons/my_button.dart';
 import 'package:teamxperience/ui/components/misc/terms_text.dart';
 
-import '../../../constants/padding.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
 
@@ -24,7 +23,7 @@ class LogInScreen extends StatelessWidget {
       appBar: const MyAppBar(appBarText: "Logare"),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: MyPaddings.appHorizontalPadding),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
           child: Form(
             key: controller.formKey,
             child: Column(

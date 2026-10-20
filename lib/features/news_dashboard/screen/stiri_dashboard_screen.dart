@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:provider/provider.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/enums/role.dart';
 import 'package:teamxperience/model/stire.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
@@ -149,7 +148,7 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: MyPaddings.appHorizontalPadding,
+            horizontal: AppSpacing.page,
             vertical: 15,
           ),
           child: Consumer<NewsList>(

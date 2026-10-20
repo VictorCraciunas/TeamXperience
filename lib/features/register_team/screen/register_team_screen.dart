@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/constants/colors.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/register_team/controller/register_team_controller.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/misc/step_register_icon.dart';
@@ -35,7 +34,7 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: MyPaddings.appHorizontalPadding,
+            horizontal: AppSpacing.page,
           ),
           child: SingleChildScrollView(
             child: Column(

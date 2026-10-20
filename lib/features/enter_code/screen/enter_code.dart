@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/enter_code/controller/enter_code_controller.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
@@ -32,7 +31,7 @@ class _EnterCodeState extends State<EnterCode> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: MyPaddings.appHorizontalPadding,
+            horizontal: AppSpacing.page,
           ),
           child: Center(
             child: Container(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/ui/components/feedback/snackbars.dart';
@@ -99,7 +98,7 @@ class _EventRegisteredTeamsState extends State<EventRegisteredTeams> {
                 )
               : ListView.separated(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: MyPaddings.appHorizontalPadding,
+                    horizontal: AppSpacing.page,
                     vertical: 16,
                   ),
                   itemCount: controller.teams.length,
