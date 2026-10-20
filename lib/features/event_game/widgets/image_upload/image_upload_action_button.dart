@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
 

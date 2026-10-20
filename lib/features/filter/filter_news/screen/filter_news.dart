@@ -3,12 +3,11 @@ import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
 import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
+import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
 import '../../../../model/newsCategory.dart';
 import '../../../../constants/routes.dart';
 import '../../../../enums/stire_type.dart';
 import '../../../../utils/calendar_helper.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
 import '../controller/filter_news_controller.dart';
 
 class FilterStiriScreen extends StatefulWidget {
@@ -98,12 +97,12 @@ class _FilterStiriScreenState extends State<FilterStiriScreen> {
                   const SizedBox(height: 30),
 
                   // Stire Type Dropdown
-                  MyDropdownField<StireType>(
-                    labelText: 'Tipul știrii',
+                  AppDropdown<StireType>(
+                    label: 'Tipul știrii',
                     items:
                         StireType.values
                             .map(
-                              (type) => DropdownItem<StireType>(
+                              (type) => AppDropdownItem<StireType>(
                                 value: type,
                                 label: type.displayName,
                               ),
@@ -113,20 +112,7 @@ class _FilterStiriScreenState extends State<FilterStiriScreen> {
                     onChanged: (value) {
                       controller.setStireType(value);
                     },
-                    hint: Text(
-                      "Selectează tipul știrii",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: context.colors.muted,
-                      ),
-                    ),
-                    borderColor: context.colors.accent,
-                    borderWidth: 1.5,
-                    radius: 15,
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 20,
-                    ),
+                    hint: "Selectează tipul știrii",
                   ),
                   const SizedBox(height: 20),
 

@@ -4,10 +4,9 @@ import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/save_puzzle/save_puzzle_controller.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
+import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
-import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
 import '../../controller/add_missions_controller.dart';
 
 class SavePuzzle extends StatefulWidget {
@@ -39,13 +38,13 @@ class _SavePuzzleState extends State<SavePuzzle> {
           children: [
             const SizedBox(height: 60), // Match top spacing
             // Puzzle Type Dropdown
-            MyDropdownField<PuzzleType>(
-              labelText: 'Tip Puzzle',
+            AppDropdown<PuzzleType>(
+              label: 'Tip Puzzle',
               value: controller.type,
               items:
                   PuzzleType.values
                       .map(
-                        (type) => DropdownItem<PuzzleType>(
+                        (type) => AppDropdownItem<PuzzleType>(
                           value: type,
                           label: type.toString().split('.').last,
                         ),
@@ -59,13 +58,7 @@ class _SavePuzzleState extends State<SavePuzzle> {
               validator:
                   (value) =>
                       value == null ? 'Selectează tipul de puzzle' : null,
-              borderColor: context.colors.accent,
-              borderWidth: 1.5,
-              radius: 20,
-              hint: Text(
-                'Selectează tipul de puzzle',
-                style: TextStyle(fontSize: 14, color: context.colors.muted),
-              ),
+              hint: 'Selectează tipul de puzzle',
             ),
             const SizedBox(height: 20), // Match spacing between fields
             // Code Text Field (conditional)

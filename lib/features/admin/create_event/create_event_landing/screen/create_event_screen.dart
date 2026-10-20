@@ -7,8 +7,7 @@ import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
 import '../../../../../enums/event_type.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
+import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
 import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
 import '../controller/create_event_controller.dart';
 
@@ -227,12 +226,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   const SizedBox(height: 20),
 
                   // Tip de eveniment
-                  MyDropdownField<EventType>(
-                    labelText: 'Tipul de eveniment',
+                  AppDropdown<EventType>(
+                    label: 'Tipul de eveniment',
                     items:
                         EventType.values
                             .map(
-                              (type) => DropdownItem<EventType>(
+                              (type) => AppDropdownItem<EventType>(
                                 value: type,
                                 label: type.toString().split('.').last,
                               ),
@@ -244,24 +243,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         controller.selectedType = value;
                       });
                     },
-                    hint: Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        "Selectează tipul de eveniment",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: context.colors.muted,
-                        ),
-                      ),
-                    ),
+                    hint: "Selectează tipul de eveniment",
                     validator:
                         (value) =>
                             value == null
                                 ? 'Selectează tipul de eveniment'
                                 : null,
-                    borderColor: context.colors.accent,
-                    borderWidth: 1.5,
-                    radius: 20,
                   ),
                   const SizedBox(height: 20),
 

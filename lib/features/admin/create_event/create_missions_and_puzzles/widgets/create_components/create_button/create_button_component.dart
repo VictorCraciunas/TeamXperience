@@ -7,8 +7,7 @@ import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';
 import '../../../../../../../utils/component_conversion/component_to_widget.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
+import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
 import '../../../controller/add_missions_controller.dart';
 import 'create_button_controller.dart';
 
@@ -134,43 +133,33 @@ class _ButtonComponentFieldsWidgetState
   }
 
   Widget _buildFontFamilyDropdown() {
-    return MyDropdownField<String>(
-      labelText: 'Tip Font',
+    return AppDropdown<String>(
+      label: 'Tip Font',
       items: const [
-        DropdownItem<String>(value: 'Poppins', label: 'Poppins'),
-        DropdownItem<String>(value: 'Monospace', label: 'Monospace'),
+        AppDropdownItem<String>(value: 'Poppins', label: 'Poppins'),
+        AppDropdownItem<String>(value: 'Monospace', label: 'Monospace'),
       ],
       value: controller.fontFamily,
       onChanged: (value) => setState(() => controller.fontFamily = value),
       validator: (value) => value == null ? 'Selectează tipul de font' : null,
-      borderColor: context.colors.accent,
-      borderWidth: 1.5,
-      radius: 20,
-      hint: Text(
-        'Selectează tipul de font',
-        style: TextStyle(fontSize: 14, color: context.colors.muted),
-      ),
+      hint: 'Selectează tipul de font',
     );
   }
 
   Widget _buildFontWeightDropdown() {
-    return MyDropdownField<String>(
-      labelText: 'Grosime Font',
+    return AppDropdown<String>(
+      label: 'Grosime Font',
       items:
           weightMap.keys
-              .map((label) => DropdownItem<String>(value: label, label: label))
+              .map(
+                (label) => AppDropdownItem<String>(value: label, label: label),
+              )
               .toList(),
       value: controller.fontWeight,
       onChanged: (value) => setState(() => controller.fontWeight = value),
       validator:
           (value) => value == null ? 'Selectează grosimea fontului' : null,
-      borderColor: context.colors.accent,
-      borderWidth: 1.5,
-      radius: 20,
-      hint: Text(
-        'Selectează grosimea fontului',
-        style: TextStyle(fontSize: 14, color: context.colors.muted),
-      ),
+      hint: 'Selectează grosimea fontului',
     );
   }
 

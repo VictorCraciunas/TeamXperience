@@ -8,8 +8,7 @@ import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
 import 'package:teamxperience/enums/stire_type.dart';
 import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
+import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
 import '../../../../model/newsCategory.dart';
 import '../../../../model/stire.dart';
 import '../controller/create_news_controller.dart';
@@ -298,12 +297,12 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                       const SizedBox(height: 20),
 
                       // News Type Dropdown
-                      MyDropdownField<StireType>(
-                        labelText: 'Tip de știre',
+                      AppDropdown<StireType>(
+                        label: 'Tip de știre',
                         items:
                             StireType.values
                                 .map(
-                                  (type) => DropdownItem<StireType>(
+                                  (type) => AppDropdownItem<StireType>(
                                     value: type,
                                     label: type.displayName,
                                   ),
@@ -315,24 +314,12 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                             controller.selectedType = value;
                           });
                         },
-                        hint: Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text(
-                            "Selectează tipul de știre",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: context.colors.muted,
-                            ),
-                          ),
-                        ),
+                        hint: "Selectează tipul de știre",
                         validator:
                             (value) =>
                                 value == null
                                     ? 'Selectează tipul de știre'
                                     : null,
-                        borderColor: context.colors.accent,
-                        borderWidth: 1.5,
-                        radius: 20,
                       ),
                       const SizedBox(height: 20),
 

@@ -4,8 +4,7 @@ import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/puzzle.dart';
 
-import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
+import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
 import '../../controller/add_missions_controller.dart';
 import 'create_button/create_button_component.dart';
 import 'create_code/create_code_component.dart';
@@ -14,7 +13,7 @@ import 'create_text/create_text_component.dart';
 
 class AddComponentWidget extends StatefulWidget {
   final Puzzle puzzle;
-  final Function(Widget) refreshUI;// callback to notify parent
+  final Function(Widget) refreshUI; // callback to notify parent
   final Component component;
   final bool edit;
 
@@ -23,7 +22,7 @@ class AddComponentWidget extends StatefulWidget {
     required this.puzzle,
     required this.refreshUI,
     required this.component,
-    required this.edit
+    required this.edit,
   });
 
   @override
@@ -48,22 +47,21 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
       backgroundColor: context.colors.page,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.page,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
           child: Column(
             children: [
               const SizedBox(height: 60),
-              MyDropdownField<ComponentType>(
-                labelText: 'Tip de componenta',
-                items: ComponentType.values
-                    .map(
-                      (type) => DropdownItem<ComponentType>(
-                    value: type,
-                    label: type.toString().split('.').last,
-                  ),
-                )
-                    .toList(),
+              AppDropdown<ComponentType>(
+                label: 'Tip de componenta',
+                items:
+                    ComponentType.values
+                        .map(
+                          (type) => AppDropdownItem<ComponentType>(
+                            value: type,
+                            label: type.toString().split('.').last,
+                          ),
+                        )
+                        .toList(),
                 value: type,
                 onChanged: (value) {
                   setState(() {
@@ -72,22 +70,13 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
                 },
                 validator:
                     (value) =>
-                value == null ? 'Please select a component type' : null,
-                hint: Text(
-                  "Selecteaza tipul de componenta",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: context.colors.muted,
-                  ),
-                ),
-                borderColor: context.colors.accent,
-                borderWidth: 1.5,
-                radius: 20,
+                        value == null ? 'Please select a component type' : null,
+                hint: "Selecteaza tipul de componenta",
               ),
               if (type == ComponentType.text) ...[
                 TextComponentFieldsWidget(
                   refreshUI: widget.refreshUI,
-                  component:widget.component,
+                  component: widget.component,
                   edit: widget.edit,
                   puzzle: widget.puzzle,
                 ),
@@ -95,11 +84,9 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
               if (type == ComponentType.image) ...[
                 ImageComponentFieldsWidget(
                   refreshUI: widget.refreshUI,
-                  component:widget.component,
+                  component: widget.component,
                   edit: widget.edit,
                   puzzle: widget.puzzle,
-
-
                 ),
               ],
               if (type == ComponentType.button) ...[
@@ -108,13 +95,12 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
                   component: widget.component,
                   edit: widget.edit,
                   puzzle: widget.puzzle,
-
                 ),
               ],
               if (type == ComponentType.code) ...[
                 CodeComponentFieldsWidget(
                   refreshUI: widget.refreshUI,
-                  component:widget.component,
+                  component: widget.component,
                   edit: widget.edit,
                   puzzle: widget.puzzle,
                 ),

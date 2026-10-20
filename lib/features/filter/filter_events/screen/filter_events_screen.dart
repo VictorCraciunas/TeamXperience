@@ -4,8 +4,7 @@ import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
+import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
 import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
 import '../controller/filter_events_controller.dart';
 
@@ -84,12 +83,12 @@ class _FilterEventsScreenState extends State<FilterEventsScreen> {
                 AnimatedBuilder(
                   animation: controller,
                   builder: (context, _) {
-                    return MyDropdownField<EventType>(
-                      labelText: 'Tip de eveniment',
+                    return AppDropdown<EventType>(
+                      label: 'Tip de eveniment',
                       items:
                           EventType.values
                               .map(
-                                (type) => DropdownItem<EventType>(
+                                (type) => AppDropdownItem<EventType>(
                                   value: type,
                                   label: _getEventTypeDisplayName(type),
                                 ),
@@ -99,20 +98,7 @@ class _FilterEventsScreenState extends State<FilterEventsScreen> {
                       onChanged: (value) {
                         controller.setEventType(value);
                       },
-                      hint: Text(
-                        "Selectează tipul de eveniment",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: context.colors.muted,
-                        ),
-                      ),
-                      borderColor: context.colors.accent,
-                      borderWidth: 1.5,
-                      radius: 20,
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 20,
-                      ),
+                      hint: "Selectează tipul de eveniment",
                     );
                   },
                 ),
