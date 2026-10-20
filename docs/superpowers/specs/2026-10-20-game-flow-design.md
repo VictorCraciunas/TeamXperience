@@ -56,8 +56,9 @@ Answer checking, attempts left, hint availability and rank move out of `PuzzleGa
 
 ### Flow (six steps, as in the mockups)
 
-1. **Event details** (existing form, unchanged except the progress label `Pasul 1 din 3`).
-2. **Missions list:** drag to reorder, duplicate a mission, an `incompletă` marker per mission (missing answer, missing location, no components), `Misiune nouă`, and **event defaults** (background colour, text colour, accent colour, font) that every new component starts with.
+0. **Start** (`Eveniment nou`): from scratch, from an old event (copies missions and style) or from a template, with the list of drafts to continue.
+1. **Event wizard**, five steps replacing the single long form: Informații de bază (cover image, name, short description with counter), Când și unde (date and time, location, start point, enrolment window with plain checks), Acces și reguli (public or private, start code with a Generează button, difficulty chips, route length, duration), Aspectul jocului (mission background, colour, accent, font; these are the event defaults, with a live preview) and Verifică (the event card as players see it). Each step validates before Continuă; the form no longer crashes on empty fields.
+2. **Missions list** (the wizard continues here as the sixth step): drag to reorder, duplicate a mission, an `incompletă` marker per mission (missing answer, missing location, no components), `Misiune nouă`, and **event defaults** (background colour, text colour, accent colour, font) that every new component starts with.
 3. **Canvas** per puzzle: the puzzle drawn like the player screen using the same component renderer. Tap a component to select and edit it, `+` row to add text, image, button or code input, drag handles to reorder, delete in the style sheet.
 4. **Style sheet** (bottom sheet, tabs `Stil`, `Efecte`, `Layout`) per selected component, described below.
 5. **Rules** screen per puzzle, separate from looks: puzzle type, correct answer (and accepted variants as a toggle), hint text, hint delay, attempts (3, 5 or unlimited), wrong-answer message.
@@ -81,7 +82,8 @@ New component fields (all optional, null = today's look): `letterSpacing`, `bord
 ### Event data
 
 - `Event.defaults` (map: `backgroundColor`, `textColor`, `accentColor`, `fontFamily`), optional. Used only when a component is created; changing defaults later does not rewrite existing components.
-- `Event.status`: `draft` or `published`; missing = published (so old events are untouched). Drafts are hidden from players and from `EventList.upcomingEvents` for players, visible to admins with a `Ciornă` tag.
+- `Event.status`: `draft` or `published`; missing = published (so old events are untouched). Drafts are hidden from players and from `EventList.upcomingEvents` for players, visible to admins with a `Ciornă` tag. A draft also stores `wizardStep` (int) so it resumes where the organiser left off.
+- **Admin Home** gets a `Ciorne` panel (between Acțiuni rapide and Evenimente viitoare, shown only when drafts exist): each row has the name, a progress bar, a short status (step, or the first missing item) and `Continuă`.
 
 ### Logic placement
 
