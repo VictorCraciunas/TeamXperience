@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
-import 'package:teamxperience/ui/ui.dart';
 import 'package:provider/provider.dart';
+import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/enums/role.dart';
+import 'package:teamxperience/features/feed/logic/post_text.dart';
+import 'package:teamxperience/features/news_dashboard/controller/stiri_dashboard_controller.dart';
+import 'package:teamxperience/features/news_dashboard/widgets/news_feed.dart';
 import 'package:teamxperience/model/stire.dart';
+import 'package:teamxperience/service/share_service.dart';
+import 'package:teamxperience/state_management/news_state_management.dart';
+import 'package:teamxperience/state_management/user_provider.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
+import 'package:teamxperience/ui/components/misc/feed_search_bar.dart';
+import 'package:teamxperience/ui/components/misc/removable_chip.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-
-import '../../../constants/routes.dart';
-import '../../../state_management/news_state_management.dart';
-import '../../../state_management/user_provider.dart';
-import 'package:teamxperience/ui/components/news/stire_card.dart';
-import '../controller/stiri_dashboard_controller.dart';
+import 'package:teamxperience/ui/ui.dart';
 
 class StiriDashboard extends StatefulWidget {
   const StiriDashboard({super.key});
@@ -19,11 +22,9 @@ class StiriDashboard extends StatefulWidget {
   State<StiriDashboard> createState() => _StiriDashboardState();
 }
 
-class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProviderStateMixin {
+class _StiriDashboardState extends State<StiriDashboard> {
   late StiriDashboardController controller;
-  late AnimationController _animationController;
-  late Animation<double> _searchAnimation;
-  bool _isSearchExpanded = false;
+  bool _isSearchOpen = false;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
 
@@ -32,48 +33,31 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
     super.initState();
     controller = StiriDashboardController();
 
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-
-    _searchAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-
     _searchController.addListener(() {
-      final newsList = context.read<NewsList>();
-      controller.searchStiri(_searchController.text, newsList);
+      controller.searchStiri(_searchController.text, context.read<NewsList>());
     });
 
-    // Load stiri when screen initializes (like events dashboard)
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final newsList = context.read<NewsList>();
-      await newsList.loadStire();
+      await context.read<NewsList>().loadStire();
     });
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
     _searchController.dispose();
     _searchFocusNode.dispose();
     controller.dispose();
     super.dispose();
   }
 
+  bool get _isAdmin => context.read<UserProvider>().currentUser?.role == Role.ADMIN;
+
   void _toggleSearch() {
     setState(() {
-      _isSearchExpanded = !_isSearchExpanded;
-      if (_isSearchExpanded) {
-        _animationController.forward();
+      _isSearchOpen = !_isSearchOpen;
+      if (_isSearchOpen) {
         _searchFocusNode.requestFocus();
       } else {
-        _animationController.reverse();
         _searchController.clear();
         controller.clearSearch();
         _searchFocusNode.unfocus();
@@ -86,34 +70,28 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
     controller.clearSearch();
   }
 
-  bool get _isAdmin =>
-      context.read<UserProvider>().currentUser?.role == Role.ADMIN;
-
-  void navigateToStireDetails(BuildContext context, Stire stire) {
+  void _openStire(Stire stire) {
     Navigator.pushNamed(
       context,
       Routes.newsDetails,
-      arguments: {
-        'stire': stire,
-        'isAdmin': _isAdmin,
-      },
+      arguments: {'stire': stire, 'isAdmin': _isAdmin},
     );
   }
 
-  void _navigateToCreateStire(BuildContext context, {Stire? stire}) {
-    Navigator.pushNamed(
+  void _share(Stire stire) {
+    ShareService().shareText(
       context,
-      Routes.createNews, // Assuming you have this route
-      arguments: {'stire': stire},
+      subject: stire.title ?? 'Știre',
+      text: newsShareText(stire),
     );
   }
 
-  void _navigateToFilter(BuildContext context) async {
-    final filterData = await Navigator.pushNamed(
-      context,
-      Routes.filterStiri, // New route we'll create
-    ) as Map<String, dynamic>?;
+  void _createStire() {
+    Navigator.pushNamed(context, Routes.createNews, arguments: {'stire': null});
+  }
 
+  Future<void> _openFilter() async {
+    final filterData = await Navigator.pushNamed(context, Routes.filterStiri) as Map<String, dynamic>?;
     controller.updateFilters(filterData);
   }
 
@@ -121,23 +99,53 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
     return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
   }
 
+  Widget? _createButton() {
+    if (!_isAdmin) return null;
+    final colors = context.colors;
 
-  Widget _buildStiriList(List<Stire> stiri) {
-    return Column(
-      children: stiri.map((stire) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 15.0),
-          child: GestureDetector(
-            onTap: () => navigateToStireDetails(context, stire),
-            child: StireCard(
-              stire: stire,
-              onTap: () => navigateToStireDetails(context, stire),
-              isAdmin: _isAdmin,
-              showBadge: true,
-            ),
+    return InkWell(
+      onTap: _createStire,
+      borderRadius: BorderRadius.circular(50),
+      child: Container(
+        height: 45,
+        decoration: BoxDecoration(
+          color: colors.iconButtonBg,
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AppSvgIcon('assets/images/add_icon.svg', width: 20, height: 20, color: colors.accent),
+            const SizedBox(width: 8),
+            Text('Creează știre', style: TextStyle(fontSize: 15, color: colors.text)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _activeChips() {
+    final type = controller.selectedStireType;
+    final category = controller.selectedCategory;
+    final start = controller.startDate;
+    final end = controller.endDate;
+    final query = controller.searchQuery;
+
+    return Wrap(
+      spacing: 8,
+      children: [
+        if (type != null)
+          RemovableChip(label: type.displayName, onRemove: controller.clearStireTypeFilter),
+        if (category != null && category.name.isNotEmpty)
+          RemovableChip(label: category.name, onRemove: controller.clearCategoryFilter),
+        if (start != null && end != null)
+          RemovableChip(
+            label: '${_formatDate(start)} - ${_formatDate(end)}',
+            onRemove: controller.clearDateFilter,
           ),
-        );
-      }).toList(),
+        if (query.isNotEmpty)
+          RemovableChip(label: '"$query"', icon: Icons.search, onRemove: _clearSearchQuery),
+      ],
     );
   }
 
@@ -147,359 +155,46 @@ class _StiriDashboardState extends State<StiriDashboard> with SingleTickerProvid
       appBar: const MyAppBar(appBarText: "Știri"),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.page,
-            vertical: 15,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page, vertical: 12),
           child: Consumer<NewsList>(
             builder: (context, newsList, child) {
               return AnimatedBuilder(
                 animation: controller,
                 builder: (context, child) {
+                  final hasFilter = controller.hasActiveFilters || controller.searchQuery.isNotEmpty;
+
                   return Column(
-                children: [
-                  // Header with buttons and filters (non-scrollable)
-                  AnimatedBuilder(
-                    animation: _searchAnimation,
-                    builder: (context, child) {
-                      return Row(
-                        children: [
-                          // Create stire button (admins only) - can be 45 width or expanded
-                          if (!_isAdmin)
-                            _isSearchExpanded
-                                ? const SizedBox.shrink()
-                                : const Spacer()
-                          else if (!_isSearchExpanded)
-                            Expanded(
-                              child: InkWell(
-                                splashFactory: InkSplash.splashFactory,
-                                onTap: () => _navigateToCreateStire(context),
-                                child: Container(
-                                  height: 45,
-                                  decoration: BoxDecoration(
-                                    color: context.colors.iconButtonBg,
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      AppSvgIcon('assets/images/add_icon.svg', width: 20, height: 20, color: context.colors.accent),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        "Creează știre",
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: context.colors.text,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            )
-                          else
-                            InkWell(
-                              splashFactory: InkSplash.splashFactory,
-                              onTap: () => _navigateToCreateStire(context),
-                              child: Container(
-                                width: 45,
-                                height: 45,
-                                decoration: BoxDecoration(
-                                  color: context.colors.iconButtonBg,
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: Center(
-                                  child: AppSvgIcon('assets/images/add_icon.svg', width: 20, height: 20, color: context.colors.accent),
-                                ),
-                              ),
-                            ),
-                          const SizedBox(width: 8),
-
-                          // Filter button - stays the same
-                          InkWell(
-                            splashFactory: InkSplash.splashFactory,
-                            onTap: () => _navigateToFilter(context),
-                            child: Container(
-                              width: 45,
-                              height: 45,
-                              decoration: BoxDecoration(
-                                color: controller.hasActiveFilters
-                                    ? context.colors.accent
-                                    : context.colors.iconButtonBg,
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              child: Center(
-                                child: AppSvgIcon('assets/images/filter.svg', width: 24, height: 24, color: controller.hasActiveFilters ? Colors.white : null),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-
-                          // Search field - can be 45 width or expanded
-                          if (_isSearchExpanded)
-                            Expanded(
-                              child: Container(
-                                height: 45,
-                                decoration: BoxDecoration(
-                                  color: context.colors.iconButtonBg,
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: Row(
-                                  children: [
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: TextField(
-                                        controller: _searchController,
-                                        focusNode: _searchFocusNode,
-                                        decoration: InputDecoration(
-                                          hintText: 'Caută știri...',
-                                          hintStyle: TextStyle(
-                                            fontSize: 14,
-                                            color: context.colors.muted,
-                                          ),
-                                          border: InputBorder.none,
-                                        ),
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: context.colors.text,
-                                        ),
-                                      ),
-                                    ),
-                                    InkWell(
-                                      splashFactory: NoSplash.splashFactory,
-                                      onTap: _toggleSearch,
-                                      child: Container(
-                                        width: 45,
-                                        height: 45,
-                                        decoration: const BoxDecoration(),
-                                        child: Center(
-                                          child: Icon(
-                                            Icons.close,
-                                            size: 24,
-                                            color: context.colors.text,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          else
-                            InkWell(
-                              splashFactory: InkSplash.splashFactory,
-                              onTap: _toggleSearch,
-                              child: Container(
-                                width: 45,
-                                height: 45,
-                                decoration: BoxDecoration(
-                                  color: context.colors.iconButtonBg,
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: Center(
-                                  child: AppSvgIcon('assets/images/search.svg', width: 24, height: 24),
-                                ),
-                              ),
-                            ),
-                        ],
-                      );
-                    },
-                  ),
-
-                  // Active filters display
-                  if (controller.hasActiveFilters) ...[
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        if (controller.selectedStireType != null)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: context.colors.iconButtonBg,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  controller.selectedStireType!.displayName.toUpperCase(),
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: context.colors.text,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                GestureDetector(
-                                  onTap: () => controller.clearStireTypeFilter(),
-                                  child: Icon(
-                                    Icons.close,
-                                    size: 16,
-                                    color: context.colors.text,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        if (controller.selectedCategory != null)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: context.colors.iconButtonBg,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  controller.selectedCategory!.name,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: context.colors.text,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                GestureDetector(
-                                  onTap: () => controller.clearCategoryFilter(),
-                                  child: Icon(
-                                    Icons.close,
-                                    size: 16,
-                                    color: context.colors.text,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        if (controller.startDate != null && controller.endDate != null)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: context.colors.iconButtonBg,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  '${_formatDate(controller.startDate!)} - ${_formatDate(controller.endDate!)}',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: context.colors.text,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                GestureDetector(
-                                  onTap: () => controller.clearDateFilter(),
-                                  child: Icon(
-                                    Icons.close,
-                                    size: 16,
-                                    color: context.colors.text,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                    children: [
+                      FeedSearchBar(
+                        isSearchOpen: _isSearchOpen,
+                        searchController: _searchController,
+                        searchFocusNode: _searchFocusNode,
+                        searchHint: 'Caută știri...',
+                        hasActiveFilters: controller.hasActiveFilters,
+                        onToggleSearch: _toggleSearch,
+                        onFilter: _openFilter,
+                        leading: _createButton(),
+                      ),
+                      if (hasFilter) ...[
+                        const SizedBox(height: 10),
+                        Align(alignment: Alignment.centerLeft, child: _activeChips()),
                       ],
-                    ),
-                  ],
-
-                  // Search query display
-                  if (controller.searchQuery.isNotEmpty) ...[
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
+                      const SizedBox(height: 12),
+                      Expanded(
+                        child: NewsFeed(
+                          news: controller.getDisplayedStiri(newsList),
+                          emptyMessage: controller.searchQuery.isNotEmpty ? 'Nu s-au găsit știri' : 'Nu există știri',
+                          onTap: _openStire,
+                          onShare: _share,
+                        ),
                       ),
-                      decoration: BoxDecoration(
-                        color: context.colors.iconButtonBg,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.search,
-                            size: 14,
-                            color: context.colors.text,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '"${controller.searchQuery}"',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: context.colors.text,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          GestureDetector(
-                            onTap: _clearSearchQuery,
-                            child: Icon(
-                              Icons.close,
-                              size: 16,
-                              color: context.colors.text,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-
-                  const SizedBox(height: 10),
-
-                  // Scrollable content area
-                  Expanded(
-                    child: controller.getDisplayedStiri(newsList).isEmpty
-                        ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.article_outlined,
-                            size: 64,
-                            color: context.colors.muted.withOpacity(0.5),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            controller.searchQuery.isNotEmpty
-                                ? 'Nu s-au găsit știri'
-                                : 'Nu există știri',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: context.colors.muted.withOpacity(0.7),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                        : SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 20),
-                          _buildStiriList(controller.getDisplayedStiri(newsList)),
-                          const SizedBox(height: 20),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                    ],
+                  );
+                },
               );
             },
-          );
-        },
-      ),
-    ),
+          ),
+        ),
       ),
     );
   }

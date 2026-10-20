@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/user.dart';
 import '../../../../backend/repo/teamRepo.dart';
-import '../../../../enums/event_type.dart';
 import '../../../../state_management/user_provider.dart';
 import '../../events_filter_service.dart';
 
@@ -21,7 +20,6 @@ class EventsDashboardUserController extends ChangeNotifier {
 
   // Search state
   String _searchQuery = '';
-  List<Event> _searchResults = [];
 
   // Filter state
   DateTime? _startDate;
@@ -89,7 +87,6 @@ class EventsDashboardUserController extends ChangeNotifier {
 
   void clearSearch() {
     _searchQuery = '';
-    _searchResults = [];
     notifyListeners();
   }
 

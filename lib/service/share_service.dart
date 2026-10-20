@@ -6,6 +6,13 @@ import '../model/team.dart';
 import '../utils/calendar_helper.dart';
 
 class ShareService {
+  /// Opens the share sheet with plain text (an event or a news item).
+  Future<void> shareText(BuildContext context, {required String subject, required String text}) async {
+    try {
+      await Share.share(text, subject: subject, sharePositionOrigin: _getSharePositionOrigin(context));
+    } catch (_) {}
+  }
+
   /// Builds the formatted message for team registration sharing
   String _buildTeamRegistrationMessage(Team team, Event event) {
     return '''Salut! Am înscris echipa "${team.name}" la evenimentul "${event.name ?? 'eveniment'}".

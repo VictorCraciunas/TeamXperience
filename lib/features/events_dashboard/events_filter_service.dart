@@ -1,4 +1,3 @@
-import 'package:teamxperience/model/user.dart';
 
 import '../../../../enums/event_type.dart';
 import '../../../../model/event.dart';
