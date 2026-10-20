@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart'; // Add this import
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/screen/add_missions_screen.dart';
 import 'package:teamxperience/features/admin/create_news/screen/create_news_screen.dart';
-import 'package:teamxperience/features/admin/home/screen/admin_home.dart';
+import 'package:teamxperience/features/admin/shell/screen/admin_shell.dart';
 import 'package:teamxperience/features/calendar/screen/calendar_screen.dart';
 import 'package:teamxperience/features/chat/screen/chat_screen.dart';
 import 'package:teamxperience/features/enter_code/screen/enter_code.dart';
@@ -146,7 +146,7 @@ class MyApp extends StatelessWidget {
                 Routes.home: (_) => const UserShell(),
                 Routes.createEvent: (_) => const CreateEventPage(),
                 Routes.addMissions: (_) => const AddMissionsPage(),
-                Routes.adminHome: (_) => const AdminHome(),
+                Routes.adminHome: (_) => const AdminShell(),
                 Routes.splash: (_) => const SplashScreen(),
                 Routes.forgotPassword: (_) => const ForgotPasswordScreen(),
                 Routes.eventDetails: (_) => const EventDetailsScreen(),

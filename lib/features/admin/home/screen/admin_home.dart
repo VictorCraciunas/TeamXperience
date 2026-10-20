@@ -1,18 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:teamxperience/ui/ui.dart';
-import 'package:teamxperience/ui/components/misc/theme_mode_button.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/padding.dart';
-import 'package:teamxperience/features/admin/home/widgets/navigate_card.dart';
-import 'package:teamxperience/features/admin/home/widgets/title_carousel.dart';
-import 'package:teamxperience/features/event_management/widgets/management_button.dart';
+import 'package:teamxperience/features/admin/home/controller/admin_controller.dart';
+import 'package:teamxperience/features/admin/home/logic/admin_hero.dart';
+import 'package:teamxperience/features/admin/home/widgets/admin_hero_actions.dart';
+import 'package:teamxperience/features/admin/home/widgets/admin_hero_section.dart';
+import 'package:teamxperience/features/admin/home/widgets/admin_quick_actions_panel.dart';
+import 'package:teamxperience/features/admin/home/widgets/admin_stats_panel.dart';
+import 'package:teamxperience/features/admin/home/widgets/admin_upcoming_panel.dart';
+import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/state_management/events_state_management.dart';
+import 'package:teamxperience/ui/components/misc/clock_builder.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
-import 'package:teamxperience/ui/components/news/stiri_carousel.dart';
-import '../../../../state_management/events_state_management.dart';
-import '../../../../state_management/news_state_management.dart';
-import 'package:teamxperience/ui/components/event/events_carousel.dart';
-import '../controller/admin_controller.dart';
+import 'package:teamxperience/ui/ui.dart';
 
 class AdminHome extends StatefulWidget {
   const AdminHome({super.key});
@@ -22,7 +24,8 @@ class AdminHome extends StatefulWidget {
 }
 
 class _AdminHomeState extends State<AdminHome> {
-  late AdminHomeController controller;
+  late final AdminHomeController controller;
+  Timer? _refreshTimer;
 
   @override
   void initState() {
@@ -32,177 +35,61 @@ class _AdminHomeState extends State<AdminHome> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.loadInitialData();
     });
+    // Keeps the live numbers fresh while an event runs.
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (mounted) controller.reloadStats();
+    });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    controller.dispose();
+    super.dispose();
+  }
+
+  AdminHeroActions get _actions => AdminHeroActions(
+        onManage: controller.navigateToEventManagement,
+        onMap: controller.navigateToMap,
+        onChats: controller.navigateToChats,
+        onTeams: controller.navigateToRegisteredTeams,
+        onNotify: controller.navigateToNotificationFor,
+      );
+
+  Event? _heroEvent(AdminHero hero) {
+    return switch (hero) {
+      AdminLiveHero() => hero.event,
+      AdminSoonHero() => hero.event,
+      NoAdminHero() => null,
+    };
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.colors.page,
-      appBar: MyAppBar(
-        appBarText: "TeamXperience",
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const ThemeModeButton(),
-            const SizedBox(width: 8),
-            GestureDetector(
-          onTap: controller.logout,
-          child: Container(
-            width: 45,
-            height: 45,
-            decoration: BoxDecoration(
-              color: context.colors.iconButtonBg,
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: Center(
-              child: Icon(Icons.logout_rounded, size: 22, color: context.colors.accent),
-            ),
-          ),
-        ),
-          ],
-        ),
-      ),
+      appBar: const MyAppBar(appBarText: "TeamXperience"),
       body: SafeArea(
-        child: Consumer2<EventList, NewsList>(
-          builder: (context, eventList, newsList, child) {
-            if ((eventList.isLoading && !eventList.hasData) ||
-                (newsList.isLoading && !newsList.hasData)) {
+        child: Consumer<EventList>(
+          builder: (context, eventList, child) {
+            if (eventList.isLoading && !eventList.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
 
             return RefreshIndicator(
               onRefresh: controller.refreshData,
               child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: MyPaddings.appHorizontalPadding,
-                    vertical: MyPaddings.topPaddingHome
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: NavigateCard(
-                              text1: "Creează",
-                              text2: "eveniment",
-                              onTap: controller.navigateToCreateEvent,
-                            ),
-                          ),
-                          const SizedBox(width: 25),
-                          Expanded(
-                            child: NavigateCard(
-                              text1: "Adaugă",
-                              text2: "știre",
-                              onTap: controller.navigateToCreateNews,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      Center(
-                        child: NavigateCard(
-                          text1: "Trimite",
-                          text2: "notificare",
-                          onTap: () {controller.navigateToNotification();},
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      if (eventList.liveEvents.isNotEmpty) ...[
-                        Row(
-                          children: [
-                            Container(
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color: context.colors.live,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              "Eveniment live",
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w500,
-                                color: context.colors.live,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 15),
-                        ...eventList.liveEvents.map(
-                          (event) => Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Container(
-                              padding: const EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                color: context.colors.live.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(
-                                  color: context.colors.live,
-                                  width: 1.5,
-                                ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    event.name ?? "",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: context.colors.text,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  ManagementButton(
-                                    text: "Gestionează eveniment",
-                                    icon: 'assets/images/incepe_jocul.svg',
-                                    enabled: true,
-                                    onTap: () => controller
-                                        .navigateToEventManagement(event),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-
-                      // Events Section
-                      TitleCarousel(
-                        text: "Evenimente",
-                        onTap: controller.navigateToEventDashboard,
-                      ),
-                      const SizedBox(height: 20),
-                      AnimatedBuilder(
-                        animation: controller,
-                        builder:(context,child){return EventsCarousel(
-                          events: eventList.upcomingEvents,
-                          onEventTap: controller.navigateToEventDetails,
-                          isAdmin: true,
-                          eventStats: controller.eventStats,
-                        );}
-                      ),
-                      const SizedBox(height: 20),
-
-                      // News Section
-                      TitleCarousel(
-                        text: "Știri",
-                        onTap: controller.navigateToStiriDashboard,
-                      ),
-                      const SizedBox(height: 20),
-                      StiriCarousel(
-                        stiri: newsList.getLatestNews(5), // Show latest 5 news
-                        onStireTap: controller.navigateToStireDetails,
-                        showBadge: false,
-                      ),
-                      const SizedBox(height: 30),
-
-                    ],
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(
+                  MyPaddings.appHorizontalPadding,
+                  MyPaddings.topPaddingHome,
+                  MyPaddings.appHorizontalPadding,
+                  24,
+                ),
+                child: ClockBuilder(
+                  builder: (context, now) => AnimatedBuilder(
+                    animation: controller,
+                    builder: (context, _) => _content(now, eventList),
                   ),
                 ),
               ),
@@ -210,6 +97,36 @@ class _AdminHomeState extends State<AdminHome> {
           },
         ),
       ),
+    );
+  }
+
+  Widget _content(DateTime now, EventList eventList) {
+    final hero = resolveAdminHero(now: now, events: eventList.events);
+    final heroEvent = _heroEvent(hero);
+    final stats = controller.statsFor(heroEvent);
+    final upcoming = eventList.upcomingEvents;
+
+    return Column(
+      children: [
+        AdminHeroSection(hero: hero, now: now, stats: stats, actions: _actions),
+        if (hero is! NoAdminHero) ...[
+          const SizedBox(height: 14),
+          AdminStatsPanel(hero: hero, stats: stats),
+          const SizedBox(height: 14),
+        ],
+        AdminQuickActionsPanel(
+          onCreateEvent: controller.navigateToCreateEvent,
+          onCreateNews: controller.navigateToCreateNews,
+          onNotify: controller.navigateToNotification,
+        ),
+        const SizedBox(height: 14),
+        AdminUpcomingPanel(
+          events: upcoming,
+          statsFor: controller.statsFor,
+          onTap: controller.navigateToEventDetails,
+          onSeeAll: controller.navigateToEventsTab,
+        ),
+      ],
     );
   }
 }

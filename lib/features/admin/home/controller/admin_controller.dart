@@ -8,6 +8,9 @@ import '../../../../constants/routes.dart';
 import '../../../../model/event.dart';
 import '../../../../model/stire.dart';
 import '../../../../state_management/events_state_management.dart';
+import '../../../../service/team_service/team_service.dart';
+import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
+import '../logic/admin_event_stats.dart';
 
 class AdminHomeController extends ChangeNotifier {
   final BuildContext context;
@@ -16,6 +19,7 @@ class AdminHomeController extends ChangeNotifier {
 
   // Event statistics (eventId -> {nrTeams, nrPerson})
   Map<String, Map<String, int>> _eventStats = {};
+  final Map<String, AdminEventStats> _stats = {};
 
   Map<String, Map<String, int>> get eventStats => _eventStats;
 
@@ -90,6 +94,33 @@ class AdminHomeController extends ChangeNotifier {
     );
   }
 
+  void navigateToMap(Event event) {
+    Navigator.pushNamed(
+      context,
+      Routes.map,
+      arguments: {
+        'eventId': event.eventId,
+        'teams': TeamService().getStreamTeams(event.eventId),
+      },
+    );
+  }
+
+  void navigateToChats(Event event) {
+    Navigator.pushNamed(context, Routes.teamConversations, arguments: event);
+  }
+
+  void navigateToRegisteredTeams(Event event) {
+    Navigator.pushNamed(context, Routes.eventRegisteredTeams, arguments: event);
+  }
+
+  void navigateToNotificationFor(Event event) {
+    Navigator.pushNamed(context, Routes.sendNotification, arguments: event);
+  }
+
+  void navigateToEventsTab() {
+    context.read<ShellController>().select(1);
+  }
+
   void navigateToStiriDashboard() {
     final newsList = context.read<NewsList>();
     Navigator.pushNamed(
@@ -104,8 +135,7 @@ class AdminHomeController extends ChangeNotifier {
     await context.read<NewsList>().loadStire();
 
     // Load event stats
-    final eventList = context.read<EventList>();
-    await loadEventStats(eventList.upcomingEvents);
+    await reloadStats();
   }
 
   Future<void> refreshData() async {
@@ -115,8 +145,7 @@ class AdminHomeController extends ChangeNotifier {
     ]);
 
     // Reload event stats
-    final eventList = context.read<EventList>();
-    await loadEventStats(eventList.upcomingEvents);
+    await reloadStats();
   }
 
   /// Load team statistics for events
@@ -124,18 +153,34 @@ class AdminHomeController extends ChangeNotifier {
     for (final event in events) {
       try {
         final teams = await _teamRepo.getAllTeamsForEvent(event.eventId);
-        final nrTeams = teams.length;
-        final nrPerson = teams.fold<int>(0, (sum, team) => sum + team.numberOfMembers);
-
+        final stats = AdminEventStats.fromTeams(teams);
+        _stats[event.eventId] = stats;
         _eventStats[event.eventId] = {
-          'nrTeams': nrTeams,
-          'nrPerson': nrPerson,
+          'nrTeams': stats.teams,
+          'nrPerson': stats.persons,
         };
       } catch (e) {
         // If error fetching teams, default to 0
+        _stats[event.eventId] = const AdminEventStats();
         _eventStats[event.eventId] = {'nrTeams': 0, 'nrPerson': 0};
       }
     }
     notifyListeners();
+  }
+
+  /// Refreshes the events the Home shows (live, soon and upcoming).
+  Future<void> reloadStats() async {
+    final eventList = context.read<EventList>();
+    final now = DateTime.now();
+    final events = eventList.events.where((e) {
+      final start = e.dateEvent;
+      return start != null && !(e.isStopped || now.isAfter(start.add(Event.maxDuration)));
+    }).toList();
+    await loadEventStats(events);
+  }
+
+  AdminEventStats statsFor(Event? event) {
+    if (event == null) return const AdminEventStats();
+    return _stats[event.eventId] ?? const AdminEventStats();
   }
 }
