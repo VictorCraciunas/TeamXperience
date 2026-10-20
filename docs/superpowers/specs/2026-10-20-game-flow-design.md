@@ -99,6 +99,23 @@ The builder logic stays in controllers next to each screen. Pure helpers get tes
 
 Each phase is its own branch, merged `--no-ff` to local `main` after a device check, same workflow as the UI redesign (TDD, `flutter analyze` and `flutter test` green, no push unless asked).
 
+## Data and logic review (checked against the code on 2026-10-20)
+
+**Works as is:** feeds, Home panels, wizard fields and image uploads (existing), duplicating an event, photo approval, the component renderer shared by builder and game, admin Home data (events, team counts).
+
+**Needs a change:**
+
+- **Timing:** `startTeam` and `finishTeam` only set booleans. Add `startedAt`/`finishedAt` written with the server timestamp (device clocks differ), plus `hintsUsed`.
+- **Attempts survive restarts:** keep attempts per puzzle on the team (`Team.attempts`, a map keyed like `Team.approvalKey`), otherwise closing the app resets them.
+- **Leaderboard privacy:** a team document holds the captain phone and email. Reading `events/{id}/teams` from every player would expose them. Publish a small public record per finished team instead (`events/{id}/results/{team}`: name, total time, hints, finished at), written when the team finishes, and read only that.
+- **Drafts:** `EventRepo.getAllEvents` returns every event, so hiding drafts only in the app is not secure. Phase 5 must filter drafts out of the player queries (or add Firestore rules). Registration and notifications must also ignore drafts.
+- **Reordering and deleting missions** is only safe before publishing: team progress, `puzzleNumber` and photo approval keys use mission and puzzle **indexes**. After publish, structure is locked (content and styling stay editable). The mission list shows reorder and delete only for drafts.
+- **Test-play:** the game controllers write progress to Firestore. Add a test mode (no-op writes) instead of today's admin preview, which enters with no team and locks everything.
+- **Templates and `Start` choices:** built-in templates are code (a list of prebuilt events), not a collection, in this version.
+- **Component JSON** grows with the new style fields; old documents read them as null.
+
+**Cannot be verified from the repo:** there are no `firestore.rules` or `storage.rules` files, so the live rules (who may read other teams, write results, read drafts) are unknown and must be checked in the Firebase console before phases 2 and 5.
+
 ## Constraints
 
 - Flutter app with Firebase; Firestore rules and Cloud Functions are not changed by this design except that the leaderboard needs read access players already have on `events/{id}/teams`. **To verify before phase 2:** that a player can read other teams' documents under the current rules.
