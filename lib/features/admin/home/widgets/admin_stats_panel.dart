@@ -18,14 +18,34 @@ class AdminStatsPanel extends StatelessWidget {
     switch (current) {
       case AdminLiveHero():
         return _panel('În acest moment', [
-          StatTile(label: 'Echipe', value: '${stats.teams}', icon: Icons.groups_outlined),
-          StatTile(label: 'Persoane', value: '${stats.persons}', icon: Icons.person_outline),
-          StatTile(label: 'Au terminat', value: '${stats.finished}', icon: Icons.flag_outlined),
+          StatTile(
+            label: 'Echipe',
+            value: '${stats.teams}',
+            icon: Icons.groups_outlined,
+          ),
+          StatTile(
+            label: 'Persoane',
+            value: '${stats.persons}',
+            icon: Icons.person_outline,
+          ),
+          StatTile(
+            label: 'Au terminat',
+            value: '${stats.finished}',
+            icon: Icons.flag_outlined,
+          ),
         ]);
       case AdminSoonHero():
         return _panel('Pregătire', [
-          StatTile(label: 'Echipe înscrise', value: '${stats.teams}', icon: Icons.groups_outlined),
-          StatTile(label: 'Persoane', value: '${stats.persons}', icon: Icons.person_outline),
+          StatTile(
+            label: 'Echipe înscrise',
+            value: '${stats.teams}',
+            icon: Icons.groups_outlined,
+          ),
+          StatTile(
+            label: 'Persoane',
+            value: '${stats.persons}',
+            icon: Icons.person_outline,
+          ),
         ]);
       case NoAdminHero():
         return const SizedBox.shrink();

@@ -19,7 +19,11 @@ class PreparationPanel extends StatelessWidget {
         children: [
           for (var i = 0; i < steps.length; i++) ...[
             if (i > 0) const SizedBox(height: 6),
-            ChecklistRow(title: steps[i].title, subtitle: steps[i].subtitle, done: steps[i].done),
+            ChecklistRow(
+              title: steps[i].title,
+              subtitle: steps[i].subtitle,
+              done: steps[i].done,
+            ),
           ],
         ],
       ),

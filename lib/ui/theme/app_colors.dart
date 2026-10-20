@@ -57,7 +57,7 @@ class AppColors extends ThemeExtension<AppColors> {
     insetBorder: Color(0xFFE1E7EF),
     text: Color(0xFF0C092A),
     muted: Color(0xFF47546A),
-    accent: Color(0xFF1B8A8E),
+    accent: Color(0xFF167A7E),
     tick: Color(0xFF2AA5A9),
     navy: Color(0xFF222F62),
     navActivePill: Color(0xFFDDF3F3),

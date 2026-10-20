@@ -16,7 +16,7 @@ class RegisteredEventCard extends StatelessWidget {
     super.key,
     required this.event,
     required this.onEventTap,
-    this.upComingRegisteredEvent = false
+    this.upComingRegisteredEvent = false,
   });
 
   @override
@@ -28,7 +28,8 @@ class RegisteredEventCard extends StatelessWidget {
 
     return Card(
       shadowColor: const Color(0xFF0B2F63).withValues(alpha: 0.1),
-      color: upComingRegisteredEvent ? context.colors.navy : context.colors.panel,
+      color:
+          upComingRegisteredEvent ? context.colors.navy : context.colors.panel,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
@@ -41,7 +42,10 @@ class RegisteredEventCard extends StatelessWidget {
                   height: 60,
                   width: 60,
                   decoration: BoxDecoration(
-                    color: upComingRegisteredEvent ? Colors.white : context.colors.iconButtonBg,
+                    color:
+                        upComingRegisteredEvent
+                            ? Colors.white
+                            : context.colors.iconButtonBg,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
@@ -78,7 +82,9 @@ class RegisteredEventCard extends StatelessWidget {
                             width: 14,
                             height: 14,
                             colorFilter: ColorFilter.mode(
-                              upComingRegisteredEvent ? Colors.white70 : context.colors.muted,
+                              upComingRegisteredEvent
+                                  ? Colors.white70
+                                  : context.colors.muted,
                               BlendMode.srcIn,
                             ),
                           ),
@@ -86,9 +92,12 @@ class RegisteredEventCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               event.location ?? "No Location",
-                              style:  TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
-                                color: upComingRegisteredEvent ? Colors.white70 : context.colors.muted,
+                                color:
+                                    upComingRegisteredEvent
+                                        ? Colors.white70
+                                        : context.colors.muted,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -98,10 +107,13 @@ class RegisteredEventCard extends StatelessWidget {
                       const SizedBox(height: 8),
                       Text(
                         event.name ?? "No Title",
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: upComingRegisteredEvent ? Colors.white : context.colors.text,
+                          color:
+                              upComingRegisteredEvent
+                                  ? Colors.white
+                                  : context.colors.text,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -112,7 +124,10 @@ class RegisteredEventCard extends StatelessWidget {
             ),
             SizedBox(height: 10),
             AppButton(
-              label: upComingRegisteredEvent ? 'Începe jocul' : 'Detalii înscriere',
+              label:
+                  upComingRegisteredEvent
+                      ? 'Începe jocul'
+                      : 'Detalii înscriere',
               onPressed: () => onEventTap(event),
               backgroundColor: upComingRegisteredEvent ? Colors.white : null,
               foregroundColor:

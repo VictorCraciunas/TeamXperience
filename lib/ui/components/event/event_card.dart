@@ -94,7 +94,11 @@ class EventCard extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            AppSvgIcon('assets/images/location.svg', width: 14, height: 14),
+                            AppSvgIcon(
+                              'assets/images/location.svg',
+                              width: 14,
+                              height: 14,
+                            ),
                             const SizedBox(width: 5),
                             Expanded(
                               child: Text(

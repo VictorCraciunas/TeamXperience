@@ -14,7 +14,8 @@ class RegisteredEventsCarousel extends StatefulWidget {
   });
 
   @override
-  State<RegisteredEventsCarousel> createState() => _RegisteredEventsCarouselState();
+  State<RegisteredEventsCarousel> createState() =>
+      _RegisteredEventsCarouselState();
 }
 
 class _RegisteredEventsCarouselState extends State<RegisteredEventsCarousel> {
@@ -30,9 +31,7 @@ class _RegisteredEventsCarouselState extends State<RegisteredEventsCarousel> {
   @override
   Widget build(BuildContext context) {
     if (widget.events.isEmpty) {
-      return const Center(
-        child: Text('No registered events'),
-      );
+      return const Center(child: Text('No registered events'));
     }
 
     return Column(
@@ -72,16 +71,17 @@ class _RegisteredEventsCarouselState extends State<RegisteredEventsCarousel> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
         widget.events.length,
-            (index) => AnimatedContainer(
+        (index) => AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           margin: const EdgeInsets.symmetric(horizontal: 4.0),
           width: _currentIndex == index ? 34.0 : 8.0,
           height: 8.0,
           decoration: BoxDecoration(
-            color: _currentIndex == index
-                ? context.colors.accent
-                : context.colors.insetBorder,
+            color:
+                _currentIndex == index
+                    ? context.colors.accent
+                    : context.colors.insetBorder,
             borderRadius: BorderRadius.circular(4.0),
           ),
         ),

@@ -21,27 +21,27 @@ class EventsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (events.isEmpty) {
-      return const Center(
-        child: Text('Încă nu sunt evenimente programate'),
-      );
+      return const Center(child: Text('Încă nu sunt evenimente programate'));
     }
 
     // If shrinkWrap is true, use Column instead of ListView
     if (shrinkWrap) {
       return Column(
-        children: events.map((event) {
-          final stats = eventStats[event.eventId] ?? {'nrTeams': 0, 'nrPerson': 0};
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: EventCard(
-              event: event,
-              onTap: () => onEventTap(event),
-              isAdmin: isAdmin,
-              nrTeams: stats['nrTeams'] ?? 0,
-              nrPerson: stats['nrPerson'] ?? 0,
-            ),
-          );
-        }).toList(),
+        children:
+            events.map((event) {
+              final stats =
+                  eventStats[event.eventId] ?? {'nrTeams': 0, 'nrPerson': 0};
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: EventCard(
+                  event: event,
+                  onTap: () => onEventTap(event),
+                  isAdmin: isAdmin,
+                  nrTeams: stats['nrTeams'] ?? 0,
+                  nrPerson: stats['nrPerson'] ?? 0,
+                ),
+              );
+            }).toList(),
       );
     }
 
@@ -50,7 +50,8 @@ class EventsList extends StatelessWidget {
       itemCount: events.length,
       itemBuilder: (context, index) {
         final event = events[index];
-        final stats = eventStats[event.eventId] ?? {'nrTeams': 0, 'nrPerson': 0};
+        final stats =
+            eventStats[event.eventId] ?? {'nrTeams': 0, 'nrPerson': 0};
         return Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: EventCard(

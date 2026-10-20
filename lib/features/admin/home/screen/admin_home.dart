@@ -48,12 +48,12 @@ class _AdminHomeState extends State<AdminHome> {
   }
 
   AdminHeroActions get _actions => AdminHeroActions(
-        onManage: controller.navigateToEventManagement,
-        onMap: controller.navigateToMap,
-        onChats: controller.navigateToChats,
-        onTeams: controller.navigateToRegisteredTeams,
-        onNotify: controller.navigateToNotificationFor,
-      );
+    onManage: controller.navigateToEventManagement,
+    onMap: controller.navigateToMap,
+    onChats: controller.navigateToChats,
+    onTeams: controller.navigateToRegisteredTeams,
+    onNotify: controller.navigateToNotificationFor,
+  );
 
   Event? _heroEvent(AdminHero hero) {
     return switch (hero) {
@@ -86,10 +86,11 @@ class _AdminHomeState extends State<AdminHome> {
                   24,
                 ),
                 child: ClockBuilder(
-                  builder: (context, now) => AnimatedBuilder(
-                    animation: controller,
-                    builder: (context, _) => _content(now, eventList),
-                  ),
+                  builder:
+                      (context, now) => AnimatedBuilder(
+                        animation: controller,
+                        builder: (context, _) => _content(now, eventList),
+                      ),
                 ),
               ),
             );

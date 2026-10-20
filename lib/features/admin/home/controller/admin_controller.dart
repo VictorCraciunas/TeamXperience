@@ -32,7 +32,7 @@ class AdminHomeController extends ChangeNotifier {
     Navigator.pushNamedAndRemoveUntil(
       context,
       Routes.splash,
-          (Route<dynamic> route) => false,
+      (Route<dynamic> route) => false,
     );
   }
 
@@ -48,10 +48,7 @@ class AdminHomeController extends ChangeNotifier {
     Navigator.pushNamed(
       context,
       Routes.eventDetails,
-      arguments: {
-        'event': event,
-        'isAdmin': true,
-      },
+      arguments: {'event': event, 'isAdmin': true},
     );
   }
 
@@ -59,10 +56,7 @@ class AdminHomeController extends ChangeNotifier {
     Navigator.pushNamed(
       context,
       Routes.newsDetails,
-      arguments: {
-        'stire': stire,
-        'isAdmin': true,
-      },
+      arguments: {'stire': stire, 'isAdmin': true},
     );
   }
 
@@ -80,18 +74,11 @@ class AdminHomeController extends ChangeNotifier {
   }
 
   void navigateToNotification() {
-    Navigator.pushNamed(
-      context,
-      Routes.sendNotification,
-    );
+    Navigator.pushNamed(context, Routes.sendNotification);
   }
 
   void navigateToEventManagement(Event event) {
-    Navigator.pushNamed(
-      context,
-      Routes.eventManagement,
-      arguments: event,
-    );
+    Navigator.pushNamed(context, Routes.eventManagement, arguments: event);
   }
 
   void navigateToMap(Event event) {
@@ -172,10 +159,12 @@ class AdminHomeController extends ChangeNotifier {
   Future<void> reloadStats() async {
     final eventList = context.read<EventList>();
     final now = DateTime.now();
-    final events = eventList.events.where((e) {
-      final start = e.dateEvent;
-      return start != null && !(e.isStopped || now.isAfter(start.add(Event.maxDuration)));
-    }).toList();
+    final events =
+        eventList.events.where((e) {
+          final start = e.dateEvent;
+          return start != null &&
+              !(e.isStopped || now.isAfter(start.add(Event.maxDuration)));
+        }).toList();
     await loadEventStats(events);
   }
 

@@ -23,15 +23,27 @@ class AdminQuickActionsPanel extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: ActionTile(icon: Icons.add_circle_outline, label: 'Creează eveniment', onTap: onCreateEvent),
+              child: ActionTile(
+                icon: Icons.add_circle_outline,
+                label: 'Creează eveniment',
+                onTap: onCreateEvent,
+              ),
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: ActionTile(icon: Icons.post_add, label: 'Creează știre', onTap: onCreateNews),
+              child: ActionTile(
+                icon: Icons.post_add,
+                label: 'Creează știre',
+                onTap: onCreateNews,
+              ),
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: ActionTile(icon: Icons.notifications_none, label: 'Trimite notificare', onTap: onNotify),
+              child: ActionTile(
+                icon: Icons.notifications_none,
+                label: 'Trimite notificare',
+                onTap: onNotify,
+              ),
             ),
           ],
         ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 
-
 class TitleCarousel extends StatelessWidget {
   final String text;
   final VoidCallback? onTap;
@@ -23,7 +22,7 @@ class TitleCarousel extends StatelessWidget {
         ),
         InkWell(
           splashFactory: InkSplash.splashFactory,
-          onTap:onTap,
+          onTap: onTap,
           child: Container(
             padding: const EdgeInsets.all(5),
             child: Text(

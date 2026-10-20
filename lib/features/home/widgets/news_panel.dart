@@ -21,12 +21,13 @@ class NewsPanel extends StatelessWidget {
     return SectionCard(
       title: 'Noutăți',
       onAction: news.isEmpty ? null : onSeeAll,
-      child: news.isEmpty
-          ? Text(
-              'Nu sunt știri momentan.',
-              style: TextStyle(color: context.colors.muted, fontSize: 12),
-            )
-          : StiriCarousel(stiri: news, onStireTap: onTap, showBadge: false),
+      child:
+          news.isEmpty
+              ? Text(
+                'Nu sunt știri momentan.',
+                style: TextStyle(color: context.colors.muted, fontSize: 12),
+              )
+              : StiriCarousel(stiri: news, onStireTap: onTap, showBadge: false),
     );
   }
 }

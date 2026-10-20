@@ -25,7 +25,6 @@ class EventImage extends StatelessWidget {
   final int nrTeams;
   final int nrPerson;
 
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -34,7 +33,8 @@ class EventImage extends StatelessWidget {
       child: Stack(
         children: [
           // Background Image
-          event.landingImageUrl != null && event.landingImageUrl?.isNotEmpty == true
+          event.landingImageUrl != null &&
+                  event.landingImageUrl?.isNotEmpty == true
               ? CachedNetworkImage(
                 imageBuilder:
                     (context, imageProvider) => Container(
@@ -75,7 +75,11 @@ class EventImage extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        AppSvgIcon('assets/images/user-group.svg', width: 18, height: 18),
+                        AppSvgIcon(
+                          'assets/images/user-group.svg',
+                          width: 18,
+                          height: 18,
+                        ),
                         const SizedBox(width: 2.0),
                         Text(
                           "$nrTeams",
@@ -102,14 +106,18 @@ class EventImage extends StatelessWidget {
                   width: 78,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: event.type == EventType.PUBLIC || isAdmin == false ? context.colors.accent : context.colors.navy,
+                    color:
+                        event.type == EventType.PUBLIC || isAdmin == false
+                            ? context.colors.accent
+                            : context.colors.navy,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Center(
                     child: Text(
                       isAdmin == true
-                          ? event.type?.name ?? "GRATUIT"  // if isAdmin is true
-                          : "GRATUIT" ,
+                          ? event.type?.name ??
+                              "GRATUIT" // if isAdmin is true
+                          : "GRATUIT",
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,

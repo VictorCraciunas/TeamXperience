@@ -7,7 +7,7 @@ void main() {
     expect(AppColors.light.page, const Color(0xFFE7ECF3));
     expect(AppColors.light.panel, const Color(0xFFFFFFFF));
     expect(AppColors.light.text, const Color(0xFF0C092A));
-    expect(AppColors.light.accent, const Color(0xFF1B8A8E));
+    expect(AppColors.light.accent, const Color(0xFF167A7E));
   });
 
   test('dark tokens match spec', () {
