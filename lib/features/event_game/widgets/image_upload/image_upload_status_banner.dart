@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
+import 'package:teamxperience/ui/ui.dart';
 
 class ImageUploadStatusBanner extends StatelessWidget {
   final PhotoApprovalStatus? status;
@@ -14,37 +14,42 @@ class ImageUploadStatusBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     if (isUploading) {
-      return CircularProgressIndicator(color: context.colors.accent);
+      return CircularProgressIndicator(color: colors.accent);
     }
 
     switch (status) {
       case PhotoApprovalStatus.pending:
         return _banner(
           'Se așteaptă aprobarea organizatorului...',
-          Colors.amber.shade300,
+          colors.warning,
+          colors.warningSoft,
         );
       case PhotoApprovalStatus.approved:
         return _banner(
           'Imaginea a fost aprobată!',
-          Colors.greenAccent.shade200,
+          colors.success,
+          colors.successSoft,
         );
       case PhotoApprovalStatus.denied:
         return _banner(
           'Imaginea a fost respinsă. Încarcă alta.',
-          Colors.redAccent.shade200,
+          colors.danger,
+          colors.dangerSoft,
         );
       case null:
         return const SizedBox.shrink();
     }
   }
 
-  Widget _banner(String text, Color color) {
+  Widget _banner(String text, Color color, Color background) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
+        color: background,
         border: Border.all(color: color, width: 1.5),
         borderRadius: BorderRadius.circular(12),
       ),

@@ -108,7 +108,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                 width: 60,
                 height: 60,
                 color: context.colors.inset,
-                child: const Icon(Icons.error, color: Colors.red),
+                child: Icon(Icons.error, color: context.colors.danger),
               ),
         ),
       );
@@ -124,7 +124,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
             width: 60,
             height: 60,
             color: context.colors.inset,
-            child: const Icon(Icons.error, color: Colors.red),
+            child: Icon(Icons.error, color: context.colors.danger),
           );
         },
       );

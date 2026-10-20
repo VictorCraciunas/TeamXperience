@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
+import 'package:teamxperience/ui/components/feedback/app_dialog.dart';
 import 'package:teamxperience/ui/components/feedback/snackbars.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
@@ -40,26 +41,16 @@ class _EventRegisteredTeamsState extends State<EventRegisteredTeams> {
   }
 
   Future<void> _confirmDelete(Team team) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text("Confirmare"),
-        content: const Text("Ești sigur că vrei să ștergi echipa înregistrată?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text("Anulează"),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text("Șterge"),
-          ),
-        ],
-      ),
+    final confirmed = await showAppDialog(
+      context,
+      title: 'Confirmare',
+      message: 'Ești sigur că vrei să ștergi echipa înregistrată?',
+      confirmLabel: 'Șterge',
+      cancelLabel: 'Anulează',
+      destructive: true,
     );
 
-    if (confirmed != true) return;
+    if (!confirmed) return;
 
     try {
       await controller.deleteTeam(team);
