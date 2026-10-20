@@ -4,6 +4,7 @@ import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/service/event_service/event_service.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
+import 'package:teamxperience/ui/components/feedback/app_dialog.dart';
 
 class EventManagementController extends ChangeNotifier {
   final BuildContext context;
@@ -53,27 +54,16 @@ class EventManagementController extends ChangeNotifier {
   }
 
   Future<void> confirmAndStop() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Oprește evenimentul"),
-        content: const Text(
-          "Toate echipele vor vedea un mesaj că evenimentul s-a terminat. Ești sigur?",
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text("Anulează"),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text("Oprește"),
-          ),
-        ],
-      ),
+    final confirmed = await showAppDialog(
+      context,
+      title: 'Oprește evenimentul',
+      message: 'Toate echipele vor vedea un mesaj că evenimentul s-a terminat. Ești sigur?',
+      confirmLabel: 'Oprește',
+      cancelLabel: 'Anulează',
+      destructive: true,
     );
 
-    if (confirmed != true) return;
+    if (!confirmed) return;
 
     _isStopping = true;
     notifyListeners();

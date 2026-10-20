@@ -17,6 +17,12 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.iconButtonBg,
     required this.live,
     required this.soon,
+    required this.success,
+    required this.warning,
+    required this.danger,
+    required this.successSoft,
+    required this.warningSoft,
+    required this.dangerSoft,
   });
 
   final Color page;
@@ -34,6 +40,15 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color live;
   final Color soon;
 
+  /// Semantic colours for feedback (snackbars, dialogs, status banners) and
+  /// their soft backgrounds.
+  final Color success;
+  final Color warning;
+  final Color danger;
+  final Color successSoft;
+  final Color warningSoft;
+  final Color dangerSoft;
+
   static const AppColors light = AppColors(
     page: Color(0xFFE7ECF3),
     panel: Color(0xFFFFFFFF),
@@ -42,13 +57,19 @@ class AppColors extends ThemeExtension<AppColors> {
     insetBorder: Color(0xFFE1E7EF),
     text: Color(0xFF0C092A),
     muted: Color(0xFF47546A),
-    accent: Color(0xFF1B8A8E),
+    accent: Color(0xFF167A7E),
     tick: Color(0xFF2AA5A9),
     navy: Color(0xFF222F62),
     navActivePill: Color(0xFFDDF3F3),
     iconButtonBg: Color(0xFFE3F2F3),
     live: Color(0xFFE5484D),
     soon: Color(0xFFF2A93B),
+    success: Color(0xFF1F8F5A),
+    warning: Color(0xFFB7791F),
+    danger: Color(0xFFD13438),
+    successSoft: Color(0xFFE2F4EA),
+    warningSoft: Color(0xFFFBEFD8),
+    dangerSoft: Color(0xFFFBE5E6),
   );
 
   static const AppColors dark = AppColors(
@@ -66,6 +87,12 @@ class AppColors extends ThemeExtension<AppColors> {
     iconButtonBg: Color(0xFF232A35),
     live: Color(0xFFE5484D),
     soon: Color(0xFFF2A93B),
+    success: Color(0xFF3DBE7F),
+    warning: Color(0xFFE8A94B),
+    danger: Color(0xFFEF6A6E),
+    successSoft: Color(0xFF173226),
+    warningSoft: Color(0xFF352A14),
+    dangerSoft: Color(0xFF3A1B1D),
   );
 
   LinearGradient get ctaGradient => const LinearGradient(
@@ -90,6 +117,12 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? iconButtonBg,
     Color? live,
     Color? soon,
+    Color? success,
+    Color? warning,
+    Color? danger,
+    Color? successSoft,
+    Color? warningSoft,
+    Color? dangerSoft,
   }) {
     return AppColors(
       page: page ?? this.page,
@@ -106,6 +139,12 @@ class AppColors extends ThemeExtension<AppColors> {
       iconButtonBg: iconButtonBg ?? this.iconButtonBg,
       live: live ?? this.live,
       soon: soon ?? this.soon,
+      success: success ?? this.success,
+      warning: warning ?? this.warning,
+      danger: danger ?? this.danger,
+      successSoft: successSoft ?? this.successSoft,
+      warningSoft: warningSoft ?? this.warningSoft,
+      dangerSoft: dangerSoft ?? this.dangerSoft,
     );
   }
 
@@ -129,6 +168,12 @@ class AppColors extends ThemeExtension<AppColors> {
       iconButtonBg: mix(iconButtonBg, other.iconButtonBg),
       live: mix(live, other.live),
       soon: mix(soon, other.soon),
+      success: mix(success, other.success),
+      warning: mix(warning, other.warning),
+      danger: mix(danger, other.danger),
+      successSoft: mix(successSoft, other.successSoft),
+      warningSoft: mix(warningSoft, other.warningSoft),
+      dangerSoft: mix(dangerSoft, other.dangerSoft),
     );
   }
 }

@@ -48,7 +48,10 @@ class HomeHeroSection extends StatelessWidget {
     final event = hero.event;
     final team = hero.team;
     final start = event.dateEvent;
-    final remaining = start == null ? Duration.zero : start.add(Event.maxDuration).difference(now);
+    final remaining =
+        start == null
+            ? Duration.zero
+            : start.add(Event.maxDuration).difference(now);
     final total = event.nrMissions;
     final mission = total <= 0 ? 1 : (team.missionProgress + 1).clamp(1, total);
 
@@ -56,9 +59,10 @@ class HomeHeroSection extends StatelessWidget {
       status: HeroStatus.live,
       statusLabel: 'LIVE',
       title: event.name ?? '',
-      subtitle: total <= 0
-          ? team.name
-          : '${team.name} · Misiunea $mission din $total',
+      subtitle:
+          total <= 0
+              ? team.name
+              : '${team.name} · Misiunea $mission din $total',
       timeChip: '${formatRemaining(remaining)} rămase',
       imageUrl: _image(event),
       progressDone: total > 0 ? team.missionProgress : null,
@@ -69,6 +73,7 @@ class HomeHeroSection extends StatelessWidget {
         onTap: () => actions.onContinue(event, team),
       ),
       secondaryIcon: Icons.chat_bubble_outline,
+      secondaryLabel: 'Chat cu organizatorii',
       onSecondary: () => actions.onChat(event, team),
     );
   }
@@ -111,6 +116,7 @@ class HomeHeroSection extends StatelessWidget {
         onTap: () => actions.onDetails(event),
       ),
       secondaryIcon: Icons.share_outlined,
+      secondaryLabel: 'Distribuie înscrierea',
       onSecondary: () => actions.onShare(event),
     );
   }

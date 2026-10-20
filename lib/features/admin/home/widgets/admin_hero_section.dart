@@ -42,13 +42,17 @@ class AdminHeroSection extends StatelessWidget {
 
   Widget _live(Event event) {
     final start = event.dateEvent;
-    final remaining = start == null ? Duration.zero : start.add(Event.maxDuration).difference(now);
+    final remaining =
+        start == null
+            ? Duration.zero
+            : start.add(Event.maxDuration).difference(now);
 
     return EventHeroCard(
       status: HeroStatus.live,
       statusLabel: 'LIVE',
       title: event.name ?? '',
-      subtitle: '${stats.teams} echipe · ${stats.finished} au terminat · ${stats.inPlay} în joc',
+      subtitle:
+          '${stats.teams} echipe · ${stats.finished} au terminat · ${stats.inPlay} în joc',
       timeChip: '${formatRemaining(remaining)} rămase',
       imageUrl: _image(event),
       primary: HeroAction(
@@ -57,9 +61,14 @@ class AdminHeroSection extends StatelessWidget {
         onTap: () => actions.onManage(event),
       ),
       secondaryIcon: Icons.map_outlined,
+      secondaryLabel: 'Harta echipelor',
       onSecondary: () => actions.onMap(event),
       moreActions: [
-        HeroIconAction(icon: Icons.chat_bubble_outline, onTap: () => actions.onChats(event)),
+        HeroIconAction(
+          icon: Icons.chat_bubble_outline,
+          label: 'Conversații cu echipele',
+          onTap: () => actions.onChats(event),
+        ),
       ],
     );
   }
@@ -81,6 +90,7 @@ class AdminHeroSection extends StatelessWidget {
         onTap: () => actions.onTeams(event),
       ),
       secondaryIcon: Icons.notifications_none,
+      secondaryLabel: 'Trimite notificare',
       onSecondary: () => actions.onNotify(event),
     );
   }

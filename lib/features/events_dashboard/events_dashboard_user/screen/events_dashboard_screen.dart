@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:provider/provider.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/events_dashboard/events_dashboard_user/controller/events_dash_user_controller.dart';
 import 'package:teamxperience/ui/components/misc/custom_icon_dashboard.dart';
 import 'package:teamxperience/ui/components/event/registered_events_list.dart';
@@ -170,7 +169,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> with SingleTickerPr
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: MyPaddings.appHorizontalPadding),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
           child: AnimatedBuilder(
             animation: controller,
             builder: (context, child) {

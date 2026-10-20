@@ -54,7 +54,11 @@ class EventRow extends StatelessWidget {
                   children: [
                     Text(
                       monthLabel,
-                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     Text(
                       dayLabel,

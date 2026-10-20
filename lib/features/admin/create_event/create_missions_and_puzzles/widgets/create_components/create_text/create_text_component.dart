@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/enums/animation_type.dart';
-import 'package:teamxperience/constants/colors.dart';
-import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
+import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 import 'package:teamxperience/ui/components/misc/color_picker_dialog.dart';
 import 'package:teamxperience/ui/components/misc/slider_widget.dart';
 
@@ -12,7 +11,6 @@ import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';
 import '../../../../../../../utils/component_conversion/component_to_widget.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
 import 'create_text_controller.dart';
 
 class TextComponentFieldsWidget extends StatefulWidget {
@@ -30,7 +28,8 @@ class TextComponentFieldsWidget extends StatefulWidget {
   });
 
   @override
-  State<TextComponentFieldsWidget> createState() => _TextComponentFieldsWidgetState();
+  State<TextComponentFieldsWidget> createState() =>
+      _TextComponentFieldsWidgetState();
 }
 
 class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
@@ -104,10 +103,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
       children: [
         const Text(
           'Previzualizare',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 6),
         Container(
@@ -125,32 +121,33 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
   }
 
   Widget _buildTextContentField() {
-    return MyTextField(
+    return AppTextField(
       onChanged: (value) {
         setState(() {});
       },
       controller: controller.textController,
-      labelText: 'Conținut Text',
-      borderColor: context.colors.accent,
-      borderWidth: 1.5,
-      radius: 20,
+      label: 'Conținut Text',
       maxLines: null,
-      validator: (value) =>
-      value == null || value.isEmpty ? 'Please enter text content' : null,
+      validator:
+          (value) =>
+              value == null || value.isEmpty
+                  ? 'Please enter text content'
+                  : null,
     );
   }
 
   Widget _buildAnimationDropdown() {
-    return MyDropdownField<AnimationType>(
-      labelText: 'Animație',
-      items: AnimationType.values
-          .map(
-            (anim) => DropdownItem<AnimationType>(
-          value: anim,
-          label: anim.toString().split('.').last,
-        ),
-      )
-          .toList(),
+    return AppDropdown<AnimationType>(
+      label: 'Animație',
+      items:
+          AnimationType.values
+              .map(
+                (anim) => AppDropdownItem<AnimationType>(
+                  value: anim,
+                  label: anim.toString().split('.').last,
+                ),
+              )
+              .toList(),
       value: controller.animation,
       onChanged: (value) {
         setState(() {
@@ -158,16 +155,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
         });
       },
       validator: (value) => value == null ? 'Selectează animația' : null,
-      borderColor: context.colors.accent,
-      borderWidth: 1.5,
-      radius: 20,
-      hint: Text(
-        'Selectează animația',
-        style: TextStyle(
-          fontSize: 14,
-          color: context.colors.muted,
-        ),
-      ),
+      hint: 'Selectează animația',
     );
   }
 
@@ -188,17 +176,11 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
   }
 
   Widget _buildFontFamilyDropdown() {
-    return MyDropdownField<String>(
-      labelText: 'Tip Font',
+    return AppDropdown<String>(
+      label: 'Tip Font',
       items: const [
-        DropdownItem<String>(
-          value: 'Poppins',
-          label: 'Poppins',
-        ),
-        DropdownItem<String>(
-          value: 'Monospace',
-          label: 'Monospace',
-        ),
+        AppDropdownItem<String>(value: 'Poppins', label: 'Poppins'),
+        AppDropdownItem<String>(value: 'Monospace', label: 'Monospace'),
       ],
       value: controller.fontFamily,
       onChanged: (value) {
@@ -207,45 +189,28 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
         });
       },
       validator: (value) => value == null ? 'Selectează tipul de font' : null,
-      borderColor: context.colors.accent,
-      borderWidth: 1.5,
-      radius: 20,
-      hint: Text(
-        'Selectează tipul de font',
-        style: TextStyle(
-          fontSize: 14,
-          color: context.colors.muted,
-        ),
-      ),
+      hint: 'Selectează tipul de font',
     );
   }
 
   Widget _buildFontWeightDropdown() {
-    return MyDropdownField<String>(
-      labelText: 'Grosime Font',
-      items: weightMap.keys
-          .map((label) => DropdownItem<String>(
-        value: label,
-        label: label,
-      ))
-          .toList(),
+    return AppDropdown<String>(
+      label: 'Grosime Font',
+      items:
+          weightMap.keys
+              .map(
+                (label) => AppDropdownItem<String>(value: label, label: label),
+              )
+              .toList(),
       value: controller.fontWeight,
       onChanged: (value) {
         setState(() {
           controller.fontWeight = value;
         });
       },
-      validator: (value) => value == null ? 'Selectează grosimea fontului' : null,
-      borderColor: context.colors.accent,
-      borderWidth: 1.5,
-      radius: 20,
-      hint: Text(
-        'Selectează grosimea fontului',
-        style: TextStyle(
-          fontSize: 14,
-          color: context.colors.muted,
-        ),
-      ),
+      validator:
+          (value) => value == null ? 'Selectează grosimea fontului' : null,
+      hint: 'Selectează grosimea fontului',
     );
   }
 
@@ -266,21 +231,16 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
   }
 
   Widget _buildTextColorPicker() {
-    return MyTextField(
-      hinttextWeight: FontWeight.w500,
-      hintTextSize: 15,
-      hintTextColor: context.colors.text,
+    return AppTextField(
       controller: controller.textColorController,
-      hintText: 'Culoare Text',
-      borderColor: context.colors.accent,
-      radius: 15,
+      hint: 'Culoare Text',
       readOnly: true,
       onTap: () {
         ColorPickerDialog.show(
           context,
           'Pick a color',
           controller.hexToColor(controller.textColor),
-              (color) {
+          (color) {
             setState(() {
               controller.textColor = color;
             });
@@ -296,17 +256,18 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
           borderRadius: BorderRadius.circular(5),
         ),
       ),
+      validator: requiredValidator('a value'),
     );
   }
 
   Widget _buildTextAlignDropdown() {
-    return MyDropdownField<String>(
-      labelText: 'Aliniere Text',
+    return AppDropdown<String>(
+      label: 'Aliniere Text',
       items: const [
-        DropdownItem<String>(value: 'left', label: 'Stânga'),
-        DropdownItem<String>(value: 'center', label: 'Centrat'),
-        DropdownItem<String>(value: 'right', label: 'Dreapta'),
-        DropdownItem<String>(value: 'justify', label: 'Justify'),
+        AppDropdownItem<String>(value: 'left', label: 'Stânga'),
+        AppDropdownItem<String>(value: 'center', label: 'Centrat'),
+        AppDropdownItem<String>(value: 'right', label: 'Dreapta'),
+        AppDropdownItem<String>(value: 'justify', label: 'Justify'),
       ],
       value: controller.textAlign,
       onChanged: (value) {
@@ -314,38 +275,26 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
           controller.textAlign = value ?? 'center';
         });
       },
-      borderColor: context.colors.accent,
-      borderWidth: 1.5,
-      radius: 20,
-      hint: Text(
-        'Selectează alinierea',
-        style: TextStyle(
-          fontSize: 14,
-          color: context.colors.muted,
-        ),
-      ),
+      hint: 'Selectează alinierea',
     );
   }
 
   Widget _buildSaveButton() {
     return Center(
-      child: MyButton(
-        buttonText: 'Salvează componenta',
-        textColor: Colors.white,
-        buttonOnTap: () {
-          controller.saveComponent(
-            context: context,
-            puzzle: widget.puzzle,
-            component: widget.component,
-            refreshUI: widget.refreshUI,
-            isEditMode: widget.edit,
-          );
-        },
-        withBorder: false,
-        buttonColor: MyColors.lightBlue,
-        fontWeight: FontWeight.w500,
-        buttonTextSize: 14,
-        buttonWidth: 270,
+      child: SizedBox(
+        width: 270,
+        child: AppButton(
+          label: 'Salvează componenta',
+          onPressed: () {
+            controller.saveComponent(
+              context: context,
+              puzzle: widget.puzzle,
+              component: widget.component,
+              refreshUI: widget.refreshUI,
+              isEditMode: widget.edit,
+            );
+          },
+        ),
       ),
     );
   }

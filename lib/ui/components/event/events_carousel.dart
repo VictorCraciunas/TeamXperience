@@ -34,9 +34,7 @@ class _EventsCarouselState extends State<EventsCarousel> {
   @override
   Widget build(BuildContext context) {
     if (widget.events.isEmpty) {
-      return const Center(
-        child: Text('Încă nu sunt evenimente programate'),
-      );
+      return const Center(child: Text('Încă nu sunt evenimente programate'));
     }
 
     return Column(
@@ -44,7 +42,8 @@ class _EventsCarouselState extends State<EventsCarousel> {
         // Horizontal scrollable event cards - let the card determine its own height
         SizedBox(
           width: double.infinity,
-          height: 282, // Increased height to accommodate your EventCard's natural size
+          height:
+              282, // Increased height to accommodate your EventCard's natural size
           child: PageView.builder(
             controller: _pageController,
             onPageChanged: (index) {
@@ -55,7 +54,9 @@ class _EventsCarouselState extends State<EventsCarousel> {
             itemCount: widget.events.length,
             itemBuilder: (context, index) {
               final event = widget.events[index];
-              final stats = widget.eventStats[event.eventId] ?? {'nrTeams': 0, 'nrPerson': 0};
+              final stats =
+                  widget.eventStats[event.eventId] ??
+                  {'nrTeams': 0, 'nrPerson': 0};
 
               return EventCard(
                 event: event,
@@ -81,16 +82,17 @@ class _EventsCarouselState extends State<EventsCarousel> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
         widget.events.length,
-            (index) => AnimatedContainer(
+        (index) => AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           margin: const EdgeInsets.symmetric(horizontal: 4.0),
           width: _currentIndex == index ? 34.0 : 8.0,
           height: 8.0,
           decoration: BoxDecoration(
-            color: _currentIndex == index
-                ? context.colors.accent
-                : context.colors.insetBorder,
+            color:
+                _currentIndex == index
+                    ? context.colors.accent
+                    : context.colors.insetBorder,
             borderRadius: BorderRadius.circular(4.0),
           ),
         ),

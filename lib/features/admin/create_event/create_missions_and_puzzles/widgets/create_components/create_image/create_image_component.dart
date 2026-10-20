@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../constants/colors.dart';
 import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';
 import '../../../../../../../utils/component_conversion/component_to_widget.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 import 'package:teamxperience/ui/components/misc/slider_widget.dart';
 import '../../../../common_widgets/upload_image.dart';
 import '../../../controller/add_missions_controller.dart';
@@ -25,10 +24,12 @@ class ImageComponentFieldsWidget extends StatefulWidget {
   });
 
   @override
-  State<ImageComponentFieldsWidget> createState() => _ImageComponentFieldsWidgetState();
+  State<ImageComponentFieldsWidget> createState() =>
+      _ImageComponentFieldsWidgetState();
 }
 
-class _ImageComponentFieldsWidgetState extends State<ImageComponentFieldsWidget> {
+class _ImageComponentFieldsWidgetState
+    extends State<ImageComponentFieldsWidget> {
   late final ImageComponentController controller;
 
   @override
@@ -69,7 +70,7 @@ class _ImageComponentFieldsWidgetState extends State<ImageComponentFieldsWidget>
       },
       child: UploadImage(
         labelText: 'Adaugă imagine',
-        imageUrl:  controller.image?.path,
+        imageUrl: controller.image?.path,
       ),
     );
   }
@@ -86,10 +87,7 @@ class _ImageComponentFieldsWidgetState extends State<ImageComponentFieldsWidget>
     // Use ComponentToWidget to convert to widget
     final previewWidget = ComponentToWidget().convert(previewComponent);
 
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: previewWidget,
-    );
+    return Padding(padding: const EdgeInsets.all(10), child: previewWidget);
   }
 
   Widget _buildRadiusSlider() {
@@ -118,23 +116,20 @@ class _ImageComponentFieldsWidgetState extends State<ImageComponentFieldsWidget>
 
   Widget _buildSaveButton() {
     return Center(
-      child: MyButton(
-        buttonText: 'Salvează componenta',
-        textColor: Colors.white,
-        buttonOnTap: () {
-          controller.saveComponent(
-            context: context,
-            puzzle: widget.puzzle,
-            component: widget.component,
-            refreshUI: widget.refreshUI,
-            isEditMode: widget.edit,
-          );
-        },
-        withBorder: false,
-        buttonColor: MyColors.lightBlue,
-        fontWeight: FontWeight.w500,
-        buttonTextSize: 14,
-        buttonWidth: 270,
+      child: SizedBox(
+        width: 270,
+        child: AppButton(
+          label: 'Salvează componenta',
+          onPressed: () {
+            controller.saveComponent(
+              context: context,
+              puzzle: widget.puzzle,
+              component: widget.component,
+              refreshUI: widget.refreshUI,
+              isEditMode: widget.edit,
+            );
+          },
+        ),
       ),
     );
   }

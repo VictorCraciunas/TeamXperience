@@ -8,7 +8,7 @@ import 'package:teamxperience/features/event_game/widgets/image_upload/image_upl
 import 'package:teamxperience/features/event_game/widgets/image_upload/image_upload_status_banner.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
 class ImageUploadPuzzleWidget extends StatefulWidget {
   final String eventId;
@@ -66,14 +66,7 @@ class _ImageUploadPuzzleWidgetState extends State<ImageUploadPuzzleWidget> {
       return Padding(
         padding: const EdgeInsets.all(16),
         child: Center(
-          child: MyButton(
-            buttonText: 'Continuă',
-            textColor: Colors.white,
-            buttonOnTap: widget.onSolved,
-            withBorder: false,
-            gradient: context.colors.ctaGradient,
-            buttonTextSize: 15,
-          ),
+          child: AppButton(label: 'Continuă', onPressed: widget.onSolved),
         ),
       );
     }
@@ -92,31 +85,37 @@ class _ImageUploadPuzzleWidgetState extends State<ImageUploadPuzzleWidget> {
 
         return AnimatedBuilder(
           animation: controller,
-          builder: (context, _) => Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: controller.selectedImage == null
-                      ? ImageUploadPicker(onTap: () => controller.pickAndUpload(team))
-                      : ImageUploadPreview(file: controller.selectedImage!),
+          builder:
+              (context, _) => Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child:
+                          controller.selectedImage == null
+                              ? ImageUploadPicker(
+                                onTap: () => controller.pickAndUpload(team),
+                              )
+                              : ImageUploadPreview(
+                                file: controller.selectedImage!,
+                              ),
+                    ),
+                    const SizedBox(height: 16),
+                    ImageUploadStatusBanner(
+                      status: status,
+                      isUploading: controller.isUploading,
+                    ),
+                    const SizedBox(height: 12),
+                    ImageUploadActionButton(
+                      status: status,
+                      isUploading: controller.isUploading,
+                      onContinue: widget.onSolved,
+                      onReupload: () => controller.pickAndUpload(team),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                ImageUploadStatusBanner(
-                  status: status,
-                  isUploading: controller.isUploading,
-                ),
-                const SizedBox(height: 12),
-                ImageUploadActionButton(
-                  status: status,
-                  isUploading: controller.isUploading,
-                  onContinue: widget.onSolved,
-                  onReupload: () => controller.pickAndUpload(team),
-                ),
-              ],
-            ),
-          ),
+              ),
         );
       },
     );

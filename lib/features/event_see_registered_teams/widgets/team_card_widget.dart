@@ -56,9 +56,9 @@ class TeamCardWidget extends StatelessWidget {
               InkWell(
                 onTap: onDelete,
                 borderRadius: BorderRadius.circular(20),
-                child: const Padding(
-                  padding: EdgeInsets.all(4),
-                  child: Icon(Icons.close, color: Colors.red, size: 22),
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Icon(Icons.close, color: context.colors.danger, size: 22),
                 ),
               ),
             ],

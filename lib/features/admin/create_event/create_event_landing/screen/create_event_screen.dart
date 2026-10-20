@@ -5,12 +5,10 @@ import 'package:intl/intl.dart';
 import 'package:teamxperience/features/admin/create_event/common_widgets/upload_image.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
-import '../../../../../constants/padding.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 import '../../../../../enums/event_type.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
-import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
+import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
+import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
 import '../controller/create_event_controller.dart';
 
 class CreateEventPage extends StatefulWidget {
@@ -72,9 +70,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: MyPaddings.appHorizontalPadding,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
             child: Form(
               key: controller.formKey,
               child: Column(
@@ -82,7 +78,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   const SizedBox(height: 10),
                   GestureDetector(
                     onTap: () async {
-                      print("UploadImage tapped for landing image!");
                       final pickedFile = await controller.pickImage();
                       if (pickedFile == null) {
                         return;
@@ -99,51 +94,39 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   const SizedBox(height: 20),
 
                   // Nume
-                  MyTextField(
+                  AppTextField(
                     controller: controller.nameController,
-                    labelText: 'Nume',
-                    hintText: 'Numele evenimentului',
-                    radius: 20,
-                    borderWidth: 1.5,
-                    borderColor: context.colors.accent,
+                    label: 'Nume',
+                    hint: 'Numele evenimentului',
                     validator:
                         (v) => v!.isEmpty ? 'Introdu nume eveniment' : null,
                   ),
                   const SizedBox(height: 20),
 
                   // Locatie
-                  MyTextField(
+                  AppTextField(
                     controller: controller.locationController,
-                    labelText: 'Locație',
-                    hintText: 'Locația evenimentului',
-                    radius: 20,
-                    borderWidth: 1.5,
-                    borderColor: context.colors.accent,
+                    label: 'Locație',
+                    hint: 'Locația evenimentului',
                     validator:
                         (v) => v!.isEmpty ? 'Introdu locație eveniment' : null,
                   ),
                   const SizedBox(height: 20),
 
-                  MyTextField(
+                  AppTextField(
                     controller: controller.punctDeStartController,
-                    labelText: 'Punct de start',
-                    hintText: 'Punctul de start al evenimentului',
-                    radius: 20,
-                    borderWidth: 1.5,
-                    borderColor: context.colors.accent,
+                    label: 'Punct de start',
+                    hint: 'Punctul de start al evenimentului',
                     validator:
                         (v) => v!.isEmpty ? 'Introdu Punctul de start' : null,
                   ),
                   const SizedBox(height: 20),
 
                   // Descriere
-                  MyTextField(
+                  AppTextField(
                     controller: controller.descriptionController,
-                    labelText: 'Descriere',
-                    hintText: 'Descrierea evenimentului',
-                    radius: 20,
-                    borderWidth: 1.5,
-                    borderColor: context.colors.accent,
+                    label: 'Descriere',
+                    hint: 'Descrierea evenimentului',
                     maxLines: null,
                     keyboardType: TextInputType.multiline,
                     validator:
@@ -153,15 +136,17 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   const SizedBox(height: 20),
 
                   // Data și ora evenimentului
-                  MyTextField(
+                  AppTextField(
                     controller: controller.dateEventController,
-                    labelText: 'Data și ora evenimentului',
-                    hintText: 'Selectează data și ora',
-                    radius: 20,
-                    borderWidth: 1.5,
-                    borderColor: context.colors.accent,
+                    label: 'Data și ora evenimentului',
+                    hint: 'Selectează data și ora',
                     readOnly: true,
-                    trailing: AppSvgIcon('assets/images/calendar.svg', width: 24, height: 24, color: context.colors.accent),
+                    trailing: AppSvgIcon(
+                      'assets/images/calendar.svg',
+                      width: 24,
+                      height: 24,
+                      color: context.colors.accent,
+                    ),
                     onTap: () async {
                       final picked = await controller.selectDate(context);
                       if (picked != null) {
@@ -182,15 +167,17 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
                   //Start inscrieri
                   const SizedBox(height: 20),
-                  MyTextField(
+                  AppTextField(
                     controller: controller.dateStartRegistrationController,
-                    labelText: 'Când se deschid înscrierile?',
-                    hintText: 'Selectează data și ora',
-                    radius: 20,
-                    borderWidth: 1.5,
-                    borderColor: context.colors.accent,
+                    label: 'Când se deschid înscrierile?',
+                    hint: 'Selectează data și ora',
                     readOnly: true,
-                    trailing: AppSvgIcon('assets/images/calendar.svg', width: 24, height: 24, color: context.colors.accent),
+                    trailing: AppSvgIcon(
+                      'assets/images/calendar.svg',
+                      width: 24,
+                      height: 24,
+                      color: context.colors.accent,
+                    ),
                     onTap: () async {
                       final picked = await controller.selectDate(context);
                       if (picked != null) {
@@ -210,15 +197,17 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   const SizedBox(height: 20),
 
                   // Deadline înscriere
-                  MyTextField(
+                  AppTextField(
                     controller: controller.dateDeadlineRegistrationController,
-                    labelText: 'Când se inchid înscrierile?',
-                    hintText: 'Selectează data și ora',
-                    radius: 20,
-                    borderWidth: 1.5,
-                    borderColor: context.colors.accent,
+                    label: 'Când se inchid înscrierile?',
+                    hint: 'Selectează data și ora',
                     readOnly: true,
-                    trailing: AppSvgIcon('assets/images/calendar.svg', width: 24, height: 24, color: context.colors.accent),
+                    trailing: AppSvgIcon(
+                      'assets/images/calendar.svg',
+                      width: 24,
+                      height: 24,
+                      color: context.colors.accent,
+                    ),
                     onTap: () async {
                       final picked = await controller.selectDate(context);
                       if (picked != null) {
@@ -236,12 +225,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   const SizedBox(height: 20),
 
                   // Tip de eveniment
-                  MyDropdownField<EventType>(
-                    labelText: 'Tipul de eveniment',
+                  AppDropdown<EventType>(
+                    label: 'Tipul de eveniment',
                     items:
                         EventType.values
                             .map(
-                              (type) => DropdownItem<EventType>(
+                              (type) => AppDropdownItem<EventType>(
                                 value: type,
                                 label: type.toString().split('.').last,
                               ),
@@ -253,35 +242,20 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         controller.selectedType = value;
                       });
                     },
-                    hint: Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        "Selectează tipul de eveniment",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: context.colors.muted,
-                        ),
-                      ),
-                    ),
+                    hint: "Selectează tipul de eveniment",
                     validator:
                         (value) =>
                             value == null
                                 ? 'Selectează tipul de eveniment'
                                 : null,
-                    borderColor: context.colors.accent,
-                    borderWidth: 1.5,
-                    radius: 20,
                   ),
                   const SizedBox(height: 20),
 
                   // Cod start
-                  MyTextField(
+                  AppTextField(
                     controller: controller.startCodeController,
-                    labelText: 'Cod start',
-                    hintText: 'Introdu codul de start al evenimentului',
-                    radius: 20,
-                    borderWidth: 1.5,
-                    borderColor: context.colors.accent,
+                    label: 'Cod start',
+                    hint: 'Introdu codul de start al evenimentului',
                     validator: (v) => v!.isEmpty ? 'Introdu cod start' : null,
                   ),
 
@@ -289,7 +263,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   // imagine fundal
                   GestureDetector(
                     onTap: () async {
-                      print("UploadImage tapped for task background image!");
                       final pickedFile = await controller.pickImage();
                       setState(() {
                         controller.taskBackgroundImageFile = pickedFile;
@@ -303,52 +276,39 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   const SizedBox(height: 20),
 
                   // Lungime traseu
-                  MyTextField(
+                  AppTextField(
                     controller: controller.lungimeController,
-                    labelText: 'Lungime traseu',
-                    hintText: 'Lungimea traseului',
-                    radius: 20,
-                    borderWidth: 1.5,
-                    borderColor: context.colors.accent,
+                    label: 'Lungime traseu',
+                    hint: 'Lungimea traseului',
                     validator:
                         (v) => v!.isEmpty ? 'Introdu lungime traseu' : null,
                   ),
                   const SizedBox(height: 20),
 
                   // Durata
-                  MyTextField(
+                  AppTextField(
                     controller: controller.durataController,
-                    labelText: 'Durata',
-                    hintText: 'Durata evenimentului',
-                    radius: 20,
-                    borderWidth: 1.5,
-                    borderColor: context.colors.accent,
+                    label: 'Durata',
+                    hint: 'Durata evenimentului',
                     validator: (v) => v!.isEmpty ? 'Introdu durata' : null,
                   ),
                   const SizedBox(height: 20),
 
                   // Dificultate
-                  MyTextField(
+                  AppTextField(
                     controller: controller.dificultateController,
-                    labelText: 'Dificultate',
-                    hintText: 'Dificultatea evenimentului',
-                    radius: 20,
-                    borderWidth: 1.5,
-                    borderColor: context.colors.accent,
+                    label: 'Dificultate',
+                    hint: 'Dificultatea evenimentului',
                     validator: (v) => v!.isEmpty ? 'Introdu dificultate' : null,
                   ),
 
                   const SizedBox(height: 20),
-                  MyButton(
-                    buttonText:
+                  AppButton(
+                    label:
                         mode == 'edit'
                             ? 'Actualizează eveniment'
                             : 'Creează eveniment',
-                    textColor: Colors.white,
-                    buttonOnTap: () => controller.createEvent(context, mode),
-                    withBorder: false,
-                    gradient: context.colors.ctaGradient,
-                    fontWeight: FontWeight.w600,
+                    onPressed: () => controller.createEvent(context, mode),
                   ),
                   const SizedBox(height: 40),
                 ],

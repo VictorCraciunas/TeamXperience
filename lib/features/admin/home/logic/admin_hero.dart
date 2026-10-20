@@ -26,7 +26,10 @@ class NoAdminHero extends AdminHero {
 
 /// Picks what the admin Home hero shows: a live event first, otherwise the
 /// nearest event starting within [adminSoonWindow].
-AdminHero resolveAdminHero({required DateTime now, required List<Event> events}) {
+AdminHero resolveAdminHero({
+  required DateTime now,
+  required List<Event> events,
+}) {
   Event? live;
   Event? soon;
 

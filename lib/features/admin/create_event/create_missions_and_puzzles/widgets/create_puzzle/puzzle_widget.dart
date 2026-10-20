@@ -2,14 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_puzzle/puzzle_controller.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/save_puzzle/save_puzzle.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/puzzle.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
 import '../../controller/add_missions_controller.dart';
 import '../create_components/add_component_widget.dart';
@@ -105,51 +104,74 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
           Container(
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-              image: widget.addMissionsController.event.taskBackgroundImageUrl != null
-                  ? DecorationImage(
-                image: controller.isUrl(widget.addMissionsController.event.taskBackgroundImageUrl!)
-                    ? NetworkImage(widget.addMissionsController.event.taskBackgroundImageUrl!) // Use NetworkImage for URLs
-                    : FileImage(File(widget.addMissionsController.event.taskBackgroundImageUrl!)) as ImageProvider, // Use FileImage for local paths
-                fit: BoxFit.cover,
-              )
-                  : null, // No background if the URL is null
+              image:
+                  widget.addMissionsController.event.taskBackgroundImageUrl !=
+                          null
+                      ? DecorationImage(
+                        image:
+                            controller.isUrl(
+                                  widget
+                                      .addMissionsController
+                                      .event
+                                      .taskBackgroundImageUrl!,
+                                )
+                                ? NetworkImage(
+                                  widget
+                                      .addMissionsController
+                                      .event
+                                      .taskBackgroundImageUrl!,
+                                ) // Use NetworkImage for URLs
+                                : FileImage(
+                                      File(
+                                        widget
+                                            .addMissionsController
+                                            .event
+                                            .taskBackgroundImageUrl!,
+                                      ),
+                                    )
+                                    as ImageProvider, // Use FileImage for local paths
+                        fit: BoxFit.cover,
+                      )
+                      : null, // No background if the URL is null
             ),
 
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Column(
-                children: List.generate(
-                  controller.puzzleComponents.length,
-                  (index) {
-                    final isCodeComponent = index < widget.puzzle.components.length &&
-                        widget.puzzle.components[index].type == ComponentType.code;
-                    final isEditMode = !controller.isDone;
+                children: List.generate(controller.puzzleComponents.length, (
+                  index,
+                ) {
+                  final isCodeComponent =
+                      index < widget.puzzle.components.length &&
+                      widget.puzzle.components[index].type ==
+                          ComponentType.code;
+                  final isEditMode = !controller.isDone;
 
-                    Widget child = Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: controller.puzzleComponents[index],
-                    );
+                  Widget child = Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: controller.puzzleComponents[index],
+                  );
 
-                    if (isEditMode && isCodeComponent) {
-                      return Stack(
-                        children: [
-                          IgnorePointer(child: child),
-                          Positioned.fill(
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onLongPress: () => _showEditDialog(index),
-                            ),
+                  if (isEditMode && isCodeComponent) {
+                    return Stack(
+                      children: [
+                        IgnorePointer(child: child),
+                        Positioned.fill(
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onLongPress: () => _showEditDialog(index),
                           ),
-                        ],
-                      );
-                    }
-
-                    return GestureDetector(
-                      onLongPress: isEditMode ? () => _showEditDialog(index) : null,
-                      child: child,
+                        ),
+                      ],
                     );
-                  },
-                ),
+                  }
+
+                  return GestureDetector(
+                    onLongPress:
+                        isEditMode ? () => _showEditDialog(index) : null,
+                    child: child,
+                  );
+                }),
               ),
             ),
           ),
@@ -162,99 +184,85 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
           children: [
             if (!controller.isDone) ...[
               Center(
-                child: MyButton(
-                  fontWeight: FontWeight.w500,
-                  buttonTextSize: 14,
-                  buttonText: 'Adaugă componentă',
-                  textColor: Colors.white,
-                  buttonOnTap: () {
+                child: SizedBox(
+                  width: 263,
+                  child: AppButton(
+                    label: 'Adaugă componentă',
+                    onPressed: () {
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        context: context,
+                        builder:
+                            (context) => AddComponentWidget(
+                              puzzle: widget.puzzle,
+                              refreshUI: (Widget componentWidget) {
+                                setState(() {
+                                  controller.puzzleComponents.add(
+                                    componentWidget,
+                                  );
+                                  controller.componentIndex++;
+                                });
+                              },
+                              component: Component(),
+                              edit: false,
+                            ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 15),
+              SizedBox(
+                width: 304,
+                child: AppButton(
+                  label: 'Șterge toate componentele',
+                  onPressed: () {
+                    setState(() {
+                      controller.puzzleComponents.clear();
+                      widget.puzzle.deleteComponents();
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(height: 150),
+
+              SizedBox(
+                width: 222,
+                child: AppButton(
+                  label: 'Salvează puzzle',
+                  onPressed: () {
                     showModalBottomSheet(
                       isScrollControlled: true,
                       context: context,
                       builder:
-                          (context) => AddComponentWidget(
+                          (context) => SavePuzzle(
                             puzzle: widget.puzzle,
-                            refreshUI: (Widget componentWidget) {
+                            onSave: () {
                               setState(() {
-                                controller.puzzleComponents.add(
-                                  componentWidget,
-                                );
-                                controller.componentIndex++;
+                                controller.isDone = true;
                               });
+                              widget.onSave();
                             },
-                            component: Component(),
-                            edit: false,
                           ),
                     );
                   },
-                  withBorder: false,
-                  buttonColor: MyColors.lightBlue,
-                  buttonWidth: 263,
                 ),
-              ),
-              const SizedBox(height: 15),
-              MyButton(
-                fontWeight: FontWeight.w500,
-                buttonTextSize: 14,
-                buttonText: 'Șterge toate componentele',
-                textColor: Colors.white,
-                buttonOnTap: () {
-                  setState(() {
-                    controller.puzzleComponents.clear();
-                    widget.puzzle.deleteComponents();
-                  });
-                },
-                withBorder: false,
-                buttonColor: MyColors.lightBlue,
-                buttonWidth: 304,
-              ),
-              const SizedBox(height: 150),
-
-              MyButton(
-                fontWeight: FontWeight.w500,
-                buttonTextSize: 14,
-                buttonText: 'Salvează puzzle',
-                textColor: Colors.white,
-                buttonOnTap: () {
-                  showModalBottomSheet(
-                    isScrollControlled: true,
-                    context: context,
-                    builder:
-                        (context) => SavePuzzle(
-                          puzzle: widget.puzzle,
-                          onSave: () {
-                            setState(() {
-                              controller.isDone = true;
-                            });
-                            widget.onSave();
-                          },
-                        ),
-                  );
-                },
-                withBorder: false,
-                buttonColor: MyColors.lightBlue,
-                buttonWidth: 222,
               ),
             ] else ...[
               // This is the else case - shown when controller.isDone is true
               const SizedBox(height: 20),
               Center(
-                child: MyButton(
-                  fontWeight: FontWeight.w500,
-                  buttonTextSize: 14,
-                  buttonText: 'Edit Puzzle',
-                  // Or any text you want
-                  textColor: Colors.white,
-                  buttonOnTap: () {
-                    setState(() {
-                      controller.isDone = false; // Allow editing again
-                    });
-                    widget.onSave();
-
-                  },
-                  withBorder: false,
-                  buttonColor: MyColors.yellow,
-                  buttonWidth: 200,
+                child: SizedBox(
+                  width: 200,
+                  child: AppButton(
+                    label: 'Edit Puzzle',
+                    onPressed: () {
+                      setState(() {
+                        controller.isDone = false; // Allow editing again
+                      });
+                      widget.onSave();
+                    },
+                  ),
                 ),
               ),
             ],

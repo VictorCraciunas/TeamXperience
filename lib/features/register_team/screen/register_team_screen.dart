@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:teamxperience/constants/colors.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/features/register_team/controller/register_team_controller.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/misc/step_register_icon.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
 import '../widgets/step1.dart';
 import '../widgets/step2.dart';
@@ -25,7 +23,10 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final event = ModalRoute.of(context)!.settings.arguments as Event;
-    controller = RegisterTeamController(context, event); // Initialize with context
+    controller = RegisterTeamController(
+      context,
+      event,
+    ); // Initialize with context
   }
 
   @override
@@ -34,9 +35,7 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
       appBar: const MyAppBar(appBarText: "Detalii echipa"),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: MyPaddings.appHorizontalPadding,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -84,7 +83,8 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                       numeEchipaController: controller.numeEchipaController,
                       componentaEchipeiController:
                           controller.componentaEchipeiController,
-                      numarPersoaneController: controller.numarPersoaneController,
+                      numarPersoaneController:
+                          controller.numarPersoaneController,
                     ),
                   ),
                 if (controller.secondStep && !controller.thirdStep)
@@ -92,7 +92,8 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                     key: controller.step2FormKey,
                     child: Step2(
                       numeCapitanController: controller.numeCapitanController,
-                      numarDeTelefonController: controller.numarDeTelefonController,
+                      numarDeTelefonController:
+                          controller.numarDeTelefonController,
                       emailCapitanController: controller.emailCapitanController,
                     ),
                   ),
@@ -102,7 +103,6 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                       Row(
                         children: [
                           Transform.scale(
-
                             scale: 1.5,
                             child: Checkbox(
                               value: controller.checkBox1,
@@ -206,21 +206,16 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                   ),
 
                 const SizedBox(height: 30),
-                MyButton(
-                  buttonText:
+                AppButton(
+                  label:
                       !(controller.secondStep && controller.thirdStep)
                           ? "Următorul pas"
                           : "Înscrie-ți echipa",
-                  textColor: Colors.white,
-                  buttonOnTap: () {
+                  onPressed: () {
                     setState(() {
                       controller.buttonOnTap();
                     });
                   },
-                  withBorder: false,
-                  fontWeight: FontWeight.w500,
-                  buttonTextSize: 15,
-                  buttonColor: MyColors.yellow,
                 ),
               ],
             ),

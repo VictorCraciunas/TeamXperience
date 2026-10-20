@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import '../../../utils/calendar_helper.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
 class DateRangeSelectionScreen extends StatefulWidget {
   final DateTime? initialStartDate;
@@ -241,14 +241,14 @@ class _DateRangeSelectionScreenState extends State<DateRangeSelectionScreen> {
                     horizontal: 16,
                     vertical: 12,
                   ),
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: context.colors.tick,
-                      width: 1.5,
-                    ),
+                    border: Border.all(color: context.colors.tick, width: 1.5),
                   ),
                   child: Row(
                     children: [
@@ -289,21 +289,16 @@ class _DateRangeSelectionScreenState extends State<DateRangeSelectionScreen> {
               ),
 
               // Save button
-              MyButton(
-                buttonTextSize: 15,
-                buttonText: 'Salvează perioada',
-                textColor: Colors.white,
-                buttonOnTap: () {
-                  if (canSave()){
+              AppButton(
+                label: 'Salvează perioada',
+                onPressed: () {
+                  if (canSave()) {
                     Navigator.pop(context, {
                       'startDate': startDate,
                       'endDate': endDate,
                     });
                   }
                 },
-                withBorder: false,
-                gradient: context.colors.ctaGradient,
-                radius: 30,
                 leading: SvgPicture.asset(
                   'assets/images/calendar.svg',
                   height: 19,
@@ -314,7 +309,7 @@ class _DateRangeSelectionScreenState extends State<DateRangeSelectionScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 10,)
+              SizedBox(height: 10),
             ],
           ),
         ),

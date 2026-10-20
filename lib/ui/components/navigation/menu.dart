@@ -136,7 +136,7 @@ class MenuWidget extends StatelessWidget {
                 Navigator.of(context).pop();
                 _handleDeleteEvent(context);
               },
-              child: const Text('Șterge', style: TextStyle(color: Colors.red)),
+              child: Text('Șterge', style: TextStyle(color: context.colors.danger)),
             ),
           ],
         );

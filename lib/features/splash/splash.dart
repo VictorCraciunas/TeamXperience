@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:teamxperience/constants/routes.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -55,14 +55,11 @@ class SplashScreen extends StatelessWidget {
                     const SizedBox(height: 10.0),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: MyButton(
-                        buttonText: "Loghează-te",
-                        buttonOnTap: () {
+                      child: AppButton(
+                        label: "Loghează-te",
+                        onPressed: () {
                           Navigator.pushNamed(context, Routes.login);
                         },
-                        gradient: context.colors.ctaGradient,
-                        textColor: Colors.white,
-                        withBorder: false,
                       ),
                     ),
                     const SizedBox(height: 5.0),
@@ -76,10 +73,7 @@ class SplashScreen extends StatelessWidget {
                         const SizedBox(width: 5.0),
                         GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              Routes.register,
-                            );
+                            Navigator.pushNamed(context, Routes.register);
                           },
                           child: Text(
                             "Inregistrează-te",

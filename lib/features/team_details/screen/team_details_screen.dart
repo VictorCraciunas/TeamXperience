@@ -2,10 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/model/user.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
 import '../../../model/event.dart';
 import '../../../utils/calendar_helper.dart';
@@ -106,9 +105,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
 
             return SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: MyPaddings.appHorizontalPadding,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.page),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -207,25 +204,23 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
 
                     const SizedBox(height: 30),
                     if (controller.isEditing)
-                      MyButton(
-                        buttonText: controller.isSaving
-                            ? "Se salvează..."
-                            : "Salvează schimbările",
-                        textColor: Colors.white,
-                        buttonOnTap: controller.isSaving ? () {} : _saveChanges,
-                        withBorder: false,
-                        gradient: context.colors.ctaGradient,
-                        buttonTextSize: 15,
+                      AppButton(
+                        label:
+                            controller.isSaving
+                                ? "Se salvează..."
+                                : "Salvează schimbările",
+                        onPressed: controller.isSaving ? () {} : _saveChanges,
                       )
                     else
-                      MyButton(
-                        buttonText: "Distribuie detaliile",
-                        textColor: Colors.white,
-                        buttonOnTap: () => controller.shareTeamRegistration(context),
-                        withBorder: false,
-                        gradient: context.colors.ctaGradient,
-                        buttonTextSize: 15,
-                        leading: AppSvgIcon('assets/images/download.svg', width: 19, height: 19),
+                      AppButton(
+                        label: "Distribuie detaliile",
+                        onPressed:
+                            () => controller.shareTeamRegistration(context),
+                        leading: AppSvgIcon(
+                          'assets/images/download.svg',
+                          width: 19,
+                          height: 19,
+                        ),
                       ),
                     const SizedBox(height: 30),
                   ],

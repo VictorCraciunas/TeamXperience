@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/enums/missions_state.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/ui/components/event/mission_state_widget.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
 import '../../../constants/routes.dart';
 import '../../../model/event.dart';
@@ -32,6 +31,7 @@ class _EventGameScreenState extends State<EventGameScreen> {
     controller.dispose();
     super.dispose();
   }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -71,19 +71,20 @@ class _EventGameScreenState extends State<EventGameScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        title: const Text("Ne pare rău"),
-        content: const Text("S-a terminat evenimentul."),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.popUntil(context, (route) => route.isFirst);
-            },
-            child: const Text("OK"),
+      builder:
+          (_) => AlertDialog(
+            title: const Text("Ne pare rău"),
+            content: const Text("S-a terminat evenimentul."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                },
+                child: const Text("OK"),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -116,7 +117,11 @@ class _EventGameScreenState extends State<EventGameScreen> {
                                   color: const Color(0x90FFFFFF),
                                   borderRadius: BorderRadius.circular(50),
                                 ),
-                                child: AppSvgIcon('assets/images/back_icon.svg', width: 24, height: 24),
+                                child: AppSvgIcon(
+                                  'assets/images/back_icon.svg',
+                                  width: 24,
+                                  height: 24,
+                                ),
                               ),
                               onTap: () {
                                 Navigator.pop(context);
@@ -140,7 +145,7 @@ class _EventGameScreenState extends State<EventGameScreen> {
                       child: SafeArea(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: MyPaddings.appHorizontalPadding,
+                            horizontal: AppSpacing.page,
                           ),
                           child: Column(
                             children: [
@@ -224,8 +229,8 @@ class _EventGameScreenState extends State<EventGameScreen> {
                                         context,
                                         Routes.chatScreen,
                                         arguments: {
-                                          'eventId' : controller.event.eventId,
-                                          'team': controller.team
+                                          'eventId': controller.event.eventId,
+                                          'team': controller.team,
                                         },
                                       );
                                     },

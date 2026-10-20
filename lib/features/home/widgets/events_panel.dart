@@ -23,20 +23,21 @@ class EventsPanel extends StatelessWidget {
       title: 'Evenimente',
       count: events.isEmpty ? null : events.length,
       onAction: events.isEmpty ? null : onSeeAll,
-      child: events.isEmpty
-          ? Text(
-              'Nu sunt evenimente programate momentan.',
-              style: TextStyle(color: context.colors.muted, fontSize: 12),
-            )
-          : SizedBox(
-              height: 128,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: events.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (_, i) => _poster(events[i]),
+      child:
+          events.isEmpty
+              ? Text(
+                'Nu sunt evenimente programate momentan.',
+                style: TextStyle(color: context.colors.muted, fontSize: 12),
+              )
+              : SizedBox(
+                height: 128,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: events.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 8),
+                  itemBuilder: (_, i) => _poster(events[i]),
+                ),
               ),
-            ),
     );
   }
 

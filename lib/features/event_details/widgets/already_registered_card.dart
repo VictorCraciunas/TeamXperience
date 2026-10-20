@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/model/event.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
-
-import '../../../constants/colors.dart';
-
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
 class AlreadyRegisteredCard extends StatelessWidget {
   final Event event;
@@ -40,12 +37,9 @@ class AlreadyRegisteredCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 25),
-            MyButton(
-              buttonText: "Detalii înscriere",
-              textColor: MyColors.blackColor,
-              buttonOnTap: () => onDetailsTap(),
-              withBorder: false,
-              buttonColor: MyColors.transparentLightBlue,
+            AppButton(
+              label: "Detalii înscriere",
+              onPressed: () => onDetailsTap(),
               leading: SvgPicture.asset(
                 'assets/images/user_icon.svg',
                 width: 19,
@@ -55,7 +49,6 @@ class AlreadyRegisteredCard extends StatelessWidget {
                   BlendMode.srcIn,
                 ),
               ),
-              buttonTextSize: 15,
             ),
             const SizedBox(height: 10),
           ],

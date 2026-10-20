@@ -2,16 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/admin/create_event/common_widgets/upload_image.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 import 'package:teamxperience/enums/stire_type.dart';
-import '../../../../../constants/padding.dart';
-import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
+import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
+import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
 import '../../../../model/newsCategory.dart';
 import '../../../../model/stire.dart';
 import '../controller/create_news_controller.dart';
@@ -34,7 +31,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
     super.didChangeDependencies();
     if (!_initialized) {
       final args =
-      ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
       final Stire? stire = args?['stire'];
 
       if (stire == null) {
@@ -55,10 +52,9 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
   }
 
   Future<void> _selectCategory() async {
-    final selectedCategory = await Navigator.pushNamed(
-      context,
-      Routes.chooseNewsType,
-    ) as NewsCategory?;
+    final selectedCategory =
+        await Navigator.pushNamed(context, Routes.chooseNewsType)
+            as NewsCategory?;
 
     if (selectedCategory != null && selectedCategory.name.isNotEmpty) {
       setState(() {
@@ -82,18 +78,14 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
             builder: (BuildContext context) {
               return AlertDialog(
                 backgroundColor: context.colors.panel,
-                content: MyButton(
-                  buttonText: "Șterge",
-                  textColor: MyColors.blackColor,
-                  buttonOnTap: () {
+                content: AppButton(
+                  label: "Șterge",
+                  onPressed: () {
                     setState(() {
                       controller.removeSecondaryImage(index);
                     });
                     Navigator.pop(context);
                   },
-                  withBorder: false,
-                  buttonColor: MyColors.transparentLightBlue,
-                  radius: 20,
                 ),
               );
             },
@@ -104,18 +96,20 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
           width: 60,
           height: 60,
           fit: BoxFit.cover,
-          placeholder: (context, url) => Container(
-            width: 60,
-            height: 60,
-            color: context.colors.inset,
-            child: const CircularProgressIndicator(),
-          ),
-          errorWidget: (context, url, error) => Container(
-            width: 60,
-            height: 60,
-            color: context.colors.inset,
-            child: const Icon(Icons.error, color: Colors.red),
-          ),
+          placeholder:
+              (context, url) => Container(
+                width: 60,
+                height: 60,
+                color: context.colors.inset,
+                child: const CircularProgressIndicator(),
+              ),
+          errorWidget:
+              (context, url, error) => Container(
+                width: 60,
+                height: 60,
+                color: context.colors.inset,
+                child: Icon(Icons.error, color: context.colors.danger),
+              ),
         ),
       );
     } else {
@@ -130,7 +124,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
             width: 60,
             height: 60,
             color: context.colors.inset,
-            child: const Icon(Icons.error, color: Colors.red),
+            child: Icon(Icons.error, color: context.colors.danger),
           );
         },
       );
@@ -145,9 +139,7 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: MyPaddings.appHorizontalPadding,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
             child: Column(
               children: [
                 Form(
@@ -160,7 +152,6 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                       // Main Image Upload
                       GestureDetector(
                         onTap: () async {
-                          print("UploadImage tapped for main image!");
                           final pickedFile = await controller.pickImage();
                           if (pickedFile == null) {
                             return;
@@ -180,36 +171,43 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                       Row(
                         children: [
                           // Display existing secondary images
-                          if (controller.getSecondaryImagePaths().isNotEmpty) ...[
+                          if (controller
+                              .getSecondaryImagePaths()
+                              .isNotEmpty) ...[
                             Wrap(
                               spacing: 10,
                               runSpacing: 10,
                               children:
-                              controller
-                                  .getSecondaryImagePaths()
-                                  .asMap()
-                                  .entries
-                                  .map((entry) {
-                                int index = entry.key;
-                                String imagePath = entry.value;
+                                  controller
+                                      .getSecondaryImagePaths()
+                                      .asMap()
+                                      .entries
+                                      .map((entry) {
+                                        int index = entry.key;
+                                        String imagePath = entry.value;
 
-                                return Stack(
-                                  children: [
-                                    Container(
-                                      width: 60,
-                                      height: 60,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: buildImageWidget(imagePath, index),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              })
-                                  .toList(),
+                                        return Stack(
+                                          children: [
+                                            Container(
+                                              width: 60,
+                                              height: 60,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: buildImageWidget(
+                                                  imagePath,
+                                                  index,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      })
+                                      .toList(),
                             ),
                             const SizedBox(width: 10),
                           ],
@@ -217,7 +215,6 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                           // Add new secondary image button
                           GestureDetector(
                             onTap: () async {
-                              print("Adding secondary image!");
                               final pickedFile = await controller.pickImage();
                               if (pickedFile == null) {
                                 return;
@@ -245,137 +242,126 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                       const SizedBox(height: 20),
 
                       // Title
-                      MyTextField(
+                      AppTextField(
                         controller: controller.titleController,
-                        labelText: 'Titlu știre',
-                        hintText: 'Titlul știrii',
-                        radius: 20,
-                        borderWidth: 1.5,
-                        borderColor: context.colors.accent,
-                        validator: (v) => v!.isEmpty ? 'Introdu titlul știrii' : null,
+                        label: 'Titlu știre',
+                        hint: 'Titlul știrii',
+                        validator:
+                            (v) => v!.isEmpty ? 'Introdu titlul știrii' : null,
                       ),
                       const SizedBox(height: 20),
 
                       // Description
-                      MyTextField(
+                      AppTextField(
                         controller: controller.descriptionController,
-                        labelText: 'Descriere',
-                        hintText: 'Descrierea știrii',
-                        radius: 20,
-                        borderWidth: 1.5,
-                        borderColor: context.colors.accent,
+                        label: 'Descriere',
+                        hint: 'Descrierea știrii',
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
-                        validator: (v) => v!.isEmpty ? 'Introdu descrierea știrii' : null,
+                        validator:
+                            (v) =>
+                                v!.isEmpty ? 'Introdu descrierea știrii' : null,
                       ),
                       const SizedBox(height: 20),
 
                       // Publication Date
-                      MyTextField(
+                      AppTextField(
                         controller: controller.dateController,
-                        labelText: 'Data publicării',
-                        hintText: 'Selectează data și ora',
-                        radius: 20,
-                        borderWidth: 1.5,
-                        borderColor: context.colors.accent,
+                        label: 'Data publicării',
+                        hint: 'Selectează data și ora',
                         readOnly: true,
-                        trailing: AppSvgIcon('assets/images/calendar.svg', width: 24, height: 24, color: context.colors.accent),
+                        trailing: AppSvgIcon(
+                          'assets/images/calendar.svg',
+                          width: 24,
+                          height: 24,
+                          color: context.colors.accent,
+                        ),
                         onTap: () async {
                           final picked = await controller.selectDate(context);
                           if (picked != null) {
                             setState(() {
                               controller.publicationDate = picked;
                               controller.dateController.text =
-                              '${picked.day}/${picked.month}/${picked.year} ${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+                                  '${picked.day}/${picked.month}/${picked.year} ${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
                             });
                           }
                         },
-                        validator: (v) => (v ?? '').isEmpty ? 'Selectează data publicării' : null,
+                        validator:
+                            (v) =>
+                                (v ?? '').isEmpty
+                                    ? 'Selectează data publicării'
+                                    : null,
                       ),
                       const SizedBox(height: 20),
 
                       // News Type Dropdown
-                      MyDropdownField<StireType>(
-                        labelText: 'Tip de știre',
-                        items: StireType.values
-                            .map(
-                              (type) => DropdownItem<StireType>(
-                            value: type,
-                            label: type.displayName,
-                          ),
-                        )
-                            .toList(),
+                      AppDropdown<StireType>(
+                        label: 'Tip de știre',
+                        items:
+                            StireType.values
+                                .map(
+                                  (type) => AppDropdownItem<StireType>(
+                                    value: type,
+                                    label: type.displayName,
+                                  ),
+                                )
+                                .toList(),
                         value: controller.selectedType,
                         onChanged: (value) {
                           setState(() {
                             controller.selectedType = value;
                           });
                         },
-                        hint: Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text(
-                            "Selectează tipul de știre",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: context.colors.muted,
-                            ),
-                          ),
-                        ),
-                        validator: (value) => value == null ? 'Selectează tipul de știre' : null,
-                        borderColor: context.colors.accent,
-                        borderWidth: 1.5,
-                        radius: 20,
+                        hint: "Selectează tipul de știre",
+                        validator:
+                            (value) =>
+                                value == null
+                                    ? 'Selectează tipul de știre'
+                                    : null,
                       ),
                       const SizedBox(height: 20),
 
                       // Category Selection (now using NewsCategory instead of dropdown)
-                      MyTextField(
+                      AppTextField(
                         controller: controller.categoryController,
-                        labelText: 'Categorie',
-                        hintText: 'Selectează categoria',
-                        radius: 20,
-                        borderWidth: 1.5,
-                        borderColor: context.colors.accent,
+                        label: 'Categorie',
+                        hint: 'Selectează categoria',
                         readOnly: true,
                         onTap: () async {
                           _selectCategory();
                         },
-                        validator: (v) => (v ?? '').isEmpty ? 'Selectează categoria' : null,
+                        validator:
+                            (v) =>
+                                (v ?? '').isEmpty
+                                    ? 'Selectează categoria'
+                                    : null,
                       ),
                       const SizedBox(height: 20),
                     ],
                   ),
                 ),
                 // Button Text
-                MyTextField(
+                AppTextField(
                   controller: controller.textButtonController,
-                  labelText: 'Buton',
-                  hintText: 'Text buton',
-                  radius: 20,
-                  borderWidth: 1.5,
-                  borderColor: context.colors.accent,
+                  label: 'Buton',
+                  hint: 'Text buton',
+                  validator: requiredValidator('Buton'),
                 ),
                 const SizedBox(height: 20),
 
                 // Button Link
-                MyTextField(
+                AppTextField(
                   controller: controller.linkButtonController,
-                  labelText: 'Link',
-                  hintText: 'Link buton',
-                  radius: 20,
-                  borderWidth: 1.5,
-                  borderColor: context.colors.accent,
+                  label: 'Link',
+                  hint: 'Link buton',
+                  validator: requiredValidator('Link'),
                 ),
                 const SizedBox(height: 30),
 
                 // Publish Button
-                MyButton(
-                  buttonText: 'Publică știre',
-                  textColor: Colors.white,
-                  buttonOnTap: () => controller.createStire(context, mode),
-                  withBorder: false,
-                  gradient: context.colors.ctaGradient,
-                  fontWeight: FontWeight.w600,
+                AppButton(
+                  label: 'Publică știre',
+                  onPressed: () => controller.createStire(context, mode),
                 ),
                 const SizedBox(height: 40),
               ],

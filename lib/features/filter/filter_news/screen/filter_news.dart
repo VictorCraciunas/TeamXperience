@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
-import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
+import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
+import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
 import '../../../../model/newsCategory.dart';
 import '../../../../constants/routes.dart';
 import '../../../../enums/stire_type.dart';
 import '../../../../utils/calendar_helper.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
 import '../controller/filter_news_controller.dart';
 
 class FilterStiriScreen extends StatefulWidget {
@@ -29,7 +27,6 @@ class _FilterStiriScreenState extends State<FilterStiriScreen> {
     super.initState();
     controller = FilterStiriController();
     _periodController = TextEditingController();
-
   }
 
   @override
@@ -37,15 +34,16 @@ class _FilterStiriScreenState extends State<FilterStiriScreen> {
     controller.dispose();
     super.dispose();
     _periodController.dispose();
-
   }
 
   Future<void> _selectCategory() async {
-    final selectedCategory = await Navigator.pushNamed(
-      context,
-      Routes.chooseNewsType,
-      arguments: controller.selectedCategory,
-    ) as NewsCategory?;
+    final selectedCategory =
+        await Navigator.pushNamed(
+              context,
+              Routes.chooseNewsType,
+              arguments: controller.selectedCategory,
+            )
+            as NewsCategory?;
 
     if (selectedCategory != null) {
       controller.setCategory(selectedCategory);
@@ -60,27 +58,24 @@ class _FilterStiriScreenState extends State<FilterStiriScreen> {
     controller.clearFilters();
   }
 
-
   String _formatDate(DateTime date) {
     return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
   }
 
   void _updatePeriodText() {
-    _periodController.text = controller.startDate != null && controller.endDate != null
-        ? '${_formatDate(controller.startDate!)} - ${_formatDate(controller.endDate!)}'
-        : '';
+    _periodController.text =
+        controller.startDate != null && controller.endDate != null
+            ? '${_formatDate(controller.startDate!)} - ${_formatDate(controller.endDate!)}'
+            : '';
   }
+
   void _navigateToPeriodSelection() async {
-    final result = await Navigator.pushNamed(
-      context,
-      Routes.calendar,
-    ) as Map<String, DateTime?>?;
+    final result =
+        await Navigator.pushNamed(context, Routes.calendar)
+            as Map<String, DateTime?>?;
 
     if (result != null) {
-      controller.setDateRange(
-        result['startDate'],
-        result['endDate'],
-      );
+      controller.setDateRange(result['startDate'], result['endDate']);
       _updatePeriodText(); // Update the text field
     }
   }
@@ -92,9 +87,7 @@ class _FilterStiriScreenState extends State<FilterStiriScreen> {
       appBar: const MyAppBar(appBarText: "Filtrare Știri"),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: MyPaddings.appHorizontalPadding,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
           child: AnimatedBuilder(
             animation: controller,
             builder: (context, child) {
@@ -104,34 +97,22 @@ class _FilterStiriScreenState extends State<FilterStiriScreen> {
                   const SizedBox(height: 30),
 
                   // Stire Type Dropdown
-                  MyDropdownField<StireType>(
-                    labelText: 'Tipul știrii',
-                    items: StireType.values
-                        .map(
-                          (type) => DropdownItem<StireType>(
-                        value: type,
-                        label: type.displayName,
-                      ),
-                    )
-                        .toList(),
+                  AppDropdown<StireType>(
+                    label: 'Tipul știrii',
+                    items:
+                        StireType.values
+                            .map(
+                              (type) => AppDropdownItem<StireType>(
+                                value: type,
+                                label: type.displayName,
+                              ),
+                            )
+                            .toList(),
                     value: controller.selectedStireType,
                     onChanged: (value) {
                       controller.setStireType(value);
                     },
-                    hint: Text(
-                      "Selectează tipul știrii",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: context.colors.muted,
-                      ),
-                    ),
-                    borderColor: context.colors.accent,
-                    borderWidth: 1.5,
-                    radius: 15,
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 20,
-                    ),
+                    hint: "Selectează tipul știrii",
                   ),
                   const SizedBox(height: 20),
 
@@ -145,47 +126,35 @@ class _FilterStiriScreenState extends State<FilterStiriScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  MyTextField(
+                  AppTextField(
                     controller: TextEditingController(
-                        text: controller.selectedCategory?.name ?? ''
+                      text: controller.selectedCategory?.name ?? '',
                     ),
-                    hintText: "Selectează categoria",
+                    hint: "Selectează categoria",
                     readOnly: true,
                     onTap: _selectCategory,
-                    radius: 15,
-                    borderColor: context.colors.accent,
-                    borderWidth: 1.5,
+                    validator: requiredValidator('a value'),
                   ),
                   const SizedBox(height: 20),
 
                   // Start Date
-                  MyTextField(
-                    labelText: 'Perioada',
-                    hintText: 'Selectează perioadă',
+                  AppTextField(
+                    label: 'Perioada',
+                    hint: 'Selectează perioadă',
                     readOnly: true,
                     onTap: _navigateToPeriodSelection,
                     trailing: Icon(
                       Icons.chevron_right,
                       color: context.colors.accent,
                     ),
-                    borderColor: context.colors.accent,
-                    borderWidth: 1.5,
-                    radius: 20,
                     controller: _periodController,
+                    validator: requiredValidator('Perioada'),
                   ),
 
-                  SizedBox(height: 10,),
+                  SizedBox(height: 10),
 
                   // Action Buttons
-                  MyButton(
-                    buttonText: "Aplică filtrele",
-                    textColor: Colors.white,
-                    buttonOnTap: _applyFilters,
-                    withBorder: false,
-                    gradient: context.colors.ctaGradient,
-                    buttonTextSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  AppButton(label: "Aplică filtrele", onPressed: _applyFilters),
                   const SizedBox(height: 20),
                 ],
               );

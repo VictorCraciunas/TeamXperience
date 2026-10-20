@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:teamxperience/constants/padding.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
-import 'package:teamxperience/ui/components/inputs/my_dropdown/dropdown_item.dart';
-import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
+import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
+import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
 import '../controller/filter_events_controller.dart';
 
 class FilterEventsScreen extends StatefulWidget {
@@ -21,14 +19,12 @@ class _FilterEventsScreenState extends State<FilterEventsScreen> {
   late FilterController controller;
   late TextEditingController _periodController;
 
-
   @override
   void initState() {
     super.initState();
     controller = FilterController();
     _periodController = TextEditingController();
   }
-
 
   @override
   void dispose() {
@@ -46,21 +42,19 @@ class _FilterEventsScreenState extends State<FilterEventsScreen> {
   }
 
   void _updatePeriodText() {
-    _periodController.text = controller.startDate != null && controller.endDate != null
-        ? '${_formatDate(controller.startDate!)} - ${_formatDate(controller.endDate!)}'
-        : '';
+    _periodController.text =
+        controller.startDate != null && controller.endDate != null
+            ? '${_formatDate(controller.startDate!)} - ${_formatDate(controller.endDate!)}'
+            : '';
   }
+
   void _navigateToPeriodSelection() async {
-    final result = await Navigator.pushNamed(
-      context,
-      Routes.calendar,
-    ) as Map<String, DateTime?>?;
+    final result =
+        await Navigator.pushNamed(context, Routes.calendar)
+            as Map<String, DateTime?>?;
 
     if (result != null) {
-      controller.setDateRange(
-        result['startDate'],
-        result['endDate'],
-      );
+      controller.setDateRange(result['startDate'], result['endDate']);
       _updatePeriodText(); // Update the text field
     }
   }
@@ -78,7 +72,7 @@ class _FilterEventsScreenState extends State<FilterEventsScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: MyPaddings.appHorizontalPadding,
+            horizontal: AppSpacing.page,
             vertical: 20,
           ),
           child: Column(
@@ -86,69 +80,50 @@ class _FilterEventsScreenState extends State<FilterEventsScreen> {
             children: [
               // Event Type Dropdown
               if (isAdmin)
-              AnimatedBuilder(
-                animation: controller,
-                builder: (context, _) {
-                  return MyDropdownField<EventType>(
-                    labelText: 'Tip de eveniment',
-                    items: EventType.values
-                        .map(
-                          (type) => DropdownItem<EventType>(
-                        value: type,
-                        label: _getEventTypeDisplayName(type),
-                      ),
-                    )
-                        .toList(),
-                    value: controller.selectedEventType,
-                    onChanged: (value) {
-                      controller.setEventType(value);
-                    },
-                    hint: Text(
-                      "Selectează tipul de eveniment",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: context.colors.muted,
-                      ),
-                    ),
-                    borderColor: context.colors.accent,
-                    borderWidth: 1.5,
-                    radius: 20,
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 20,
-                    ),
-                  );
-                },
-              ),
+                AnimatedBuilder(
+                  animation: controller,
+                  builder: (context, _) {
+                    return AppDropdown<EventType>(
+                      label: 'Tip de eveniment',
+                      items:
+                          EventType.values
+                              .map(
+                                (type) => AppDropdownItem<EventType>(
+                                  value: type,
+                                  label: _getEventTypeDisplayName(type),
+                                ),
+                              )
+                              .toList(),
+                      value: controller.selectedEventType,
+                      onChanged: (value) {
+                        controller.setEventType(value);
+                      },
+                      hint: "Selectează tipul de eveniment",
+                    );
+                  },
+                ),
               const SizedBox(height: 20),
 
               // Period Selection Button
-              MyTextField(
-                labelText: 'Perioada',
-                hintText: 'Selectează perioadă',
+              AppTextField(
+                label: 'Perioada',
+                hint: 'Selectează perioadă',
                 readOnly: true,
                 onTap: _navigateToPeriodSelection,
                 trailing: Icon(
                   Icons.chevron_right,
                   color: context.colors.accent,
                 ),
-                borderColor: context.colors.accent,
-                borderWidth: 1.5,
-                radius: 20,
                 controller: _periodController,
+                validator: requiredValidator('Perioada'),
               ),
 
               const Spacer(),
 
               // Apply Filters Button
-              MyButton(
-                buttonText: 'Salvează modificările',
-                textColor: Colors.white,
-                buttonOnTap: _applyFilters,
-                withBorder: false,
-                gradient: context.colors.ctaGradient,
-                fontWeight: FontWeight.w600,
-                radius: 30,
+              AppButton(
+                label: 'Salvează modificările',
+                onPressed: _applyFilters,
               ),
               const SizedBox(height: 20),
             ],
@@ -165,7 +140,7 @@ class _FilterEventsScreenState extends State<FilterEventsScreen> {
         return 'Public';
       case EventType.PRIVAT:
         return 'Privat';
-      }
+    }
   }
 
   String _formatDate(DateTime date) {

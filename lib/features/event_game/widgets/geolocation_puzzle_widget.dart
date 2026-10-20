@@ -8,7 +8,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/service/LocationService.dart';
 import 'package:teamxperience/service/route_service.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
 class GeolocationPuzzleWidget extends StatefulWidget {
   final Puzzle puzzle;
@@ -25,7 +25,8 @@ class GeolocationPuzzleWidget extends StatefulWidget {
   });
 
   @override
-  State<GeolocationPuzzleWidget> createState() => _GeolocationPuzzleWidgetState();
+  State<GeolocationPuzzleWidget> createState() =>
+      _GeolocationPuzzleWidgetState();
 }
 
 class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
@@ -43,10 +44,8 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
 
   static const double _circleRadiusMeters = 20.0;
 
-  LatLng get _targetPosition => LatLng(
-        widget.puzzle.latitude ?? 0,
-        widget.puzzle.longitude ?? 0,
-      );
+  LatLng get _targetPosition =>
+      LatLng(widget.puzzle.latitude ?? 0, widget.puzzle.longitude ?? 0);
 
   @override
   void initState() {
@@ -75,7 +74,9 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
     // Get initial position immediately
     try {
       final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
       if (mounted) {
         final userLatLng = LatLng(position.latitude, position.longitude);
@@ -98,33 +99,33 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
     _positionSubscription = _locationService
         .getPositionStream(distanceFilter: 2)
         .listen(
-      (Position position) {
-        final userLatLng = LatLng(position.latitude, position.longitude);
-        final distance = Geolocator.distanceBetween(
-          position.latitude,
-          position.longitude,
-          _targetPosition.latitude,
-          _targetPosition.longitude,
-        );
+          (Position position) {
+            final userLatLng = LatLng(position.latitude, position.longitude);
+            final distance = Geolocator.distanceBetween(
+              position.latitude,
+              position.longitude,
+              _targetPosition.latitude,
+              _targetPosition.longitude,
+            );
 
-        if (mounted) {
-          setState(() {
-            _currentPosition = userLatLng;
-            _isInsideCircle = distance <= _circleRadiusMeters;
-            _straightLineDistance = distance;
-          });
-          _fetchRoute(userLatLng);
-        }
-      },
-      onError: (error) {
-        if (mounted) {
-          setState(() {
-            _locationError = true;
-            _errorMessage = 'Eroare la localizare: $error';
-          });
-        }
-      },
-    );
+            if (mounted) {
+              setState(() {
+                _currentPosition = userLatLng;
+                _isInsideCircle = distance <= _circleRadiusMeters;
+                _straightLineDistance = distance;
+              });
+              _fetchRoute(userLatLng);
+            }
+          },
+          onError: (error) {
+            if (mounted) {
+              setState(() {
+                _locationError = true;
+                _errorMessage = 'Eroare la localizare: $error';
+              });
+            }
+          },
+        );
   }
 
   void _fitMapToBounds(LatLng userPosition) {
@@ -136,10 +137,7 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) {
         _mapController.fitCamera(
-          CameraFit.bounds(
-            bounds: bounds,
-            padding: const EdgeInsets.all(60),
-          ),
+          CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(60)),
         );
       }
     });
@@ -191,7 +189,8 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
                 ),
                 children: [
                   TileLayer(
-                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     userAgentPackageName: 'com.example.flutter_map_test',
                   ),
                   MarkerLayer(
@@ -203,14 +202,18 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
                         child: Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: context.colors.accent.withValues(alpha: 0.25),
+                            color: context.colors.accent.withValues(
+                              alpha: 0.25,
+                            ),
                             border: Border.all(
                               color: context.colors.accent,
                               width: 3,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: context.colors.accent.withValues(alpha: 0.4),
+                                color: context.colors.accent.withValues(
+                                  alpha: 0.4,
+                                ),
                                 blurRadius: 12,
                                 spreadRadius: 4,
                               ),
@@ -268,23 +271,20 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
         if (_isInsideCircle || widget.isMissionCompleted)
           Padding(
             padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
-            child: MyButton(
-              buttonText: 'Continuă',
-              textColor: Colors.white,
-              buttonOnTap: widget.onSolved,
-              withBorder: false,
-              gradient: context.colors.ctaGradient,
-              buttonTextSize: 15,
-            ),
+            child: AppButton(label: 'Continuă', onPressed: widget.onSolved),
           ),
-        if (!_isInsideCircle && !widget.isMissionCompleted && _currentPosition != null)
+        if (!_isInsideCircle &&
+            !widget.isMissionCompleted &&
+            _currentPosition != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: Column(
               children: [
                 if (_routeDistance != null || _straightLineDistance != null)
                   Text(
-                    RouteService.formatDistance(_routeDistance ?? _straightLineDistance!),
+                    RouteService.formatDistance(
+                      _routeDistance ?? _straightLineDistance!,
+                    ),
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,

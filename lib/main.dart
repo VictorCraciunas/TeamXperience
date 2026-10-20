@@ -118,12 +118,6 @@ class MyApp extends StatelessWidget {
                 TeamService(),
               ),
         ),
-
-        ChangeNotifierProvider<NewsList>(
-          create:
-              (context) =>
-                  NewsList(Provider.of<NewsService>(context, listen: false)),
-        ),
       ],
       child: Consumer<ThemeController>(
         builder:

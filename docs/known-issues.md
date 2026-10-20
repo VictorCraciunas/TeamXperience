@@ -24,8 +24,7 @@ Verify before fixing; none of these were reproduced. Roughly ordered by impact.
 - `EventList.liveEvents` / `Event.isOver` don't trigger rebuilds when the 3 h mark passes.
 - Facebook sign-in buttons are non-functional placeholders.
 - Errors: repos throw generic `Exception('Failed to …')` and drop the cause; some controllers show raw `e.toString()` to users.
-- `NewsList` is registered twice in `main.dart`.
-- Stray debug `print`s (`avoid_print` lint, e.g. `AuthUtil`, `EventGameController`, `AddMissionsController`).
+- Stray debug `print`s remain in files this redesign did not touch (`avoid_print` lint, e.g. `AuthUtil`, `EventGameController`, `AddMissionsController`).
 
 ## Platform
 - Release builds signed with the debug key; missing Android `POST_NOTIFICATIONS`; missing iOS `NSPhotoLibraryUsageDescription`; no iOS push setup visible; `assets/images/default_background.png` referenced but absent.

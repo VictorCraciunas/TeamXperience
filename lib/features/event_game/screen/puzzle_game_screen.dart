@@ -1,9 +1,9 @@
+import 'package:teamxperience/ui/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/features/event_game/controller/puzzle_game_controller.dart';
 import 'package:teamxperience/features/event_game/widgets/geolocation_puzzle_widget.dart';
 import 'package:teamxperience/features/event_game/widgets/image_upload/image_upload_puzzle_widget.dart';
-import '../../../constants/padding.dart';
 import '../../../model/event.dart';
 import '../../../model/mission.dart';
 import '../../../model/team.dart';
@@ -93,7 +93,7 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: MyPaddings.appHorizontalPadding,
+              horizontal: AppSpacing.page,
             ),
             child: ValueListenableBuilder<int>(
               valueListenable: controller.selectedPuzzleNotifier,

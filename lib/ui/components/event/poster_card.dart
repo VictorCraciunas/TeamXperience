@@ -37,14 +37,15 @@ class PosterCard extends StatelessWidget {
         child: Stack(
           children: [
             Positioned.fill(
-              child: (url == null || url.isEmpty)
-                  ? fallback
-                  : CachedNetworkImage(
-                      imageUrl: url,
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) => fallback,
-                      errorWidget: (_, __, ___) => fallback,
-                    ),
+              child:
+                  (url == null || url.isEmpty)
+                      ? fallback
+                      : CachedNetworkImage(
+                        imageUrl: url,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => fallback,
+                        errorWidget: (_, __, ___) => fallback,
+                      ),
             ),
             const Positioned.fill(
               child: DecoratedBox(
@@ -70,7 +71,10 @@ class PosterCard extends StatelessWidget {
                     dateLabel,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Color(0xFFF0E1B8), fontSize: 10),
+                    style: const TextStyle(
+                      color: Color(0xFFF0E1B8),
+                      fontSize: 10,
+                    ),
                   ),
                   Text(
                     title,
@@ -87,7 +91,10 @@ class PosterCard extends StatelessWidget {
                     place,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Color(0xFFD3DAE6), fontSize: 10),
+                    style: const TextStyle(
+                      color: Color(0xFFD3DAE6),
+                      fontSize: 10,
+                    ),
                   ),
                 ],
               ),

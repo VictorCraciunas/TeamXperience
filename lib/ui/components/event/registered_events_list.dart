@@ -18,9 +18,7 @@ class RegisteredEventsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (events.isEmpty) {
-      return const Center(
-        child: Text('Încă nu sunt evenimente programate'),
-      );
+      return const Center(child: Text('Încă nu sunt evenimente programate'));
     }
     if (shrinkWrap) {
       return Column(
@@ -28,10 +26,7 @@ class RegisteredEventsList extends StatelessWidget {
           for (final event in events)
             Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
-              child: RegisteredEventCard(
-                event: event,
-                onEventTap: onEventTap,
-              ),
+              child: RegisteredEventCard(event: event, onEventTap: onEventTap),
             ),
         ],
       );
@@ -42,10 +37,7 @@ class RegisteredEventsList extends StatelessWidget {
         final event = events[index];
         return Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
-          child: RegisteredEventCard(
-            event: event,
-            onEventTap: onEventTap,
-          ),
+          child: RegisteredEventCard(event: event, onEventTap: onEventTap),
         );
       },
     );

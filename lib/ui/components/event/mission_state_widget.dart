@@ -3,7 +3,6 @@ import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/enums/missions_state.dart';
 
-
 class MissionStateWidget extends StatelessWidget {
   final MissionState missionState;
   final VoidCallback? onTap;
@@ -19,7 +18,7 @@ class MissionStateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: missionState == MissionState.deblcata ? onTap : (){},
+      onTap: missionState == MissionState.deblcata ? onTap : () {},
       child: Opacity(
         opacity: missionState == MissionState.blocata ? 0.4 : 1.0,
         child: Container(
@@ -78,19 +77,27 @@ class MissionStateWidget extends StatelessWidget {
                           ),
                           SizedBox(height: 5),
                           Text(
-                            missionState == MissionState.finalizata ? "Finalizată" : missionState == MissionState.deblcata ? "Deblocată" : "Blocată",
-                            style: TextStyle(fontSize: 12, color: context.colors.muted),
+                            missionState == MissionState.finalizata
+                                ? "Finalizată"
+                                : missionState == MissionState.deblcata
+                                ? "Deblocată"
+                                : "Blocată",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: context.colors.muted,
+                            ),
                           ),
                         ],
                       ),
                     ],
                   ),
-                  if(missionState == MissionState.deblcata || missionState == MissionState.finalizata)
+                  if (missionState == MissionState.deblcata ||
+                      missionState == MissionState.finalizata)
                     SvgPicture.asset(
-                       'assets/images/arrow.svg',
-                    width: 24, // Reasonable size for the icon
-                    height: 24,
-                  ),
+                      'assets/images/arrow.svg',
+                      width: 24, // Reasonable size for the icon
+                      height: 24,
+                    ),
                 ],
               ),
             ),

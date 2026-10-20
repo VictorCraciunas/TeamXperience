@@ -26,19 +26,20 @@ class AdminUpcomingPanel extends StatelessWidget {
       title: 'Evenimente viitoare',
       count: events.length,
       onAction: onSeeAll,
-      child: events.isEmpty
-          ? Text(
-              'Nu ai evenimente programate.',
-              style: TextStyle(color: context.colors.muted, fontSize: 12),
-            )
-          : Column(
-              children: [
-                for (var i = 0; i < events.length; i++) ...[
-                  if (i > 0) const SizedBox(height: 6),
-                  _row(context, events[i]),
+      child:
+          events.isEmpty
+              ? Text(
+                'Nu ai evenimente programate.',
+                style: TextStyle(color: context.colors.muted, fontSize: 12),
+              )
+              : Column(
+                children: [
+                  for (var i = 0; i < events.length; i++) ...[
+                    if (i > 0) const SizedBox(height: 6),
+                    _row(context, events[i]),
+                  ],
                 ],
-              ],
-            ),
+              ),
     );
   }
 
@@ -59,7 +60,11 @@ class AdminUpcomingPanel extends StatelessWidget {
         children: [
           Text(
             '${stats.teams} echipe',
-            style: TextStyle(color: colors.text, fontSize: 11, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: colors.text,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           Text(
             '${stats.persons} pers.',

@@ -24,6 +24,7 @@ class EventHeroCard extends StatelessWidget {
     this.countdown,
     this.secondaryIcon,
     this.onSecondary,
+    this.secondaryLabel,
     this.moreActions = const [],
   });
 
@@ -39,6 +40,7 @@ class EventHeroCard extends StatelessWidget {
   final HeroAction primary;
   final IconData? secondaryIcon;
   final VoidCallback? onSecondary;
+  final String? secondaryLabel;
 
   /// Further icon buttons shown after [secondaryIcon].
   final List<HeroIconAction> moreActions;
@@ -101,7 +103,10 @@ class EventHeroCard extends StatelessWidget {
                   subtitleText,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Color(0xFFD3DAE6), fontSize: 12),
+                  style: const TextStyle(
+                    color: Color(0xFFD3DAE6),
+                    fontSize: 12,
+                  ),
                 ),
               ],
               if (total != null && total > 0) ...[
@@ -115,14 +120,24 @@ class EventHeroCard extends StatelessWidget {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  Expanded(child: _PrimaryButton(action: primary, status: status)),
+                  Expanded(
+                    child: _PrimaryButton(action: primary, status: status),
+                  ),
                   if (secondary != null && onSecondaryTap != null) ...[
                     const SizedBox(width: 8),
-                    _SecondaryButton(icon: secondary, onTap: onSecondaryTap),
+                    _SecondaryButton(
+                      icon: secondary,
+                      onTap: onSecondaryTap,
+                      label: secondaryLabel,
+                    ),
                   ],
                   for (final action in moreActions) ...[
                     const SizedBox(width: 8),
-                    _SecondaryButton(icon: action.icon, onTap: action.onTap),
+                    _SecondaryButton(
+                      icon: action.icon,
+                      onTap: action.onTap,
+                      label: action.label,
+                    ),
                   ],
                 ],
               ),
@@ -185,26 +200,28 @@ class _Segments extends StatelessWidget {
                 i < clampedDone
                     ? 'hero-segment-done-$i'
                     : i == clampedDone
-                        ? 'hero-segment-current-$i'
-                        : 'hero-segment-todo-$i',
+                    ? 'hero-segment-current-$i'
+                    : 'hero-segment-todo-$i',
               ),
               height: 5,
               decoration: BoxDecoration(
                 color: i < clampedDone ? filled : null,
-                gradient: i == clampedDone
-                    ? const LinearGradient(
-                        colors: [filled, filled, empty, empty],
-                        stops: [0, 0.5, 0.5, 1],
-                      )
-                    : null,
+                gradient:
+                    i == clampedDone
+                        ? const LinearGradient(
+                          colors: [filled, filled, empty, empty],
+                          stops: [0, 0.5, 0.5, 1],
+                        )
+                        : null,
                 borderRadius: BorderRadius.circular(3),
               ),
-              foregroundDecoration: i > clampedDone
-                  ? BoxDecoration(
-                      color: empty,
-                      borderRadius: BorderRadius.circular(3),
-                    )
-                  : null,
+              foregroundDecoration:
+                  i > clampedDone
+                      ? BoxDecoration(
+                        color: empty,
+                        borderRadius: BorderRadius.circular(3),
+                      )
+                      : null,
             ),
           ),
         ],
@@ -239,7 +256,7 @@ class _PrimaryButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.button),
           onTap: action.onTap,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 44),
+            constraints: const BoxConstraints(minHeight: 48),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Row(
@@ -272,13 +289,20 @@ class _PrimaryButton extends StatelessWidget {
 }
 
 class _SecondaryButton extends StatelessWidget {
-  const _SecondaryButton({required this.icon, required this.onTap});
+  const _SecondaryButton({required this.icon, required this.onTap, this.label});
 
   final IconData icon;
   final VoidCallback onTap;
+  final String? label;
 
   @override
   Widget build(BuildContext context) {
+    final button = _build();
+    final text = label;
+    return text == null ? button : Tooltip(message: text, child: button);
+  }
+
+  Widget _build() {
     return Material(
       color: const Color(0x2EFFFFFF),
       shape: RoundedRectangleBorder(
@@ -289,8 +313,8 @@ class _SecondaryButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.button),
         onTap: onTap,
         child: SizedBox(
-          width: 44,
-          height: 44,
+          width: 48,
+          height: 48,
           child: Icon(icon, color: Colors.white, size: 20),
         ),
       ),

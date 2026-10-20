@@ -27,7 +27,7 @@ Approved by the owner through mockups in conversation on 2026-10-19. This is the
 | insetBorder | `#E1E7EF` | `#252B35` |
 | text | `#0C092A` | `#F2F4F8` |
 | muted | `#47546A` | `#A3ACBB` |
-| accent (teal text/links) | `#1B8A8E` | `#5CC8CB` |
+| accent (teal text/links) | `#167A7E` | `#5CC8CB` |
 | tick (teal) | `#2AA5A9` | `#53C4C7` |
 | navy (date block, 2nd tick) | `#222F62` | `#2A3A80` |
 | navActivePill | `#DDF3F3` | `#22393C` |
