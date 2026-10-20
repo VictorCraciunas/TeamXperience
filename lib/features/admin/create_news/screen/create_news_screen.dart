@@ -152,7 +152,6 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                       // Main Image Upload
                       GestureDetector(
                         onTap: () async {
-                          print("UploadImage tapped for main image!");
                           final pickedFile = await controller.pickImage();
                           if (pickedFile == null) {
                             return;
@@ -216,7 +215,6 @@ class _CreateStireScreenState extends State<CreateStireScreen> {
                           // Add new secondary image button
                           GestureDetector(
                             onTap: () async {
-                              print("Adding secondary image!");
                               final pickedFile = await controller.pickImage();
                               if (pickedFile == null) {
                                 return;

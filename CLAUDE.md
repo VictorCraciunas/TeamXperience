@@ -54,14 +54,14 @@ Keep these in sync when adding routes, models, collections or providers.
 
 ```
 main.dart          Firebase init, FCM init, MultiProvider, MaterialApp, ALL routes
-constants/         routes.dart (Routes.* string consts), colors.dart (MyColors), padding.dart
+constants/         routes.dart (Routes.* string consts)
 enums/             Role, EventType, PuzzleType, ComponentType, MissionState, MessageType, PhotoApprovalStatus, StireType, AnimationType
 model/             Plain data classes with fromMap/fromFirestore + toJson (see "Data model")
 backend/           Raw Firebase access: authentication/, repo/*_repo.dart (Firestore), storage/ (Firebase Storage), network/ (HTTP to Cloud Function)
 service/           Business logic over repos: event_service/, team_service/, news_service/, message_service, FCMService, LocationService, RouteService, share_service
 state_management/  ChangeNotifier providers: UserProvider, EventList, NewsList, UserEventsProvider
 features/          One folder per screen/flow: controller/ + screen/ (+ widgets/, service/)
-ui/                Shared UI layer: theme/ (AppColors tokens, AppTheme, radius/spacing) and components/ (buttons, inputs, navigation, event, news, feedback, misc: MyButton, MyTextField, MyAppBar, EventCard, StireCard, MyDropdown, MySnackBars, ...)
+ui/                Shared UI layer: theme/ (AppColors tokens, AppTheme, radius/spacing) and components/ (buttons, inputs, navigation, event, news, feedback, misc: AppButton, AppTextField, AppDropdown, SectionCard, EventHeroCard, MyAppBar, EventCard, StireCard, MySnackBars, showAppDialog, AsyncState, ...)
 utils/             AuthUtil, calendar_helper, image_helper, color_conversion, component_conversion/
 ```
 
@@ -78,7 +78,7 @@ Flow: `screen -> *Controller -> service -> repo -> Firestore`. Not every feature
 Providers registered in `main.dart` (order matters — later ones read earlier ones):
 - `UserProvider` — current `AppUser` + Firebase `User`. `AppUser` is immutable, so mutations (e.g. `addRegisteredEvent`) rebuild a new instance.
 - `EventList` — cached list of all events with `upcomingEvents` / `liveEvents` / `pastEvents` getters; `loadEvents()` is throttled (5 min) unless `forceRefresh`. Admin-side views use this.
-- `NewsList` — same pattern for news. Note it is registered **twice** in `main.dart` (harmless duplicate).
+- `NewsList` — same pattern for news.
 - `UserEventsProvider` — player-side: derives registered/upcoming/past events from `UserProvider` + `EventList`, and finds the user's *active event* (a team with `hasStarted && !hasFinished`) to drive the "play event" card on Home. Skips events where `Event.isOver` (stopped by admin or >3h after start).
 
 Game-time screens use their own `ChangeNotifier` controllers (e.g. `EventGameController`) and Firestore streams rather than the global providers.
@@ -117,7 +117,7 @@ Event lifecycle: players register for events (`registeredEventIds`), enter the e
 
 ### Theme
 
-Theme lives in `lib/ui/theme/`: `AppColors` (a `ThemeExtension` with light and dark tokens: page, panel, border, inset, text, muted, accent, tick, navy, ...), `AppTheme.light/dark` (Material 3, Poppins, scaffold = page colour, canvas = panel colour), `AppRadius`, `AppSpacing`, and `context.colors` to read the tokens. `themeMode` comes from `ThemeController` (saved choice: Sistem / Luminos / Întunecat, default Luminos). Screens and shared widgets read colours from `context.colors`; `constants/colors.dart` (`MyColors`) only remains for legacy values and is removed in the cleanup phase. Fonts: `Poppins` (weights 300–800) and `Monospace` (SpaceMono) in `assets/fonts/`. Lottie loader at `assets/loader/loader.json`; images in `assets/images/`.
+Theme lives in `lib/ui/theme/`: `AppColors` (a `ThemeExtension` with light and dark tokens: page, panel, border, inset, text, muted, accent, tick, navy, ...), `AppTheme.light/dark` (Material 3, Poppins, scaffold = page colour, canvas = panel colour), `AppRadius`, `AppSpacing`, and `context.colors` to read the tokens. `themeMode` comes from `ThemeController` (saved choice: Sistem / Luminos / Întunecat, default Luminos). Screens and shared widgets read colours from `context.colors`; there is no `MyColors` any more. Text styles come from `AppTextStyles` (also registered as the `TextTheme`), spacing from `AppSpacing` (`AppSpacing.page` = 16 side padding), and feedback colours from `AppColors.success/warning/danger` (+ `*Soft`). `test/ui/no_hardcoded_colors_test.dart` stops `lib/features` from gaining literal colours (allow-list in `test/ui/colour_allowlist.txt`). Fonts: `Poppins` (weights 300–800) and `Monospace` (SpaceMono) in `assets/fonts/`. Lottie loader at `assets/loader/loader.json`; images in `assets/images/`.
 
 ## Gotchas
 

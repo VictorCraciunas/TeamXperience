@@ -78,7 +78,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   const SizedBox(height: 10),
                   GestureDetector(
                     onTap: () async {
-                      print("UploadImage tapped for landing image!");
                       final pickedFile = await controller.pickImage();
                       if (pickedFile == null) {
                         return;
@@ -264,7 +263,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   // imagine fundal
                   GestureDetector(
                     onTap: () async {
-                      print("UploadImage tapped for task background image!");
                       final pickedFile = await controller.pickImage();
                       setState(() {
                         controller.taskBackgroundImageFile = pickedFile;
