@@ -3,7 +3,7 @@ import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/controller/add_missions_controller.dart';
 import 'package:teamxperience/model/event.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
 import '../widgets/my_list_component.dart';
 
@@ -24,10 +24,7 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
     super.didChangeDependencies();
     if (!_initialized) {
       final args =
-      ModalRoute
-          .of(context)!
-          .settings
-          .arguments as Map<String, dynamic>?;
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
       final Event event = args?['event'];
       final String mode = args?['mode'] ?? "create";
 
@@ -39,7 +36,6 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
         },
       );
       _initialized = true;
-
     }
   }
 
@@ -50,9 +46,7 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
       // resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.page,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -74,15 +68,29 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                                   content: TextButton(
                                     onPressed: () {
                                       setState(() {
-                                        _addMissionsController.event.missions.removeAt(index);
-                                        _addMissionsController.missionWidgets.removeAt(index);
-                                        _addMissionsController.isMissionDone.removeAt(index);
-                                        _addMissionsController.event.nrMissions--;
-                                        if (_addMissionsController.selectedMission >= index &&
-                                            _addMissionsController.selectedMission > 0) {
-                                          _addMissionsController.selectedMission--;
-                                        } else if (_addMissionsController.event.missions.isEmpty) {
-                                          _addMissionsController.selectedMission = 0;
+                                        _addMissionsController.event.missions
+                                            .removeAt(index);
+                                        _addMissionsController.missionWidgets
+                                            .removeAt(index);
+                                        _addMissionsController.isMissionDone
+                                            .removeAt(index);
+                                        _addMissionsController
+                                            .event
+                                            .nrMissions--;
+                                        if (_addMissionsController
+                                                    .selectedMission >=
+                                                index &&
+                                            _addMissionsController
+                                                    .selectedMission >
+                                                0) {
+                                          _addMissionsController
+                                              .selectedMission--;
+                                        } else if (_addMissionsController
+                                            .event
+                                            .missions
+                                            .isEmpty) {
+                                          _addMissionsController
+                                              .selectedMission = 0;
                                         }
                                       });
                                       Navigator.pop(context);
@@ -141,16 +149,16 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                 ),
 
                 const SizedBox(height: 20),
-                MyButton(
-                  buttonText: 'Creează eveniment',
-                  textColor: Colors.white,
-                  buttonOnTap: () async{
+                AppButton(
+                  label: 'Creează eveniment',
+                  onPressed: () async {
                     await _addMissionsController.saveEvent(context);
-                    Navigator.pushNamedAndRemoveUntil(context, Routes.adminHome, (Route<dynamic> route) => false);
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      Routes.adminHome,
+                      (Route<dynamic> route) => false,
+                    );
                   },
-                  withBorder: false,
-                  gradient: context.colors.ctaGradient,
-                  fontWeight: FontWeight.w600,
                 ),
                 const SizedBox(height: 30),
               ],

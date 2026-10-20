@@ -6,7 +6,7 @@ import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';
 import '../../../../../../../utils/component_conversion/component_to_widget.dart';
 import 'package:teamxperience/ui/components/misc/color_picker_dialog.dart';
-import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
+import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
 
 class CodeComponentController {
   static const String _defaultWhite = '#FFFFFF';
@@ -41,7 +41,8 @@ class CodeComponentController {
 
   // Getters
   bool get canShowPreview => codeLength != null && inputType != null;
-  bool get isFormValid => codeLength != null && inputType != null && capsLock != null;
+  bool get isFormValid =>
+      codeLength != null && inputType != null && capsLock != null;
 
   // Color conversion methods
   Color hexToColor(String? hex) => _colorConversion.hexToColor(hex);
@@ -56,9 +57,12 @@ class CodeComponentController {
     capsLock = component.capsLock;
     radiusChenar = component.frameCornerRadius ?? radiusChenar;
     radiusChenarInputuri = component.inputCornerRadius ?? radiusChenarInputuri;
-    frameBackgroundColor = component.frameBackgroundColor ?? frameBackgroundColor;
-    inputBackgroundColor = component.inputBackgroundColor ?? inputBackgroundColor;
-    colorBorderContainer = component.colorBorderContainer ?? colorBorderContainer;
+    frameBackgroundColor =
+        component.frameBackgroundColor ?? frameBackgroundColor;
+    inputBackgroundColor =
+        component.inputBackgroundColor ?? inputBackgroundColor;
+    colorBorderContainer =
+        component.colorBorderContainer ?? colorBorderContainer;
     colorBorderInput = component.colorBorderInput ?? colorBorderInput;
     enableGlow = component.enableGlow ?? enableGlow;
     glowColor = component.glowColor ?? glowColor;
@@ -107,9 +111,9 @@ class CodeComponentController {
     // Validate first
     final validationError = validateComponent();
     if (validationError != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(validationError)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(validationError)));
       return;
     }
 
@@ -127,24 +131,24 @@ class CodeComponentController {
     Navigator.pop(context);
   }
 
-
   Widget buildColorPickerField(
-      String title,
-      String colorHex,
-      Function(String) onColorChanged,
-      BuildContext context,
-      ) {
+    String title,
+    String colorHex,
+    Function(String) onColorChanged,
+    BuildContext context,
+  ) {
     Color currentColor = hexToColor(colorHex);
-    return MyTextField(
-      hinttextWeight: FontWeight.w500,
-      hintTextSize: 15,
-      hintTextColor: context.colors.text,
+    return AppTextField(
       controller: TextEditingController(),
-      hintText: title,
-      borderColor: context.colors.accent,
-      radius: 15,
+      hint: title,
       readOnly: true,
-      onTap: () => ColorPickerDialog.show(context, title, currentColor, onColorChanged),
+      onTap:
+          () => ColorPickerDialog.show(
+            context,
+            title,
+            currentColor,
+            onColorChanged,
+          ),
       trailing: Container(
         width: 25,
         height: 25,
@@ -154,6 +158,7 @@ class CodeComponentController {
           borderRadius: BorderRadius.circular(5),
         ),
       ),
+      validator: requiredValidator('a value'),
     );
   }
 }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:teamxperience/constants/colors.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
-import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
+import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
 import 'package:teamxperience/ui/components/misc/slider_widget.dart';
 import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
@@ -28,10 +27,12 @@ class ButtonComponentFieldsWidget extends StatefulWidget {
   });
 
   @override
-  State<ButtonComponentFieldsWidget> createState() => _ButtonComponentFieldsWidgetState();
+  State<ButtonComponentFieldsWidget> createState() =>
+      _ButtonComponentFieldsWidgetState();
 }
 
-class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidget> {
+class _ButtonComponentFieldsWidgetState
+    extends State<ButtonComponentFieldsWidget> {
   late final ButtonComponentController controller;
 
   final weightMap = <String, FontWeight>{
@@ -90,9 +91,10 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
     // Create a temporary Component for preview
     final previewComponent = Component();
     controller.updateComponentFields(previewComponent);
-    previewComponent.buttonLabel = controller.labelController.text.isEmpty
-        ? 'Text'
-        : controller.labelController.text;
+    previewComponent.buttonLabel =
+        controller.labelController.text.isEmpty
+            ? 'Text'
+            : controller.labelController.text;
 
     final previewWidget = ComponentToWidget().convert(previewComponent);
 
@@ -101,10 +103,7 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
       children: [
         const Text(
           'Previzualizare',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 15),
         Container(
@@ -123,14 +122,14 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
   }
 
   Widget _buildButtonLabelField() {
-    return MyTextField(
+    return AppTextField(
       controller: controller.labelController,
-      labelText: 'Text',
-      borderColor: context.colors.accent,
-      borderWidth: 1.5,
-      radius: 20,
-      validator: (value) =>
-      value == null || value.isEmpty ? 'Introdu un text la buton' : null,
+      label: 'Text',
+      validator:
+          (value) =>
+              value == null || value.isEmpty
+                  ? 'Introdu un text la buton'
+                  : null,
     );
   }
 
@@ -138,14 +137,8 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
     return MyDropdownField<String>(
       labelText: 'Tip Font',
       items: const [
-        DropdownItem<String>(
-          value: 'Poppins',
-          label: 'Poppins',
-        ),
-        DropdownItem<String>(
-          value: 'Monospace',
-          label: 'Monospace',
-        ),
+        DropdownItem<String>(value: 'Poppins', label: 'Poppins'),
+        DropdownItem<String>(value: 'Monospace', label: 'Monospace'),
       ],
       value: controller.fontFamily,
       onChanged: (value) => setState(() => controller.fontFamily = value),
@@ -155,10 +148,7 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
       radius: 20,
       hint: Text(
         'Selectează tipul de font',
-        style: TextStyle(
-          fontSize: 14,
-          color: context.colors.muted,
-        ),
+        style: TextStyle(fontSize: 14, color: context.colors.muted),
       ),
     );
   }
@@ -166,24 +156,20 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
   Widget _buildFontWeightDropdown() {
     return MyDropdownField<String>(
       labelText: 'Grosime Font',
-      items: weightMap.keys
-          .map((label) => DropdownItem<String>(
-        value: label,
-        label: label,
-      ))
-          .toList(),
+      items:
+          weightMap.keys
+              .map((label) => DropdownItem<String>(value: label, label: label))
+              .toList(),
       value: controller.fontWeight,
       onChanged: (value) => setState(() => controller.fontWeight = value),
-      validator: (value) => value == null ? 'Selectează grosimea fontului' : null,
+      validator:
+          (value) => value == null ? 'Selectează grosimea fontului' : null,
       borderColor: context.colors.accent,
       borderWidth: 1.5,
       radius: 20,
       hint: Text(
         'Selectează grosimea fontului',
-        style: TextStyle(
-          fontSize: 14,
-          color: context.colors.muted,
-        ),
+        style: TextStyle(fontSize: 14, color: context.colors.muted),
       ),
     );
   }
@@ -194,35 +180,41 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
         controller.buildColorPickerField(
           title: 'Culoare fundal',
           colorHex: controller.buttonColor,
-          onColorChanged: (color) => setState(() => controller.buttonColor = color),
+          onColorChanged:
+              (color) => setState(() => controller.buttonColor = color),
           context: context,
         ),
         const SizedBox(height: 20),
         controller.buildColorPickerField(
           title: 'Culoare fundal apăsat',
           colorHex: controller.buttonColorOnTap,
-          onColorChanged: (color) => setState(() => controller.buttonColorOnTap = color),
+          onColorChanged:
+              (color) => setState(() => controller.buttonColorOnTap = color),
           context: context,
         ),
         const SizedBox(height: 20),
         controller.buildColorPickerField(
           title: 'Culoare text',
           colorHex: controller.buttonTextColor,
-          onColorChanged: (color) => setState(() => controller.buttonTextColor = color),
+          onColorChanged:
+              (color) => setState(() => controller.buttonTextColor = color),
           context: context,
         ),
         const SizedBox(height: 20),
         controller.buildColorPickerField(
           title: 'Culoare text apăsat',
           colorHex: controller.buttonTextColorOnTap,
-          onColorChanged: (color) => setState(() => controller.buttonTextColorOnTap = color),
+          onColorChanged:
+              (color) =>
+                  setState(() => controller.buttonTextColorOnTap = color),
           context: context,
         ),
         const SizedBox(height: 20),
         controller.buildColorPickerField(
           title: 'Culoare chenar',
           colorHex: controller.borderColor,
-          onColorChanged: (color) => setState(() => controller.borderColor = color),
+          onColorChanged:
+              (color) => setState(() => controller.borderColor = color),
           context: context,
         ),
       ],
@@ -249,23 +241,19 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
           child: Checkbox(
             value: controller.enableFlicker,
             activeColor: context.colors.accent,
-            onChanged: (value) => setState(() => controller.enableFlicker = value ?? false),
+            onChanged:
+                (value) =>
+                    setState(() => controller.enableFlicker = value ?? false),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),
             ),
-            side: BorderSide(
-              width: 1.5,
-              color: context.colors.accent,
-            ),
+            side: BorderSide(width: 1.5, color: context.colors.accent),
           ),
         ),
         const SizedBox(width: 16),
         const Text(
           'Animatie Flicker',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
       ],
     );
@@ -284,19 +272,13 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),
             ),
-            side: BorderSide(
-              width: 1.5,
-              color: context.colors.accent,
-            ),
+            side: BorderSide(width: 1.5, color: context.colors.accent),
           ),
         ),
         const SizedBox(width: 16),
         const Text(
           'Glow buton',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
       ],
     );
@@ -325,23 +307,20 @@ class _ButtonComponentFieldsWidgetState extends State<ButtonComponentFieldsWidge
 
   Widget _buildSaveButton() {
     return Center(
-      child: MyButton(
-        buttonText: 'Salvează componenta',
-        textColor: Colors.white,
-        buttonOnTap: () {
-          controller.saveComponent(
-            context: context,
-            puzzle: widget.puzzle,
-            component: widget.component,
-            refreshUI: widget.refreshUI,
-            isEditMode: widget.edit,
-          );
-        },
-        withBorder: false,
-        buttonColor: MyColors.lightBlue,
-        fontWeight: FontWeight.w500,
-        buttonTextSize: 14,
-        buttonWidth: 270,
+      child: SizedBox(
+        width: 270,
+        child: AppButton(
+          label: 'Salvează componenta',
+          onPressed: () {
+            controller.saveComponent(
+              context: context,
+              puzzle: widget.puzzle,
+              component: widget.component,
+              refreshUI: widget.refreshUI,
+              isEditMode: widget.edit,
+            );
+          },
+        ),
       ),
     );
   }

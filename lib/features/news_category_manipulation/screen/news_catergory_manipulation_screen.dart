@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 import '../../../model/newsCategory.dart';
 import '../controller/news_category_controller.dart';
 
@@ -69,9 +69,9 @@ class _NewsCategoryManipulationScreenState
                       const SizedBox(height: 20),
 
                       // Search Field
-                      MyTextField(
+                      AppTextField(
                         controller: controller.searchController,
-                        hintText: "Caută categorie ...",
+                        hint: "Caută categorie ...",
                         trailing: SvgPicture.asset(
                           'assets/images/search.svg',
                           height: 24,
@@ -81,13 +81,11 @@ class _NewsCategoryManipulationScreenState
                             BlendMode.srcIn,
                           ),
                         ),
-                        radius: 15,
-                        borderColor: context.colors.accent,
-                        borderWidth: 1.5,
                         onChanged: (value) {
                           controller.filterCategories(value);
                           setState(() {});
                         },
+                        validator: requiredValidator('a value'),
                       ),
                       const SizedBox(height: 20),
 
@@ -179,13 +177,10 @@ class _NewsCategoryManipulationScreenState
                                   },
                                 ),
                       ),
-                      MyTextField(
+                      AppTextField(
                         controller: controller.newCategoryController,
-                        labelText: 'Adaugă categorie',
-                        hintText: 'Categorie noua',
-                        borderColor: context.colors.accent,
-                        radius: 15,
-                        borderWidth: 1.5,
+                        label: 'Adaugă categorie',
+                        hint: 'Categorie noua',
                         trailing: Icon(
                           Icons.add,
                           color: context.colors.accent,
@@ -205,18 +200,16 @@ class _NewsCategoryManipulationScreenState
                             setState(() {});
                           }
                         },
+                        validator: requiredValidator('Adaugă categorie'),
                       ),
                       SizedBox(height: 30),
-                      MyButton(
-                        buttonText: "Selecteaza categorie",
-                        textColor: Colors.white,
-                        buttonOnTap: (){
-                          Navigator.of(context).pop(controller.selectedCategory);
+                      AppButton(
+                        label: "Selecteaza categorie",
+                        onPressed: () {
+                          Navigator.of(
+                            context,
+                          ).pop(controller.selectedCategory);
                         },
-                        withBorder: false,
-                        gradient: context.colors.ctaGradient,
-                        buttonTextSize: 16,
-                        fontWeight: FontWeight.w600,
                       ),
                       SizedBox(height: 30),
                     ],

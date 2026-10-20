@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:teamxperience/constants/colors.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 import 'package:teamxperience/ui/components/inputs/my_dropdown/my_dropdown.dart';
 import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
@@ -26,7 +25,8 @@ class CodeComponentFieldsWidget extends StatefulWidget {
   });
 
   @override
-  State<CodeComponentFieldsWidget> createState() => _CodeComponentFieldsWidgetState();
+  State<CodeComponentFieldsWidget> createState() =>
+      _CodeComponentFieldsWidgetState();
 }
 
 class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
@@ -82,7 +82,9 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
           ),
           SizedBox(height: 15),
           Center(
-            child: Text('Select number of characters, input type and colors of the fields'),
+            child: Text(
+              'Select number of characters, input type and colors of the fields',
+            ),
           ),
         ],
       );
@@ -127,26 +129,22 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
   Widget _buildCodeLengthDropdown() {
     return MyDropdownField<int>(
       labelText: 'Număr de caractere',
-      items: List.generate(10, (index) => index + 1)
-          .map(
-            (length) => DropdownItem<int>(
-          value: length,
-          label: '$length',
-        ),
-      )
-          .toList(),
+      items:
+          List.generate(10, (index) => index + 1)
+              .map(
+                (length) => DropdownItem<int>(value: length, label: '$length'),
+              )
+              .toList(),
       value: controller.codeLength,
       onChanged: (value) => setState(() => controller.codeLength = value),
-      validator: (value) => value == null ? 'Selectează numărul de caractere' : null,
+      validator:
+          (value) => value == null ? 'Selectează numărul de caractere' : null,
       borderColor: context.colors.accent,
       borderWidth: 1.5,
       radius: 20,
       hint: Text(
         'Selectează numărul de caractere',
-        style: TextStyle(
-          fontSize: 14,
-          color: context.colors.muted,
-        ),
+        style: TextStyle(fontSize: 14, color: context.colors.muted),
       ),
     );
   }
@@ -166,10 +164,7 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
       radius: 20,
       hint: Text(
         'Selectează tipul de cod',
-        style: TextStyle(
-          fontSize: 14,
-          color: context.colors.muted,
-        ),
+        style: TextStyle(fontSize: 14, color: context.colors.muted),
       ),
     );
   }
@@ -189,10 +184,7 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
       radius: 20,
       hint: Text(
         'Selectează tipul de cod',
-        style: TextStyle(
-          fontSize: 14,
-          color: context.colors.muted,
-        ),
+        style: TextStyle(fontSize: 14, color: context.colors.muted),
       ),
     );
   }
@@ -249,7 +241,8 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
       divisions: 50,
       value: controller.radiusChenarInputuri,
       label: controller.radiusChenarInputuri.toStringAsFixed(0),
-      onChanged: (value) => setState(() => controller.radiusChenarInputuri = value),
+      onChanged:
+          (value) => setState(() => controller.radiusChenarInputuri = value),
     );
   }
 
@@ -257,7 +250,7 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
     return controller.buildColorPickerField(
       'Culoare fundal chenar',
       controller.frameBackgroundColor,
-          (color) => setState(() => controller.frameBackgroundColor = color),
+      (color) => setState(() => controller.frameBackgroundColor = color),
       context,
     );
   }
@@ -266,7 +259,7 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
     return controller.buildColorPickerField(
       'Culoare fundal input-uri',
       controller.inputBackgroundColor,
-          (color) => setState(() => controller.inputBackgroundColor = color),
+      (color) => setState(() => controller.inputBackgroundColor = color),
       context,
     );
   }
@@ -275,7 +268,7 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
     return controller.buildColorPickerField(
       'Culoare bordura input',
       controller.colorBorderInput,
-          (color) => setState(() => controller.colorBorderInput = color),
+      (color) => setState(() => controller.colorBorderInput = color),
       context,
     );
   }
@@ -284,7 +277,7 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
     return controller.buildColorPickerField(
       'Culoare bordura chenar',
       controller.colorBorderContainer,
-          (color) => setState(() => controller.colorBorderContainer = color),
+      (color) => setState(() => controller.colorBorderContainer = color),
       context,
     );
   }
@@ -305,14 +298,8 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
     return MyDropdownField<String>(
       labelText: 'Tip Font',
       items: const [
-        DropdownItem<String>(
-          value: 'Poppins',
-          label: 'Poppins',
-        ),
-        DropdownItem<String>(
-          value: 'Monospace',
-          label: 'Monospace',
-        ),
+        DropdownItem<String>(value: 'Poppins', label: 'Poppins'),
+        DropdownItem<String>(value: 'Monospace', label: 'Monospace'),
       ],
       value: controller.fontFamily,
       onChanged: (value) => setState(() => controller.fontFamily = value),
@@ -322,10 +309,7 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
       radius: 20,
       hint: Text(
         'Selectează tipul de font',
-        style: TextStyle(
-          fontSize: 14,
-          color: context.colors.muted,
-        ),
+        style: TextStyle(fontSize: 14, color: context.colors.muted),
       ),
     );
   }
@@ -346,7 +330,7 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
     return controller.buildColorPickerField(
       'Culoare text input',
       controller.textColor,
-          (color) => setState(() => controller.textColor = color),
+      (color) => setState(() => controller.textColor = color),
       context,
     );
   }
@@ -368,7 +352,8 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
           scale: 1.5,
           child: Checkbox(
             value: controller.enableGlow,
-            onChanged: (value) => setState(() => controller.enableGlow = value!),
+            onChanged:
+                (value) => setState(() => controller.enableGlow = value!),
             activeColor: context.colors.accent,
             checkColor: Colors.white,
             shape: RoundedRectangleBorder(
@@ -394,30 +379,27 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
     return controller.buildColorPickerField(
       'Culoare Glow',
       controller.glowColor,
-          (color) => setState(() => controller.glowColor = color),
+      (color) => setState(() => controller.glowColor = color),
       context,
     );
   }
 
   Widget _buildSaveButton() {
     return Center(
-      child: MyButton(
-        buttonText: 'Salvează componenta',
-        textColor: Colors.white,
-        buttonOnTap: () {
-          controller.saveComponent(
-            context: context,
-            puzzle: widget.puzzle,
-            component: widget.component,
-            refreshUI: widget.refreshUI,
-            isEditMode: widget.edit,
-          );
-        },
-        withBorder: false,
-        buttonColor: MyColors.lightBlue,
-        fontWeight: FontWeight.w500,
-        buttonTextSize: 14,
-        buttonWidth: 270,
+      child: SizedBox(
+        width: 270,
+        child: AppButton(
+          label: 'Salvează componenta',
+          onPressed: () {
+            controller.saveComponent(
+              context: context,
+              puzzle: widget.puzzle,
+              component: widget.component,
+              refreshUI: widget.refreshUI,
+              isEditMode: widget.edit,
+            );
+          },
+        ),
       ),
     );
   }

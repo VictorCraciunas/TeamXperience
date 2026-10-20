@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
 class ImageUploadActionButton extends StatelessWidget {
   final PhotoApprovalStatus? status;
@@ -23,23 +23,9 @@ class ImageUploadActionButton extends StatelessWidget {
 
     switch (status) {
       case PhotoApprovalStatus.approved:
-        return MyButton(
-          buttonText: 'Continuă',
-          textColor: Colors.white,
-          buttonOnTap: onContinue,
-          withBorder: false,
-          gradient: context.colors.ctaGradient,
-          buttonTextSize: 15,
-        );
+        return AppButton(label: 'Continuă', onPressed: onContinue);
       case PhotoApprovalStatus.denied:
-        return MyButton(
-          buttonText: 'Încarcă altă poză',
-          textColor: Colors.white,
-          buttonOnTap: onReupload,
-          withBorder: false,
-          gradient: context.colors.ctaGradient,
-          buttonTextSize: 15,
-        );
+        return AppButton(label: 'Încarcă altă poză', onPressed: onReupload);
       case PhotoApprovalStatus.pending:
       case null:
         return const SizedBox.shrink();

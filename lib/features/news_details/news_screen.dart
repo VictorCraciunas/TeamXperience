@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/model/stire.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
 import '../../constants/routes.dart';
 import '../../utils/calendar_helper.dart';
@@ -76,10 +75,11 @@ class _NewsScreenState extends State<NewsScreen> {
   void _openFullscreen(List<String> images, int initialIndex) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => FullscreenImageViewer(
-          images: images,
-          initialIndex: initialIndex,
-        ),
+        builder:
+            (_) => FullscreenImageViewer(
+              images: images,
+              initialIndex: initialIndex,
+            ),
       ),
     );
   }
@@ -91,7 +91,11 @@ class _NewsScreenState extends State<NewsScreen> {
         width: double.infinity,
         color: context.colors.inset,
         child: Center(
-          child: Icon(Icons.image_not_supported, color: context.colors.muted, size: 50),
+          child: Icon(
+            Icons.image_not_supported,
+            color: context.colors.muted,
+            size: 50,
+          ),
         ),
       );
     }
@@ -117,22 +121,26 @@ class _NewsScreenState extends State<NewsScreen> {
                   imageUrl: images[index],
                   fit: BoxFit.cover,
                   width: double.infinity,
-                  progressIndicatorBuilder: (context, url, progress) => Container(
-                    color: context.colors.inset,
-                    child: Center(
-                      child: CircularProgressIndicator(value: progress.progress),
-                    ),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    color: context.colors.inset,
-                    child: Center(
-                      child: Icon(
-                        Icons.error_outline,
-                        color: context.colors.muted,
-                        size: 50,
+                  progressIndicatorBuilder:
+                      (context, url, progress) => Container(
+                        color: context.colors.inset,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            value: progress.progress,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+                  errorWidget:
+                      (context, url, error) => Container(
+                        color: context.colors.inset,
+                        child: Center(
+                          child: Icon(
+                            Icons.error_outline,
+                            color: context.colors.muted,
+                            size: 50,
+                          ),
+                        ),
+                      ),
                 ),
               );
             },
@@ -171,7 +179,11 @@ class _NewsScreenState extends State<NewsScreen> {
                         color: const Color(0x90FFFFFF),
                         borderRadius: BorderRadius.circular(50),
                       ),
-                      child: AppSvgIcon('assets/images/back_icon.svg', width: 24, height: 24),
+                      child: AppSvgIcon(
+                        'assets/images/back_icon.svg',
+                        width: 24,
+                        height: 24,
+                      ),
                     ),
                     onTap: () {
                       Navigator.pop(context);
@@ -185,7 +197,11 @@ class _NewsScreenState extends State<NewsScreen> {
                         color: const Color(0x90FFFFFF),
                         borderRadius: BorderRadius.circular(50),
                       ),
-                      child: AppSvgIcon('assets/images/download.svg', width: 24, height: 24),
+                      child: AppSvgIcon(
+                        'assets/images/download.svg',
+                        width: 24,
+                        height: 24,
+                      ),
                     ),
                   ),
                 ],
@@ -343,30 +359,20 @@ class _NewsScreenState extends State<NewsScreen> {
                         ),
                         const SizedBox(height: 20),
                         if (stire.buttonText != null)
-                          MyButton(
-                            buttonText: stire.buttonText ?? "Vezi galeria foto",
-                            textColor: MyColors.blackColor,
-                            buttonOnTap: () {
+                          AppButton(
+                            label: stire.buttonText ?? "Vezi galeria foto",
+                            onPressed: () {
                               _linkUtil.launchURL(stire.buttonLink, context);
                             },
-                            withBorder: false,
-                            buttonColor: MyColors.transparentLightBlue,
-                            buttonTextSize: 15,
-                            fontWeight: FontWeight.w400,
                           ),
 
                         const SizedBox(height: 30),
                         if (isAdmin == true)
-                          MyButton(
-                            buttonText: "Editează",
-                            textColor: Colors.white,
-                            buttonOnTap: () {
+                          AppButton(
+                            label: "Editează",
+                            onPressed: () {
                               _navigateToEditStire(stire);
                             },
-                            withBorder: false,
-                            buttonTextSize: 16,
-                            fontWeight: FontWeight.w600,
-                            gradient: context.colors.ctaGradient,
                           ),
                       ],
                     ),

@@ -6,7 +6,7 @@ import 'package:teamxperience/features/enter_code/controller/enter_code_controll
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import '../../../model/event.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
 class EnterCode extends StatefulWidget {
   const EnterCode({super.key});
@@ -16,23 +16,22 @@ class EnterCode extends StatefulWidget {
 }
 
 class _EnterCodeState extends State<EnterCode> {
-  late EnterCodeController  controller;
+  late EnterCodeController controller;
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     final event = ModalRoute.of(context)!.settings.arguments as Event;
-    controller = EnterCodeController(event,context);
+    controller = EnterCodeController(event, context);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(appBarText: "TeamXperience"),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppSpacing.page,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.page),
           child: Center(
             child: Container(
               width: double.infinity,
@@ -40,16 +39,18 @@ class _EnterCodeState extends State<EnterCode> {
                 borderRadius: BorderRadius.circular(15),
                 color: context.colors.navy,
               ),
-              padding: const EdgeInsets.all(20.0), // Use padding instead of Padding widget
+              padding: const EdgeInsets.all(
+                20.0,
+              ), // Use padding instead of Padding widget
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     "Introdu codul primit",
                     style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 20), // Spacing before text field
@@ -75,20 +76,15 @@ class _EnterCodeState extends State<EnterCode> {
                             fontSize: 16,
                           ),
                           border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: 15,
-                          ),
+                          contentPadding: EdgeInsets.symmetric(vertical: 15),
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 20), // Spacing before button
-                  MyButton(
-                    buttonText: "Trimite codul",
-                    textColor: const Color(0xFF222F62),
-                    buttonOnTap: () =>controller.navigateToGame(),
-                    withBorder: false,
-                    buttonColor: Colors.white,
+                  AppButton(
+                    label: "Trimite codul",
+                    onPressed: () => controller.navigateToGame(),
                     leading: SvgPicture.asset(
                       'assets/images/incepe_jocul.svg',
                       width: 19,
@@ -98,7 +94,8 @@ class _EnterCodeState extends State<EnterCode> {
                         BlendMode.srcIn,
                       ),
                     ),
-                    buttonTextSize: 15,
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFF222F62),
                   ),
                 ],
               ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:provider/provider.dart'; // Add this import
-import 'package:teamxperience/constants/colors.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/event_details/controller/event_details_controller.dart';
 import 'package:teamxperience/features/event_details/widgets/already_registered_card.dart';
@@ -13,7 +12,7 @@ import 'package:teamxperience/utils/calendar_helper.dart';
 import 'package:teamxperience/utils/image_helper.dart';
 import 'package:teamxperience/ui/components/event/event_image.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
 class EventDetailsScreen extends StatefulWidget {
   const EventDetailsScreen({super.key});
@@ -32,7 +31,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     super.didChangeDependencies();
     if (!_initialized) {
       final arguments =
-      ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       final event = arguments['event'] as Event;
       isAdmin = arguments['isAdmin'] as bool? ?? false;
 
@@ -41,15 +40,20 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     }
   }
 
-  void _navigateToRegisterTeam(){
-    Navigator.pushNamed(context, Routes.registerTeam, arguments: controller.event);
+  void _navigateToRegisterTeam() {
+    Navigator.pushNamed(
+      context,
+      Routes.registerTeam,
+      arguments: controller.event,
+    );
   }
 
-  void _navigateToTeamDetails(){
-    Navigator.pushNamed(context, Routes.registerTeamDetails, arguments: {
-      'event': controller.event,
-      'user': controller.user,
-    });
+  void _navigateToTeamDetails() {
+    Navigator.pushNamed(
+      context,
+      Routes.registerTeamDetails,
+      arguments: {'event': controller.event, 'user': controller.user},
+    );
   }
 
   @override
@@ -60,75 +64,78 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     final eventDate = eventDateTime['date'] ?? '';
     final eventTime = eventDateTime['time'] ?? '';
 
-    return Consumer<UserProvider>( // Wrap the entire Scaffold with Consumer
+    return Consumer<UserProvider>(
+      // Wrap the entire Scaffold with Consumer
       builder: (context, userProvider, child) {
         final currentUser = userProvider.currentUser;
-        final isRegistered = currentUser?.isRegisterToEvent(controller.event.eventId) ?? false;
+        final isRegistered =
+            currentUser?.isRegisterToEvent(controller.event.eventId) ?? false;
 
         return Scaffold(
-          appBar: isAdmin == true ? MyAppBar(
-            appBarText: "Detalii Eveniment",
-            iconString: 'assets/images/menu.svg',
-            showDropdown: true,
-            event: controller.event,
-          ) : const MyAppBar(
-            appBarText: "Detalii Eveniment",
-          ),
-          bottomNavigationBar: isAdmin == true
-              ? SafeArea(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: MyButton(
-                buttonText: "Vezi echipele înscrise",
-                textColor: Colors.white,
-                buttonOnTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    Routes.eventRegisteredTeams,
-                    arguments: controller.event,
-                  );
-                },
-                withBorder: false,
-                gradient: context.colors.ctaGradient,
-                buttonTextSize: 15,
-              ),
-            ),
-          )
-              :  !isRegistered ? SafeArea(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: MyButton(
-                buttonText: !isRegistered ? "Înscrie-ți echipa" : "Vezi detalii înscriere",
-                leading: AppSvgIcon('assets/images/user_icon.svg', width: 19, height: 19),
-                textColor: Colors.white,
-                buttonOnTap: () {
-                  if (!isAdmin) {
-                    if (!isRegistered) {
-                      _navigateToRegisterTeam();
-                    } else {
-                      _navigateToTeamDetails();
-                    }
-                  }
-                },
-                withBorder: false,
-                gradient: context.colors.ctaGradient,
-                buttonTextSize: 15,
-              ),
-            ),
-          ) : null,
+          appBar:
+              isAdmin == true
+                  ? MyAppBar(
+                    appBarText: "Detalii Eveniment",
+                    iconString: 'assets/images/menu.svg',
+                    showDropdown: true,
+                    event: controller.event,
+                  )
+                  : const MyAppBar(appBarText: "Detalii Eveniment"),
+          bottomNavigationBar:
+              isAdmin == true
+                  ? SafeArea(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      child: AppButton(
+                        label: "Vezi echipele înscrise",
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            Routes.eventRegisteredTeams,
+                            arguments: controller.event,
+                          );
+                        },
+                      ),
+                    ),
+                  )
+                  : !isRegistered
+                  ? SafeArea(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      child: AppButton(
+                        label:
+                            !isRegistered
+                                ? "Înscrie-ți echipa"
+                                : "Vezi detalii înscriere",
+                        onPressed: () {
+                          if (!isAdmin) {
+                            if (!isRegistered) {
+                              _navigateToRegisterTeam();
+                            } else {
+                              _navigateToTeamDetails();
+                            }
+                          }
+                        },
+                        leading: AppSvgIcon(
+                          'assets/images/user_icon.svg',
+                          width: 19,
+                          height: 19,
+                        ),
+                      ),
+                    ),
+                  )
+                  : null,
           body: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.page,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                     const SizedBox(height: 15),
+                    const SizedBox(height: 15),
                     AnimatedBuilder(
                       animation: controller,
-                      builder:(context, child)  {
+                      builder: (context, child) {
                         final totalPeople = controller.teams.fold<int>(
                           0,
                           (sum, team) => sum + team.userIds.length,
@@ -142,7 +149,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                           nrTeams: controller.teams.length,
                           nrPerson: totalPeople,
                         );
-                      }
+                      },
                     ),
                     const SizedBox(height: 10),
                     Text(
@@ -153,8 +160,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         color: context.colors.text,
                       ),
                     ),
-                    if(isRegistered == true)
-                      AlreadyRegisteredCard(event: controller.event, onDetailsTap: () => _navigateToTeamDetails()),
+                    if (isRegistered == true)
+                      AlreadyRegisteredCard(
+                        event: controller.event,
+                        onDetailsTap: () => _navigateToTeamDetails(),
+                      ),
                     const SizedBox(height: 20),
                     DetailWidget(
                       text1: eventDate,
@@ -164,7 +174,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     const SizedBox(height: 10),
                     DetailWidget(
                       text1: controller.event.location ?? "No Location",
-                      text2: 'Punct de start: ${controller.event.punctDeStart ?? "No starting point"}',
+                      text2:
+                          'Punct de start: ${controller.event.punctDeStart ?? "No starting point"}',
                       iconPath: 'assets/images/location_map.svg',
                     ),
                     const SizedBox(height: 30),
@@ -190,7 +201,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     const SizedBox(height: 12),
                     DetailWidget(
                       text1: "Lungime traseu",
-                      text2: controller.event.lungimeTraseu ?? "No track length",
+                      text2:
+                          controller.event.lungimeTraseu ?? "No track length",
                       iconPath: 'assets/images/traseu.svg',
                     ),
                     const SizedBox(height: 10),
@@ -207,20 +219,20 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     ),
                     const SizedBox(height: 20),
                     if (isAdmin == true)
-                      MyButton(
-                        buttonText: "Gestionează evenimentul",
-                        textColor: MyColors.blackColor,
-                        buttonOnTap: () {
+                      AppButton(
+                        label: "Gestionează evenimentul",
+                        onPressed: () {
                           Navigator.pushNamed(
                             context,
                             Routes.eventManagement,
                             arguments: controller.event,
                           );
                         },
-                        withBorder: false,
-                        buttonColor: MyColors.transparentLightBlue,
-                        leading: AppSvgIcon('assets/images/notification2.svg', width: 24, height: 24),
-                        buttonTextSize: 15,
+                        leading: AppSvgIcon(
+                          'assets/images/notification2.svg',
+                          width: 24,
+                          height: 24,
+                        ),
                       ),
                   ],
                 ),

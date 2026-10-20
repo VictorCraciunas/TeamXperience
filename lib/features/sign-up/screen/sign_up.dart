@@ -3,17 +3,14 @@ import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/features/sign-up/controller/signup_controller.dart';
 
-import '../../../constants/colors.dart';
 import '../../../constants/routes.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
-import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
+import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
 import 'package:teamxperience/ui/components/misc/terms_text.dart';
-
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -23,19 +20,23 @@ class RegisterScreen extends StatelessWidget {
       backgroundColor: context.colors.page,
       appBar: const MyAppBar(appBarText: "Inregistrare"),
       body: SingleChildScrollView(
-        child:Padding(
+        child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
           child: Form(
             key: controller.formKey,
             child: Column(
               children: [
                 const SizedBox(height: 20),
-                MyTextField(
+                AppTextField(
                   controller: controller.emailController,
-                  labelText: "Adresa de email",
-                  labelFontSize: 14,
-                  hintText: 'exemplu@gmail.com',
-                  leading: AppSvgIcon('assets/images/email.svg', width: 24, height: 24, color: context.colors.accent),
+                  label: "Adresa de email",
+                  hint: 'exemplu@gmail.com',
+                  leading: AppSvgIcon(
+                    'assets/images/email.svg',
+                    width: 24,
+                    height: 24,
+                    color: context.colors.accent,
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Te rugăm să introduci adresa de email';
@@ -48,11 +49,10 @@ class RegisterScreen extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 20),
-                MyTextField(
+                AppTextField(
                   controller: controller.firstNameController,
-                  labelText: "Prenume",
-                  labelFontSize: 14,
-                  hintText: 'Prenume',
+                  label: "Prenume",
+                  hint: 'Prenume',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Te rugăm să introduci prenumele';
@@ -61,11 +61,10 @@ class RegisterScreen extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 20),
-                MyTextField(
+                AppTextField(
                   controller: controller.lastNameController,
-                  labelText: "Nume de familie",
-                  labelFontSize: 14,
-                  hintText: 'Nume de familie',
+                  label: "Nume de familie",
+                  hint: 'Nume de familie',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Te rugăm să introduci numele de familie';
@@ -74,14 +73,23 @@ class RegisterScreen extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 20),
-                MyTextField(
+                AppTextField(
                   controller: controller.passwordController,
-                  labelText: "Parola",
-                  labelFontSize: 14,
-                  hintText: 'Parola ta',
-                  leading: AppSvgIcon('assets/images/pass.svg', width: 24, height: 24, color: context.colors.accent),
-                  obscureText: true,
-                  trailing: AppSvgIcon('assets/images/show_pass.svg', width: 24, height: 24, color: context.colors.muted),
+                  label: "Parola",
+                  hint: 'Parola ta',
+                  leading: AppSvgIcon(
+                    'assets/images/pass.svg',
+                    width: 24,
+                    height: 24,
+                    color: context.colors.accent,
+                  ),
+                  obscure: true,
+                  trailing: AppSvgIcon(
+                    'assets/images/show_pass.svg',
+                    width: 24,
+                    height: 24,
+                    color: context.colors.muted,
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Te rugăm să introduci parola';
@@ -89,20 +97,28 @@ class RegisterScreen extends StatelessWidget {
                     if (value.length < 6) {
                       return 'Parola trebuie să aibă cel puțin 6 caractere';
                     }
-                    if (value != controller.confirmPasswordController.text) {
-                    }
+                    if (value != controller.confirmPasswordController.text) {}
                     return null;
                   },
                 ),
                 const SizedBox(height: 20),
-                MyTextField(
+                AppTextField(
                   controller: controller.confirmPasswordController,
-                  labelText: "Confirmă parola",
-                  labelFontSize: 14,
-                  hintText: 'Confirmă parola',
-                  leading: AppSvgIcon('assets/images/pass.svg', width: 24, height: 24, color: context.colors.accent),
-                  obscureText: true,
-                  trailing: AppSvgIcon('assets/images/show_pass.svg', width: 24, height: 24, color: context.colors.muted),
+                  label: "Confirmă parola",
+                  hint: 'Confirmă parola',
+                  leading: AppSvgIcon(
+                    'assets/images/pass.svg',
+                    width: 24,
+                    height: 24,
+                    color: context.colors.accent,
+                  ),
+                  obscure: true,
+                  trailing: AppSvgIcon(
+                    'assets/images/show_pass.svg',
+                    width: 24,
+                    height: 24,
+                    color: context.colors.muted,
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Te rugăm să confirmi parola';
@@ -115,14 +131,11 @@ class RegisterScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                MyButton(
-                  buttonText: "Crează cont",
-                  textColor: Colors.white,
-                  buttonOnTap: () async {
+                AppButton(
+                  label: "Crează cont",
+                  onPressed: () async {
                     await controller.register(context);
                   },
-                  withBorder: false,
-                  buttonColor: MyColors.yellow,
                 ),
                 const SizedBox(height: 20),
                 Row(
@@ -130,15 +143,15 @@ class RegisterScreen extends StatelessWidget {
                   children: [
                     Text(
                       "Ai deja un cont?",
-                      style: TextStyle(fontSize: 14, color: context.colors.muted),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: context.colors.muted,
+                      ),
                     ),
                     const SizedBox(width: 5.0),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          Routes.login,
-                        );
+                        Navigator.pushNamed(context, Routes.login);
                       },
                       child: Text(
                         "Loghează-te",
@@ -151,7 +164,7 @@ class RegisterScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const TermsText()
+                const TermsText(),
               ],
             ),
           ),

@@ -6,7 +6,7 @@ import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/puzzle.dart';
 import '../../../../../../../utils/component_conversion/component_to_widget.dart';
 import 'package:teamxperience/ui/components/misc/color_picker_dialog.dart';
-import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
+import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
 
 class ButtonComponentController {
   // UI State
@@ -51,21 +51,16 @@ class ButtonComponentController {
   }) {
     Color currentColor = hexToColor(colorHex);
 
-    return MyTextField(
-      hinttextWeight: FontWeight.w500,
-      hintTextSize: 15,
-      hintTextColor: context.colors.text,
+    return AppTextField(
       controller: controller,
-      hintText: title,
-      borderColor: context.colors.accent,
-      radius: 15,
+      hint: title,
       readOnly: true,
       onTap: () {
         ColorPickerDialog.show(
           context,
           title,
           currentColor,
-              (color) => onColorChanged(color),
+          (color) => onColorChanged(color),
         );
       },
       trailing: Container(
@@ -77,6 +72,7 @@ class ButtonComponentController {
           borderRadius: BorderRadius.circular(5),
         ),
       ),
+      validator: requiredValidator('a value'),
     );
   }
 
@@ -117,9 +113,9 @@ class ButtonComponentController {
     // Validate first
     final validationError = validateComponent();
     if (validationError != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(validationError)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(validationError)));
       return;
     }
 

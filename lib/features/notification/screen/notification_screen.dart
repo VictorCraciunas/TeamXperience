@@ -4,8 +4,8 @@ import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/features/notification/controller/notification_controller.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-import 'package:teamxperience/ui/components/buttons/my_button.dart';
-import 'package:teamxperience/ui/components/inputs/my_text_field.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
+import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -30,62 +30,58 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final appBarText = controller.event != null
-        ? "Trimite notificare — ${controller.event!.name ?? ''}"
-        : "Trimite notificare";
+    final appBarText =
+        controller.event != null
+            ? "Trimite notificare — ${controller.event!.name ?? ''}"
+            : "Trimite notificare";
 
     return Scaffold(
       appBar: MyAppBar(appBarText: appBarText),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.page,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
           child: Column(
             children: [
               const SizedBox(height: 10),
               if (controller.event != null) ...[
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: context.colors.iconButtonBg,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     "Această notificare va fi trimisă doar participanților înscriși la acest eveniment.",
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: context.colors.text,
-                    ),
+                    style: TextStyle(fontSize: 13, color: context.colors.text),
                   ),
                 ),
                 const SizedBox(height: 15),
               ],
-              MyTextField(
-                labelText: "Titlu",
-                borderColor: context.colors.accent,
-                hintText: "Titlu notificare...",
+              AppTextField(
+                label: "Titlu",
+                hint: "Titlu notificare...",
                 controller: controller.titluNotificareController,
+                validator: requiredValidator("Titlu"),
               ),
               const SizedBox(height: 15),
-              MyTextField(
-                labelText: "Descriere",
-                borderColor: context.colors.accent,
-                hintText: "Descriere notificare...",
+              AppTextField(
+                label: "Descriere",
+                hint: "Descriere notificare...",
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
                 controller: controller.descriereNotificareController,
+                validator: requiredValidator("Descriere"),
               ),
               const SizedBox(height: 30),
-              MyButton(
-                buttonText: "Trimite",
-                textColor: Colors.white,
-                buttonOnTap: () {
+              AppButton(
+                label: "Trimite",
+                onPressed: () {
                   controller.sendNotification();
                 },
-                withBorder: false,
-                gradient: context.colors.ctaGradient,
               ),
             ],
           ),

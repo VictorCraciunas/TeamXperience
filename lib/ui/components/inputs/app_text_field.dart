@@ -33,7 +33,7 @@ class AppTextField extends StatefulWidget {
   final String? Function(String?)? validator;
   final bool obscure;
   final TextInputType? keyboardType;
-  final int maxLines;
+  final int? maxLines;
   final bool readOnly;
   final VoidCallback? onTap;
   final Widget? leading;
@@ -61,9 +61,9 @@ class _AppTextFieldState extends State<AppTextField> {
   }
 
   OutlineInputBorder _border(Color color, double width) => OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppRadius.card),
-        borderSide: BorderSide(color: color, width: width),
-      );
+    borderRadius: BorderRadius.circular(AppRadius.card),
+    borderSide: BorderSide(color: color, width: width),
+  );
 
   Widget _icon(Key key, Widget icon, EdgeInsets padding) {
     return Padding(
@@ -159,13 +159,19 @@ class _AppTextFieldState extends State<AppTextField> {
             filled: true,
             fillColor: colors.panel,
             prefixIcon: _leading(),
-            prefixIconConstraints:
-                const BoxConstraints(minWidth: 0, minHeight: 0),
+            prefixIconConstraints: const BoxConstraints(
+              minWidth: 0,
+              minHeight: 0,
+            ),
             suffixIcon: _suffix(),
-            suffixIconConstraints:
-                const BoxConstraints(minWidth: 0, minHeight: 0),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            suffixIconConstraints: const BoxConstraints(
+              minWidth: 0,
+              minHeight: 0,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 14,
+            ),
             border: _border(colors.border, 1.5),
             enabledBorder: _border(colors.border, 1.5),
             focusedBorder: _border(colors.tick, 2),
@@ -176,4 +182,10 @@ class _AppTextFieldState extends State<AppTextField> {
       ],
     );
   }
+}
+
+/// Validator that rejects an empty value with "Introdu <label>".
+String? Function(String?) requiredValidator(String? label) {
+  return (value) =>
+      (value ?? '').isEmpty ? 'Introdu ${label ?? 'a value'}' : null;
 }
