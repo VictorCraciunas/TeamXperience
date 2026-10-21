@@ -43,7 +43,10 @@ class EventsFeed extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 80),
             child: Center(
-              child: Text(emptyMessage, style: TextStyle(color: context.colors.muted, fontSize: 15)),
+              child: Text(
+                emptyMessage,
+                style: TextStyle(color: context.colors.muted, fontSize: 15),
+              ),
             ),
           ),
         ],

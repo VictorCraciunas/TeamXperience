@@ -26,12 +26,12 @@ class EventsDashboardUserController extends ChangeNotifier {
   DateTime? _endDate;
 
   // Constructor
-  EventsDashboardUserController(List<Event> events,context) : _allEvents = events{
+  EventsDashboardUserController(List<Event> events, context)
+    : _allEvents = events {
     user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    if(user != null){
+    if (user != null) {
       //registeredEvents = _filterService.registeredEventsFromUser(_allEvents, user!);
-    }
-    else {
+    } else {
       registeredEvents = []; // ← Initialize to empty list if no user
     }
   }
@@ -48,9 +48,7 @@ class EventsDashboardUserController extends ChangeNotifier {
   DateTime? get endDate => _endDate;
   Map<String, Map<String, int>> get eventStats => _eventStats;
 
-  bool get hasActiveFilters =>
-          _startDate != null ||
-          _endDate != null;
+  bool get hasActiveFilters => _startDate != null || _endDate != null;
 
   bool get isSearchActive => _searchQuery.isNotEmpty;
 
@@ -147,12 +145,12 @@ class EventsDashboardUserController extends ChangeNotifier {
       try {
         final teams = await _teamRepo.getAllTeamsForEvent(event.eventId);
         final nrTeams = teams.length;
-        final nrPerson = teams.fold<int>(0, (sum, team) => sum + team.userIds.length);
+        final nrPerson = teams.fold<int>(
+          0,
+          (sum, team) => sum + team.userIds.length,
+        );
 
-        _eventStats[event.eventId] = {
-          'nrTeams': nrTeams,
-          'nrPerson': nrPerson,
-        };
+        _eventStats[event.eventId] = {'nrTeams': nrTeams, 'nrPerson': nrPerson};
       } catch (e) {
         _eventStats[event.eventId] = {'nrTeams': 0, 'nrPerson': 0};
       }

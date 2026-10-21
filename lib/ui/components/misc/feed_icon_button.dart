@@ -25,8 +25,8 @@ class FeedIconButton extends StatelessWidget {
     return Tooltip(
       message: tooltip,
       child: Material(
-        color: colors.iconButtonBg,
-        shape: const CircleBorder(),
+        color: active ? colors.tick : colors.panel,
+        shape: CircleBorder(side: BorderSide(color: colors.tick, width: 1.5)),
         child: InkWell(
           customBorder: const CircleBorder(),
           onTap: onTap,
@@ -36,7 +36,7 @@ class FeedIconButton extends StatelessWidget {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                Icon(icon, color: colors.accent, size: 22),
+                Icon(icon, color: active ? colors.onTick : colors.text, size: 22),
                 if (active)
                   Positioned(
                     right: 11,
@@ -48,7 +48,7 @@ class FeedIconButton extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: colors.live,
                         shape: BoxShape.circle,
-                        border: Border.all(color: colors.iconButtonBg, width: 1.5),
+                        border: Border.all(color: colors.tick, width: 1.5),
                       ),
                     ),
                   ),

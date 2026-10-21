@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../theme/app_radius.dart';
 import '../../theme/theme_context.dart';
 
 /// A small pill showing an active filter or search with a close icon.
@@ -18,8 +17,8 @@ class RemovableChip extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: colors.iconButtonBg,
-        borderRadius: BorderRadius.circular(AppRadius.pill),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: colors.tick, width: 1.5),
       ),
       child: Padding(
         padding: const EdgeInsets.only(left: 12, right: 4),

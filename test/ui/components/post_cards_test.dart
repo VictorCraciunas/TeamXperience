@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/ui/components/event/event_post_card.dart';
-import 'package:teamxperience/ui/components/misc/choice_chips_row.dart';
 import 'package:teamxperience/ui/components/news/news_post_card.dart';
 
 import '../pump_ui.dart';
@@ -88,18 +87,6 @@ void main() {
         width: 320,
       );
       expect(tester.takeException(), isNull);
-    });
-  });
-
-  group('ChoiceChipsRow', () {
-    testWidgets('marks the selected chip and reports taps', (tester) async {
-      int? picked;
-      await pumpUi(
-        tester,
-        ChoiceChipsRow(labels: const ['Toate', 'Înscrise'], selectedIndex: 0, onSelected: (i) => picked = i),
-      );
-      await tester.tap(find.text('Înscrise'));
-      expect(picked, 1);
     });
   });
 }

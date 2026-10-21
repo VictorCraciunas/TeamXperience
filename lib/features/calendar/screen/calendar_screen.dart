@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-
-import '../../../utils/calendar_helper.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
+import 'package:teamxperience/ui/components/misc/period_picker.dart';
+import 'package:teamxperience/ui/components/misc/period_selection.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
+import 'package:teamxperience/ui/ui.dart';
+import 'package:teamxperience/utils/calendar_helper.dart';
 
+/// Full-screen date range picker (used by the admin filter screens). It shares
+/// the calendar with the period bottom sheet.
 class DateRangeSelectionScreen extends StatefulWidget {
   final DateTime? initialStartDate;
   final DateTime? initialEndDate;
@@ -22,294 +24,80 @@ class DateRangeSelectionScreen extends StatefulWidget {
 }
 
 class _DateRangeSelectionScreenState extends State<DateRangeSelectionScreen> {
-  DateTime? startDate;
-  DateTime? endDate;
-  final ScrollController _scrollController = ScrollController();
+  late PeriodSelection _selection = PeriodSelection(
+    start: widget.initialStartDate,
+    end: widget.initialEndDate,
+  );
 
-  @override
-  void initState() {
-    super.initState();
-    startDate = widget.initialStartDate;
-    endDate = widget.initialEndDate;
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  List<DateTime> generateMonths() {
-    List<DateTime> months = [];
-    DateTime current = DateTime.now();
-
-    // Generate 24 months starting from current month
-    for (int i = 0; i < 24; i++) {
-      months.add(DateTime(current.year, current.month + i, 1));
-    }
-
-    return months;
-  }
-
-  void onDateTap(DateTime date) {
-    setState(() {
-      if (startDate == null) {
-        // First selection - set start date
-        startDate = date;
-        endDate = null;
-      } else if (endDate == null) {
-        // Second selection - set end date
-        if (date.isBefore(startDate!)) {
-          // If selected date is before start date, make it the new start date
-          endDate = startDate;
-          startDate = date;
-        } else {
-          endDate = date;
-        }
-      } else {
-        // Both dates are selected, start new selection
-        startDate = date;
-        endDate = null;
-      }
-    });
-  }
-
-  void clearSelection() {
-    setState(() {
-      startDate = null;
-      endDate = null;
-    });
-  }
-
-  bool isDateInRange(DateTime date) {
-    if (startDate == null) return false;
-    if (endDate == null) return date.isAtSameMomentAs(startDate!);
-
-    return (date.isAtSameMomentAs(startDate!) ||
-        date.isAtSameMomentAs(endDate!) ||
-        (date.isAfter(startDate!) && date.isBefore(endDate!)));
-  }
-
-  bool isStartDate(DateTime date) {
-    return startDate != null && date.isAtSameMomentAs(startDate!);
-  }
-
-  bool isEndDate(DateTime date) {
-    return endDate != null && date.isAtSameMomentAs(endDate!);
-  }
-
-  Widget buildMonthCalendar(DateTime month) {
-    final firstDayOfMonth = DateTime(month.year, month.month, 1);
-    final lastDayOfMonth = DateTime(month.year, month.month + 1, 0);
-    final firstWeekday = firstDayOfMonth.weekday;
-
-    List<Widget> dayWidgets = [];
-
-    // Add empty spaces for days before the first day of the month
-    for (int i = 1; i < firstWeekday; i++) {
-      dayWidgets.add(const SizedBox(width: 40, height: 40));
-    }
-
-    // Add days of the month
-    for (int day = 1; day <= lastDayOfMonth.day; day++) {
-      final date = DateTime(month.year, month.month, day);
-      final isInRange = isDateInRange(date);
-      final isStart = isStartDate(date);
-      final isEnd = isEndDate(date);
-      final isToday = date.isAtSameMomentAs(DateTime.now());
-
-      dayWidgets.add(
-        GestureDetector(
-          onTap: () => onDateTap(date),
-          child: Container(
-            width: 40,
-            height: 40,
-            margin: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              color:
-                  isStart || isEnd
-                      ? context.colors.tick
-                      : isInRange
-                      ? context.colors.tick.withValues(alpha: 0.25)
-                      : Colors.transparent,
-              borderRadius: BorderRadius.circular(20),
-              border:
-                  isToday && !isInRange
-                      ? Border.all(color: context.colors.tick, width: 1)
-                      : null,
-            ),
-            child: Center(
-              child: Text(
-                '$day',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight:
-                      isStart || isEnd ? FontWeight.bold : FontWeight.normal,
-                  color:
-                      isStart || isEnd
-                          ? Colors.white
-                          : isInRange
-                          ? context.colors.tick
-                          : isToday
-                          ? context.colors.tick
-                          : context.colors.text,
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-          child: Text(
-            '${CalendarHelper.romanianMonthsUpper[month.month]} ${month.year}',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: context.colors.text,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 7,
-            children: [
-              // Day headers using CalendarHelper
-              ...CalendarHelper.romanianDaysShort.map(
-                (day) => Center(
-                  child: Text(
-                    day,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: context.colors.muted,
-                    ),
-                  ),
-                ),
-              ),
-              // Day widgets
-              ...dayWidgets,
-            ],
-          ),
-        ),
-        const SizedBox(height: 20),
-      ],
-    );
-  }
-
-  String getSelectedPeriodText() {
-    if (startDate == null) return 'Selectează perioada';
-    if (endDate == null) return 'Selectează data de sfârșit';
-
-    // Use CalendarHelper for consistent formatting
-    return '${CalendarHelper.formatDate(startDate)} - ${CalendarHelper.formatDate(endDate)}';
-  }
-
-  bool canSave() {
-    return startDate != null && endDate != null;
-  }
-
-  bool hasSelection() {
-    return startDate != null || endDate != null;
+  String get _selectedPeriodText {
+    final start = _selection.start;
+    final end = _selection.end;
+    if (start == null) return 'Selectează perioada';
+    if (end == null) return 'Selectează data de sfârșit';
+    return '${CalendarHelper.formatDate(start)} - ${CalendarHelper.formatDate(end)}';
   }
 
   @override
   Widget build(BuildContext context) {
-    final months = generateMonths();
+    final colors = context.colors;
 
     return Scaffold(
-      backgroundColor: context.colors.page,
+      backgroundColor: colors.page,
       appBar: const MyAppBar(appBarText: "Selectează Perioada"),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
           child: Column(
             children: [
-              // Selected period display with new UI
-              if (hasSelection())
+              if (!_selection.isEmpty)
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(16, 4, 4, 4),
+                  margin: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: context.colors.tick, width: 1.5),
+                    border: Border.all(color: colors.tick, width: 1.5),
                   ),
                   child: Row(
                     children: [
                       Expanded(
                         child: Text(
-                          getSelectedPeriodText(),
+                          _selectedPeriodText,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
-                            color: context.colors.text,
+                            color: colors.text,
                           ),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: clearSelection,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          child: Icon(
-                            Icons.close,
-                            size: 20,
-                            color: context.colors.tick,
-                          ),
-                        ),
+                      IconButton(
+                        onPressed: () => setState(() => _selection = const PeriodSelection()),
+                        tooltip: 'Șterge perioada',
+                        icon: Icon(Icons.close, size: 20, color: colors.text),
                       ),
                     ],
                   ),
                 ),
-
-              // Calendar
               Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount: months.length,
-                  itemBuilder: (context, index) {
-                    return buildMonthCalendar(months[index]);
-                  },
+                child: PeriodPicker(
+                  selection: _selection,
+                  now: DateTime.now(),
+                  onDayTap: (date) => setState(() => _selection = _selection.tap(date)),
                 ),
               ),
-
-              // Save button
               AppButton(
                 label: 'Salvează perioada',
-                onPressed: () {
-                  if (canSave()) {
-                    Navigator.pop(context, {
-                      'startDate': startDate,
-                      'endDate': endDate,
-                    });
-                  }
-                },
-                leading: SvgPicture.asset(
-                  'assets/images/calendar.svg',
-                  height: 19,
-                  width: 19,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.white,
-                    BlendMode.srcIn,
-                  ),
-                ),
+                leading: const Icon(Icons.calendar_today_outlined),
+                backgroundColor: colors.tick,
+                foregroundColor: colors.onTick,
+                onPressed: _selection.isComplete
+                    ? () => Navigator.pop(context, {
+                          'startDate': _selection.start,
+                          'endDate': _selection.end,
+                        })
+                    : null,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
             ],
           ),
         ),

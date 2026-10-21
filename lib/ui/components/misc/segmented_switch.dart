@@ -32,7 +32,7 @@ class SegmentedSwitch extends StatelessWidget {
           for (var i = 0; i < labels.length; i++)
             Expanded(
               child: Material(
-                color: i == selectedIndex ? colors.accent : Colors.transparent,
+                color: i == selectedIndex ? colors.tick : Colors.transparent,
                 shape: const StadiumBorder(),
                 child: InkWell(
                   customBorder: const StadiumBorder(),
@@ -45,7 +45,7 @@ class SegmentedSwitch extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: i == selectedIndex ? Colors.white : colors.text,
+                          color: i == selectedIndex ? colors.onTick : colors.text,
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
