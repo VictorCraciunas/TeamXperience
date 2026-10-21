@@ -8,7 +8,7 @@ import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/service/share_service.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
-import 'package:teamxperience/ui/components/misc/choice_chips_row.dart';
+import 'package:teamxperience/ui/components/misc/segmented_switch.dart';
 import 'package:teamxperience/ui/components/misc/feed_search_bar.dart';
 import 'package:teamxperience/ui/components/misc/removable_chip.dart';
 import 'package:teamxperience/ui/ui.dart';
@@ -41,7 +41,8 @@ class _FilterEventsUserState extends State<FilterEventsUser> {
     super.didChangeDependencies();
     final routeArguments = ModalRoute.of(context)?.settings.arguments;
     final routeEvents = routeArguments is List<Event> ? routeArguments : null;
-    final events = routeEvents ?? Provider.of<EventList>(context).upcomingEvents;
+    final events =
+        routeEvents ?? Provider.of<EventList>(context).upcomingEvents;
     if (!_isControllerInitialized) {
       controller = EventsDashboardUserController(events, context);
       _isControllerInitialized = true;
@@ -101,11 +102,9 @@ class _FilterEventsUserState extends State<FilterEventsUser> {
   }
 
   Future<void> _openFilter() async {
-    final filterData = await Navigator.pushNamed(
-      context,
-      Routes.filter,
-      arguments: false,
-    ) as Map<String, dynamic>?;
+    final filterData =
+        await Navigator.pushNamed(context, Routes.filter, arguments: false)
+            as Map<String, dynamic>?;
     controller.updateFilters(filterData);
   }
 
@@ -113,15 +112,43 @@ class _FilterEventsUserState extends State<FilterEventsUser> {
     return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
   }
 
+  Widget _header(bool hasFilter) {
+    final back = _backButton();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (back != null) back,
+          FeedSearchBar(
+            isSearchOpen: _isSearchOpen,
+            searchController: _searchController,
+            searchFocusNode: _searchFocusNode,
+            searchHint: 'Caută evenimente...',
+            hasActiveFilters: controller.hasActiveFilters,
+            filterIcon: Icons.calendar_today_outlined,
+            filterLabel: 'Alege perioada',
+            onToggleSearch: _toggleSearch,
+            onFilter: _openFilter,
+            leading: SegmentedSwitch(
+              labels: const ['Toate', 'Înscrise'],
+              selectedIndex: _chipIndex,
+              onSelected: (i) => setState(() => _chipIndex = i),
+            ),
+          ),
+          if (hasFilter) ...[const SizedBox(height: 10), _activeChips()],
+        ],
+      ),
+    );
+  }
+
   Widget? _backButton() {
     if (!Navigator.of(context).canPop()) return null;
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: IconButton(
-        onPressed: () => Navigator.pop(context),
-        tooltip: 'Înapoi',
-        icon: Icon(Icons.arrow_back, color: context.colors.text),
-      ),
+    return IconButton(
+      onPressed: () => Navigator.pop(context),
+      tooltip: 'Înapoi',
+      icon: Icon(Icons.arrow_back, color: context.colors.text),
     );
   }
 
@@ -139,7 +166,11 @@ class _FilterEventsUserState extends State<FilterEventsUser> {
             onRemove: controller.clearDateFilter,
           ),
         if (query.isNotEmpty)
-          RemovableChip(label: '"$query"', icon: Icons.search, onRemove: _clearSearchQuery),
+          RemovableChip(
+            label: '"$query"',
+            icon: Icons.search,
+            onRemove: _clearSearchQuery,
+          ),
       ],
     );
   }
@@ -155,56 +186,41 @@ class _FilterEventsUserState extends State<FilterEventsUser> {
             builder: (context, child) {
               return Consumer<UserEventsProvider>(
                 builder: (context, userEvents, child) {
-                  final registeredIds = userEvents.registeredEvents.map((e) => e.eventId).toSet();
+                  final registeredIds =
+                      userEvents.registeredEvents.map((e) => e.eventId).toSet();
                   final onlyRegistered = _chipIndex == 1;
-                  final hasFilter = controller.hasActiveFilters || controller.searchQuery.isNotEmpty;
+                  final hasFilter =
+                      controller.hasActiveFilters ||
+                      controller.searchQuery.isNotEmpty;
 
-                  final upcoming = onlyRegistered
-                      ? controller.filterRegisteredEvents(userEvents.upcomingRegisteredEvents)
-                      : controller.events;
-                  final past = onlyRegistered
-                      ? controller.filterRegisteredEvents(userEvents.pastRegisteredEvents)
-                      : <Event>[];
+                  final upcoming =
+                      onlyRegistered
+                          ? controller.filterRegisteredEvents(
+                            userEvents.upcomingRegisteredEvents,
+                          )
+                          : controller.events;
+                  final past =
+                      onlyRegistered
+                          ? controller.filterRegisteredEvents(
+                            userEvents.pastRegisteredEvents,
+                          )
+                          : <Event>[];
 
-                  return Column(
-                    children: [
-                      FeedSearchBar(
-                        isSearchOpen: _isSearchOpen,
-                        searchController: _searchController,
-                        searchFocusNode: _searchFocusNode,
-                        searchHint: 'Caută evenimente...',
-                        hasActiveFilters: controller.hasActiveFilters,
-                        onToggleSearch: _toggleSearch,
-                        onFilter: _openFilter,
-                        leading: _backButton(),
-                      ),
-                      if (hasFilter) ...[
-                        const SizedBox(height: 10),
-                        Align(alignment: Alignment.centerLeft, child: _activeChips()),
-                      ],
-                      const SizedBox(height: 12),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: ChoiceChipsRow(
-                          labels: const ['Toate', 'Înscrise'],
-                          selectedIndex: _chipIndex,
-                          onSelected: (i) => setState(() => _chipIndex = i),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Expanded(
-                        child: EventsFeed(
-                          upcoming: upcoming,
-                          past: past,
-                          registeredIds: registeredIds,
-                          emptyMessage: onlyRegistered
-                              ? (hasFilter ? 'Nu s-au găsit înscrieri' : 'Nu ai nicio înscriere')
-                              : (hasFilter ? 'Nu s-au găsit evenimente' : 'Nu există evenimente'),
-                          onTap: (event) => _openEvent(event, registeredIds),
-                          onShare: _share,
-                        ),
-                      ),
-                    ],
+                  return EventsFeed(
+                    upcoming: upcoming,
+                    past: past,
+                    registeredIds: registeredIds,
+                    header: _header(hasFilter),
+                    emptyMessage:
+                        onlyRegistered
+                            ? (hasFilter
+                                ? 'Nu s-au găsit înscrieri'
+                                : 'Nu ai nicio înscriere')
+                            : (hasFilter
+                                ? 'Nu s-au găsit evenimente'
+                                : 'Nu există evenimente'),
+                    onTap: (event) => _openEvent(event, registeredIds),
+                    onShare: _share,
                   );
                 },
               );

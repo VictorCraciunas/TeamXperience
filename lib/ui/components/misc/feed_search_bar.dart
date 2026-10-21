@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/theme_context.dart';
-import 'custom_icon_dashboard.dart';
+import 'feed_icon_button.dart';
 
-/// The row above a feed: an optional leading widget, a filter button and a
-/// search button that expands into a search field.
+/// The row at the top of a feed: an optional leading widget (a switch or a
+/// create button), a search button that expands into a search field, and a
+/// filter button. It is the first item of the scrolling feed, not a pinned bar.
 class FeedSearchBar extends StatelessWidget {
   const FeedSearchBar({
     super.key,
@@ -15,6 +16,8 @@ class FeedSearchBar extends StatelessWidget {
     required this.hasActiveFilters,
     required this.onToggleSearch,
     required this.onFilter,
+    this.filterIcon = Icons.tune,
+    this.filterLabel = 'Filtrează',
     this.leading,
   });
 
@@ -25,8 +28,10 @@ class FeedSearchBar extends StatelessWidget {
   final bool hasActiveFilters;
   final VoidCallback onToggleSearch;
   final VoidCallback onFilter;
+  final IconData filterIcon;
+  final String filterLabel;
 
-  /// Shown at the start while the search is closed (for example a create button).
+  /// Fills the space before the buttons while the search is closed.
   final Widget? leading;
 
   @override
@@ -36,18 +41,10 @@ class FeedSearchBar extends StatelessWidget {
 
     return Row(
       children: [
-        if (start != null && !isSearchOpen) Expanded(child: start) else if (!isSearchOpen) const Spacer(),
-        if (!isSearchOpen) const SizedBox(width: 8),
-        CustomIconDashBoard(
-          activeFilter: hasActiveFilters,
-          onTap: onFilter,
-          iconString: 'assets/images/filter.svg',
-        ),
-        const SizedBox(width: 8),
         if (isSearchOpen)
           Expanded(
             child: Container(
-              height: 45,
+              height: 48,
               decoration: BoxDecoration(
                 color: colors.iconButtonBg,
                 borderRadius: BorderRadius.circular(50),
@@ -70,18 +67,24 @@ class FeedSearchBar extends StatelessWidget {
                   IconButton(
                     onPressed: onToggleSearch,
                     tooltip: 'Închide căutarea',
-                    icon: Icon(Icons.close, size: 24, color: colors.text),
+                    icon: Icon(Icons.close, size: 22, color: colors.text),
                   ),
                 ],
               ),
             ),
           )
-        else
-          CustomIconDashBoard(
-            activeFilter: false,
-            onTap: onToggleSearch,
-            iconString: 'assets/images/search.svg',
-          ),
+        else ...[
+          if (start != null) Expanded(child: start) else const Spacer(),
+          const SizedBox(width: 8),
+          FeedIconButton(icon: Icons.search, tooltip: 'Caută', onTap: onToggleSearch),
+        ],
+        const SizedBox(width: 8),
+        FeedIconButton(
+          icon: filterIcon,
+          tooltip: filterLabel,
+          onTap: onFilter,
+          active: hasActiveFilters,
+        ),
       ],
     );
   }

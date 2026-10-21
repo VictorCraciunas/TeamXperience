@@ -116,4 +116,56 @@ void main() {
       expect(find.text('Nu există știri'), findsOneWidget);
     });
   });
+  group('feed headers', () {
+    testWidgets('the events header is part of the list and scrolls away', (tester) async {
+      await pumpUi(
+        tester,
+        SizedBox(
+          height: 500,
+          child: EventsFeed(
+            header: const Text('antet'),
+            upcoming: [for (var i = 1; i <= 6; i++) _event('e$i', 20 + i)],
+            registeredIds: const {},
+            onTap: (_) {},
+            onShare: (_) {},
+          ),
+        ),
+      );
+      expect(find.text('antet'), findsOneWidget);
+      await tester.drag(find.byType(ListView), const Offset(0, -900));
+      await tester.pump();
+      expect(find.text('antet'), findsNothing);
+    });
+
+    testWidgets('the header stays when there are no events', (tester) async {
+      await pumpUi(
+        tester,
+        SizedBox(
+          height: 500,
+          child: EventsFeed(
+            header: const Text('antet'),
+            upcoming: const [],
+            registeredIds: const {},
+            onTap: (_) {},
+            onShare: (_) {},
+            emptyMessage: 'Nimic',
+          ),
+        ),
+      );
+      expect(find.text('antet'), findsOneWidget);
+      expect(find.text('Nimic'), findsOneWidget);
+    });
+
+    testWidgets('the news header is part of the list and stays when empty', (tester) async {
+      await pumpUi(
+        tester,
+        SizedBox(
+          height: 500,
+          child: NewsFeed(header: const Text('antet'), news: const [], onTap: (_) {}, onShare: (_) {}),
+        ),
+      );
+      expect(find.text('antet'), findsOneWidget);
+      expect(find.text('Nu există știri'), findsOneWidget);
+    });
+  });
 }

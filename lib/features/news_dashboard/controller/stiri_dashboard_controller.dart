@@ -89,12 +89,13 @@ class StiriDashboardController extends ChangeNotifier {
     } else {
       final lowerQuery = _searchQuery.toLowerCase();
       final allFilteredStiri = getFilteredStiri(newsList);
-      _searchResults = allFilteredStiri.where((stire) {
-        final stireTitle = stire.title?.toLowerCase() ?? '';
-        final stireDescription = stire.description?.toLowerCase() ?? '';
-        return stireTitle.contains(lowerQuery) ||
-            stireDescription.contains(lowerQuery);
-      }).toList();
+      _searchResults =
+          allFilteredStiri.where((stire) {
+            final stireTitle = stire.title?.toLowerCase() ?? '';
+            final stireDescription = stire.description?.toLowerCase() ?? '';
+            return stireTitle.contains(lowerQuery) ||
+                stireDescription.contains(lowerQuery);
+          }).toList();
     }
     notifyListeners();
   }

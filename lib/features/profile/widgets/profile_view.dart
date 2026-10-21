@@ -75,10 +75,7 @@ class ProfileView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          const SectionCard(
-            title: 'Aspect',
-            child: ThemeModeOptions(),
-          ),
+          const SectionCard(title: 'Aspect', child: ThemeModeOptions()),
           const SizedBox(height: 16),
           AppButton(
             label: 'Deconectare',
