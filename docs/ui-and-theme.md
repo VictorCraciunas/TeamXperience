@@ -17,7 +17,7 @@ Moved from `lib/widgets/` (and `utils/snackbars.dart`) in UI redesign phase 1: `
 | `AppTextField` (+ `requiredValidator(label)`) | Text field: label, hint, helper, obscure toggle, leading/trailing, `maxLines` (null = multiline), readOnly+onTap for pickers |
 | `AppDropdown<T>` + `AppDropdownItem<T>` | Labelled dropdown matching `AppTextField` |
 | `EventPostCard`, `NewsPostCard` | Feed posts: big image with date/tag, title, details, one share icon; the whole post is tappable |
-| `ChoiceChipsRow`, `FeedSearchBar`, `RemovableChip` | Feed chrome: filter chips, filter + expanding search row, removable active-filter pill |
+| `SegmentedSwitch`, `FeedSearchBar`, `FeedIconButton`, `RemovableChip`, `ChoiceChipsRow` | Feed chrome that scrolls with the feed: switch, search button that expands into a field, filter button with an active dot, removable active-filter pill |
 | `showAppDialog`, `AsyncState`, `MySnackBars` | Confirm dialog (destructive uses `danger`), loading/error/empty/content switcher, semantic snackbars |
 | `MyAppBar` | App bar with title, optional icon, `showDropdown` + `event` → shows `MenuWidget` |
 | `MenuWidget` (`menu.dart`) | Admin event actions overlay (edit / duplicate / start) |

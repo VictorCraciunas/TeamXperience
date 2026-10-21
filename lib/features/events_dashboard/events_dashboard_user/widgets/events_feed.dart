@@ -14,6 +14,7 @@ class EventsFeed extends StatelessWidget {
     required this.onTap,
     required this.onShare,
     this.past = const [],
+    this.header,
     this.emptyMessage = 'Nu există evenimente',
   });
 
@@ -24,21 +25,38 @@ class EventsFeed extends StatelessWidget {
   final void Function(Event event) onShare;
   final String emptyMessage;
 
+  /// Scrolls with the posts as the first item (search, filters).
+  final Widget? header;
+
   @override
   Widget build(BuildContext context) {
     final total = upcoming.length + past.length;
 
+    final top = header;
+    final offset = top == null ? 0 : 1;
+
     if (total == 0) {
-      return Center(
-        child: Text(emptyMessage, style: TextStyle(color: context.colors.muted, fontSize: 15)),
+      return ListView(
+        padding: const EdgeInsets.only(bottom: 24),
+        children: [
+          if (top != null) top,
+          Padding(
+            padding: const EdgeInsets.only(top: 80),
+            child: Center(
+              child: Text(emptyMessage, style: TextStyle(color: context.colors.muted, fontSize: 15)),
+            ),
+          ),
+        ],
       );
     }
 
     return ListView.separated(
       padding: const EdgeInsets.only(bottom: 24),
-      itemCount: total,
+      itemCount: total + offset,
       separatorBuilder: (_, __) => const SizedBox(height: 14),
-      itemBuilder: (context, index) {
+      itemBuilder: (context, listIndex) {
+        if (top != null && listIndex == 0) return top;
+        final index = listIndex - offset;
         final isPast = index >= upcoming.length;
         final event = isPast ? past[index - upcoming.length] : upcoming[index];
 

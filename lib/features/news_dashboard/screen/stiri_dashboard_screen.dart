@@ -12,7 +12,6 @@ import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/components/misc/feed_search_bar.dart';
 import 'package:teamxperience/ui/components/misc/removable_chip.dart';
-import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 class StiriDashboard extends StatefulWidget {
@@ -50,7 +49,8 @@ class _StiriDashboardState extends State<StiriDashboard> {
     super.dispose();
   }
 
-  bool get _isAdmin => context.read<UserProvider>().currentUser?.role == Role.ADMIN;
+  bool get _isAdmin =>
+      context.read<UserProvider>().currentUser?.role == Role.ADMIN;
 
   void _toggleSearch() {
     setState(() {
@@ -91,7 +91,9 @@ class _StiriDashboardState extends State<StiriDashboard> {
   }
 
   Future<void> _openFilter() async {
-    final filterData = await Navigator.pushNamed(context, Routes.filterStiri) as Map<String, dynamic>?;
+    final filterData =
+        await Navigator.pushNamed(context, Routes.filterStiri)
+            as Map<String, dynamic>?;
     controller.updateFilters(filterData);
   }
 
@@ -107,7 +109,7 @@ class _StiriDashboardState extends State<StiriDashboard> {
       onTap: _createStire,
       borderRadius: BorderRadius.circular(50),
       child: Container(
-        height: 45,
+        height: 48,
         decoration: BoxDecoration(
           color: colors.iconButtonBg,
           borderRadius: BorderRadius.circular(50),
@@ -115,9 +117,17 @@ class _StiriDashboardState extends State<StiriDashboard> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AppSvgIcon('assets/images/add_icon.svg', width: 20, height: 20, color: colors.accent),
+            AppSvgIcon(
+              'assets/images/add_icon.svg',
+              width: 20,
+              height: 20,
+              color: colors.accent,
+            ),
             const SizedBox(width: 8),
-            Text('Creează știre', style: TextStyle(fontSize: 15, color: colors.text)),
+            Text(
+              'Creează știre',
+              style: TextStyle(fontSize: 15, color: colors.text),
+            ),
           ],
         ),
       ),
@@ -135,60 +145,76 @@ class _StiriDashboardState extends State<StiriDashboard> {
       spacing: 8,
       children: [
         if (type != null)
-          RemovableChip(label: type.displayName, onRemove: controller.clearStireTypeFilter),
+          RemovableChip(
+            label: type.displayName,
+            onRemove: controller.clearStireTypeFilter,
+          ),
         if (category != null && category.name.isNotEmpty)
-          RemovableChip(label: category.name, onRemove: controller.clearCategoryFilter),
+          RemovableChip(
+            label: category.name,
+            onRemove: controller.clearCategoryFilter,
+          ),
         if (start != null && end != null)
           RemovableChip(
             label: '${_formatDate(start)} - ${_formatDate(end)}',
             onRemove: controller.clearDateFilter,
           ),
         if (query.isNotEmpty)
-          RemovableChip(label: '"$query"', icon: Icons.search, onRemove: _clearSearchQuery),
+          RemovableChip(
+            label: '"$query"',
+            icon: Icons.search,
+            onRemove: _clearSearchQuery,
+          ),
       ],
+    );
+  }
+
+  Widget _header(bool hasFilter) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          FeedSearchBar(
+            isSearchOpen: _isSearchOpen,
+            searchController: _searchController,
+            searchFocusNode: _searchFocusNode,
+            searchHint: 'Caută știri...',
+            hasActiveFilters: controller.hasActiveFilters,
+            onToggleSearch: _toggleSearch,
+            onFilter: _openFilter,
+            leading: _createButton(),
+          ),
+          if (hasFilter) ...[const SizedBox(height: 10), _activeChips()],
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(appBarText: "Știri"),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
           child: Consumer<NewsList>(
             builder: (context, newsList, child) {
               return AnimatedBuilder(
                 animation: controller,
                 builder: (context, child) {
-                  final hasFilter = controller.hasActiveFilters || controller.searchQuery.isNotEmpty;
+                  final hasFilter =
+                      controller.hasActiveFilters ||
+                      controller.searchQuery.isNotEmpty;
 
-                  return Column(
-                    children: [
-                      FeedSearchBar(
-                        isSearchOpen: _isSearchOpen,
-                        searchController: _searchController,
-                        searchFocusNode: _searchFocusNode,
-                        searchHint: 'Caută știri...',
-                        hasActiveFilters: controller.hasActiveFilters,
-                        onToggleSearch: _toggleSearch,
-                        onFilter: _openFilter,
-                        leading: _createButton(),
-                      ),
-                      if (hasFilter) ...[
-                        const SizedBox(height: 10),
-                        Align(alignment: Alignment.centerLeft, child: _activeChips()),
-                      ],
-                      const SizedBox(height: 12),
-                      Expanded(
-                        child: NewsFeed(
-                          news: controller.getDisplayedStiri(newsList),
-                          emptyMessage: controller.searchQuery.isNotEmpty ? 'Nu s-au găsit știri' : 'Nu există știri',
-                          onTap: _openStire,
-                          onShare: _share,
-                        ),
-                      ),
-                    ],
+                  return NewsFeed(
+                    header: _header(hasFilter),
+                    news: controller.getDisplayedStiri(newsList),
+                    emptyMessage:
+                        controller.searchQuery.isNotEmpty
+                            ? 'Nu s-au găsit știri'
+                            : 'Nu există știri',
+                    onTap: _openStire,
+                    onShare: _share,
                   );
                 },
               );
