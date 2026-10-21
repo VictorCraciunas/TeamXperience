@@ -105,7 +105,8 @@ class SectionCard extends StatelessWidget {
               ],
             ),
           ),
-          child,
+          // Lets ink-based widgets (ListTile, InkWell) paint on top of the panel.
+          Material(type: MaterialType.transparency, child: child),
         ],
       ),
     );
