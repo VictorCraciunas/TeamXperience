@@ -16,6 +16,7 @@ import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/state_management/news_state_management.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
 import 'package:teamxperience/ui/components/misc/clock_builder.dart';
+import 'package:teamxperience/ui/components/misc/fade_in_section.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/ui.dart';
 
@@ -143,41 +144,62 @@ class _HomeState extends State<Home> {
         .where((e) => e.eventId != heroEvent?.eventId || hero is! UpcomingHero)
         .toList();
 
+    // Sections fade in one after the other from the top, once. The keys keep
+    // each section's animation state while the clock rebuilds this every second.
+    var order = 0;
+    Widget section(String key, Widget child) =>
+        FadeInSection(key: ValueKey(key), order: order++, child: child);
+
     return Column(
       children: [
-        HomeHeroSection(
-          hero: hero,
-          now: now,
-          actions: _actions(),
-          recommendedTeamCount: _heroTeamCount,
+        section(
+          'hero',
+          HomeHeroSection(
+            hero: hero,
+            now: now,
+            actions: _actions(),
+            recommendedTeamCount: _heroTeamCount,
+          ),
         ),
         if (hero is! NoHero) const SizedBox(height: 14),
         if (hero is UpcomingHero && heroEvent != null) ...[
-          PreparationPanel(steps: preparationSteps(heroEvent, _heroTeam, now)),
-          const SizedBox(height: 14),
-        ],
-        if (hero is RecommendedHero || hero is NoHero) ...[
-          const HowItWorksPanel(),
-          const SizedBox(height: 14),
-        ],
-        if (registrations.isNotEmpty) ...[
-          RegistrationsPanel(
-            events: registrations,
-            onTap: controller.navigateToTeamDetails,
-            onSeeAll: controller.navigateToEventDashboard,
+          section(
+            'preparation',
+            PreparationPanel(steps: preparationSteps(heroEvent, _heroTeam, now)),
           ),
           const SizedBox(height: 14),
         ],
-        EventsPanel(
-          events: events,
-          onTap: controller.navigateToEventDetails,
-          onSeeAll: controller.navigateToEventDashboard,
+        if (hero is RecommendedHero || hero is NoHero) ...[
+          section('how-it-works', const HowItWorksPanel()),
+          const SizedBox(height: 14),
+        ],
+        if (registrations.isNotEmpty) ...[
+          section(
+            'registrations',
+            RegistrationsPanel(
+              events: registrations,
+              onTap: controller.navigateToTeamDetails,
+              onSeeAll: controller.navigateToEventDashboard,
+            ),
+          ),
+          const SizedBox(height: 14),
+        ],
+        section(
+          'events',
+          EventsPanel(
+            events: events,
+            onTap: controller.navigateToEventDetails,
+            onSeeAll: controller.navigateToEventDashboard,
+          ),
         ),
         const SizedBox(height: 14),
-        NewsPanel(
-          news: newsList.getLatestNews(5),
-          onTap: controller.navigateToStireDetails,
-          onSeeAll: controller.navigateToNewsTab,
+        section(
+          'news',
+          NewsPanel(
+            news: newsList.getLatestNews(5),
+            onTap: controller.navigateToStireDetails,
+            onSeeAll: controller.navigateToNewsTab,
+          ),
         ),
       ],
     );
