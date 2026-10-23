@@ -4,16 +4,17 @@ import 'package:flutter/material.dart';
 /// sections on a page increasing [order] values and they appear one after the
 /// other from the top. It plays once, when the section first appears, and not
 /// again when the parent rebuilds (give each section a stable key). With
-/// reduced motion on, the child is simply shown.
+/// reduced motion on, the child is simply shown. If the page is still sliding
+/// in, it waits for that to finish first.
 class FadeInSection extends StatefulWidget {
   const FadeInSection({
     super.key,
     required this.order,
     required this.child,
-    this.step = const Duration(milliseconds: 90),
-    this.duration = const Duration(milliseconds: 420),
+    this.step = const Duration(milliseconds: 110),
+    this.duration = const Duration(milliseconds: 520),
     this.maxDelaySteps = 6,
-    this.drift = 14,
+    this.drift = 22,
   });
 
   /// Position on the page, 0 for the first section.
@@ -38,6 +39,7 @@ class _FadeInSectionState extends State<FadeInSection> with SingleTickerProvider
   late final AnimationController _controller;
   late final Animation<double> _progress;
   bool _started = false;
+  Animation<double>? _transition;
 
   Duration get _delay => widget.step * widget.order.clamp(0, widget.maxDelaySteps);
 
@@ -64,13 +66,34 @@ class _FadeInSectionState extends State<FadeInSection> with SingleTickerProvider
 
     if (MediaQuery.disableAnimationsOf(context)) {
       _controller.value = 1;
-    } else {
-      _controller.forward();
+      return;
     }
+
+    // Start only once the page has finished sliding in, otherwise most of the
+    // fade happens before anyone can see it. The route reports its animation
+    // as completed while the page is still being built, so look one frame later.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final transition = ModalRoute.of(context)?.animation;
+      if (transition == null || transition.status == AnimationStatus.completed) {
+        _controller.forward();
+        return;
+      }
+      _transition = transition;
+      transition.addStatusListener(_onTransitionStatus);
+    });
+  }
+
+  void _onTransitionStatus(AnimationStatus status) {
+    if (status != AnimationStatus.completed) return;
+    _transition?.removeStatusListener(_onTransitionStatus);
+    _transition = null;
+    if (mounted) _controller.forward();
   }
 
   @override
   void dispose() {
+    _transition?.removeStatusListener(_onTransitionStatus);
     _controller.dispose();
     super.dispose();
   }

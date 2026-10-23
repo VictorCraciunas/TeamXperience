@@ -22,6 +22,7 @@ void main() {
   testWidgets('starts invisible and fades in', (tester) async {
     await tester.pumpWidget(_app(const FadeInSection(order: 0, child: Text('unu'))));
     expect(_opacity(tester, 'unu'), 0);
+    await tester.pump(); // the animation starts after the first frame
     await tester.pump(const Duration(milliseconds: 200));
     final mid = _opacity(tester, 'unu');
     expect(mid, greaterThan(0));
@@ -48,6 +49,7 @@ void main() {
         ),
       ),
     );
+    await tester.pump(); // the animation starts after the first frame
     await tester.pump(const Duration(milliseconds: 150));
     expect(_opacity(tester, 'unu'), greaterThan(_opacity(tester, 'patru')));
     await tester.pumpAndSettle();
@@ -73,5 +75,33 @@ void main() {
       _app(const FadeInSection(order: 4, child: Text('unu')), disableAnimations: true),
     );
     expect(_opacity(tester, 'unu'), 1);
+  });
+  testWidgets('waits for the page transition to finish before it starts', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => TextButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const Scaffold(body: FadeInSection(order: 0, child: Text('nou'))),
+              ),
+            ),
+            child: const Text('mergi'),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('mergi'));
+    await tester.pump(); // route starts
+    await tester.pump(const Duration(milliseconds: 100)); // still transitioning
+    expect(_opacity(tester, 'nou'), 0);
+
+    await tester.pump(const Duration(milliseconds: 400)); // transition done
+    await tester.pump(const Duration(milliseconds: 150)); // fade running
+    final mid = _opacity(tester, 'nou');
+    expect(mid, greaterThan(0));
+    expect(mid, lessThan(1));
+    await tester.pumpAndSettle();
+    expect(_opacity(tester, 'nou'), 1);
   });
 }
