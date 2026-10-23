@@ -56,10 +56,11 @@ void main() {
       expect(find.byIcon(Icons.calendar_today_outlined), findsOneWidget);
     });
 
-    testWidgets('open: shows the search field instead of the leading widget', (tester) async {
-      await pumpUi(tester, _bar(open: true, leading: const Text('lead')));
-      expect(find.text('lead'), findsNothing);
+    testWidgets('open: the search field is there and the leading widget has no room', (tester) async {
+      await pumpUi(tester, _bar(open: true, leading: const SizedBox(key: ValueKey('lead'), height: 48)));
+      await tester.pumpAndSettle();
       expect(find.byType(TextField), findsOneWidget);
+      expect(tester.getSize(find.byKey(const ValueKey('feed-search-leading'))).width, 0);
     });
 
     testWidgets('an active filter shows a dot on the filter button', (tester) async {
