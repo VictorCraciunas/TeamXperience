@@ -13,6 +13,7 @@ import 'package:teamxperience/ui/components/misc/period_sheet.dart';
 import 'package:teamxperience/ui/components/misc/segmented_switch.dart';
 import 'package:teamxperience/ui/components/misc/feed_search_bar.dart';
 import 'package:teamxperience/ui/components/misc/removable_chip.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/utils/calendar_helper.dart';
 
@@ -174,6 +175,7 @@ class _FilterEventsUserState extends State<FilterEventsUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const MyAppBar(appBarText: 'Evenimente'),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),

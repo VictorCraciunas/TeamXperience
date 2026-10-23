@@ -12,6 +12,7 @@ import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/components/misc/feed_search_bar.dart';
 import 'package:teamxperience/ui/components/misc/removable_chip.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/misc/period_selection.dart';
 import 'package:teamxperience/ui/components/misc/period_sheet.dart';
 import 'package:teamxperience/ui/ui.dart';
@@ -216,6 +217,7 @@ class _StiriDashboardState extends State<StiriDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const MyAppBar(appBarText: 'Știri'),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
