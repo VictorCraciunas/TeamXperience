@@ -120,14 +120,11 @@ class _FilterEventsUserState extends State<FilterEventsUser> {
   }
 
   Widget _header(bool hasFilter) {
-    final back = _backButton();
-
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (back != null) back,
           FeedSearchBar(
             isSearchOpen: _isSearchOpen,
             searchController: _searchController,
@@ -147,15 +144,6 @@ class _FilterEventsUserState extends State<FilterEventsUser> {
           if (hasFilter) ...[const SizedBox(height: 10), _activeChips()],
         ],
       ),
-    );
-  }
-
-  Widget? _backButton() {
-    if (!Navigator.of(context).canPop()) return null;
-    return IconButton(
-      onPressed: () => Navigator.pop(context),
-      tooltip: 'Înapoi',
-      icon: Icon(Icons.arrow_back, color: context.colors.text),
     );
   }
 
