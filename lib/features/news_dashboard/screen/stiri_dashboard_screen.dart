@@ -12,7 +12,10 @@ import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/components/misc/feed_search_bar.dart';
 import 'package:teamxperience/ui/components/misc/removable_chip.dart';
+import 'package:teamxperience/ui/components/misc/period_selection.dart';
+import 'package:teamxperience/ui/components/misc/period_sheet.dart';
 import 'package:teamxperience/ui/ui.dart';
+import 'package:teamxperience/utils/calendar_helper.dart';
 
 class StiriDashboard extends StatefulWidget {
   const StiriDashboard({super.key});
@@ -90,15 +93,31 @@ class _StiriDashboardState extends State<StiriDashboard> {
     Navigator.pushNamed(context, Routes.createNews, arguments: {'stire': null});
   }
 
+  /// Players filter by period only (a bottom sheet); admins keep the full
+  /// filter screen with type and category.
   Future<void> _openFilter() async {
-    final filterData =
-        await Navigator.pushNamed(context, Routes.filterStiri)
-            as Map<String, dynamic>?;
-    controller.updateFilters(filterData);
-  }
+    if (_isAdmin) {
+      final filterData =
+          await Navigator.pushNamed(context, Routes.filterStiri)
+              as Map<String, dynamic>?;
+      controller.updateFilters(filterData);
+      return;
+    }
 
-  String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+    final picked = await showPeriodSheet(
+      context,
+      initial: PeriodSelection(
+        start: controller.startDate,
+        end: controller.endDate,
+      ),
+    );
+    if (picked == null) return;
+    controller.updateFilters({
+      'stireType': controller.selectedStireType,
+      'category': controller.selectedCategory,
+      'startDate': picked.start,
+      'endDate': picked.end,
+    });
   }
 
   Widget? _createButton() {
@@ -156,7 +175,8 @@ class _StiriDashboardState extends State<StiriDashboard> {
           ),
         if (start != null && end != null)
           RemovableChip(
-            label: '${_formatDate(start)} - ${_formatDate(end)}',
+            label:
+                '${CalendarHelper.formatDate(start)} - ${CalendarHelper.formatDate(end)}',
             onRemove: controller.clearDateFilter,
           ),
         if (query.isNotEmpty)
@@ -183,6 +203,8 @@ class _StiriDashboardState extends State<StiriDashboard> {
             hasActiveFilters: controller.hasActiveFilters,
             onToggleSearch: _toggleSearch,
             onFilter: _openFilter,
+            filterIcon: _isAdmin ? Icons.tune : Icons.calendar_today_outlined,
+            filterLabel: _isAdmin ? 'Filtrează' : 'Alege perioada',
             leading: _createButton(),
           ),
           if (hasFilter) ...[const SizedBox(height: 10), _activeChips()],

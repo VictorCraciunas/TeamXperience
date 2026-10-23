@@ -35,6 +35,10 @@ void main() {
       expect(contrast(c.accent, c.panel), greaterThanOrEqualTo(4.5));
     });
 
+    test('$name: text on a tick fill is readable', () {
+      expect(contrast(c.onTick, c.tick), greaterThanOrEqualTo(4.5));
+    });
+
     test('$name: feedback colours are readable on their soft backgrounds', () {
       expect(contrast(c.success, c.successSoft), greaterThanOrEqualTo(3));
       expect(contrast(c.warning, c.warningSoft), greaterThanOrEqualTo(3));

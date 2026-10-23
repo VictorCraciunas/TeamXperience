@@ -3,14 +3,26 @@ import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:teamxperience/utils/color_conversion.dart';
 
-
 class ColorPickerDialog {
-  static Future<void> show(BuildContext context, String title, Color initialColor, Function(String) onColorChanged) async {
+  static Future<void> show(
+    BuildContext context,
+    String title,
+    Color initialColor,
+    Function(String) onColorChanged,
+  ) async {
     Color dialogColor = initialColor;
-    TextEditingController rController = TextEditingController(text: (initialColor.r * 255).toInt().toString());
-    TextEditingController gController = TextEditingController(text: (initialColor.g * 255).toInt().toString());
-    TextEditingController bController = TextEditingController(text: (initialColor.b * 255).toInt().toString());
-    TextEditingController aController = TextEditingController(text: (initialColor.a * 255).toInt().toString());
+    TextEditingController rController = TextEditingController(
+      text: (initialColor.r * 255).toInt().toString(),
+    );
+    TextEditingController gController = TextEditingController(
+      text: (initialColor.g * 255).toInt().toString(),
+    );
+    TextEditingController bController = TextEditingController(
+      text: (initialColor.b * 255).toInt().toString(),
+    );
+    TextEditingController aController = TextEditingController(
+      text: (initialColor.a * 255).toInt().toString(),
+    );
 
     await showDialog(
       context: context,
@@ -40,13 +52,21 @@ class ColorPickerDialog {
                     ),
                     Row(
                       children: [
-                        Expanded(child: _buildInputField(context, 'R', rController)),
+                        Expanded(
+                          child: _buildInputField(context, 'R', rController),
+                        ),
                         const SizedBox(width: 8),
-                        Expanded(child: _buildInputField(context, 'G', gController)),
+                        Expanded(
+                          child: _buildInputField(context, 'G', gController),
+                        ),
                         const SizedBox(width: 8),
-                        Expanded(child: _buildInputField(context, 'B', bController)),
+                        Expanded(
+                          child: _buildInputField(context, 'B', bController),
+                        ),
                         const SizedBox(width: 8),
-                        Expanded(child: _buildInputField(context, 'A', aController)),
+                        Expanded(
+                          child: _buildInputField(context, 'A', aController),
+                        ),
                       ],
                     ),
                   ],
@@ -66,10 +86,14 @@ class ColorPickerDialog {
                   int g = int.parse(gController.text);
                   int b = int.parse(bController.text);
                   int a = int.parse(aController.text);
-                  if (r >= 0 && r <= 255 &&
-                      g >= 0 && g <= 255 &&
-                      b >= 0 && b <= 255 &&
-                      a >= 0 && a <= 255) {
+                  if (r >= 0 &&
+                      r <= 255 &&
+                      g >= 0 &&
+                      g <= 255 &&
+                      b >= 0 &&
+                      b <= 255 &&
+                      a >= 0 &&
+                      a <= 255) {
                     dialogColor = Color.fromRGBO(r, g, b, a / 255.0);
                     onColorChanged(ColorConversion().colorToHex(dialogColor));
                     Navigator.pop(context);
@@ -92,7 +116,11 @@ class ColorPickerDialog {
     );
   }
 
-  static Widget _buildInputField(BuildContext context, String hint, TextEditingController controller) {
+  static Widget _buildInputField(
+    BuildContext context,
+    String hint,
+    TextEditingController controller,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -106,14 +134,19 @@ class ColorPickerDialog {
             controller: controller,
             decoration: InputDecoration(
               hintText: hint,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 8,
+              ),
               border: InputBorder.none,
             ),
-            keyboardType: hint.contains('A') ? const TextInputType.numberWithOptions(decimal: true) : TextInputType.number,
+            keyboardType:
+                hint.contains('A')
+                    ? const TextInputType.numberWithOptions(decimal: true)
+                    : TextInputType.number,
           ),
         ),
       ],
     );
   }
-
 }

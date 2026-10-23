@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 
-
 class StepRegisterWidget extends StatelessWidget {
-  const StepRegisterWidget({super.key, required this.text, required this.isEnabled});
+  const StepRegisterWidget({
+    super.key,
+    required this.text,
+    required this.isEnabled,
+  });
 
   final String text;
   final bool isEnabled;
@@ -14,13 +17,18 @@ class StepRegisterWidget extends StatelessWidget {
       width: 45,
       height: 45,
       decoration: BoxDecoration(
-        color: isEnabled
-            ? context.colors.tick
-            : context.colors.border,
+        color: isEnabled ? context.colors.tick : context.colors.border,
         borderRadius: BorderRadius.circular(50),
       ),
       child: Center(
-        child: Text(text,style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16,color: Colors.white),),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }

@@ -8,14 +8,11 @@ class TermsText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseStyle = TextStyle(
-      color: context.colors.muted,
-      fontSize: 14,
-    );
+    final baseStyle = TextStyle(color: context.colors.muted, fontSize: 14);
     final linkStyle = baseStyle.copyWith(color: context.colors.text);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 30.0,),
+      padding: const EdgeInsets.symmetric(vertical: 30.0),
       child: Text.rich(
         TextSpan(
           style: baseStyle,
@@ -24,19 +21,21 @@ class TermsText extends StatelessWidget {
             TextSpan(
               text: 'Termenii și Condițiile',
               style: linkStyle,
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  // TODO: navigate to terms page
-                },
+              recognizer:
+                  TapGestureRecognizer()
+                    ..onTap = () {
+                      // TODO: navigate to terms page
+                    },
             ),
             const TextSpan(text: ' și cu '),
             TextSpan(
               text: 'Politica de confidențialitate',
               style: linkStyle,
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  // TODO: navigate to privacy policy
-                },
+              recognizer:
+                  TapGestureRecognizer()
+                    ..onTap = () {
+                      // TODO: navigate to privacy policy
+                    },
             ),
             const TextSpan(text: '.'),
           ],

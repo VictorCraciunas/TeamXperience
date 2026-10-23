@@ -14,10 +14,11 @@ class ThemeModeButton extends StatelessWidget {
       button: true,
       label: 'Alege aspectul aplicației',
       child: GestureDetector(
-        onTap: () => showModalBottomSheet<void>(
-          context: context,
-          builder: (_) => const ThemeModeSheet(),
-        ),
+        onTap:
+            () => showModalBottomSheet<void>(
+              context: context,
+              builder: (_) => const ThemeModeSheet(),
+            ),
         child: Container(
           width: 45,
           height: 45,
@@ -25,7 +26,11 @@ class ThemeModeButton extends StatelessWidget {
             color: colors.iconButtonBg,
             shape: BoxShape.circle,
           ),
-          child: Icon(Icons.brightness_6_outlined, size: 22, color: colors.accent),
+          child: Icon(
+            Icons.brightness_6_outlined,
+            size: 22,
+            color: colors.accent,
+          ),
         ),
       ),
     );

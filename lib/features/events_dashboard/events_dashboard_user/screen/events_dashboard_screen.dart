@@ -8,10 +8,13 @@ import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/service/share_service.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
+import 'package:teamxperience/ui/components/misc/period_selection.dart';
+import 'package:teamxperience/ui/components/misc/period_sheet.dart';
 import 'package:teamxperience/ui/components/misc/segmented_switch.dart';
 import 'package:teamxperience/ui/components/misc/feed_search_bar.dart';
 import 'package:teamxperience/ui/components/misc/removable_chip.dart';
 import 'package:teamxperience/ui/ui.dart';
+import 'package:teamxperience/utils/calendar_helper.dart';
 
 class FilterEventsUser extends StatefulWidget {
   const FilterEventsUser({super.key});
@@ -102,25 +105,26 @@ class _FilterEventsUserState extends State<FilterEventsUser> {
   }
 
   Future<void> _openFilter() async {
-    final filterData =
-        await Navigator.pushNamed(context, Routes.filter, arguments: false)
-            as Map<String, dynamic>?;
-    controller.updateFilters(filterData);
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+    final picked = await showPeriodSheet(
+      context,
+      initial: PeriodSelection(
+        start: controller.startDate,
+        end: controller.endDate,
+      ),
+    );
+    if (picked == null) return;
+    controller.updateFilters({
+      'startDate': picked.start,
+      'endDate': picked.end,
+    });
   }
 
   Widget _header(bool hasFilter) {
-    final back = _backButton();
-
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (back != null) back,
           FeedSearchBar(
             isSearchOpen: _isSearchOpen,
             searchController: _searchController,
@@ -143,15 +147,6 @@ class _FilterEventsUserState extends State<FilterEventsUser> {
     );
   }
 
-  Widget? _backButton() {
-    if (!Navigator.of(context).canPop()) return null;
-    return IconButton(
-      onPressed: () => Navigator.pop(context),
-      tooltip: 'Înapoi',
-      icon: Icon(Icons.arrow_back, color: context.colors.text),
-    );
-  }
-
   Widget _activeChips() {
     final start = controller.startDate;
     final end = controller.endDate;
@@ -162,7 +157,8 @@ class _FilterEventsUserState extends State<FilterEventsUser> {
       children: [
         if (start != null && end != null)
           RemovableChip(
-            label: '${_formatDate(start)} - ${_formatDate(end)}',
+            label:
+                '${CalendarHelper.formatDate(start)} - ${CalendarHelper.formatDate(end)}',
             onRemove: controller.clearDateFilter,
           ),
         if (query.isNotEmpty)

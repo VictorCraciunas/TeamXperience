@@ -12,6 +12,7 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.muted,
     required this.accent,
     required this.tick,
+    required this.onTick,
     required this.navy,
     required this.navActivePill,
     required this.iconButtonBg,
@@ -34,6 +35,9 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color muted;
   final Color accent;
   final Color tick;
+
+  /// Text and icons on a [tick] fill (dark navy, 6.5:1 on the light teal).
+  final Color onTick;
   final Color navy;
   final Color navActivePill;
   final Color iconButtonBg;
@@ -59,6 +63,7 @@ class AppColors extends ThemeExtension<AppColors> {
     muted: Color(0xFF47546A),
     accent: Color(0xFF167A7E),
     tick: Color(0xFF2AA5A9),
+    onTick: Color(0xFF0C092A),
     navy: Color(0xFF222F62),
     navActivePill: Color(0xFFDDF3F3),
     iconButtonBg: Color(0xFFE3F2F3),
@@ -82,6 +87,7 @@ class AppColors extends ThemeExtension<AppColors> {
     muted: Color(0xFFA3ACBB),
     accent: Color(0xFF5CC8CB),
     tick: Color(0xFF53C4C7),
+    onTick: Color(0xFF0E1116),
     navy: Color(0xFF2A3A80),
     navActivePill: Color(0xFF22393C),
     iconButtonBg: Color(0xFF232A35),
@@ -112,6 +118,7 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? muted,
     Color? accent,
     Color? tick,
+    Color? onTick,
     Color? navy,
     Color? navActivePill,
     Color? iconButtonBg,
@@ -134,6 +141,7 @@ class AppColors extends ThemeExtension<AppColors> {
       muted: muted ?? this.muted,
       accent: accent ?? this.accent,
       tick: tick ?? this.tick,
+      onTick: onTick ?? this.onTick,
       navy: navy ?? this.navy,
       navActivePill: navActivePill ?? this.navActivePill,
       iconButtonBg: iconButtonBg ?? this.iconButtonBg,
@@ -163,6 +171,7 @@ class AppColors extends ThemeExtension<AppColors> {
       muted: mix(muted, other.muted),
       accent: mix(accent, other.accent),
       tick: mix(tick, other.tick),
+      onTick: mix(onTick, other.onTick),
       navy: mix(navy, other.navy),
       navActivePill: mix(navActivePill, other.navActivePill),
       iconButtonBg: mix(iconButtonBg, other.iconButtonBg),
