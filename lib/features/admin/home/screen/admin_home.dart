@@ -12,6 +12,7 @@ import 'package:teamxperience/features/admin/home/widgets/admin_upcoming_panel.d
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/ui/components/misc/clock_builder.dart';
+import 'package:teamxperience/ui/components/misc/fade_in_section.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/ui.dart';
 
@@ -106,25 +107,39 @@ class _AdminHomeState extends State<AdminHome> {
     final stats = controller.statsFor(heroEvent);
     final upcoming = eventList.upcomingEvents;
 
+    // Sections fade in one after the other from the top, once.
+    var order = 0;
+    Widget section(String key, Widget child) =>
+        FadeInSection(key: ValueKey(key), order: order++, child: child);
+
     return Column(
       children: [
-        AdminHeroSection(hero: hero, now: now, stats: stats, actions: _actions),
+        section(
+          'hero',
+          AdminHeroSection(hero: hero, now: now, stats: stats, actions: _actions),
+        ),
         if (hero is! NoAdminHero) ...[
           const SizedBox(height: 14),
-          AdminStatsPanel(hero: hero, stats: stats),
+          section('stats', AdminStatsPanel(hero: hero, stats: stats)),
           const SizedBox(height: 14),
         ],
-        AdminQuickActionsPanel(
-          onCreateEvent: controller.navigateToCreateEvent,
-          onCreateNews: controller.navigateToCreateNews,
-          onNotify: controller.navigateToNotification,
+        section(
+          'quick-actions',
+          AdminQuickActionsPanel(
+            onCreateEvent: controller.navigateToCreateEvent,
+            onCreateNews: controller.navigateToCreateNews,
+            onNotify: controller.navigateToNotification,
+          ),
         ),
         const SizedBox(height: 14),
-        AdminUpcomingPanel(
-          events: upcoming,
-          statsFor: controller.statsFor,
-          onTap: controller.navigateToEventDetails,
-          onSeeAll: controller.navigateToEventsTab,
+        section(
+          'upcoming',
+          AdminUpcomingPanel(
+            events: upcoming,
+            statsFor: controller.statsFor,
+            onTap: controller.navigateToEventDetails,
+            onSeeAll: controller.navigateToEventsTab,
+          ),
         ),
       ],
     );
