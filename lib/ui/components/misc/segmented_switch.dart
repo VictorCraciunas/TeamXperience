@@ -45,7 +45,8 @@ class SegmentedSwitch extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: i == selectedIndex ? colors.onTick : colors.text,
+                          color:
+                              i == selectedIndex ? colors.onTick : colors.text,
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),

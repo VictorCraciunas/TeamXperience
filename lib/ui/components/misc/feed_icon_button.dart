@@ -36,7 +36,11 @@ class FeedIconButton extends StatelessWidget {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                Icon(icon, color: active ? colors.onTick : colors.text, size: 22),
+                Icon(
+                  icon,
+                  color: active ? colors.onTick : colors.text,
+                  size: 22,
+                ),
                 if (active)
                   Positioned(
                     right: 11,

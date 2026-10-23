@@ -71,31 +71,35 @@ class _DateRangeSelectionScreenState extends State<DateRangeSelectionScreen> {
                         ),
                       ),
                       IconButton(
-                        onPressed: () => setState(() => _selection = const PeriodSelection()),
+                        onPressed:
+                            () => setState(
+                              () => _selection = const PeriodSelection(),
+                            ),
                         tooltip: 'Șterge perioada',
                         icon: Icon(Icons.close, size: 20, color: colors.text),
                       ),
                     ],
                   ),
                 ),
-              Expanded(
-                child: PeriodPicker(
-                  selection: _selection,
-                  now: DateTime.now(),
-                  onDayTap: (date) => setState(() => _selection = _selection.tap(date)),
-                ),
+              PeriodPicker(
+                selection: _selection,
+                now: DateTime.now(),
+                onDayTap:
+                    (date) => setState(() => _selection = _selection.tap(date)),
               ),
+              const Spacer(),
               AppButton(
                 label: 'Salvează perioada',
                 leading: const Icon(Icons.calendar_today_outlined),
                 backgroundColor: colors.tick,
                 foregroundColor: colors.onTick,
-                onPressed: _selection.isComplete
-                    ? () => Navigator.pop(context, {
+                onPressed:
+                    _selection.isComplete
+                        ? () => Navigator.pop(context, {
                           'startDate': _selection.start,
                           'endDate': _selection.end,
                         })
-                    : null,
+                        : null,
               ),
               const SizedBox(height: 10),
             ],

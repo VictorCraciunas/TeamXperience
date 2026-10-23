@@ -60,7 +60,7 @@ class PeriodPreset {
 }
 
 /// The quick choices for [now]: anytime (clears), this week (Monday to
-/// Sunday), this month, and the next 30 days.
+/// Sunday) and this month.
 List<PeriodPreset> periodPresets(DateTime now) {
   final today = DateTime(now.year, now.month, now.day);
   // Calendar arithmetic, not Duration: a day is not always 24 h (daylight saving).
@@ -79,10 +79,6 @@ List<PeriodPreset> periodPresets(DateTime now) {
         start: DateTime(today.year, today.month, 1),
         end: DateTime(today.year, today.month + 1, 0),
       ),
-    ),
-    PeriodPreset(
-      '30 de zile',
-      PeriodSelection(start: today, end: daysFrom(today, 29)),
     ),
   ];
 }

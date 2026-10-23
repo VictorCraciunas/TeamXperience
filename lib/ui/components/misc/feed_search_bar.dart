@@ -76,7 +76,11 @@ class FeedSearchBar extends StatelessWidget {
         else ...[
           if (start != null) Expanded(child: start) else const Spacer(),
           const SizedBox(width: 8),
-          FeedIconButton(icon: Icons.search, tooltip: 'Caută', onTap: onToggleSearch),
+          FeedIconButton(
+            icon: Icons.search,
+            tooltip: 'Caută',
+            onTap: onToggleSearch,
+          ),
         ],
         const SizedBox(width: 8),
         FeedIconButton(

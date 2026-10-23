@@ -30,13 +30,14 @@ class ThemeModeOptions extends StatelessWidget {
             contentPadding: EdgeInsets.zero,
             leading: Icon(icon, color: colors.accent),
             title: Text(label, style: TextStyle(color: colors.text)),
-            trailing: controller.mode == mode
-                ? Icon(
-                    Icons.check,
-                    key: ValueKey('theme-option-selected-${mode.name}'),
-                    color: colors.accent,
-                  )
-                : null,
+            trailing:
+                controller.mode == mode
+                    ? Icon(
+                      Icons.check,
+                      key: ValueKey('theme-option-selected-${mode.name}'),
+                      color: colors.accent,
+                    )
+                    : null,
             onTap: () {
               controller.setMode(mode);
               onSelected?.call();

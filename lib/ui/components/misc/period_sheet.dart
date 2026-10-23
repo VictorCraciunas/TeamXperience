@@ -20,12 +20,11 @@ Future<PeriodSelection?> showPeriodSheet(
     useSafeArea: true,
     showDragHandle: true,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.panel + 2)),
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(AppRadius.panel + 2),
+      ),
     ),
-    builder: (_) => FractionallySizedBox(
-      heightFactor: 0.88,
-      child: _PeriodSheet(initial: initial, now: now ?? DateTime.now()),
-    ),
+    builder: (_) => _PeriodSheet(initial: initial, now: now ?? DateTime.now()),
   );
 }
 
@@ -55,14 +54,19 @@ class _PeriodSheetState extends State<_PeriodSheet> {
     final from = _selection.start;
     final to = _selection.end;
 
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Selectează perioada',
-            style: TextStyle(color: colors.text, fontSize: 17, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: colors.text,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 12),
           Wrap(
@@ -80,17 +84,18 @@ class _PeriodSheetState extends State<_PeriodSheet> {
           const SizedBox(height: 12),
           if (from != null)
             _PeriodPill(
-              text: to == null
-                  ? CalendarHelper.formatDate(from)
-                  : '${CalendarHelper.formatDate(from)} - ${CalendarHelper.formatDate(to)}',
-              onClear: () => setState(() => _selection = const PeriodSelection()),
+              text:
+                  to == null
+                      ? CalendarHelper.formatDate(from)
+                      : '${CalendarHelper.formatDate(from)} - ${CalendarHelper.formatDate(to)}',
+              onClear:
+                  () => setState(() => _selection = const PeriodSelection()),
             ),
-          Expanded(
-            child: PeriodPicker(
-              selection: _selection,
-              now: widget.now,
-              onDayTap: (date) => setState(() => _selection = _selection.tap(date)),
-            ),
+          PeriodPicker(
+            selection: _selection,
+            now: widget.now,
+            onDayTap:
+                (date) => setState(() => _selection = _selection.tap(date)),
           ),
           const SizedBox(height: 8),
           AppButton(
@@ -98,7 +103,8 @@ class _PeriodSheetState extends State<_PeriodSheet> {
             leading: const Icon(Icons.calendar_today_outlined),
             backgroundColor: colors.tick,
             foregroundColor: colors.onTick,
-            onPressed: _canSave ? () => Navigator.of(context).pop(_selection) : null,
+            onPressed:
+                _canSave ? () => Navigator.of(context).pop(_selection) : null,
           ),
         ],
       ),
@@ -107,7 +113,11 @@ class _PeriodSheetState extends State<_PeriodSheet> {
 }
 
 class _PresetChip extends StatelessWidget {
-  const _PresetChip({required this.label, required this.selected, required this.onTap});
+  const _PresetChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
   final String label;
   final bool selected;
@@ -119,7 +129,9 @@ class _PresetChip extends StatelessWidget {
 
     return Material(
       color: selected ? colors.tick : colors.panel,
-      shape: StadiumBorder(side: BorderSide(color: selected ? colors.tick : colors.border)),
+      shape: StadiumBorder(
+        side: BorderSide(color: selected ? colors.tick : colors.border),
+      ),
       child: InkWell(
         customBorder: const StadiumBorder(),
         onTap: onTap,
@@ -167,7 +179,11 @@ class _PeriodPill extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: TextStyle(color: colors.text, fontSize: 14, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                color: colors.text,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
           IconButton(

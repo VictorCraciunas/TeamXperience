@@ -104,6 +104,63 @@ void main() {
     expect(h.result, isNull);
   });
 
+  group('month carousel', () {
+    testWidgets('shows one month at a time with arrows to move between them', (tester) async {
+      await _open(tester);
+      expect(find.text('OCTOMBRIE 2026'), findsOneWidget);
+      expect(find.text('NOIEMBRIE 2026'), findsNothing);
+
+      await tester.tap(find.byTooltip('Luna următoare'));
+      await tester.pumpAndSettle();
+      expect(find.text('NOIEMBRIE 2026'), findsOneWidget);
+      expect(find.text('OCTOMBRIE 2026'), findsNothing);
+
+      await tester.tap(find.byTooltip('Luna anterioară'));
+      await tester.pumpAndSettle();
+      expect(find.text('OCTOMBRIE 2026'), findsOneWidget);
+    });
+
+    testWidgets('swiping sideways changes the month', (tester) async {
+      await _open(tester);
+      await tester.fling(find.byType(PageView), const Offset(-300, 0), 1000);
+      await tester.pumpAndSettle();
+      expect(find.text('NOIEMBRIE 2026'), findsOneWidget);
+    });
+
+    testWidgets('the previous arrow does nothing on the first month', (tester) async {
+      await _open(tester);
+      await tester.tap(find.byTooltip('Luna anterioară'));
+      await tester.pumpAndSettle();
+      expect(find.text('OCTOMBRIE 2026'), findsOneWidget);
+    });
+
+    testWidgets('a range can span two months', (tester) async {
+      final h = await _open(tester);
+      await tester.tap(_day(10, 28));
+      await tester.tap(find.byTooltip('Luna următoare'));
+      await tester.pumpAndSettle();
+      await tester.tap(_day(11, 3));
+      await tester.pump();
+      await tester.tap(find.text('Salvează perioada'));
+      await tester.pumpAndSettle();
+      expect(h.result?.start, DateTime(2026, 10, 28));
+      expect(h.result?.end, DateTime(2026, 11, 3));
+    });
+
+    testWidgets('opens on the month of an existing period', (tester) async {
+      await _open(
+        tester,
+        initial: PeriodSelection(start: DateTime(2026, 12, 5), end: DateTime(2026, 12, 9)),
+      );
+      expect(find.text('DECEMBRIE 2026'), findsOneWidget);
+    });
+
+    testWidgets('there is no 30 days chip', (tester) async {
+      await _open(tester);
+      expect(find.text('30 de zile'), findsNothing);
+    });
+  });
+
   testWidgets('fits a narrow screen at large text', (tester) async {
     await _open(tester);
     expect(tester.takeException(), isNull);

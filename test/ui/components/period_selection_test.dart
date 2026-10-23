@@ -82,10 +82,8 @@ void main() {
       expect(month.end, d(10, 31));
     });
 
-    test('Următoarele 30 de zile starts today', () {
-      final next = named('30 de zile').selection;
-      expect(next.start, d(10, 20));
-      expect(next.end, d(11, 18)); // 30 days including today
+    test('there is no 30 days preset', () {
+      expect(presets.map((p) => p.label), ['Oricând', 'Săptămâna asta', 'Luna asta']);
     });
 
     test('a preset is recognised as the current selection', () {

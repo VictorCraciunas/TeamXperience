@@ -10,7 +10,8 @@ class SliderWidget extends StatelessWidget {
   final String label;
   final ValueChanged<double> onChanged;
 
-  const SliderWidget({super.key,
+  const SliderWidget({
+    super.key,
     required this.title,
     required this.min,
     required this.max,
@@ -27,10 +28,7 @@ class SliderWidget extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 8),
         Container(
