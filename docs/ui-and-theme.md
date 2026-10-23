@@ -18,7 +18,7 @@ Moved from `lib/widgets/` (and `utils/snackbars.dart`) in UI redesign phase 1: `
 | `AppDropdown<T>` + `AppDropdownItem<T>` | Labelled dropdown matching `AppTextField` |
 | `EventPostCard`, `NewsPostCard` | Feed posts: big image with date/tag, title, details, one share icon; the whole post is tappable |
 | `showPeriodSheet` (+ `PeriodPicker`, `PeriodSelection`, `periodPresets`) | Period bottom sheet: quick presets (Oricând, Săptămâna asta, Luna asta) and a month calendar you swipe or step through with arrows (round days, filled ends in `tick`, tinted range); also used by the full-screen `DateRangeSelectionScreen` |
-| `SegmentedSwitch`, `FeedSearchBar`, `FeedIconButton`, `RemovableChip` | Feed chrome that scrolls with the feed: switch, search button that expands into a field, filter button with an active dot, removable active-filter pill |
+| `SegmentedSwitch`, `FeedSearchBar`, `FeedIconButton`, `RemovableChip` | Feed chrome that scrolls with the feed: switch, search button that grows into a white, tick-bordered field (the leading widget shrinks away; it plays backwards on close), filter button with an active dot, removable active-filter pill |
 | `showAppDialog`, `AsyncState`, `MySnackBars` | Confirm dialog (destructive uses `danger`), loading/error/empty/content switcher, semantic snackbars |
 | `MyAppBar` | App bar with title, optional icon, `showDropdown` + `event` → shows `MenuWidget` |
 | `MenuWidget` (`menu.dart`) | Admin event actions overlay (edit / duplicate / start) |
