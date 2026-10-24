@@ -132,6 +132,23 @@ void main() {
     expect(h.result?.period.start, DateTime(2026, 10, 1));
   });
 
+  testWidgets('a custom period replaces the Personalizat… chip with its dates', (tester) async {
+    await _open(
+      tester,
+      period: PeriodSelection(start: DateTime(2026, 10, 5), end: DateTime(2026, 10, 9)),
+    );
+    expect(find.text('05 oct 2026 - 09 oct 2026'), findsOneWidget);
+    expect(find.text('Personalizat…'), findsNothing);
+  });
+
+  testWidgets('a preset period keeps the Personalizat… chip', (tester) async {
+    await _open(
+      tester,
+      period: PeriodSelection(start: DateTime(2026, 10, 1), end: DateTime(2026, 10, 31)),
+    );
+    expect(find.text('Personalizat…'), findsOneWidget);
+  });
+
   testWidgets('dismissing the sheet returns null', (tester) async {
     final h = await _open(tester);
     await tester.tapAt(const Offset(10, 10));

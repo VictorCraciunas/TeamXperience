@@ -124,6 +124,10 @@ class _FilterSheetState extends State<_FilterSheet> {
     final matchedPreset = presets.where((p) => p.matches(_period)).isNotEmpty;
     final from = _period.start;
     final to = _period.end;
+    // Once a custom range is chosen, its chip shows the dates.
+    final customRange = (!matchedPreset && from != null && to != null)
+        ? '${CalendarHelper.formatDate(from)} - ${CalendarHelper.formatDate(to)}'
+        : null;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -167,20 +171,12 @@ class _FilterSheetState extends State<_FilterSheet> {
                   onTap: () => setState(() => _period = preset.selection),
                 ),
               _Choice(
-                label: 'Personalizat…',
-                selected: !matchedPreset && !_period.isEmpty,
+                label: customRange ?? 'Personalizat…',
+                selected: customRange != null,
                 onTap: _pickCustomPeriod,
               ),
             ],
           ),
-          if (!matchedPreset && from != null && to != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(
-                '${CalendarHelper.formatDate(from)} - ${CalendarHelper.formatDate(to)}',
-                style: TextStyle(color: colors.muted, fontSize: 12),
-              ),
-            ),
           for (final group in widget.groups) ...[
             _SectionLabel(group.title),
             Wrap(
