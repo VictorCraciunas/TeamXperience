@@ -1,11 +1,31 @@
 import 'package:flutter/material.dart';
 import '../../../model/stire.dart';
+import '../../../backend/repo/news_category_repo.dart';
 import '../../../utils/period_utils.dart';
 import '../../../model/newsCategory.dart';
 import '../../../enums/stire_type.dart';
 import '../../../state_management/news_state_management.dart';
 
+/// How adding a category went.
+enum AddCategoryStatus { added, empty, duplicate, failed }
+
+class AddCategoryResult {
+  const AddCategoryResult(this.status, [this.name = '']);
+
+  final AddCategoryStatus status;
+
+  /// The saved name when [status] is [AddCategoryStatus.added].
+  final String name;
+}
+
 class StiriDashboardController extends ChangeNotifier {
+  StiriDashboardController({NewsCategoryRepo? categoryRepo})
+    : _injectedCategoryRepo = categoryRepo;
+
+  final NewsCategoryRepo? _injectedCategoryRepo;
+  late final NewsCategoryRepo _categoryRepo =
+      _injectedCategoryRepo ?? NewsCategoryRepo();
+
   List<Stire> _searchResults = [];
   String _searchQuery = '';
 
@@ -30,6 +50,56 @@ class StiriDashboardController extends ChangeNotifier {
     'startDate': startDate,
     'endDate': endDate,
   };
+
+  /// All category names: the saved ones plus any used by [news], sorted and
+  /// without repeats (ignoring case). If loading fails, only those used by news.
+  Future<List<String>> categoryNames(Iterable<Stire> news) async {
+    final byLower = <String, String>{};
+
+    void add(String? name) {
+      final clean = name?.trim() ?? '';
+      if (clean.isEmpty) return;
+      byLower.putIfAbsent(clean.toLowerCase(), () => clean);
+    }
+
+    // News first, so a name keeps the spelling it is used with.
+    for (final stire in news) {
+      add(stire.category?.name);
+    }
+    try {
+      for (final category in await _categoryRepo.getAllCategories()) {
+        add(category.name);
+      }
+    } catch (_) {
+      // Keep what the news already gave us.
+    }
+
+    return byLower.values.toList()
+      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+  }
+
+  /// Saves a new category unless it is empty or already in [existing].
+  Future<AddCategoryResult> addCategory(
+    String rawName,
+    Iterable<String> existing,
+  ) async {
+    final name = rawName.trim();
+    if (name.isEmpty) return const AddCategoryResult(AddCategoryStatus.empty);
+
+    final lower = name.toLowerCase();
+    if (existing.any((e) => e.trim().toLowerCase() == lower)) {
+      return const AddCategoryResult(AddCategoryStatus.duplicate);
+    }
+
+    try {
+      final category = NewsCategory(name: name);
+      category.id = await _categoryRepo.getNewCategoryId();
+      await _categoryRepo.createCategory(category);
+      return AddCategoryResult(AddCategoryStatus.added, name);
+    } catch (_) {
+      return const AddCategoryResult(AddCategoryStatus.failed);
+    }
+  }
 
   /// Get filtered stiri from NewsList
   List<Stire> getFilteredStiri(NewsList newsList) {

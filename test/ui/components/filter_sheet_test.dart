@@ -58,6 +58,7 @@ Future<_Harness> _open(
 }
 
 void main() {
+  addOptionTests();
   testWidgets('shows the title, the period choices and every group', (tester) async {
     await _open(tester);
     expect(find.text('Filtre'), findsOneWidget);
@@ -155,5 +156,73 @@ void main() {
     await tester.pumpAndSettle();
     expect(h.returned, isTrue);
     expect(h.result, isNull);
+  });
+}
+
+void addOptionTests() {
+  Future<_Harness> openWithAdd(
+    WidgetTester tester, {
+    required Future<FilterOption?> Function() onAdd,
+  }) async {
+    tester.view.physicalSize = const Size(400, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final harness = _Harness();
+    await pumpUi(
+      tester,
+      Builder(
+        builder: (context) => TextButton(
+          onPressed: () async {
+            harness.result = await showFilterSheet(
+              context,
+              groups: [
+                FilterGroup(
+                  id: 'category',
+                  title: 'Categorie',
+                  options: const [FilterOption('Anunțuri', 'Anunțuri')],
+                  onAdd: onAdd,
+                  addTooltip: 'Adaugă categorie',
+                ),
+              ],
+              now: _now,
+            );
+            harness.returned = true;
+          },
+          child: const Text('deschide'),
+        ),
+      ),
+    );
+    await tester.tap(find.text('deschide'));
+    await tester.pumpAndSettle();
+    return harness;
+  }
+
+  group('adding an option from the sheet', () {
+    testWidgets('a group with onAdd shows a plus button', (tester) async {
+      await openWithAdd(tester, onAdd: () async => null);
+      expect(find.byTooltip('Adaugă categorie'), findsOneWidget);
+    });
+
+    testWidgets('the new option appears, is selected and is returned on apply', (tester) async {
+      final h = await openWithAdd(
+        tester,
+        onAdd: () async => const FilterOption('Povești', 'Povești'),
+      );
+      await tester.tap(find.byTooltip('Adaugă categorie'));
+      await tester.pumpAndSettle();
+      expect(find.text('Povești'), findsOneWidget);
+      await tester.tap(find.text('Aplică'));
+      await tester.pumpAndSettle();
+      expect(h.result?.selected, {'category': 'Povești'});
+    });
+
+    testWidgets('cancelling the add changes nothing', (tester) async {
+      final h = await openWithAdd(tester, onAdd: () async => null);
+      await tester.tap(find.byTooltip('Adaugă categorie'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Aplică'));
+      await tester.pumpAndSettle();
+      expect(h.result?.selected, isEmpty);
+    });
   });
 }

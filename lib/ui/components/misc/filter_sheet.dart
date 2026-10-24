@@ -21,11 +21,19 @@ class FilterGroup {
     required this.id,
     required this.title,
     required this.options,
+    this.onAdd,
+    this.addTooltip = 'Adaugă',
   });
 
   final String id;
   final String title;
   final List<FilterOption> options;
+
+  /// When set, the group shows a "+" button. It should ask for the new option
+  /// (for example with a dialog), save it, and return it, or null to cancel.
+  /// The returned option is added to the group and selected.
+  final Future<FilterOption?> Function()? onAdd;
+  final String addTooltip;
 }
 
 /// What the user chose: a period and, per group id, the chosen option id. A
@@ -91,6 +99,20 @@ class _FilterSheetState extends State<_FilterSheet> {
   late PeriodSelection _period = widget.initialPeriod;
   late final Map<String, String> _selected = Map.of(widget.initialSelected);
 
+  /// Options added from the sheet, per group id.
+  final Map<String, List<FilterOption>> _added = {};
+
+  Future<void> _addTo(FilterGroup group) async {
+    final add = group.onAdd;
+    if (add == null) return;
+    final option = await add();
+    if (option == null || !mounted) return;
+    setState(() {
+      _added.putIfAbsent(group.id, () => []).add(option);
+      _selected[group.id] = option.id;
+    });
+  }
+
   Future<void> _pickCustomPeriod() async {
     final picked = await showPeriodSheet(
       context,
@@ -125,9 +147,10 @@ class _FilterSheetState extends State<_FilterSheet> {
     final from = _period.start;
     final to = _period.end;
     // Once a custom range is chosen, its chip shows the dates.
-    final customRange = (!matchedPreset && from != null && to != null)
-        ? '${CalendarHelper.formatDate(from)} - ${CalendarHelper.formatDate(to)}'
-        : null;
+    final customRange =
+        (!matchedPreset && from != null && to != null)
+            ? '${CalendarHelper.formatDate(from)} - ${CalendarHelper.formatDate(to)}'
+            : null;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -178,7 +201,11 @@ class _FilterSheetState extends State<_FilterSheet> {
             ],
           ),
           for (final group in widget.groups) ...[
-            _SectionLabel(group.title),
+            _SectionLabel(
+              group.title,
+              onAdd: group.onAdd == null ? null : () => _addTo(group),
+              addTooltip: group.addTooltip,
+            ),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -188,7 +215,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                   selected: !_selected.containsKey(group.id),
                   onTap: () => _choose(group.id, null),
                 ),
-                for (final option in group.options)
+                for (final option in [...group.options, ...?_added[group.id]])
                   _Choice(
                     label: option.label,
                     selected: _selected[group.id] == option.id,
@@ -232,21 +259,41 @@ class _FilterSheetState extends State<_FilterSheet> {
 }
 
 class _SectionLabel extends StatelessWidget {
-  const _SectionLabel(this.text);
+  const _SectionLabel(this.text, {this.onAdd, this.addTooltip = 'Adaugă'});
 
   final String text;
+  final VoidCallback? onAdd;
+  final String addTooltip;
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final add = onAdd;
+
     return Padding(
-      padding: const EdgeInsets.only(top: 14, bottom: 8),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: context.colors.muted,
-          fontSize: 13,
-          fontWeight: FontWeight.w500,
-        ),
+      padding: EdgeInsets.only(
+        top: add == null ? 14 : 6,
+        bottom: add == null ? 8 : 2,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: colors.muted,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          if (add != null)
+            IconButton(
+              onPressed: add,
+              tooltip: addTooltip,
+              icon: Icon(Icons.add_circle_outline, color: colors.text),
+            ),
+        ],
       ),
     );
   }

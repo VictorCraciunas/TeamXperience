@@ -12,6 +12,8 @@ import 'package:teamxperience/service/share_service.dart';
 import 'package:teamxperience/state_management/news_state_management.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/ui/components/buttons/tick_outline_button.dart';
+import 'package:teamxperience/ui/components/feedback/snackbars.dart';
+import 'package:teamxperience/ui/components/feedback/text_input_dialog.dart';
 import 'package:teamxperience/ui/components/misc/filter_sheet.dart';
 import 'package:teamxperience/ui/components/misc/feed_search_bar.dart';
 import 'package:teamxperience/ui/components/misc/removable_chip.dart';
@@ -102,16 +104,10 @@ class _StiriDashboardState extends State<StiriDashboard> {
 
   /// Admin filters: period, public or private, and category, applied together.
   Future<void> _openAdminFilter() async {
-    final categories =
-        context
-            .read<NewsList>()
-            .stireList
-            .map((s) => s.category?.name)
-            .whereType<String>()
-            .where((name) => name.isNotEmpty)
-            .toSet()
-            .toList()
-          ..sort();
+    final news = context.read<NewsList>().stireList;
+    // Saved categories plus the ones in use, so a category with no news yet shows too.
+    final categories = await controller.categoryNames(news);
+    if (!mounted) return;
 
     final result = await showFilterSheet(
       context,
@@ -124,12 +120,13 @@ class _StiriDashboardState extends State<StiriDashboard> {
               FilterOption(type.name, type.displayName),
           ],
         ),
-        if (categories.isNotEmpty)
-          FilterGroup(
-            id: _categoryGroup,
-            title: 'Categorie',
-            options: [for (final name in categories) FilterOption(name, name)],
-          ),
+        FilterGroup(
+          id: _categoryGroup,
+          title: 'Categorie',
+          options: [for (final name in categories) FilterOption(name, name)],
+          addTooltip: 'Adaugă categorie',
+          onAdd: () => _addCategory(categories),
+        ),
       ],
       period: PeriodSelection(
         start: controller.startDate,
@@ -153,6 +150,41 @@ class _StiriDashboardState extends State<StiriDashboard> {
       'startDate': result.period.start,
       'endDate': result.period.end,
     });
+  }
+
+  /// Asks for a name and saves a new category. [known] holds the names shown in
+  /// the sheet and is extended with the new one.
+  Future<FilterOption?> _addCategory(List<String> known) async {
+    final name = await showTextInputDialog(
+      context,
+      title: 'Categorie nouă',
+      label: 'Nume categorie',
+      confirmLabel: 'Adaugă',
+    );
+    if (name == null || !mounted) return null;
+
+    final result = await controller.addCategory(name, known);
+    if (!mounted) return null;
+
+    switch (result.status) {
+      case AddCategoryStatus.added:
+        known.add(result.name);
+        MySnackBars.successSnackBar(
+          context,
+          title: 'Categoria a fost adăugată',
+        );
+        return FilterOption(result.name, result.name);
+      case AddCategoryStatus.duplicate:
+        MySnackBars.warningSnackBar(context, title: 'Categoria există deja');
+      case AddCategoryStatus.empty:
+        break;
+      case AddCategoryStatus.failed:
+        MySnackBars.errorSnackBar(
+          context,
+          title: 'Nu am putut salva categoria',
+        );
+    }
+    return null;
   }
 
   /// Players filter by period only (a bottom sheet); admins keep the full
