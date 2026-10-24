@@ -12,20 +12,17 @@ class AdminUpcomingPanel extends StatelessWidget {
     required this.events,
     required this.statsFor,
     required this.onTap,
-    required this.onSeeAll,
   });
 
   final List<Event> events;
   final AdminEventStats Function(Event event) statsFor;
   final void Function(Event event) onTap;
-  final VoidCallback onSeeAll;
 
   @override
   Widget build(BuildContext context) {
     return SectionCard(
       title: 'Evenimente viitoare',
       count: events.length,
-      onAction: onSeeAll,
       child:
           events.isEmpty
               ? Text(
