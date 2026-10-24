@@ -21,7 +21,7 @@ class StireCard extends StatelessWidget {
     required this.stire,
     this.onTap,
     required this.isAdmin,
-    required this.showBadge
+    required this.showBadge,
   });
 
   @override
@@ -36,30 +36,31 @@ class StireCard extends StatelessWidget {
             // Background Image
             stire.principalImage != null && stire.principalImage!.isNotEmpty
                 ? CachedNetworkImage(
-              imageBuilder: (context, imageProvider) => Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  image: DecorationImage(
-                    image: imageProvider,
-                    fit: BoxFit.cover,
+                  imageBuilder:
+                      (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                  imageUrl: stire.principalImage!,
+                  fit: BoxFit.cover,
+                  cacheManager: ImageHelper.eventImageCache,
+                )
+                : Container(
+                  decoration: BoxDecoration(
+                    color: context.colors.inset,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Icon(
+                    Icons.article,
+                    size: 50,
+                    color: context.colors.muted,
                   ),
                 ),
-              ),
-              imageUrl: stire.principalImage!,
-              fit: BoxFit.cover,
-              cacheManager: ImageHelper.eventImageCache,
-            )
-                : Container(
-              decoration: BoxDecoration(
-                color: context.colors.inset,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Icon(
-                Icons.article,
-                size: 50,
-                color: context.colors.muted,
-              ),
-            ),
 
             // Dark overlay for better text readability
             Positioned(
@@ -87,34 +88,37 @@ class StireCard extends StatelessWidget {
             ),
 
             // Blue containers overlay (right side only like EventImage)
-            if(showBadge == true)
-            Padding(
-              padding: const EdgeInsets.all(13.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  // Type badge
-                  Container(
-                    width: 78,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      color: stire.type == StireType.PUBLICA ? context.colors.accent : context.colors.navy,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        (stire.type?.displayName ?? "PUBLICA").toUpperCase(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+            if (showBadge == true)
+              Padding(
+                padding: const EdgeInsets.all(13.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // Type badge
+                    Container(
+                      width: 78,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color:
+                            stire.type == StireType.PUBLICA
+                                ? context.colors.accent
+                                : context.colors.navy,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Center(
+                        child: Text(
+                          (stire.type?.displayName ?? "PUBLICA").toUpperCase(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
             // Text overlay at bottom
             Positioned(
@@ -160,7 +164,11 @@ class StireCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 4),
-                      AppSvgIcon('assets/images/punct.svg', width: 2, height: 2),
+                      AppSvgIcon(
+                        'assets/images/punct.svg',
+                        width: 2,
+                        height: 2,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         CalendarHelper.formatDate(stire.publicationDate),
@@ -179,5 +187,4 @@ class StireCard extends StatelessWidget {
       ),
     );
   }
-
 }

@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
-import 'package:teamxperience/ui/ui.dart';
 import 'package:provider/provider.dart';
+import 'package:teamxperience/constants/routes.dart';
+import 'package:teamxperience/enums/event_type.dart';
+import 'package:teamxperience/features/events_dashboard/events_dashboard_admin/controller/events_dashboard_controller.dart';
 import 'package:teamxperience/model/event.dart';
-import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-
-import '../../../../constants/routes.dart';
-import '../../../../enums/event_type.dart';
-import '../../../../state_management/events_state_management.dart';
-import 'package:teamxperience/ui/components/misc/custom_icon_dashboard.dart';
+import 'package:teamxperience/state_management/events_state_management.dart';
+import 'package:teamxperience/ui/components/buttons/tick_outline_button.dart';
 import 'package:teamxperience/ui/components/event/events_list.dart';
-import '../controller/events_dashboard_controller.dart';
+import 'package:teamxperience/ui/components/misc/feed_search_bar.dart';
+import 'package:teamxperience/ui/components/misc/filter_sheet.dart';
+import 'package:teamxperience/ui/components/misc/period_selection.dart';
+import 'package:teamxperience/ui/components/misc/removable_chip.dart';
+import 'package:teamxperience/ui/components/misc/section_title.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
+import 'package:teamxperience/ui/ui.dart';
+import 'package:teamxperience/utils/calendar_helper.dart';
 
 class EventsDashboard extends StatefulWidget {
   const EventsDashboard({super.key});
@@ -19,11 +23,12 @@ class EventsDashboard extends StatefulWidget {
   State<EventsDashboard> createState() => _EventsDashboardState();
 }
 
-class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProviderStateMixin {
+class _EventsDashboardState extends State<EventsDashboard> {
+  static const _typeGroup = 'type';
+  static const _statusGroup = 'status';
+
   late EventsDashboardController controller;
-  late AnimationController _animationController;
-  late Animation<double> _searchAnimation;
-  bool _isSearchExpanded = false;
+  bool _isSearchOpen = false;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
 
@@ -32,38 +37,25 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
     super.initState();
     controller = EventsDashboardController();
 
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-
-    _searchAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-
     _searchController.addListener(() {
-      final eventList = context.read<EventList>();
-      controller.searchEvents(_searchController.text, eventList);
+      controller.searchEvents(
+        _searchController.text,
+        context.read<EventList>(),
+      );
     });
 
-    // Load events when screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final eventList = context.read<EventList>();
       await eventList.loadEvents();
-
-      // Load team statistics for all events
-      final allEvents = [...eventList.upcomingEvents, ...eventList.pastEvents];
-      await controller.loadEventStats(allEvents);
+      await controller.loadEventStats([
+        ...eventList.upcomingEvents,
+        ...eventList.pastEvents,
+      ]);
     });
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
     _searchController.dispose();
     _searchFocusNode.dispose();
     controller.dispose();
@@ -72,15 +64,10 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
 
   void _toggleSearch() {
     setState(() {
-      _isSearchExpanded = !_isSearchExpanded;
-      if (_isSearchExpanded) {
-        _animationController.forward();
-        _searchFocusNode.requestFocus();
-      } else {
-        _animationController.reverse();
+      _isSearchOpen = !_isSearchOpen;
+      if (!_isSearchOpen) {
         _searchController.clear();
         controller.clearSearch();
-        _searchFocusNode.unfocus();
       }
     });
   }
@@ -90,81 +77,131 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
     controller.clearSearch();
   }
 
-  void navigateToEventDetails(BuildContext context, Event event) {
+  void _openEvent(Event event) {
     Navigator.pushNamed(
       context,
       Routes.eventDetails,
-      arguments: {
-        'event': event,
-        'isAdmin': true,
-      },
+      arguments: {'event': event, 'isAdmin': true},
     );
   }
 
-  void _navigateToCreateEvent(BuildContext context, {Event? event}) {
+  void _createEvent() {
     Navigator.pushNamed(
       context,
       Routes.createEvent,
-      arguments: {'event': event, 'isBlueprint': true},
+      arguments: {'event': null, 'isBlueprint': true},
     );
   }
 
-  void _navigateToFilter(BuildContext context) async {
-    final filterData = await Navigator.pushNamed(
+  Future<void> _openFilter() async {
+    final result = await showFilterSheet(
       context,
-      Routes.filter,
-        arguments: true
-    ) as Map<String, dynamic>?;
+      groups: const [
+        FilterGroup(
+          id: _typeGroup,
+          title: 'Tip eveniment',
+          options: [
+            FilterOption('PUBLIC', 'Public'),
+            FilterOption('PRIVAT', 'Privat'),
+          ],
+        ),
+        FilterGroup(
+          id: _statusGroup,
+          title: 'Stare',
+          options: [
+            FilterOption('upcoming', 'Viitoare'),
+            FilterOption('past', 'Trecute'),
+          ],
+        ),
+      ],
+      period: PeriodSelection(
+        start: controller.startDate,
+        end: controller.endDate,
+      ),
+      selected: {
+        if (controller.selectedEventType != null)
+          _typeGroup: controller.selectedEventType!.name,
+        if (controller.selectedStatus != null)
+          _statusGroup: controller.selectedStatus!.name,
+      },
+    );
+    if (result == null) return;
 
-    controller.updateFilters(filterData);
+    final type = result.selected[_typeGroup];
+    final status = result.selected[_statusGroup];
+    controller.updateFilters({
+      'eventType': type == null ? null : EventType.values.byName(type),
+      'status': status == null ? null : EventStatusFilter.values.byName(status),
+      'startDate': result.period.start,
+      'endDate': result.period.end,
+    });
   }
 
-  String _getEventTypeDisplayName(EventType type) {
-    switch (type) {
-      case EventType.PUBLIC:
-        return 'Public';
-      case EventType.PRIVAT:
-        return 'Privat';
-    }
+  String _typeLabel(EventType type) =>
+      type == EventType.PUBLIC ? 'Public' : 'Privat';
+
+  Widget _activeChips() {
+    final type = controller.selectedEventType;
+    final status = controller.selectedStatus;
+    final start = controller.startDate;
+    final end = controller.endDate;
+    final query = controller.searchQuery;
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        if (type != null)
+          RemovableChip(
+            label: _typeLabel(type),
+            onRemove: controller.clearEventTypeFilter,
+          ),
+        if (status != null)
+          RemovableChip(
+            label:
+                status == EventStatusFilter.upcoming ? 'Viitoare' : 'Trecute',
+            onRemove: controller.clearStatusFilter,
+          ),
+        if (start != null && end != null)
+          RemovableChip(
+            label:
+                '${CalendarHelper.formatDate(start)} - ${CalendarHelper.formatDate(end)}',
+            onRemove: controller.clearDateFilter,
+          ),
+        if (query.isNotEmpty)
+          RemovableChip(
+            label: '"$query"',
+            icon: Icons.search,
+            onRemove: _clearSearchQuery,
+          ),
+      ],
+    );
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
-  }
+  Widget _header() {
+    final hasFilter =
+        controller.hasActiveFilters || controller.searchQuery.isNotEmpty;
 
-  Widget _buildSectionHeader(String title) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Row(
+      padding: const EdgeInsets.only(top: 8, bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Container(
-              height: 2,
-              decoration: BoxDecoration(
-                color: context.colors.accent,
-                borderRadius: BorderRadius.circular(1),
-              ),
+          FeedSearchBar(
+            isSearchOpen: _isSearchOpen,
+            searchController: _searchController,
+            searchFocusNode: _searchFocusNode,
+            searchHint: 'Caută evenimente...',
+            hasActiveFilters: controller.hasActiveFilters,
+            onToggleSearch: _toggleSearch,
+            onFilter: _openFilter,
+            leading: TickOutlineButton(
+              label: 'Creează eveniment',
+              icon: Icons.add_circle_outline,
+              onTap: _createEvent,
             ),
           ),
-          const SizedBox(width: 12),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: context.colors.text,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Container(
-              height: 2,
-              decoration: BoxDecoration(
-                color: context.colors.accent,
-                borderRadius: BorderRadius.circular(1),
-              ),
-            ),
-          ),
+          if (hasFilter) ...[const SizedBox(height: 10), _activeChips()],
         ],
       ),
     );
@@ -173,13 +210,10 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(appBarText: "Evenimente"),
+      appBar: const MyAppBar(appBarText: 'Evenimente'),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.page,
-            vertical: 15,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
           child: Consumer<EventList>(
             builder: (context, eventList, child) {
               if (eventList.isLoading && !eventList.hasData) {
@@ -191,11 +225,15 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Error: ${eventList.error}'),
+                      Text(
+                        'Nu am putut încărca evenimentele.',
+                        style: TextStyle(color: context.colors.text),
+                      ),
                       const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () => eventList.loadEvents(forceRefresh: true),
-                        child: const Text('Retry'),
+                      TextButton(
+                        onPressed:
+                            () => eventList.loadEvents(forceRefresh: true),
+                        child: const Text('Reîncearcă'),
                       ),
                     ],
                   ),
@@ -205,323 +243,56 @@ class _EventsDashboardState extends State<EventsDashboard> with SingleTickerProv
               return AnimatedBuilder(
                 animation: controller,
                 builder: (context, child) {
-                  final hasUpcoming = controller.hasUpcomingEvents(eventList);
-                  final hasPast = controller.hasPastEvents(eventList);
+                  final upcoming = controller.getDisplayedUpcomingEvents(
+                    eventList,
+                  );
+                  final past = controller.getDisplayedPastEvents(eventList);
 
-                  return Column(
-                    children: [
-                      // Header with buttons and filters (non-scrollable)
-                      AnimatedBuilder(
-                        animation: _searchAnimation,
-                        builder: (context, child) {
-                          return Row(
-                            children: [
-                              // Create event button - can be 45 width or expanded
-                              if (!_isSearchExpanded)
-                                Expanded(
-                                  child: InkWell(
-                                    splashFactory: InkSplash.splashFactory,
-                                    onTap: () => _navigateToCreateEvent(context),
-                                    child: Container(
-                                      height: 45,
-                                      decoration: BoxDecoration(
-                                        color: context.colors.iconButtonBg,
-                                        borderRadius: BorderRadius.circular(50),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          AppSvgIcon('assets/images/add_icon.svg', width: 20, height: 20, color: context.colors.accent),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            "Creează eveniment",
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              color: context.colors.text,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              else
-                                InkWell(
-                                  splashFactory: InkSplash.splashFactory,
-                                  onTap: () => _navigateToCreateEvent(context),
-                                  child: Container(
-                                    width: 45,
-                                    height: 45,
-                                    decoration: BoxDecoration(
-                                      color: context.colors.iconButtonBg,
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                    child: Center(
-                                      child: AppSvgIcon('assets/images/add_icon.svg', width: 20, height: 20, color: context.colors.accent),
-                                    ),
-                                  ),
-                                ),
-                              const SizedBox(width: 8),
-
-                              // Filter button
-                              CustomIconDashBoard(
-                                activeFilter: controller.hasActiveFilters,
-                                onTap: () => _navigateToFilter(context),
-                                iconString: 'assets/images/filter.svg',
-                              ),
-                              const SizedBox(width: 8),
-
-                              // Search field
-                              if (_isSearchExpanded)
-                                Expanded(
-                                  child: Container(
-                                    height: 45,
-                                    decoration: BoxDecoration(
-                                      color: context.colors.iconButtonBg,
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        const SizedBox(width: 16),
-                                        Expanded(
-                                          child: TextField(
-                                            controller: _searchController,
-                                            focusNode: _searchFocusNode,
-                                            decoration: InputDecoration(
-                                              hintText: 'Caută evenimente...',
-                                              hintStyle: TextStyle(
-                                                fontSize: 14,
-                                                color: context.colors.muted,
-                                              ),
-                                              border: InputBorder.none,
-                                            ),
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: context.colors.text,
-                                            ),
-                                          ),
-                                        ),
-                                        InkWell(
-                                          splashFactory: NoSplash.splashFactory,
-                                          onTap: _toggleSearch,
-                                          child: Container(
-                                            width: 45,
-                                            height: 45,
-                                            decoration: const BoxDecoration(),
-                                            child: Center(
-                                              child: Icon(
-                                                Icons.close,
-                                                size: 24,
-                                                color: context.colors.text,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              else
-                                CustomIconDashBoard(
-                                  activeFilter: false,
-                                  onTap: _toggleSearch,
-                                  iconString: 'assets/images/search.svg',
-                                ),
-                            ],
-                          );
-                        },
-                      ),
-
-                      // Active filters display
-                      if (controller.hasActiveFilters) ...[
-                        const SizedBox(height: 10),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            if (controller.selectedEventType != null)
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: context.colors.iconButtonBg,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      _getEventTypeDisplayName(controller.selectedEventType!),
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: context.colors.text,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    GestureDetector(
-                                      onTap: () => controller.clearEventTypeFilter(),
-                                      child: Icon(
-                                        Icons.close,
-                                        size: 16,
-                                        color: context.colors.text,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            if (controller.startDate != null && controller.endDate != null)
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: context.colors.iconButtonBg,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      '${_formatDate(controller.startDate!)} - ${_formatDate(controller.endDate!)}',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: context.colors.text,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    GestureDetector(
-                                      onTap: () => controller.clearDateFilter(),
-                                      child: Icon(
-                                        Icons.close,
-                                        size: 16,
-                                        color: context.colors.text,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                          ],
-                        ),
-                      ],
-
-                      // Search query display
-                      if (controller.searchQuery.isNotEmpty) ...[
-                        const SizedBox(height: 10),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: context.colors.iconButtonBg,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.search,
-                                size: 14,
-                                color: context.colors.text,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '"${controller.searchQuery}"',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: context.colors.text,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              GestureDetector(
-                                onTap: _clearSearchQuery,
-                                child: Icon(
-                                  Icons.close,
-                                  size: 16,
-                                  color: context.colors.text,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-
-                      const SizedBox(height: 10),
-
-                      // SINGLE SCROLLABLE CONTENT WITH COLUMN APPROACH
-                      Expanded(
-                        child: hasUpcoming || hasPast
-                            ? RefreshIndicator(
-                          onRefresh: () => eventList.refresh(),
-                          child: SingleChildScrollView(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Upcoming Events Section
-                                if (hasUpcoming) ...[
-                                  _buildSectionHeader("Evenimente viitoare"),
-                                  // Use EventsList with shrinkWrap: true (Column approach)
-                                  EventsList(
-                                    events: controller.getDisplayedUpcomingEvents(eventList),
-                                    onEventTap: (event) => navigateToEventDetails(context, event),
-                                    isAdmin: true,
-                                    shrinkWrap: true, // This makes it use Column instead of ListView
-                                    eventStats: controller.eventStats,
-                                  ),
-                                ],
-
-                                // Past Events Section
-                                if (hasPast) ...[
-                                  _buildSectionHeader("Evenimente trecute"),
-                                  // Use EventsList with shrinkWrap: true (Column approach)
-                                  EventsList(
-                                    events: controller.getDisplayedPastEvents(eventList),
-                                    onEventTap: (event) => navigateToEventDetails(context, event),
-                                    isAdmin: true,
-                                    shrinkWrap: true, // This makes it use Column instead of ListView
-                                    eventStats: controller.eventStats,
-                                  ),
-                                ],
-
-                                // Add some bottom padding
-                                const SizedBox(height: 20),
-                              ],
-                            ),
-                          ),
-                        )
-                            : Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.event_busy,
-                                size: 64,
-                                color: context.colors.muted.withOpacity(0.5),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                controller.searchQuery.isNotEmpty
+                  return RefreshIndicator(
+                    onRefresh: () => eventList.refresh(),
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.only(bottom: 24),
+                      children: [
+                        _header(),
+                        if (upcoming.isEmpty && past.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 80),
+                            child: Center(
+                              child: Text(
+                                controller.searchQuery.isNotEmpty ||
+                                        controller.hasActiveFilters
                                     ? 'Nu s-au găsit evenimente'
                                     : 'Nu există evenimente',
                                 style: TextStyle(
-                                  fontSize: 16,
-                                  color: context.colors.muted.withOpacity(0.7),
+                                  color: context.colors.muted,
+                                  fontSize: 15,
                                 ),
                               ),
-                              if (!eventList.isLoading)
-                                TextButton(
-                                  onPressed: () => eventList.loadEvents(forceRefresh: true),
-                                  child: const Text('Încarcă evenimente'),
-                                ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
-                    ],
+                        if (upcoming.isNotEmpty) ...[
+                          const SectionTitle('Evenimente viitoare'),
+                          EventsList(
+                            events: upcoming,
+                            onEventTap: _openEvent,
+                            isAdmin: true,
+                            shrinkWrap: true,
+                            eventStats: controller.eventStats,
+                          ),
+                        ],
+                        if (past.isNotEmpty) ...[
+                          const SectionTitle('Evenimente trecute'),
+                          EventsList(
+                            events: past,
+                            onEventTap: _openEvent,
+                            isAdmin: true,
+                            shrinkWrap: true,
+                            eventStats: controller.eventStats,
+                          ),
+                        ],
+                      ],
+                    ),
                   );
                 },
               );

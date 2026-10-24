@@ -16,10 +16,14 @@ Moved from `lib/widgets/` (and `utils/snackbars.dart`) in UI redesign phase 1: `
 | `AppButton` | Button: label, variants primary / secondary / ghost, `leading`, `isLoading`, optional brand `backgroundColor`/`foregroundColor` |
 | `AppTextField` (+ `requiredValidator(label)`) | Text field: label, hint, helper, obscure toggle, leading/trailing, `maxLines` (null = multiline), readOnly+onTap for pickers |
 | `AppDropdown<T>` + `AppDropdownItem<T>` | Labelled dropdown matching `AppTextField` |
-| `EventPostCard`, `NewsPostCard` | Feed posts: big image with date/tag, title, details, one share icon; the whole post is tappable |
+| `EventPostCard`, `NewsPostCard` | Feed posts: big image with date/tag, title, details, one share icon; the whole post is tappable. `NewsPostCard.onDelete` (admins) adds a small red x at the end of the category and date row |
 | `showPeriodSheet` (+ `PeriodPicker`, `PeriodSelection`, `periodPresets`) | Period bottom sheet: quick presets (Oricând, Săptămâna asta, Luna asta) and a month calendar you swipe or step through with arrows (round days, filled ends in `tick`, tinted range); also used by the full-screen `DateRangeSelectionScreen` |
 | `SegmentedSwitch`, `FeedSearchBar`, `FeedIconButton`, `RemovableChip` | Feed chrome that scrolls with the feed: switch, search button that grows into a white, tick-bordered field (the leading widget shrinks away; it plays backwards on close), filter button with an active dot, removable active-filter pill |
 | `FadeInSection` | Fades a page section in while it drifts down into place; give sections increasing `order` for a top-down stagger. Plays once per section (stable key), skipped with reduced motion. Used on the player and admin Home |
+| `showFilterSheet` (`FilterGroup`, `FilterOption`, `FilterSheetResult`) | Admin filter bottom sheet: a period (presets, or "Dată personalizată" with the calendar sheet) plus any number of option groups, each with "Toate", applied together. A group can have an `onAdd` (a "+" chip after its options, to create one on the spot) and an `onOptionLongPress` (long press an option to delete it) |
+| `showTextInputDialog` | Asks for one line of text (trimmed); stays open while empty |
+| `TickOutlineButton` | Wide pill button with the tick ring (panel fill, icon and label), used for "Creează ..." in feed headers |
+| `SectionTitle` | Heading with a tick bar above a group of items |
 | `showAppDialog`, `AsyncState`, `MySnackBars` | Confirm dialog (destructive uses `danger`), loading/error/empty/content switcher, semantic snackbars |
 | `MyAppBar` | App bar with title, optional icon, `showDropdown` + `event` → shows `MenuWidget` |
 | `MenuWidget` (`menu.dart`) | Admin event actions overlay (edit / duplicate / start) |

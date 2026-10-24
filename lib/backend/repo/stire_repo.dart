@@ -14,6 +14,10 @@ class StireRepo {
     await docRef.set(stire.toJson());
   }
 
+  Future<void> deleteStire(String id) async {
+    await _firestore.collection('stire').doc(id).delete();
+  }
+
   Future<List<Stire>> getAllStire() async {
     try {
       QuerySnapshot snapshot = await _firestore.collection('stire').get();

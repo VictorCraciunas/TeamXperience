@@ -9,14 +9,12 @@ class StiriCarousel extends StatefulWidget {
   final bool isAdmin;
   final bool showBadge;
 
-
   const StiriCarousel({
     super.key,
     required this.stiri,
     required this.onStireTap,
     this.isAdmin = false,
-    required this.showBadge
-
+    required this.showBadge,
   });
 
   @override
@@ -36,9 +34,7 @@ class _StiriCarouselState extends State<StiriCarousel> {
   @override
   Widget build(BuildContext context) {
     if (widget.stiri.isEmpty) {
-      return const Center(
-        child: Text('No news available'),
-      );
+      return const Center(child: Text('No news available'));
     }
 
     return Column(
@@ -83,16 +79,17 @@ class _StiriCarouselState extends State<StiriCarousel> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
         widget.stiri.length,
-            (index) => AnimatedContainer(
+        (index) => AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           margin: const EdgeInsets.symmetric(horizontal: 4.0),
           width: _currentIndex == index ? 34.0 : 8.0,
           height: 8.0,
           decoration: BoxDecoration(
-            color: _currentIndex == index
-                ? context.colors.navy
-                : context.colors.insetBorder,
+            color:
+                _currentIndex == index
+                    ? context.colors.navy
+                    : context.colors.insetBorder,
             borderRadius: BorderRadius.circular(4.0),
           ),
         ),

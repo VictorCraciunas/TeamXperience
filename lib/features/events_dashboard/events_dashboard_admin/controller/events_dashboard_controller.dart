@@ -6,9 +6,12 @@ import '../../../../model/event.dart';
 import '../../../../state_management/events_state_management.dart';
 import '../../events_filter_service.dart';
 
+/// Which events the admin list shows.
+enum EventStatusFilter { upcoming, past }
+
 class EventsDashboardController extends ChangeNotifier {
   final FilterService _filterService = FilterService();
-  final TeamRepo _teamRepo = TeamRepo();
+  late final TeamRepo _teamRepo = TeamRepo();
 
   List<Event> _searchResults = [];
   String _searchQuery = '';
@@ -18,21 +21,27 @@ class EventsDashboardController extends ChangeNotifier {
 
   // Filter state
   EventType? _selectedEventType;
+  EventStatusFilter? _selectedStatus;
   DateTime? _startDate;
   DateTime? _endDate;
 
   // Getters
   String get searchQuery => _searchQuery;
   EventType? get selectedEventType => _selectedEventType;
+  EventStatusFilter? get selectedStatus => _selectedStatus;
   DateTime? get startDate => _startDate;
   DateTime? get endDate => _endDate;
   Map<String, Map<String, int>> get eventStats => _eventStats;
 
-  bool get hasActiveFilters => _selectedEventType != null || _startDate != null || _endDate != null;
-
+  bool get hasActiveFilters =>
+      _selectedEventType != null ||
+      _selectedStatus != null ||
+      _startDate != null ||
+      _endDate != null;
 
   Map<String, dynamic> get currentFilters => {
     'eventType': _selectedEventType,
+    'status': _selectedStatus,
     'startDate': _startDate,
     'endDate': _endDate,
   };
@@ -59,6 +68,7 @@ class EventsDashboardController extends ChangeNotifier {
 
   /// Get displayed upcoming events (with search applied if active)
   List<Event> getDisplayedUpcomingEvents(EventList eventList) {
+    if (_selectedStatus == EventStatusFilter.past) return [];
     if (_searchQuery.isNotEmpty) {
       // Filter search results to only upcoming events
       return _searchResults.where((event) {
@@ -71,6 +81,7 @@ class EventsDashboardController extends ChangeNotifier {
 
   /// Get displayed past events (with search applied if active)
   List<Event> getDisplayedPastEvents(EventList eventList) {
+    if (_selectedStatus == EventStatusFilter.upcoming) return [];
     if (_searchQuery.isNotEmpty) {
       // Filter search results to only past events
       return _searchResults.where((event) {
@@ -81,8 +92,10 @@ class EventsDashboardController extends ChangeNotifier {
     return getFilteredPastEvents(eventList);
   }
 
-  bool hasUpcomingEvents(EventList eventList) => getDisplayedUpcomingEvents(eventList).isNotEmpty;
-  bool hasPastEvents(EventList eventList) => getDisplayedPastEvents(eventList).isNotEmpty;
+  bool hasUpcomingEvents(EventList eventList) =>
+      getDisplayedUpcomingEvents(eventList).isNotEmpty;
+  bool hasPastEvents(EventList eventList) =>
+      getDisplayedPastEvents(eventList).isNotEmpty;
 
   void searchEvents(String query, EventList eventList) {
     _searchQuery = query.trim();
@@ -112,6 +125,7 @@ class EventsDashboardController extends ChangeNotifier {
   void updateFilters(Map<String, dynamic>? filterData) {
     if (filterData != null) {
       _selectedEventType = filterData['eventType'];
+      _selectedStatus = filterData['status'];
       _startDate = filterData['startDate'];
       _endDate = filterData['endDate'];
       notifyListeners();
@@ -120,6 +134,7 @@ class EventsDashboardController extends ChangeNotifier {
 
   void clearFilters() {
     _selectedEventType = null;
+    _selectedStatus = null;
     _startDate = null;
     _endDate = null;
     notifyListeners();
@@ -127,6 +142,11 @@ class EventsDashboardController extends ChangeNotifier {
 
   void clearEventTypeFilter() {
     _selectedEventType = null;
+    notifyListeners();
+  }
+
+  void clearStatusFilter() {
+    _selectedStatus = null;
     notifyListeners();
   }
 
@@ -142,12 +162,12 @@ class EventsDashboardController extends ChangeNotifier {
       try {
         final teams = await _teamRepo.getAllTeamsForEvent(event.eventId);
         final nrTeams = teams.length;
-        final nrPerson = teams.fold<int>(0, (sum, team) => sum + team.numberOfMembers);
+        final nrPerson = teams.fold<int>(
+          0,
+          (sum, team) => sum + team.numberOfMembers,
+        );
 
-        _eventStats[event.eventId] = {
-          'nrTeams': nrTeams,
-          'nrPerson': nrPerson,
-        };
+        _eventStats[event.eventId] = {'nrTeams': nrTeams, 'nrPerson': nrPerson};
       } catch (e) {
         // If error fetching teams, default to 0
         _eventStats[event.eventId] = {'nrTeams': 0, 'nrPerson': 0};

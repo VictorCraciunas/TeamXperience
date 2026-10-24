@@ -18,6 +18,7 @@ class NewsPostCard extends StatelessWidget {
     required this.onShare,
     this.imageUrl,
     this.tag,
+    this.onDelete,
   });
 
   final String title;
@@ -31,11 +32,15 @@ class NewsPostCard extends StatelessWidget {
   /// A small label on the image, for example "Privată".
   final String? tag;
 
+  /// When set (admins), a small x in the top right of the image calls it.
+  final VoidCallback? onDelete;
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final url = imageUrl;
     final label = tag;
+    final delete = onDelete;
     final fallback = ColoredBox(color: colors.navy);
 
     return Material(
@@ -51,23 +56,74 @@ class NewsPostCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(14, 10, 14, 8),
+              padding: EdgeInsets.fromLTRB(
+                14,
+                delete == null ? 10 : 2,
+                delete == null ? 14 : 4,
+                delete == null ? 8 : 0,
+              ),
               child: Row(
                 children: [
-                  Flexible(
-                    child: Text(
-                      categoryLabel,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: colors.accent, fontSize: 12, fontWeight: FontWeight.w600),
+                  // All the free width goes to this group, so the x is pushed
+                  // to the end of the row.
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            categoryLabel,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: colors.accent,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '  ·  ',
+                          style: TextStyle(color: colors.muted, fontSize: 12),
+                        ),
+                        Text(
+                          dateLabel,
+                          maxLines: 1,
+                          style: TextStyle(color: colors.muted, fontSize: 12),
+                        ),
+                      ],
                     ),
                   ),
-                  Text('  ·  ', style: TextStyle(color: colors.muted, fontSize: 12)),
-                  Text(
-                    dateLabel,
-                    maxLines: 1,
-                    style: TextStyle(color: colors.muted, fontSize: 12),
-                  ),
+                  if (delete != null) ...[
+                    Tooltip(
+                      message: 'Șterge știrea',
+                      child: InkWell(
+                        customBorder: const CircleBorder(),
+                        onTap: delete,
+                        child: SizedBox(
+                          width: 36,
+                          height: 36,
+                          child: Center(
+                            child: DecoratedBox(
+                              key: const ValueKey('news-delete-circle'),
+                              decoration: BoxDecoration(
+                                color: colors.danger,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: Icon(
+                                  Icons.close,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -79,11 +135,11 @@ class NewsPostCard extends StatelessWidget {
                   (url == null || url.isEmpty)
                       ? fallback
                       : CachedNetworkImage(
-                          imageUrl: url,
-                          fit: BoxFit.cover,
-                          placeholder: (_, __) => fallback,
-                          errorWidget: (_, __, ___) => fallback,
-                        ),
+                        imageUrl: url,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => fallback,
+                        errorWidget: (_, __, ___) => fallback,
+                      ),
                   if (label != null)
                     Positioned(
                       right: 10,
@@ -94,10 +150,17 @@ class NewsPostCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(AppRadius.pill),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           child: Text(
                             label,
-                            style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
@@ -118,14 +181,22 @@ class NewsPostCard extends StatelessWidget {
                           title,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: colors.text, fontSize: 16, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            color: colors.text,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           preview,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: colors.muted, fontSize: 13, height: 1.35),
+                          style: TextStyle(
+                            color: colors.muted,
+                            fontSize: 13,
+                            height: 1.35,
+                          ),
                         ),
                       ],
                     ),
@@ -133,7 +204,11 @@ class NewsPostCard extends StatelessWidget {
                   IconButton(
                     onPressed: onShare,
                     tooltip: 'Distribuie',
-                    icon: Icon(Icons.share_outlined, color: colors.text, size: 22),
+                    icon: Icon(
+                      Icons.share_outlined,
+                      color: colors.text,
+                      size: 22,
+                    ),
                   ),
                 ],
               ),

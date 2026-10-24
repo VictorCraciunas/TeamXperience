@@ -19,21 +19,20 @@ class NewsList extends ChangeNotifier {
   // Getters
   List<Stire> get stireList => List.unmodifiable(_stireList);
 
-
   List<Stire> getNewsByType(StireType type) {
-    return _stireList.where((s) =>
-    s.type == type && s.publicationDate != null
-    ).toList()..sort((a, b) =>
-        b.publicationDate!.compareTo(a.publicationDate!)
-    );
+    return _stireList
+        .where((s) => s.type == type && s.publicationDate != null)
+        .toList()
+      ..sort((a, b) => b.publicationDate!.compareTo(a.publicationDate!));
   }
 
   List<Stire> getNewsByCategory(String categoryName) {
-    return _stireList.where((s) =>
-    s.category?.name == categoryName && s.publicationDate != null
-    ).toList()..sort((a, b) =>
-        b.publicationDate!.compareTo(a.publicationDate!)
-    );
+    return _stireList
+        .where(
+          (s) => s.category?.name == categoryName && s.publicationDate != null,
+        )
+        .toList()
+      ..sort((a, b) => b.publicationDate!.compareTo(a.publicationDate!));
   }
 
   // Get all news sorted by most recent first (all will be in the past)
@@ -48,18 +47,26 @@ class NewsList extends ChangeNotifier {
   }
 
   // Get news from a specific time period
-  List<Stire> getNewsFromPeriod({required DateTime startDate, required DateTime endDate}) {
-    return _stireList.where((s) =>
-    s.publicationDate != null &&
-        s.publicationDate!.isAfter(startDate) &&
-        s.publicationDate!.isBefore(endDate)
-    ).toList()..sort((a, b) => b.publicationDate!.compareTo(a.publicationDate!));
+  List<Stire> getNewsFromPeriod({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) {
+    return _stireList
+        .where(
+          (s) =>
+              s.publicationDate != null &&
+              s.publicationDate!.isAfter(startDate) &&
+              s.publicationDate!.isBefore(endDate),
+        )
+        .toList()
+      ..sort((a, b) => b.publicationDate!.compareTo(a.publicationDate!));
   }
 
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get hasData => _stireList.isNotEmpty;
-  bool get needsRefresh => _lastFetch == null ||
+  bool get needsRefresh =>
+      _lastFetch == null ||
       DateTime.now().difference(_lastFetch!).inMinutes > 5;
 
   // News operations
@@ -103,6 +110,20 @@ class NewsList extends ChangeNotifier {
     }
   }
 
+  /// Deletes the news and removes it from the list once that worked.
+  Future<void> deleteStire(String id) async {
+    clearError();
+
+    try {
+      await _stireService.deleteStire(id);
+      _stireList.removeWhere((s) => s.id == id);
+      notifyListeners();
+    } catch (e) {
+      _setError(e.toString());
+      rethrow;
+    }
+  }
+
   Future<void> updateStire(Stire stire) async {
     clearError();
 
@@ -117,11 +138,8 @@ class NewsList extends ChangeNotifier {
     } catch (e) {
       _setError(e.toString());
       rethrow;
-    } finally {
-    }
+    } finally {}
   }
-
-
 
   // Query methods
   Stire? getStireById(String stireId) {
