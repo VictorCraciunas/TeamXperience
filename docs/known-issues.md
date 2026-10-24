@@ -32,6 +32,7 @@ Verify before fixing; none of these were reproduced. Roughly ordered by impact.
 - Hardcoded Cloud Run URL (`NetworkAPI`), public OSRM server, placeholder OSM user agent.
 
 ## Security (client-visible)
+- **Drafts are hidden only in the app.** `EventRepo.getAllEvents` reads every event document, drafts included, for every signed-in user, and the filtering is done in `EventList`. Real protection needs Firestore rules (or a query that excludes drafts); the rules are not in the repo, so check them in the Firebase console.
 - Admin = `users/{uid}.role == "ADMIN"`, checked only client-side at login. Without Firestore rules (none in repo) any signed-in user could write that field or any event/team data. Rules must be reviewed in the Firebase console.
 - `sendNotification` HTTP function has no authentication (anyone with the URL can POST and push to all users).
 - `firebase_options.dart` / `google-services.json` are public client config by design, but the project's rules decide what they can access.
