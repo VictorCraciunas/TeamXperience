@@ -1,6 +1,5 @@
 lib/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/create_button/create_button_component.dart 1
 lib/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/create_code/create_code_component.dart 1
-lib/features/admin/create_event/create_missions_and_puzzles/widgets/my_list_component.dart 1
 lib/features/calendar/screen/calendar_screen.dart 4
 lib/features/chat/widgets/chat_composer.dart 4
 lib/features/chat/widgets/full_screen_image.dart 4

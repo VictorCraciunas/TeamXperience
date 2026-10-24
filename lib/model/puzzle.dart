@@ -22,6 +22,17 @@ class Puzzle {
 
   int get componentsCount => components.length;
 
+  /// The same puzzle under another number.
+  Puzzle withId(String newId) => Puzzle(
+    id: newId,
+    components: components,
+    type: type,
+    code: code,
+    latitude: latitude,
+    longitude: longitude,
+    indiciu: indiciu,
+  );
+
   Component addComponent(Component component) {
     components.add(component);
     return component;
