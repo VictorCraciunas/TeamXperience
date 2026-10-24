@@ -56,7 +56,12 @@ class NewsPostCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(14, 10, 14, 8),
+              padding: EdgeInsets.fromLTRB(
+                14,
+                delete == null ? 10 : 2,
+                delete == null ? 14 : 4,
+                delete == null ? 8 : 0,
+              ),
               child: Row(
                 children: [
                   Flexible(
@@ -80,6 +85,25 @@ class NewsPostCard extends StatelessWidget {
                     maxLines: 1,
                     style: TextStyle(color: colors.muted, fontSize: 12),
                   ),
+                  if (delete != null) ...[
+                    const Spacer(),
+                    Tooltip(
+                      message: 'Șterge știrea',
+                      child: InkWell(
+                        customBorder: const CircleBorder(),
+                        onTap: delete,
+                        child: SizedBox(
+                          width: 36,
+                          height: 36,
+                          child: Icon(
+                            Icons.close,
+                            size: 18,
+                            color: colors.danger,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -98,7 +122,7 @@ class NewsPostCard extends StatelessWidget {
                       ),
                   if (label != null)
                     Positioned(
-                      left: 10,
+                      right: 10,
                       top: 10,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
@@ -116,31 +140,6 @@ class NewsPostCard extends StatelessWidget {
                               color: Colors.white,
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (delete != null)
-                    Positioned(
-                      right: 6,
-                      top: 6,
-                      child: Tooltip(
-                        message: 'Șterge știrea',
-                        child: Material(
-                          color: const Color(0x99000000),
-                          shape: const CircleBorder(),
-                          child: InkWell(
-                            customBorder: const CircleBorder(),
-                            onTap: delete,
-                            child: const SizedBox(
-                              width: 40,
-                              height: 40,
-                              child: Icon(
-                                Icons.close,
-                                size: 18,
-                                color: Colors.white,
-                              ),
                             ),
                           ),
                         ),

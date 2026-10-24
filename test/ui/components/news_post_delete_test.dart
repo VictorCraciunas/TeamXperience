@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/ui/components/news/news_post_card.dart';
+import 'package:teamxperience/ui/theme/app_colors.dart';
 
 import '../pump_ui.dart';
 
@@ -23,36 +24,45 @@ void main() {
     expect(find.byTooltip('Șterge știrea'), findsNothing);
   });
 
-  testWidgets('a small x sits in the top right of the image and reports taps', (tester) async {
+  testWidgets('a small red x sits at the end of the category and date row', (tester) async {
     var deletes = 0;
     var opens = 0;
     await pumpUi(tester, _card(onDelete: () => deletes++, onTap: () => opens++));
 
     final x = find.byTooltip('Șterge știrea');
     expect(x, findsOneWidget);
-    expect(find.byIcon(Icons.close), findsOneWidget);
 
+    final category = tester.getCenter(find.text('Anunț'));
+    final date = tester.getCenter(find.text('20 oct 2026'));
+    final xCenter = tester.getCenter(x);
     final card = tester.getRect(find.byType(NewsPostCard));
-    final center = tester.getCenter(x);
-    expect(center.dx, greaterThan(card.center.dx), reason: 'right half');
-    expect(center.dy, lessThan(card.top + 140), reason: 'near the top of the card');
+
+    expect(xCenter.dy, closeTo(category.dy, 6), reason: 'same row as the category');
+    expect(xCenter.dx, greaterThan(date.dx), reason: 'after the date');
+    expect(xCenter.dx, greaterThan(card.right - 60), reason: 'at the end of the row');
+
+    final icon = tester.widget<Icon>(find.descendant(of: x, matching: find.byType(Icon)));
+    expect(icon.color, AppColors.light.danger);
+    expect(icon.size, lessThanOrEqualTo(20), reason: 'small');
 
     await tester.tap(x);
     expect(deletes, 1);
     expect(opens, 0, reason: 'the x must not open the post');
   });
 
-  testWidgets('the delete button is at least 40 px so it can be hit', (tester) async {
+  testWidgets('the red x stays easy to hit', (tester) async {
     await pumpUi(tester, _card(onDelete: () {}));
     final size = tester.getSize(find.byTooltip('Șterge știrea'));
-    expect(size.width, greaterThanOrEqualTo(40));
-    expect(size.height, greaterThanOrEqualTo(40));
+    expect(size.width, greaterThanOrEqualTo(36));
+    expect(size.height, greaterThanOrEqualTo(36));
   });
 
-  testWidgets('the tag moves to the left so it does not sit under the x', (tester) async {
+  testWidgets('the tag stays in the top right of the image, away from the x', (tester) async {
     await pumpUi(tester, _card(onDelete: () {}, tag: 'Privată'));
     final tag = tester.getCenter(find.text('Privată'));
+    final card = tester.getRect(find.byType(NewsPostCard));
+    expect(tag.dx, greaterThan(card.center.dx));
     final x = tester.getCenter(find.byTooltip('Șterge știrea'));
-    expect(tag.dx, lessThan(x.dx));
+    expect(tag.dy, greaterThan(x.dy), reason: 'the tag is on the image, below the row');
   });
 }
