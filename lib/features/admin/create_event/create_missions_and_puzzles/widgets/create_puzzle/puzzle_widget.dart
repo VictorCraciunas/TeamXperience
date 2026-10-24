@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_puzzle/puzzle_controller.dart';
-import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/save_puzzle/save_puzzle.dart';
-import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/puzzle.dart';
@@ -17,14 +15,12 @@ class PuzzleWidget extends StatefulWidget {
   final Puzzle puzzle;
   final String mode;
   final AddMissionsController addMissionsController;
-  final VoidCallback onSave;
 
   const PuzzleWidget({
     super.key,
     required this.puzzle,
     required this.mode,
     required this.addMissionsController,
-    required this.onSave,
   });
 
   @override
@@ -145,14 +141,12 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
                       index < widget.puzzle.components.length &&
                       widget.puzzle.components[index].type ==
                           ComponentType.code;
-                  final isEditMode = !controller.isDone;
-
                   Widget child = Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: controller.puzzleComponents[index],
                   );
 
-                  if (isEditMode && isCodeComponent) {
+                  if (isCodeComponent) {
                     return Stack(
                       children: [
                         IgnorePointer(child: child),
@@ -167,8 +161,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
                   }
 
                   return GestureDetector(
-                    onLongPress:
-                        isEditMode ? () => _showEditDialog(index) : null,
+                    onLongPress: () => _showEditDialog(index),
                     child: child,
                   );
                 }),
@@ -182,7 +175,7 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
         // adauga componenta
         Column(
           children: [
-            if (!controller.isDone) ...[
+            ...[
               Center(
                 child: SizedBox(
                   width: 263,
@@ -222,47 +215,6 @@ class _PuzzleWidgetState extends State<PuzzleWidget> {
                       widget.puzzle.deleteComponents();
                     });
                   },
-                ),
-              ),
-              const SizedBox(height: 150),
-
-              SizedBox(
-                width: 222,
-                child: AppButton(
-                  label: 'Salvează puzzle',
-                  onPressed: () {
-                    showModalBottomSheet(
-                      isScrollControlled: true,
-                      context: context,
-                      builder:
-                          (context) => SavePuzzle(
-                            puzzle: widget.puzzle,
-                            onSave: () {
-                              setState(() {
-                                controller.isDone = true;
-                              });
-                              widget.onSave();
-                            },
-                          ),
-                    );
-                  },
-                ),
-              ),
-            ] else ...[
-              // This is the else case - shown when controller.isDone is true
-              const SizedBox(height: 20),
-              Center(
-                child: SizedBox(
-                  width: 200,
-                  child: AppButton(
-                    label: 'Edit Puzzle',
-                    onPressed: () {
-                      setState(() {
-                        controller.isDone = false; // Allow editing again
-                      });
-                      widget.onSave();
-                    },
-                  ),
                 ),
               ),
             ],
