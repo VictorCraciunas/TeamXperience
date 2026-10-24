@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
-import 'package:teamxperience/ui/components/inputs/color_swatch_row.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:intl/intl.dart';
 import 'package:teamxperience/features/admin/create_event/common_widgets/upload_image.dart';
@@ -18,17 +17,6 @@ class CreateEventPage extends StatefulWidget {
   @override
   State<CreateEventPage> createState() => _CreateEventPageState();
 }
-
-/// Colours offered for the look of the game. The first row is for backgrounds,
-/// the second for buttons, links and highlights.
-const _backgroundSwatches = [
-  '#050805',
-  '#0B0A24',
-  '#2B0F12',
-  '#E8D5A8',
-  '#FFFFFF',
-];
-const _accentSwatches = ['#33FF66', '#3FD0FF', '#FFE94A', '#FF3EA5', '#2AA5A9'];
 
 class _CreateEventPageState extends State<CreateEventPage> {
   late CreateEventController controller;
@@ -304,44 +292,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       labelText: 'Adaugă imagine fundal misiuni (opțional)',
                       imageUrl: controller.getTaskBackgroundImageToDisplay(),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Aspectul jocului: what new components start with.
-                  ColorSwatchRow(
-                    label: 'Culoare de fundal',
-                    swatches: _backgroundSwatches,
-                    selected: controller.backgroundColor,
-                    onChanged:
-                        (hex) =>
-                            setState(() => controller.backgroundColor = hex),
-                  ),
-                  const SizedBox(height: 16),
-                  ColorSwatchRow(
-                    label: 'Culoare accent',
-                    swatches: _accentSwatches,
-                    selected: controller.accentColor,
-                    onChanged:
-                        (hex) => setState(() => controller.accentColor = hex),
-                  ),
-                  const SizedBox(height: 16),
-                  AppDropdown<String>(
-                    label: 'Font',
-                    hint: 'Implicit',
-                    items: const [
-                      AppDropdownItem<String>(
-                        value: 'Poppins',
-                        label: 'Poppins',
-                      ),
-                      AppDropdownItem<String>(
-                        value: 'Monospace',
-                        label: 'Monospace',
-                      ),
-                    ],
-                    value: controller.fontFamily,
-                    onChanged:
-                        (value) =>
-                            setState(() => controller.fontFamily = value),
                   ),
                   const SizedBox(height: 20),
 

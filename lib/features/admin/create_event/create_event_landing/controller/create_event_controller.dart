@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/model/event.dart';
-import 'package:teamxperience/model/event_defaults.dart';
 import 'package:teamxperience/service/event_service/event_completeness.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/ui/components/feedback/snackbars.dart';
@@ -42,11 +41,6 @@ class CreateEventController {
   // EventType field
   EventType? selectedType;
 
-  /// The look every new component starts with (hex colours, a font name).
-  String? backgroundColor;
-  String? accentColor;
-  String? fontFamily;
-
   Event? originalEvent;
 
   /// The draft saved from this form, so saving again updates it instead of
@@ -68,9 +62,6 @@ class CreateEventController {
       lungimeController.text = event.lungimeTraseu ?? "";
       durataController.text = event.durata ?? "";
       dificultateController.text = event.dificultate ?? "";
-      backgroundColor = event.defaults?.backgroundColor;
-      accentColor = event.defaults?.accentColor;
-      fontFamily = event.defaults?.fontFamily;
       if (dateEvent != null) {
         dateEventController.text = _format(dateEvent!);
       }
@@ -93,17 +84,6 @@ class CreateEventController {
   static String _format(DateTime date) =>
       DateFormat('yyyy-MM-dd HH:mm').format(date);
 
-  EventDefaults? _defaults() {
-    final defaults = EventDefaults(
-      backgroundColor: backgroundColor,
-      accentColor: accentColor,
-      fontFamily: fontFamily,
-      // The text colour is not set from this form; keep an existing one.
-      textColor: originalEvent?.defaults?.textColor,
-    );
-    return defaults.toJson().isEmpty ? null : defaults;
-  }
-
   /// Copies what the form holds onto [event]. Nothing is required: empty fields
   /// stay empty, so a half filled form can be saved as a draft.
   void _fill(Event event) {
@@ -121,8 +101,7 @@ class CreateEventController {
       ..dateDeadlineEnrollment = deadlineEnrollment
       ..dateStartEnrollment = dateStartEnrollement
       ..landingImageUrl = landingImageFile?.path
-      ..taskBackgroundImageUrl = taskBackgroundImageFile?.path
-      ..defaults = _defaults();
+      ..taskBackgroundImageUrl = taskBackgroundImageFile?.path;
   }
 
   /// A new event from the form (it gets an id when saved). If the form was
