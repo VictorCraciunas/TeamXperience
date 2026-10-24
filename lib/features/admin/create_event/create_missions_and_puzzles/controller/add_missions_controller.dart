@@ -1,8 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_mission/mission_widget.dart';
 import 'package:teamxperience/model/mission.dart';
+import 'package:teamxperience/model/puzzle.dart';
+import 'package:teamxperience/service/event_service/event_completeness.dart';
 import 'package:teamxperience/ui/components/feedback/snackbars.dart';
 
 import '../../../../../exceptions/events_exceptions.dart';
@@ -21,11 +22,6 @@ String publishFailureMessage(EventNotPublishableException e) {
 }
 
 class AddMissionsController {
-
-  int selectedMission = 0;
-
-  List<MissionWidget> missionWidgets = [];
-  List<bool> isMissionDone = [];
   final VoidCallback? onStateChanged;
 
   late Event event;
@@ -34,97 +30,90 @@ class AddMissionsController {
   /// True when the event was a draft: saving then publishes it.
   final bool isDraft;
 
-  AddMissionsController(this.event, this.mode, {this.onStateChanged, this.isDraft = false}){
-    buildMissionWidgets(event.nrMissions, mode);
+  AddMissionsController(this.event, this.mode, {this.onStateChanged, this.isDraft = false}) {
+    if (mode == 'blueprint') _copyMissionsWithoutAnswers();
   }
 
+  /// A copy of an old event keeps its missions and puzzles but not the answers.
+  /// The missions are copied first so the old event is left as it was.
+  void _copyMissionsWithoutAnswers() {
+    event.missions = [
+      for (final mission in event.missions)
+        Mission(
+          id: mission.id,
+          puzzles: [
+            for (final puzzle in mission.puzzles)
+              Puzzle.fromMap(puzzle.toJson())
+                ..type = null
+                ..code = null
+                ..latitude = null
+                ..longitude = null
+                ..indiciu = null,
+          ],
+        ),
+    ];
+    event.nrMissions = event.missions.length;
+  }
 
   void addNewMission() {
-      event.nrMissions += 1; // Increment the count
-
-      Mission missionAdded = Mission(id: event.missions.length.toString());
-      event.addMission(missionAdded);
-      isMissionDone.add(false);
-
-      addMissionWidget(missionAdded, "create");
-
+    event.addMission(Mission(id: event.missions.length.toString()));
+    event.nrMissions = event.missions.length;
+    onStateChanged?.call();
   }
 
-  void addMissionWidget(Mission missionAdded, String missionMode){
-    missionWidgets.add(MissionWidget(
-      currentMission: missionAdded,
-      mode: missionMode,
-      addMissionsController: this,
-      missionDone: (bool isDone) {
-        int missionIndex = int.parse(missionAdded.id);
-        isMissionDone[missionIndex] = isDone;
-        print (isMissionDone[missionIndex]) ;
-        onStateChanged?.call();
-      },
-    ));
+  /// Removes a mission and numbers the ones after it again.
+  void removeMission(int index) {
+    if (index < 0 || index >= event.missions.length) return;
+
+    final left = [...event.missions]..removeAt(index);
+    event.missions = [
+      for (var i = 0; i < left.length; i++) Mission(id: i.toString(), puzzles: left[i].puzzles),
+    ];
+    event.nrMissions = event.missions.length;
+    onStateChanged?.call();
   }
 
-
-  void buildMissionWidgets(int nrMissions, String mode) {
-      for (int i = 0; i < nrMissions; i ++){
-          addMissionWidget(event.missions[i], mode);
-          bool missionComplete = _isMissionComplete(event.missions[i]);
-          isMissionDone.add(missionComplete);
-
-      }
+  bool isDone(int index) {
+    if (index < 0 || index >= event.missions.length) return false;
+    return isMissionComplete(event.missions[index]);
   }
-  bool _isMissionComplete(Mission mission) {
-    // If mission has no puzzles, it's not complete
-    if (mission.puzzles.isEmpty) {
-      return false;
-    }
 
-    // Check if all puzzles have a type set
-    for (var puzzle in mission.puzzles) {
-      if (puzzle.type == null) {
-        return false;
-      }
-    }
+  /// What the mission card says: the first thing missing, or that it is ready.
+  String statusText(int index) {
+    if (index < 0 || index >= event.missions.length) return '';
 
-    return true;
+    final problems = missionProblems(event.missions[index]);
+    if (problems.isEmpty) return 'Gata';
+    final more = problems.length > 1 ? ' · încă ${problems.length - 1}' : '';
+    return '${problems.first.text}$more';
   }
-  Future<void> saveEvent(BuildContext context) async {
+
+  /// Creates, updates or publishes the event. True when it worked, so the
+  /// screen knows whether to leave.
+  Future<bool> saveEvent(BuildContext context) async {
+    _showProgress(context);
+    final eventList = context.read<EventList>();
+
     try {
-
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-      );
-
-      final eventList = context.read<EventList>();
-
       if (isDraft) {
-        // Publish the draft: refused with the list of what is missing if not complete.
+        // Refused with the list of what is missing if the event is not complete.
         await eventList.publishEvent(event);
-        if (!context.mounted) return;
+        if (!context.mounted) return true;
         Navigator.of(context).pop();
         MySnackBars.successSnackBar(context, title: "Eveniment publicat !", message: "Evenimentul este acum vizibil pentru jucători");
       } else if (mode == 'edit') {
-        // Update existing event
         await eventList.updateEvent(event);
-        if (!context.mounted) return;
+        if (!context.mounted) return true;
         Navigator.of(context).pop();
         MySnackBars.successSnackBar(context, title: "Eveniment editat !", message: "Eveniment editat cu success");
       } else {
-        // Create new event (EventService will handle all image uploads)
+        // EventService handles all image uploads.
         await eventList.createEvent(event);
-        if (!context.mounted) return;
+        if (!context.mounted) return true;
         Navigator.of(context).pop();
-
         MySnackBars.successSnackBar(context, title: "Eveniment create !", message: "Eveniment creat cu success");
-
       }
-
+      return true;
     } on EventNotPublishableException catch (e) {
       if (context.mounted) {
         Navigator.of(context).pop(); // the progress dialog
@@ -134,15 +123,41 @@ class AddMissionsController {
           message: publishFailureMessage(e),
         );
       }
+      return false;
     } catch (e) {
-      print('Error saving event: $e');
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save event: $e')),
-        );
+        Navigator.of(context).pop(); // the progress dialog
+        MySnackBars.warningSnackBar(context, title: 'Nu s-a putut salva', message: '$e');
       }
+      return false;
     }
   }
 
+  /// Keeps the event as a draft, however much of it is filled in.
+  Future<bool> saveDraft(BuildContext context) async {
+    _showProgress(context);
+    final eventList = context.read<EventList>();
 
+    try {
+      await eventList.saveDraft(event, wizardStep: 2);
+      if (!context.mounted) return true;
+      Navigator.of(context).pop();
+      MySnackBars.successSnackBar(context, title: 'Ciornă salvată', message: 'O găsești pe pagina principală');
+      return true;
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        MySnackBars.warningSnackBar(context, title: 'Nu s-a putut salva ciorna', message: '$e');
+      }
+      return false;
+    }
+  }
+
+  void _showProgress(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+  }
 }
