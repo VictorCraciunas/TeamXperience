@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/controller/add_missions_controller.dart';
+import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/screen/mission_page.dart';
+import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/mission_list/mission_card.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
-
-import '../widgets/my_list_component.dart';
+import 'package:teamxperience/ui/components/feedback/app_dialog.dart';
+import 'package:teamxperience/ui/ui.dart';
 
 class AddMissionsPage extends StatefulWidget {
   const AddMissionsPage({super.key});
@@ -15,157 +16,114 @@ class AddMissionsPage extends StatefulWidget {
 }
 
 class _AddMissionsPageState extends State<AddMissionsPage> {
-  late AddMissionsController _addMissionsController;
+  late AddMissionsController _controller;
   bool _initialized = false;
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    if (!_initialized) {
-      final args =
-          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
-      final Event event = args?['event'];
-      final String mode = args?['mode'] ?? "create";
-      final bool isDraft = args?['isDraft'] ?? false;
+    if (_initialized) return;
 
-      _addMissionsController = AddMissionsController(
-        event,
-        mode,
-        isDraft: isDraft,
-        onStateChanged: () {
-          setState(() {}); // Rebuild UI when state changes
-        },
-      );
-      _initialized = true;
-    }
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final Event event = args?['event'];
+    _controller = AddMissionsController(
+      event,
+      args?['mode'] ?? 'create',
+      isDraft: args?['isDraft'] ?? false,
+      onStateChanged: () {
+        if (mounted) setState(() {});
+      },
+    );
+    _initialized = true;
+  }
+
+  bool get _isPublished => _controller.mode == 'edit' && !_controller.isDraft;
+
+  String get _primaryLabel {
+    if (_controller.isDraft) return 'Publică evenimentul';
+    if (_controller.mode == 'edit') return 'Actualizează eveniment';
+    return 'Creează eveniment';
+  }
+
+  Future<void> _openMission(int index) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => MissionPage(controller: _controller, index: index),
+      ),
+    );
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _confirmDelete(int index) async {
+    final ok = await showAppDialog(
+      context,
+      title: 'Ștergi misiunea ${index + 1}?',
+      message: 'Se șterg și puzzle-urile ei.',
+      confirmLabel: 'Șterge',
+      cancelLabel: 'Anulează',
+      destructive: true,
+    );
+    if (ok) _controller.removeMission(index);
+  }
+
+  void _goHome() {
+    Navigator.pushNamedAndRemoveUntil(context, Routes.adminHome, (_) => false);
+  }
+
+  Future<void> _save() async {
+    if (await _controller.saveEvent(context) && mounted) _goHome();
+  }
+
+  Future<void> _saveDraft() async {
+    if (await _controller.saveDraft(context) && mounted) _goHome();
   }
 
   @override
   Widget build(BuildContext context) {
+    final missions = _controller.event.missions;
+
     return Scaffold(
       backgroundColor: context.colors.page,
-      // resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        backgroundColor: context.colors.page,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: const BackButton(),
+        title: const Text('Misiuni'),
+      ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                SizedBox(
-                  height: 40,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _addMissionsController.event.nrMissions + 1,
-                    itemBuilder: (context, index) {
-                      if (index < _addMissionsController.event.nrMissions) {
-                        return GestureDetector(
-                          onLongPress: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  backgroundColor: context.colors.panel,
-                                  content: TextButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _addMissionsController.event.missions
-                                            .removeAt(index);
-                                        _addMissionsController.missionWidgets
-                                            .removeAt(index);
-                                        _addMissionsController.isMissionDone
-                                            .removeAt(index);
-                                        _addMissionsController
-                                            .event
-                                            .nrMissions--;
-                                        if (_addMissionsController
-                                                    .selectedMission >=
-                                                index &&
-                                            _addMissionsController
-                                                    .selectedMission >
-                                                0) {
-                                          _addMissionsController
-                                              .selectedMission--;
-                                        } else if (_addMissionsController
-                                            .event
-                                            .missions
-                                            .isEmpty) {
-                                          _addMissionsController
-                                              .selectedMission = 0;
-                                        }
-                                      });
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('delete'),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                          child: MyListComponent(
-                            index: index,
-                            type: "Misiunea",
-                            isSelected:
-                                _addMissionsController.selectedMission == index,
-                            isDone: _addMissionsController.isMissionDone[index],
-                            onTap: () {
-                              setState(() {
-                                _addMissionsController.selectedMission = index;
-                              });
-                            },
-                          ),
-                        );
-                      } else {
-                        return GestureDetector(
-                          onTap: () {
-                            _addMissionsController.addNewMission();
-                            setState(() {});
-                          },
-                          child: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: context.colors.accent,
-                                width: 2,
-                              ),
-                            ),
-                            child: Icon(
-                              Icons.add,
-                              color: context.colors.accent,
-                              size: 24,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
-
-                //missions widget
-                IndexedStack(
-                  index: _addMissionsController.selectedMission,
-                  children: _addMissionsController.missionWidgets,
-                ),
-
-                const SizedBox(height: 20),
-                AppButton(
-                  label: 'Creează eveniment',
-                  onPressed: () async {
-                    await _addMissionsController.saveEvent(context);
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      Routes.adminHome,
-                      (Route<dynamic> route) => false,
-                    );
-                  },
-                ),
-                const SizedBox(height: 30),
-              ],
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(AppSpacing.page, 8, AppSpacing.page, 30),
+          children: [
+            for (var i = 0; i < missions.length; i++) ...[
+              MissionCard(
+                index: i,
+                puzzleCount: missions[i].puzzles.length,
+                status: _controller.statusText(i),
+                done: _controller.isDone(i),
+                onTap: () => _openMission(i),
+                onDelete: () => _confirmDelete(i),
+              ),
+              const SizedBox(height: 10),
+            ],
+            AppButton(
+              label: 'Adaugă misiune',
+              variant: AppButtonVariant.secondary,
+              foregroundColor: context.colors.text,
+              onPressed: _controller.addNewMission,
             ),
-          ),
+            const SizedBox(height: 24),
+            AppButton(label: _primaryLabel, onPressed: _save),
+            if (!_isPublished) ...[
+              const SizedBox(height: 10),
+              AppButton(
+                label: 'Salvează ca ciornă',
+                variant: AppButtonVariant.secondary,
+                foregroundColor: context.colors.text,
+                onPressed: _saveDraft,
+              ),
+            ],
+          ],
         ),
       ),
     );
