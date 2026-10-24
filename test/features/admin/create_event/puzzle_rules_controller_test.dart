@@ -15,7 +15,6 @@ void main() {
           code: 'XTREME',
           indiciu: 'Uită-te în sus',
           maxAttempts: 5,
-          hintDelaySeconds: 60,
           wrongAnswerMessage: 'Aproape',
         ),
       );
@@ -23,7 +22,6 @@ void main() {
       expect(c.hintController.text, 'Uită-te în sus');
       expect(c.messageController.text, 'Aproape');
       expect(c.maxAttempts, 5);
-      expect(c.hintDelaySeconds, 60);
     });
 
     test('an empty puzzle gives empty fields', () {
@@ -84,14 +82,12 @@ void main() {
       expect(puzzle.longitude, isNull);
     });
 
-    test('attempts and hint delay are written, and cleared when unset', () {
-      final puzzle = Puzzle(id: '0', type: PuzzleType.code, maxAttempts: 3, hintDelaySeconds: 30);
+    test('attempts are written, and cleared when unset', () {
+      final puzzle = Puzzle(id: '0', type: PuzzleType.code, maxAttempts: 3);
       final c = _controller(puzzle)
-        ..maxAttempts = null
-        ..hintDelaySeconds = 180;
+        ..maxAttempts = null;
       c.apply();
       expect(puzzle.maxAttempts, isNull);
-      expect(puzzle.hintDelaySeconds, 180);
     });
   });
 
@@ -123,8 +119,7 @@ void main() {
     });
   });
 
-  test('the choices offered are the ones in the design', () {
+  test('the attempts offered are the ones in the design', () {
     expect(PuzzleRulesController.attemptChoices, [3, 5, null]);
-    expect(PuzzleRulesController.hintDelayChoices, [30, 60, 90, 180]);
   });
 }

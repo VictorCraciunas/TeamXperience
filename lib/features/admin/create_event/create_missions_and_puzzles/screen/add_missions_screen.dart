@@ -6,6 +6,7 @@ import 'package:teamxperience/features/admin/create_event/create_missions_and_pu
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
 import 'package:teamxperience/ui/components/feedback/app_dialog.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 class AddMissionsPage extends StatefulWidget {
@@ -84,13 +85,7 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
 
     return Scaffold(
       backgroundColor: context.colors.page,
-      appBar: AppBar(
-        backgroundColor: context.colors.page,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: const BackButton(),
-        title: const Text('Misiuni'),
-      ),
+      appBar: const MyAppBar(appBarText: 'Misiuni'),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(AppSpacing.page, 8, AppSpacing.page, 30),

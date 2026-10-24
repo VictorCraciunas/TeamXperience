@@ -92,19 +92,6 @@ class _PuzzleRulesFormState extends State<PuzzleRulesForm> {
           maxLines: null,
           onChanged: (_) => _changed(),
         ),
-        gap,
-        ChoiceChipRow<int?>(
-          label: 'Indiciul apare după',
-          options: [
-            for (final seconds in PuzzleRulesController.hintDelayChoices)
-              ChoiceOption<int?>(seconds, _delayLabel(seconds)),
-          ],
-          selected: _controller.hintDelaySeconds,
-          onChanged: (value) {
-            _controller.hintDelaySeconds = value;
-            _changed();
-          },
-        ),
         if (type == PuzzleType.code) ...[
           gap,
           ChoiceChipRow<int?>(
@@ -129,11 +116,5 @@ class _PuzzleRulesFormState extends State<PuzzleRulesForm> {
         ],
       ],
     );
-  }
-
-  static String _delayLabel(int seconds) {
-    if (seconds < 60) return '$seconds s';
-    if (seconds % 60 == 0) return '${seconds ~/ 60} min';
-    return '$seconds s';
   }
 }

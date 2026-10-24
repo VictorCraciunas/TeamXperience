@@ -12,7 +12,6 @@ class PuzzleRulesController {
     hintController.text = puzzle.indiciu ?? '';
     messageController.text = puzzle.wrongAnswerMessage ?? '';
     maxAttempts = puzzle.maxAttempts;
-    hintDelaySeconds = puzzle.hintDelaySeconds;
   }
 
   final Puzzle puzzle;
@@ -26,12 +25,8 @@ class PuzzleRulesController {
   /// Null means unlimited.
   int? maxAttempts;
 
-  /// Null means the game's standard delay.
-  int? hintDelaySeconds;
-
   /// The attempts offered; null is "Nelimitat".
   static const attemptChoices = <int?>[3, 5, null];
-  static const hintDelayChoices = [30, 60, 90, 180];
 
   String? _text(TextEditingController controller) {
     final value = controller.text.trim();
@@ -65,7 +60,6 @@ class PuzzleRulesController {
     puzzle.wrongAnswerMessage = _text(messageController);
     puzzle.indiciu = _text(hintController);
     puzzle.maxAttempts = maxAttempts;
-    puzzle.hintDelaySeconds = hintDelaySeconds;
 
     if (type == PuzzleType.geolocation) {
       puzzle.latitude = latitudeError == null ? _number(latitudeController) : null;

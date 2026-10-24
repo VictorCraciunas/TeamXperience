@@ -13,6 +13,9 @@ class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Event? event;
   final Widget? trailing;
 
+  /// Shown under the title, for example a TabBar.
+  final PreferredSizeWidget? bottom;
+
   const MyAppBar({
     super.key,
     required this.appBarText,
@@ -21,13 +24,15 @@ class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.showDropdown = false,
     this.event,
     this.trailing,
+    this.bottom,
   });
 
   @override
   State<MyAppBar> createState() => _MyAppBarState();
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize =>
+      Size.fromHeight(kToolbarHeight + (bottom?.preferredSize.height ?? 0));
 }
 
 class _MyAppBarState extends State<MyAppBar> {
@@ -140,6 +145,7 @@ class _MyAppBarState extends State<MyAppBar> {
               ),
             ),
       centerTitle: true,
+      bottom: widget.bottom,
       actions: [
         if (widget.trailing != null)
           Padding(

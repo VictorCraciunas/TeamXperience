@@ -56,23 +56,19 @@ void main() {
     expect(find.text('sus'), findsOneWidget);
   });
 
-  testWidgets('picking attempts and hint delay writes them onto the puzzle', (tester) async {
+  testWidgets('picking attempts writes them onto the puzzle', (tester) async {
     final puzzle = Puzzle(id: '0', type: PuzzleType.code);
     await _pump(tester, puzzle);
     await tester.tap(find.byKey(const ValueKey('chip-5')));
-    await tester.tap(find.byKey(const ValueKey('chip-1 min')));
     expect(puzzle.maxAttempts, 5);
-    expect(puzzle.hintDelaySeconds, 60);
 
     await tester.tap(find.byKey(const ValueKey('chip-Nelimitat')));
     expect(puzzle.maxAttempts, isNull);
   });
 
-  testWidgets('hint delays are worded as seconds or minutes', (tester) async {
+  testWidgets('there is no choice about when the hint appears', (tester) async {
     await _pump(tester, Puzzle(id: '0', type: PuzzleType.code));
-    for (final label in ['30 s', '1 min', '90 s', '3 min']) {
-      expect(find.byKey(ValueKey('chip-$label')), findsOneWidget, reason: label);
-    }
+    expect(find.textContaining('apare după'), findsNothing);
   });
 
   testWidgets('coordinates are written onto the puzzle', (tester) async {

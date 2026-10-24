@@ -11,10 +11,9 @@ class Puzzle {
   String? indiciu;
 
   /// Rules for the players; null means the game's default (unlimited attempts,
-  /// the standard hint delay, the standard wrong answer message).
+  /// the standard wrong answer message).
   int? maxAttempts;
   String? wrongAnswerMessage;
-  int? hintDelaySeconds;
 
   Puzzle({
     required this.id,
@@ -26,7 +25,6 @@ class Puzzle {
     this.indiciu,
     this.maxAttempts,
     this.wrongAnswerMessage,
-    this.hintDelaySeconds,
   }) : components = components ?? [];
 
   int get componentsCount => components.length;
@@ -42,7 +40,6 @@ class Puzzle {
     indiciu: indiciu,
     maxAttempts: maxAttempts,
     wrongAnswerMessage: wrongAnswerMessage,
-    hintDelaySeconds: hintDelaySeconds,
   );
 
   Component addComponent(Component component) {
@@ -75,7 +72,6 @@ class Puzzle {
       indiciu: data['indiciu'] as String?,
       maxAttempts: (data['maxAttempts'] as num?)?.toInt(),
       wrongAnswerMessage: data['wrongAnswerMessage'] as String?,
-      hintDelaySeconds: (data['hintDelaySeconds'] as num?)?.toInt(),
     );
     return puzzle;
   }
@@ -91,7 +87,6 @@ class Puzzle {
       if (indiciu != null) 'indiciu': indiciu,
       if (maxAttempts != null) 'maxAttempts': maxAttempts,
       if (wrongAnswerMessage != null) 'wrongAnswerMessage': wrongAnswerMessage,
-      if (hintDelaySeconds != null) 'hintDelaySeconds': hintDelaySeconds,
 
     };
   }

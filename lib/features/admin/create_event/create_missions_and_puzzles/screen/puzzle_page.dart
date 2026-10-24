@@ -3,6 +3,7 @@ import 'package:teamxperience/features/admin/create_event/create_missions_and_pu
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_puzzle/puzzle_widget.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/puzzle_list/puzzle_type_info.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/puzzle_rules/puzzle_rules_form.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 /// One puzzle opened from the mission. "Aspect" is how its screen looks (the
@@ -29,12 +30,9 @@ class PuzzlePage extends StatelessWidget {
       length: 2,
       child: Scaffold(
         backgroundColor: context.colors.page,
-        appBar: AppBar(
-          backgroundColor: context.colors.page,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          leading: const BackButton(),
-          title: Text('Puzzle ${index + 1} · ${type.label}'),
+        appBar: MyAppBar(
+          appBarText: 'Puzzle ${index + 1}',
+          subtitle: type.label,
           bottom: const TabBar(tabs: [Tab(text: 'Aspect'), Tab(text: 'Reguli')]),
         ),
         body: SafeArea(
