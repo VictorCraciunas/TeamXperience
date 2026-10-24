@@ -5,7 +5,7 @@ import 'package:teamxperience/features/home/logic/home_hero.dart';
 import 'package:teamxperience/features/home/logic/preparation_steps.dart';
 import 'package:teamxperience/features/home/widgets/events_panel.dart';
 import 'package:teamxperience/features/home/widgets/home_hero_actions.dart';
-import 'package:teamxperience/features/home/widgets/home_hero_section.dart';
+import 'package:teamxperience/features/home/widgets/home_hero_ticker.dart';
 import 'package:teamxperience/features/home/widgets/how_it_works_panel.dart';
 import 'package:teamxperience/features/home/widgets/news_panel.dart';
 import 'package:teamxperience/features/home/widgets/preparation_panel.dart';
@@ -15,7 +15,6 @@ import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/state_management/news_state_management.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
-import 'package:teamxperience/ui/components/misc/clock_builder.dart';
 import 'package:teamxperience/ui/components/misc/fade_in_section.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/ui.dart';
@@ -64,11 +63,15 @@ class _HomeState extends State<Home> {
 
     if (hero is UpcomingHero) {
       controller.teamFor(event).then((team) {
-        if (mounted && _extrasFor == event.eventId) setState(() => _heroTeam = team);
+        if (mounted && _extrasFor == event.eventId) {
+          setState(() => _heroTeam = team);
+        }
       });
     } else if (hero is RecommendedHero) {
       controller.teamCountFor(event).then((count) {
-        if (mounted && _extrasFor == event.eventId) setState(() => _heroTeamCount = count);
+        if (mounted && _extrasFor == event.eventId) {
+          setState(() => _heroTeamCount = count);
+        }
       });
     }
   }
@@ -107,9 +110,7 @@ class _HomeState extends State<Home> {
                   AppSpacing.page,
                   24,
                 ),
-                child: ClockBuilder(
-                  builder: (context, now) => _content(now, eventList, newsList, userEvents),
-                ),
+                child: _content(eventList, newsList, userEvents),
               ),
             );
           },
@@ -118,16 +119,19 @@ class _HomeState extends State<Home> {
     );
   }
 
+  /// The page is built once per data change. Only the hero card ticks each
+  /// second (see [HomeHeroTicker]); the panels are rebuilt when the kind of
+  /// hero changes, not every second.
   Widget _content(
-    DateTime now,
     EventList eventList,
     NewsList newsList,
     UserEventsProvider userEvents,
   ) {
+    final now = DateTime.now();
     final registered = userEvents.registeredEvents;
     final upcomingRegistered = userEvents.upcomingRegisteredEvents;
-    final hero = resolveHomeHero(
-      now: now,
+    HomeHero resolve(DateTime at) => resolveHomeHero(
+      now: at,
       activeEvent: userEvents.activeEvent,
       activeTeam: userEvents.activeTeam,
       startedRecently: userEvents.recentlyStartedEvent,
@@ -136,13 +140,17 @@ class _HomeState extends State<Home> {
       allEvents: eventList.events,
       registeredIds: registered.map((e) => e.eventId).toSet(),
     );
+    final hero = resolve(now);
     _loadExtras(hero);
 
     final heroEvent = _heroEvent(hero);
     final events = eventList.upcomingEvents;
-    final registrations = upcomingRegistered
-        .where((e) => e.eventId != heroEvent?.eventId || hero is! UpcomingHero)
-        .toList();
+    final registrations =
+        upcomingRegistered
+            .where(
+              (e) => e.eventId != heroEvent?.eventId || hero is! UpcomingHero,
+            )
+            .toList();
 
     // Sections fade in one after the other from the top, once. The keys keep
     // each section's animation state while the clock rebuilds this every second.
@@ -154,18 +162,23 @@ class _HomeState extends State<Home> {
       children: [
         section(
           'hero',
-          HomeHeroSection(
-            hero: hero,
-            now: now,
+          HomeHeroTicker(
+            resolve: resolve,
+            shown: hero,
             actions: _actions(),
             recommendedTeamCount: _heroTeamCount,
+            onLayoutChange: () {
+              if (mounted) setState(() {});
+            },
           ),
         ),
         if (hero is! NoHero) const SizedBox(height: 14),
         if (hero is UpcomingHero && heroEvent != null) ...[
           section(
             'preparation',
-            PreparationPanel(steps: preparationSteps(heroEvent, _heroTeam, now)),
+            PreparationPanel(
+              steps: preparationSteps(heroEvent, _heroTeam, now),
+            ),
           ),
           const SizedBox(height: 14),
         ],

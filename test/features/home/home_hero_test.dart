@@ -59,6 +59,7 @@ HomeHero _resolve({
 }
 
 void main() {
+  signatureTests();
   recentlyStartedTests();
   final inOneHour = _now.add(const Duration(hours: 1));
 
@@ -226,6 +227,27 @@ void recentlyStartedTests() {
         now,
       );
       expect(result, isNull);
+    });
+  });
+}
+
+void signatureTests() {
+  group('HomeHero.signature', () {
+    test('the same kind for the same event has the same signature', () {
+      final a = UpcomingHero(_event('a', start: _now.add(const Duration(days: 2))), const Duration(days: 2));
+      final b = UpcomingHero(_event('a', start: _now.add(const Duration(days: 2))), const Duration(days: 1, hours: 23));
+      expect(a.signature, b.signature);
+    });
+
+    test('a different kind or a different event changes it', () {
+      final event = _event('a', start: _now.add(const Duration(days: 2)));
+      final upcoming = UpcomingHero(event, const Duration(days: 2));
+      expect(upcoming.signature, isNot(RecommendedHero(event).signature));
+      expect(upcoming.signature, isNot(UpcomingHero(_event('b', start: _now), Duration.zero).signature));
+    });
+
+    test('no hero has its own signature', () {
+      expect(const NoHero().signature, isNot(RecommendedHero(_event('a', start: _now)).signature));
     });
   });
 }
