@@ -13,13 +13,18 @@ class NewsCategoryRepo {
     await docRef.set(category.toJson());
   }
 
+  Future<void> deleteCategory(String id) async {
+    await _firestore.collection('categories').doc(id).delete();
+  }
+
   Future<List<NewsCategory>> getAllCategories() async {
     try {
       QuerySnapshot snapshot = await _firestore.collection('categories').get();
 
-      List<NewsCategory> categoryList = snapshot.docs.map((doc) {
-        return NewsCategory.fromMap(doc.data() as Map<String, dynamic>);
-      }).toList();
+      List<NewsCategory> categoryList =
+          snapshot.docs.map((doc) {
+            return NewsCategory.fromMap(doc.data() as Map<String, dynamic>);
+          }).toList();
 
       return categoryList;
     } catch (e, stacktrace) {

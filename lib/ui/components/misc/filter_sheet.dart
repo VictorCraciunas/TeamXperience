@@ -23,17 +23,23 @@ class FilterGroup {
     required this.options,
     this.onAdd,
     this.addTooltip = 'Adaugă',
+    this.onOptionLongPress,
   });
 
   final String id;
   final String title;
   final List<FilterOption> options;
 
-  /// When set, the group shows a "+" button. It should ask for the new option
-  /// (for example with a dialog), save it, and return it, or null to cancel.
-  /// The returned option is added to the group and selected.
+  /// When set, the group ends with a "+" chip. It should ask for the new
+  /// option (for example with a dialog), save it, and return it, or null to
+  /// cancel. The returned option is added to the group and selected.
   final Future<FilterOption?> Function()? onAdd;
   final String addTooltip;
+
+  /// When set, long-pressing an option calls it. It should confirm and delete
+  /// the option and return true if it was deleted; the option then disappears
+  /// from the sheet.
+  final Future<bool> Function(FilterOption option)? onOptionLongPress;
 }
 
 /// What the user chose: a period and, per group id, the chosen option id. A
@@ -101,6 +107,28 @@ class _FilterSheetState extends State<_FilterSheet> {
 
   /// Options added from the sheet, per group id.
   final Map<String, List<FilterOption>> _added = {};
+
+  /// Ids of options deleted from the sheet, per group id.
+  final Map<String, Set<String>> _removed = {};
+
+  List<FilterOption> _optionsOf(FilterGroup group) {
+    final removed = _removed[group.id] ?? const <String>{};
+    return [
+      ...group.options,
+      ...?_added[group.id],
+    ].where((o) => !removed.contains(o.id)).toList();
+  }
+
+  Future<void> _longPress(FilterGroup group, FilterOption option) async {
+    final handler = group.onOptionLongPress;
+    if (handler == null) return;
+    final deleted = await handler(option);
+    if (!deleted || !mounted) return;
+    setState(() {
+      _removed.putIfAbsent(group.id, () => {}).add(option.id);
+      if (_selected[group.id] == option.id) _selected.remove(group.id);
+    });
+  }
 
   Future<void> _addTo(FilterGroup group) async {
     final add = group.onAdd;
@@ -201,11 +229,7 @@ class _FilterSheetState extends State<_FilterSheet> {
             ],
           ),
           for (final group in widget.groups) ...[
-            _SectionLabel(
-              group.title,
-              onAdd: group.onAdd == null ? null : () => _addTo(group),
-              addTooltip: group.addTooltip,
-            ),
+            _SectionLabel(group.title),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -215,11 +239,21 @@ class _FilterSheetState extends State<_FilterSheet> {
                   selected: !_selected.containsKey(group.id),
                   onTap: () => _choose(group.id, null),
                 ),
-                for (final option in [...group.options, ...?_added[group.id]])
+                for (final option in _optionsOf(group))
                   _Choice(
                     label: option.label,
                     selected: _selected[group.id] == option.id,
                     onTap: () => _choose(group.id, option.id),
+                    onLongPress:
+                        group.onOptionLongPress == null
+                            ? null
+                            : () => _longPress(group, option),
+                  ),
+                if (group.onAdd != null)
+                  _AddChip(
+                    key: ValueKey('filter-add-chip-${group.id}'),
+                    tooltip: group.addTooltip,
+                    onTap: () => _addTo(group),
                   ),
               ],
             ),
@@ -259,41 +293,51 @@ class _FilterSheetState extends State<_FilterSheet> {
 }
 
 class _SectionLabel extends StatelessWidget {
-  const _SectionLabel(this.text, {this.onAdd, this.addTooltip = 'Adaugă'});
+  const _SectionLabel(this.text);
 
   final String text;
-  final VoidCallback? onAdd;
-  final String addTooltip;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 14, bottom: 8),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: context.colors.muted,
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+}
+
+/// The "+" chip at the end of a group that can add options.
+class _AddChip extends StatelessWidget {
+  const _AddChip({super.key, required this.tooltip, required this.onTap});
+
+  final String tooltip;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final add = onAdd;
 
-    return Padding(
-      padding: EdgeInsets.only(
-        top: add == null ? 14 : 6,
-        bottom: add == null ? 8 : 2,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: colors.muted,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: colors.panel,
+        shape: StadiumBorder(side: BorderSide(color: colors.tick, width: 1.5)),
+        child: InkWell(
+          customBorder: const StadiumBorder(),
+          onTap: onTap,
+          child: SizedBox(
+            width: 48,
+            height: 40,
+            child: Icon(Icons.add, size: 20, color: colors.text),
           ),
-          if (add != null)
-            IconButton(
-              onPressed: add,
-              tooltip: addTooltip,
-              icon: Icon(Icons.add_circle_outline, color: colors.text),
-            ),
-        ],
+        ),
       ),
     );
   }
@@ -304,11 +348,13 @@ class _Choice extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onTap,
+    this.onLongPress,
   });
 
   final String label;
   final bool selected;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -322,6 +368,7 @@ class _Choice extends StatelessWidget {
       child: InkWell(
         customBorder: const StadiumBorder(),
         onTap: onTap,
+        onLongPress: onLongPress,
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 40),
           child: Padding(

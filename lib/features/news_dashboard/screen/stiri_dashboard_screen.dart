@@ -12,6 +12,7 @@ import 'package:teamxperience/service/share_service.dart';
 import 'package:teamxperience/state_management/news_state_management.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/ui/components/buttons/tick_outline_button.dart';
+import 'package:teamxperience/ui/components/feedback/app_dialog.dart';
 import 'package:teamxperience/ui/components/feedback/snackbars.dart';
 import 'package:teamxperience/ui/components/feedback/text_input_dialog.dart';
 import 'package:teamxperience/ui/components/misc/filter_sheet.dart';
@@ -126,6 +127,8 @@ class _StiriDashboardState extends State<StiriDashboard> {
           options: [for (final name in categories) FilterOption(name, name)],
           addTooltip: 'Adaugă categorie',
           onAdd: () => _addCategory(categories),
+          onOptionLongPress:
+              (option) => _deleteCategory(option.label, categories, news),
         ),
       ],
       period: PeriodSelection(
@@ -185,6 +188,51 @@ class _StiriDashboardState extends State<StiriDashboard> {
         );
     }
     return null;
+  }
+
+  /// Long press on a category: confirm, then delete it. Returns true when it
+  /// was deleted, so the sheet drops the chip. [known] is kept in step.
+  Future<bool> _deleteCategory(
+    String name,
+    List<String> known,
+    List<Stire> news,
+  ) async {
+    final confirmed = await showAppDialog(
+      context,
+      title: 'Șterge categoria',
+      message: 'Vrei să ștergi categoria "$name"?',
+      confirmLabel: 'Șterge',
+      cancelLabel: 'Anulează',
+      destructive: true,
+    );
+    if (!confirmed || !mounted) return false;
+
+    final result = await controller.deleteCategory(name, news);
+    if (!mounted) return false;
+
+    switch (result.status) {
+      case DeleteCategoryStatus.deleted:
+        known.remove(name);
+        MySnackBars.successSnackBar(context, title: 'Categoria a fost ștearsă');
+        return true;
+      case DeleteCategoryStatus.inUse:
+        MySnackBars.warningSnackBar(
+          context,
+          title: 'Categoria nu poate fi ștearsă',
+          message:
+              result.newsCount == 1
+                  ? 'O știre încă o folosește.'
+                  : '${result.newsCount} știri încă o folosesc.',
+        );
+      case DeleteCategoryStatus.notFound:
+        MySnackBars.infoSnackBar(context, title: 'Categoria nu este salvată');
+      case DeleteCategoryStatus.failed:
+        MySnackBars.errorSnackBar(
+          context,
+          title: 'Nu am putut șterge categoria',
+        );
+    }
+    return false;
   }
 
   /// Players filter by period only (a bottom sheet); admins keep the full

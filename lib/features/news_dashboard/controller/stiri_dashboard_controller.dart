@@ -18,6 +18,18 @@ class AddCategoryResult {
   final String name;
 }
 
+/// How deleting a category went.
+enum DeleteCategoryStatus { deleted, inUse, notFound, failed }
+
+class DeleteCategoryResult {
+  const DeleteCategoryResult(this.status, [this.newsCount = 0]);
+
+  final DeleteCategoryStatus status;
+
+  /// How many news use the category when [status] is [DeleteCategoryStatus.inUse].
+  final int newsCount;
+}
+
 class StiriDashboardController extends ChangeNotifier {
   StiriDashboardController({NewsCategoryRepo? categoryRepo})
     : _injectedCategoryRepo = categoryRepo;
@@ -98,6 +110,39 @@ class StiriDashboardController extends ChangeNotifier {
       return AddCategoryResult(AddCategoryStatus.added, name);
     } catch (_) {
       return const AddCategoryResult(AddCategoryStatus.failed);
+    }
+  }
+
+  /// Deletes the saved category called [name], unless [news] still use it
+  /// (those news would bring it back, so it has to be changed there first).
+  Future<DeleteCategoryResult> deleteCategory(
+    String name,
+    Iterable<Stire> news,
+  ) async {
+    final lower = name.trim().toLowerCase();
+
+    final using =
+        news
+            .where(
+              (s) => (s.category?.name ?? '').trim().toLowerCase() == lower,
+            )
+            .length;
+    if (using > 0) {
+      return DeleteCategoryResult(DeleteCategoryStatus.inUse, using);
+    }
+
+    try {
+      final saved = await _categoryRepo.getAllCategories();
+      final match = saved.where(
+        (c) => c.name.trim().toLowerCase() == lower && c.id != null,
+      );
+      if (match.isEmpty) {
+        return const DeleteCategoryResult(DeleteCategoryStatus.notFound);
+      }
+      await _categoryRepo.deleteCategory(match.first.id!);
+      return const DeleteCategoryResult(DeleteCategoryStatus.deleted);
+    } catch (_) {
+      return const DeleteCategoryResult(DeleteCategoryStatus.failed);
     }
   }
 
