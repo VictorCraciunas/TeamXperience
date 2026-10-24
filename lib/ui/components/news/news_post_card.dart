@@ -95,10 +95,23 @@ class NewsPostCard extends StatelessWidget {
                         child: SizedBox(
                           width: 36,
                           height: 36,
-                          child: Icon(
-                            Icons.close,
-                            size: 18,
-                            color: colors.danger,
+                          child: Center(
+                            child: DecoratedBox(
+                              key: const ValueKey('news-delete-circle'),
+                              decoration: BoxDecoration(
+                                color: colors.danger,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: Icon(
+                                  Icons.close,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),

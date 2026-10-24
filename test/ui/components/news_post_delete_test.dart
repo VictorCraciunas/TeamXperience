@@ -41,9 +41,17 @@ void main() {
     expect(xCenter.dx, greaterThan(date.dx), reason: 'after the date');
     expect(xCenter.dx, greaterThan(card.right - 60), reason: 'at the end of the row');
 
-    final icon = tester.widget<Icon>(find.descendant(of: x, matching: find.byType(Icon)));
-    expect(icon.color, AppColors.light.danger);
-    expect(icon.size, lessThanOrEqualTo(20), reason: 'small');
+    // A bold filled red circle with a white x, still small.
+    final circle = find.byKey(const ValueKey('news-delete-circle'));
+    final decoration = tester.widget<DecoratedBox>(circle).decoration as BoxDecoration;
+    expect(decoration.color, AppColors.light.danger);
+    expect(decoration.shape, BoxShape.circle);
+    expect(tester.getSize(circle).width, lessThanOrEqualTo(28), reason: 'small');
+    final icon = tester.widget<Icon>(find.descendant(of: circle, matching: find.byType(Icon)));
+    expect(icon.color, Colors.white);
+
+    // Close to the right edge of the card, like the content below it.
+    expect(card.right - tester.getRect(circle).right, lessThanOrEqualTo(16));
 
     await tester.tap(x);
     expect(deletes, 1);
