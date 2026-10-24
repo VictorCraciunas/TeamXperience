@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../model/stire.dart';
+import '../../../utils/period_utils.dart';
 import '../../../model/newsCategory.dart';
 import '../../../enums/stire_type.dart';
 import '../../../state_management/news_state_management.dart';
@@ -62,12 +63,9 @@ class StiriDashboardController extends ChangeNotifier {
       return false;
     }
 
-    // Filter by date range
-    if (startDate != null && endDate != null && stire.publicationDate != null) {
-      final stireDate = stire.publicationDate!;
-      if (stireDate.isBefore(startDate!) || stireDate.isAfter(endDate!)) {
-        return false;
-      }
+    // Filter by date range (the last day counts until its end)
+    if (!isWithinPeriod(stire.publicationDate, startDate, endDate)) {
+      return false;
     }
 
     return true;

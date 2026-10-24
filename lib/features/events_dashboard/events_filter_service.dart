@@ -1,6 +1,7 @@
 
 import '../../../../enums/event_type.dart';
 import '../../../../model/event.dart';
+import 'package:teamxperience/utils/period_utils.dart';
 
 class FilterService {
   /// Filters events based on event type and/or date range
@@ -16,12 +17,9 @@ class FilterService {
         return false;
       }
 
-      // Filter by date range (only if both dates are provided and event has a date)
-      if (startDate != null && endDate != null && event.dateEvent != null) {
-        final eventDate = event.dateEvent!;
-        if (eventDate.isBefore(startDate) || eventDate.isAfter(endDate)) {
-          return false;
-        }
+      // Filter by date range (the last day counts until its end)
+      if (!isWithinPeriod(event.dateEvent, startDate, endDate)) {
+        return false;
       }
 
       return true;

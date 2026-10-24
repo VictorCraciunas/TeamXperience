@@ -5,11 +5,14 @@ import 'package:teamxperience/enums/role.dart';
 import 'package:teamxperience/features/feed/logic/post_text.dart';
 import 'package:teamxperience/features/news_dashboard/controller/stiri_dashboard_controller.dart';
 import 'package:teamxperience/features/news_dashboard/widgets/news_feed.dart';
+import 'package:teamxperience/enums/stire_type.dart';
+import 'package:teamxperience/model/newsCategory.dart';
 import 'package:teamxperience/model/stire.dart';
 import 'package:teamxperience/service/share_service.dart';
 import 'package:teamxperience/state_management/news_state_management.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
-import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
+import 'package:teamxperience/ui/components/buttons/tick_outline_button.dart';
+import 'package:teamxperience/ui/components/misc/filter_sheet.dart';
 import 'package:teamxperience/ui/components/misc/feed_search_bar.dart';
 import 'package:teamxperience/ui/components/misc/removable_chip.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
@@ -26,6 +29,9 @@ class StiriDashboard extends StatefulWidget {
 }
 
 class _StiriDashboardState extends State<StiriDashboard> {
+  static const _typeGroup = 'type';
+  static const _categoryGroup = 'category';
+
   late StiriDashboardController controller;
   bool _isSearchOpen = false;
   final TextEditingController _searchController = TextEditingController();
@@ -94,14 +100,66 @@ class _StiriDashboardState extends State<StiriDashboard> {
     Navigator.pushNamed(context, Routes.createNews, arguments: {'stire': null});
   }
 
+  /// Admin filters: period, public or private, and category, applied together.
+  Future<void> _openAdminFilter() async {
+    final categories =
+        context
+            .read<NewsList>()
+            .stireList
+            .map((s) => s.category?.name)
+            .whereType<String>()
+            .where((name) => name.isNotEmpty)
+            .toSet()
+            .toList()
+          ..sort();
+
+    final result = await showFilterSheet(
+      context,
+      groups: [
+        FilterGroup(
+          id: _typeGroup,
+          title: 'Tip știre',
+          options: [
+            for (final type in StireType.values)
+              FilterOption(type.name, type.displayName),
+          ],
+        ),
+        if (categories.isNotEmpty)
+          FilterGroup(
+            id: _categoryGroup,
+            title: 'Categorie',
+            options: [for (final name in categories) FilterOption(name, name)],
+          ),
+      ],
+      period: PeriodSelection(
+        start: controller.startDate,
+        end: controller.endDate,
+      ),
+      selected: {
+        if (controller.selectedStireType != null)
+          _typeGroup: controller.selectedStireType!.name,
+        if (controller.selectedCategory != null &&
+            controller.selectedCategory!.name.isNotEmpty)
+          _categoryGroup: controller.selectedCategory!.name,
+      },
+    );
+    if (result == null) return;
+
+    final type = result.selected[_typeGroup];
+    final category = result.selected[_categoryGroup];
+    controller.updateFilters({
+      'stireType': type == null ? null : StireType.values.byName(type),
+      'category': category == null ? null : NewsCategory(name: category),
+      'startDate': result.period.start,
+      'endDate': result.period.end,
+    });
+  }
+
   /// Players filter by period only (a bottom sheet); admins keep the full
   /// filter screen with type and category.
   Future<void> _openFilter() async {
     if (_isAdmin) {
-      final filterData =
-          await Navigator.pushNamed(context, Routes.filterStiri)
-              as Map<String, dynamic>?;
-      controller.updateFilters(filterData);
+      await _openAdminFilter();
       return;
     }
 
@@ -123,34 +181,11 @@ class _StiriDashboardState extends State<StiriDashboard> {
 
   Widget? _createButton() {
     if (!_isAdmin) return null;
-    final colors = context.colors;
 
-    return InkWell(
+    return TickOutlineButton(
+      label: 'Creează știre',
+      icon: Icons.add_circle_outline,
       onTap: _createStire,
-      borderRadius: BorderRadius.circular(50),
-      child: Container(
-        height: 48,
-        decoration: BoxDecoration(
-          color: colors.iconButtonBg,
-          borderRadius: BorderRadius.circular(50),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AppSvgIcon(
-              'assets/images/add_icon.svg',
-              width: 20,
-              height: 20,
-              color: colors.accent,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'Creează știre',
-              style: TextStyle(fontSize: 15, color: colors.text),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
