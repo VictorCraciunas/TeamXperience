@@ -5,6 +5,7 @@ import 'package:teamxperience/features/admin/create_event/create_missions_and_pu
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/puzzle_list/puzzle_type_sheet.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
 import 'package:teamxperience/ui/components/feedback/app_dialog.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 /// One mission opened from the list: its puzzles, one row each.
@@ -63,13 +64,7 @@ class _MissionPageState extends State<MissionPage> {
 
     return Scaffold(
       backgroundColor: context.colors.page,
-      appBar: AppBar(
-        backgroundColor: context.colors.page,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: const BackButton(),
-        title: Text('Misiunea ${widget.index + 1}'),
-      ),
+      appBar: MyAppBar(appBarText: 'Misiunea ${widget.index + 1}'),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(AppSpacing.page, 8, AppSpacing.page, 30),
