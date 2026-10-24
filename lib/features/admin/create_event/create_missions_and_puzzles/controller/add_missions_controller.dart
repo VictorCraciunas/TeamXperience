@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/service/event_service/event_completeness.dart';
@@ -71,6 +72,46 @@ class AddMissionsController {
     ];
     event.nrMissions = event.missions.length;
     onStateChanged?.call();
+  }
+
+  /// Adds a puzzle of [type] to a mission and returns its index, or -1 when
+  /// there is no such mission.
+  int addPuzzle(int mission, PuzzleType type) {
+    if (mission < 0 || mission >= event.missions.length) return -1;
+
+    final puzzles = event.missions[mission].puzzles;
+    puzzles.add(Puzzle(id: puzzles.length.toString(), type: type));
+    onStateChanged?.call();
+    return puzzles.length - 1;
+  }
+
+  /// Removes a puzzle and numbers the ones after it again.
+  void removePuzzle(int mission, int index) {
+    if (mission < 0 || mission >= event.missions.length) return;
+
+    final puzzles = event.missions[mission].puzzles;
+    if (index < 0 || index >= puzzles.length) return;
+
+    puzzles.removeAt(index);
+    for (var i = 0; i < puzzles.length; i++) {
+      puzzles[i] = puzzles[i].withId(i.toString());
+    }
+    onStateChanged?.call();
+  }
+
+  /// What the puzzle row says: the first thing missing, or that it is ready.
+  String puzzleStatus(int mission, int index) {
+    if (mission < 0 || mission >= event.missions.length) return '';
+
+    final puzzles = event.missions[mission].puzzles;
+    if (index < 0 || index >= puzzles.length) return '';
+
+    final issues = puzzleIssues(puzzles[index]);
+    if (issues.isEmpty) return 'Gata';
+
+    final first = issues.first.label;
+    final text = first[0].toUpperCase() + first.substring(1);
+    return issues.length > 1 ? '$text · încă ${issues.length - 1}' : text;
   }
 
   bool isDone(int index) {
