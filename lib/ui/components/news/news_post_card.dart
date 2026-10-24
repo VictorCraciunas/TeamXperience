@@ -64,29 +64,36 @@ class NewsPostCard extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Flexible(
-                    child: Text(
-                      categoryLabel,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: colors.accent,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  // All the free width goes to this group, so the x is pushed
+                  // to the end of the row.
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            categoryLabel,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: colors.accent,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '  ·  ',
+                          style: TextStyle(color: colors.muted, fontSize: 12),
+                        ),
+                        Text(
+                          dateLabel,
+                          maxLines: 1,
+                          style: TextStyle(color: colors.muted, fontSize: 12),
+                        ),
+                      ],
                     ),
                   ),
-                  Text(
-                    '  ·  ',
-                    style: TextStyle(color: colors.muted, fontSize: 12),
-                  ),
-                  Text(
-                    dateLabel,
-                    maxLines: 1,
-                    style: TextStyle(color: colors.muted, fontSize: 12),
-                  ),
                   if (delete != null) ...[
-                    const Spacer(),
                     Tooltip(
                       message: 'Șterge știrea',
                       child: InkWell(

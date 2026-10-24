@@ -58,6 +58,14 @@ void main() {
     expect(opens, 0, reason: 'the x must not open the post');
   });
 
+  testWidgets('the x reaches the right edge even when the card is much wider than its texts', (tester) async {
+    // Short texts in a wide card: the free space must all go before the x.
+    await pumpUi(tester, _card(onDelete: () {}), width: 700);
+    final card = tester.getRect(find.byType(NewsPostCard));
+    final circle = tester.getRect(find.byKey(const ValueKey('news-delete-circle')));
+    expect(card.right - circle.right, lessThanOrEqualTo(16));
+  });
+
   testWidgets('the red x stays easy to hit', (tester) async {
     await pumpUi(tester, _card(onDelete: () {}));
     final size = tester.getSize(find.byTooltip('Șterge știrea'));
