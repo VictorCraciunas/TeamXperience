@@ -27,10 +27,12 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
       final Event event = args?['event'];
       final String mode = args?['mode'] ?? "create";
+      final bool isDraft = args?['isDraft'] ?? false;
 
       _addMissionsController = AddMissionsController(
         event,
         mode,
+        isDraft: isDraft,
         onStateChanged: () {
           setState(() {}); // Rebuild UI when state changes
         },

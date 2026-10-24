@@ -5,8 +5,20 @@ import 'package:teamxperience/features/admin/create_event/create_missions_and_pu
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/ui/components/feedback/snackbars.dart';
 
+import '../../../../../exceptions/events_exceptions.dart';
 import '../../../../../model/event.dart';
 import '../../../../../state_management/events_state_management.dart';
+
+/// What to tell the organiser when publishing was refused: the first three
+/// problems, one per line, and how many more there are.
+String publishFailureMessage(EventNotPublishableException e) {
+  final problems = e.problems;
+  if (problems.isEmpty) return 'Evenimentul nu este complet';
+
+  final shown = problems.take(3).toList();
+  final rest = problems.length - shown.length;
+  return [...shown, if (rest > 0) 'și încă $rest'].join('\n');
+}
 
 class AddMissionsController {
 
@@ -19,8 +31,10 @@ class AddMissionsController {
   late Event event;
   late String mode;
 
+  /// True when the event was a draft: saving then publishes it.
+  final bool isDraft;
 
-  AddMissionsController(this.event, this.mode, {this.onStateChanged}){
+  AddMissionsController(this.event, this.mode, {this.onStateChanged, this.isDraft = false}){
     buildMissionWidgets(event.nrMissions, mode);
   }
 
@@ -89,7 +103,13 @@ class AddMissionsController {
 
       final eventList = context.read<EventList>();
 
-      if (mode == 'edit') {
+      if (isDraft) {
+        // Publish the draft: refused with the list of what is missing if not complete.
+        await eventList.publishEvent(event);
+        if (!context.mounted) return;
+        Navigator.of(context).pop();
+        MySnackBars.successSnackBar(context, title: "Eveniment publicat !", message: "Evenimentul este acum vizibil pentru jucători");
+      } else if (mode == 'edit') {
         // Update existing event
         await eventList.updateEvent(event);
         if (!context.mounted) return;
@@ -105,6 +125,15 @@ class AddMissionsController {
 
       }
 
+    } on EventNotPublishableException catch (e) {
+      if (context.mounted) {
+        Navigator.of(context).pop(); // the progress dialog
+        MySnackBars.warningSnackBar(
+          context,
+          title: 'Evenimentul nu poate fi publicat încă',
+          message: publishFailureMessage(e),
+        );
+      }
     } catch (e) {
       print('Error saving event: $e');
       if (context.mounted) {

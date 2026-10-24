@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
+import 'package:teamxperience/ui/components/inputs/color_swatch_row.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:intl/intl.dart';
 import 'package:teamxperience/features/admin/create_event/common_widgets/upload_image.dart';
@@ -18,6 +19,17 @@ class CreateEventPage extends StatefulWidget {
   State<CreateEventPage> createState() => _CreateEventPageState();
 }
 
+/// Colours offered for the look of the game. The first row is for backgrounds,
+/// the second for buttons, links and highlights.
+const _backgroundSwatches = [
+  '#050805',
+  '#0B0A24',
+  '#2B0F12',
+  '#E8D5A8',
+  '#FFFFFF',
+];
+const _accentSwatches = ['#33FF66', '#3FD0FF', '#FFE94A', '#FF3EA5', '#2AA5A9'];
+
 class _CreateEventPageState extends State<CreateEventPage> {
   late CreateEventController controller;
   late String mode;
@@ -32,9 +44,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
       final Event? event = args?['event'];
       final bool isBlueprint = args?['isBlueprint'] ?? false;
+      final bool isDraft = args?['isDraft'] ?? false;
 
       if (event == null) {
         mode = 'create';
+      } else if (isDraft) {
+        mode = 'draft';
       } else if (isBlueprint) {
         mode = 'blueprint';
       } else {
@@ -63,8 +78,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
         appBarText:
             mode == 'edit'
                 ? 'Editează Eveniment'
+                : mode == 'draft'
+                ? 'Continuă ciorna'
                 : mode == 'blueprint'
-                ? 'Crează din Șablon'
+                ? 'Din eveniment vechi'
                 : 'Eveniment Nou',
       ),
       body: SafeArea(
@@ -87,7 +104,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       });
                     },
                     child: UploadImage(
-                      labelText: 'Adaugă imagine eveniment',
+                      labelText: 'Adaugă imagine eveniment (opțional)',
                       imageUrl: controller.getLandingImageToDisplay(),
                     ),
                   ),
@@ -99,7 +116,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     label: 'Nume',
                     hint: 'Numele evenimentului',
                     validator:
-                        (v) => v!.isEmpty ? 'Introdu nume eveniment' : null,
+                        (v) =>
+                            (v ?? '').trim().isEmpty
+                                ? 'Introdu nume eveniment'
+                                : null,
                   ),
                   const SizedBox(height: 20),
 
@@ -109,7 +129,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     label: 'Locație',
                     hint: 'Locația evenimentului',
                     validator:
-                        (v) => v!.isEmpty ? 'Introdu locație eveniment' : null,
+                        (v) =>
+                            (v ?? '').trim().isEmpty
+                                ? 'Introdu locație eveniment'
+                                : null,
                   ),
                   const SizedBox(height: 20),
 
@@ -118,7 +141,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     label: 'Punct de start',
                     hint: 'Punctul de start al evenimentului',
                     validator:
-                        (v) => v!.isEmpty ? 'Introdu Punctul de start' : null,
+                        (v) =>
+                            (v ?? '').trim().isEmpty
+                                ? 'Introdu Punctul de start'
+                                : null,
                   ),
                   const SizedBox(height: 20),
 
@@ -131,7 +157,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     keyboardType: TextInputType.multiline,
                     validator:
                         (v) =>
-                            v!.isEmpty ? 'Introdu descriere eveniment' : null,
+                            (v ?? '').trim().isEmpty
+                                ? 'Introdu descriere eveniment'
+                                : null,
                   ),
                   const SizedBox(height: 20),
 
@@ -256,7 +284,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     controller: controller.startCodeController,
                     label: 'Cod start',
                     hint: 'Introdu codul de start al evenimentului',
-                    validator: (v) => v!.isEmpty ? 'Introdu cod start' : null,
+                    validator:
+                        (v) =>
+                            (v ?? '').trim().isEmpty
+                                ? 'Introdu cod start'
+                                : null,
                   ),
 
                   const SizedBox(height: 20),
@@ -269,9 +301,47 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       });
                     },
                     child: UploadImage(
-                      labelText: 'Adaugă imagine fundal misiuni',
+                      labelText: 'Adaugă imagine fundal misiuni (opțional)',
                       imageUrl: controller.getTaskBackgroundImageToDisplay(),
                     ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Aspectul jocului: what new components start with.
+                  ColorSwatchRow(
+                    label: 'Culoare de fundal',
+                    swatches: _backgroundSwatches,
+                    selected: controller.backgroundColor,
+                    onChanged:
+                        (hex) =>
+                            setState(() => controller.backgroundColor = hex),
+                  ),
+                  const SizedBox(height: 16),
+                  ColorSwatchRow(
+                    label: 'Culoare accent',
+                    swatches: _accentSwatches,
+                    selected: controller.accentColor,
+                    onChanged:
+                        (hex) => setState(() => controller.accentColor = hex),
+                  ),
+                  const SizedBox(height: 16),
+                  AppDropdown<String>(
+                    label: 'Font',
+                    hint: 'Implicit',
+                    items: const [
+                      AppDropdownItem<String>(
+                        value: 'Poppins',
+                        label: 'Poppins',
+                      ),
+                      AppDropdownItem<String>(
+                        value: 'Monospace',
+                        label: 'Monospace',
+                      ),
+                    ],
+                    value: controller.fontFamily,
+                    onChanged:
+                        (value) =>
+                            setState(() => controller.fontFamily = value),
                   ),
                   const SizedBox(height: 20),
 
@@ -281,7 +351,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     label: 'Lungime traseu',
                     hint: 'Lungimea traseului',
                     validator:
-                        (v) => v!.isEmpty ? 'Introdu lungime traseu' : null,
+                        (v) =>
+                            (v ?? '').trim().isEmpty
+                                ? 'Introdu lungime traseu'
+                                : null,
                   ),
                   const SizedBox(height: 20),
 
@@ -290,7 +363,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     controller: controller.durataController,
                     label: 'Durata',
                     hint: 'Durata evenimentului',
-                    validator: (v) => v!.isEmpty ? 'Introdu durata' : null,
+                    validator:
+                        (v) =>
+                            (v ?? '').trim().isEmpty ? 'Introdu durata' : null,
                   ),
                   const SizedBox(height: 20),
 
@@ -299,7 +374,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     controller: controller.dificultateController,
                     label: 'Dificultate',
                     hint: 'Dificultatea evenimentului',
-                    validator: (v) => v!.isEmpty ? 'Introdu dificultate' : null,
+                    validator:
+                        (v) =>
+                            (v ?? '').trim().isEmpty
+                                ? 'Introdu dificultate'
+                                : null,
                   ),
 
                   const SizedBox(height: 20),
@@ -307,9 +386,18 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     label:
                         mode == 'edit'
                             ? 'Actualizează eveniment'
-                            : 'Creează eveniment',
+                            : 'Continuă la misiuni',
                     onPressed: () => controller.createEvent(context, mode),
                   ),
+                  if (mode != 'edit') ...[
+                    const SizedBox(height: 10),
+                    AppButton(
+                      label: 'Salvează ca ciornă',
+                      variant: AppButtonVariant.secondary,
+                      foregroundColor: context.colors.text,
+                      onPressed: () => controller.saveDraft(context, mode),
+                    ),
+                  ],
                   const SizedBox(height: 40),
                 ],
               ),
