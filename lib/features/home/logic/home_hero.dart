@@ -7,6 +7,10 @@ const Duration enterCodeWindow = Duration(minutes: 60);
 
 sealed class HomeHero {
   const HomeHero();
+
+  /// Which kind of hero this is and for which event. The page layout (which
+  /// panels follow the hero) only depends on this, not on the countdown.
+  String get signature;
 }
 
 class LiveHero extends HomeHero {
@@ -14,6 +18,9 @@ class LiveHero extends HomeHero {
 
   final Event event;
   final Team team;
+
+  @override
+  String get signature => 'live:${event.eventId}';
 }
 
 class StartingSoonHero extends HomeHero {
@@ -21,6 +28,9 @@ class StartingSoonHero extends HomeHero {
 
   final Event event;
   final int minutesLeftToEnter;
+
+  @override
+  String get signature => 'soon:${event.eventId}';
 }
 
 class UpcomingHero extends HomeHero {
@@ -28,16 +38,25 @@ class UpcomingHero extends HomeHero {
 
   final Event event;
   final Duration untilStart;
+
+  @override
+  String get signature => 'upcoming:${event.eventId}';
 }
 
 class RecommendedHero extends HomeHero {
   const RecommendedHero(this.event);
 
   final Event event;
+
+  @override
+  String get signature => 'recommended:${event.eventId}';
 }
 
 class NoHero extends HomeHero {
   const NoHero();
+
+  @override
+  String get signature => 'none';
 }
 
 /// Picks what the top card of the player Home shows, in priority order:

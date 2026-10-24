@@ -104,7 +104,8 @@ class _FadeInSectionState extends State<FadeInSection> with SingleTickerProvider
       opacity: _progress,
       child: AnimatedBuilder(
         animation: _progress,
-        child: widget.child,
+        // Its own layer, so the moving, fading section does not repaint its neighbours.
+        child: RepaintBoundary(child: widget.child),
         builder: (context, child) => Transform.translate(
           offset: Offset(0, -widget.drift * (1 - _progress.value)),
           child: child,
