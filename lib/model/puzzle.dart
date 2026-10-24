@@ -10,9 +10,7 @@ class Puzzle {
   double? longitude;
   String? indiciu;
 
-  /// Rules for the players; null means the game's default (unlimited attempts,
-  /// the standard wrong answer message).
-  int? maxAttempts;
+  /// What players are told after a wrong answer; null means the game's standard message.
   String? wrongAnswerMessage;
 
   Puzzle({
@@ -23,7 +21,6 @@ class Puzzle {
     this.latitude,
     this.longitude,
     this.indiciu,
-    this.maxAttempts,
     this.wrongAnswerMessage,
   }) : components = components ?? [];
 
@@ -38,7 +35,6 @@ class Puzzle {
     latitude: latitude,
     longitude: longitude,
     indiciu: indiciu,
-    maxAttempts: maxAttempts,
     wrongAnswerMessage: wrongAnswerMessage,
   );
 
@@ -70,7 +66,6 @@ class Puzzle {
       latitude: (data['latitude'] as num?)?.toDouble(),
       longitude: (data['longitude'] as num?)?.toDouble(),
       indiciu: data['indiciu'] as String?,
-      maxAttempts: (data['maxAttempts'] as num?)?.toInt(),
       wrongAnswerMessage: data['wrongAnswerMessage'] as String?,
     );
     return puzzle;
@@ -85,7 +80,6 @@ class Puzzle {
       if (latitude != null) 'latitude': latitude,
       if (longitude != null) 'longitude': longitude,
       if (indiciu != null) 'indiciu': indiciu,
-      if (maxAttempts != null) 'maxAttempts': maxAttempts,
       if (wrongAnswerMessage != null) 'wrongAnswerMessage': wrongAnswerMessage,
 
     };

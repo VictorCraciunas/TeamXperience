@@ -18,11 +18,10 @@ Future<void> _pump(WidgetTester tester, Puzzle puzzle, {VoidCallback? onChanged}
 }
 
 void main() {
-  testWidgets('a code puzzle asks for the answer, hint, attempts and message', (tester) async {
+  testWidgets('a code puzzle asks for the answer, hint and message', (tester) async {
     await _pump(tester, Puzzle(id: '0', type: PuzzleType.code));
     expect(find.text('Răspuns corect'), findsOneWidget);
     expect(find.text('Indiciu (opțional)'), findsOneWidget);
-    expect(find.text('Încercări'), findsOneWidget);
     expect(find.text('Mesaj la răspuns greșit (opțional)'), findsOneWidget);
     expect(find.text('Latitudine'), findsNothing);
   });
@@ -32,7 +31,6 @@ void main() {
     expect(find.text('Latitudine'), findsOneWidget);
     expect(find.text('Longitudine'), findsOneWidget);
     expect(find.text('Răspuns corect'), findsNothing);
-    expect(find.text('Încercări'), findsNothing);
   });
 
   testWidgets('a photo puzzle explains how it is checked', (tester) async {
@@ -56,14 +54,9 @@ void main() {
     expect(find.text('sus'), findsOneWidget);
   });
 
-  testWidgets('picking attempts writes them onto the puzzle', (tester) async {
-    final puzzle = Puzzle(id: '0', type: PuzzleType.code);
-    await _pump(tester, puzzle);
-    await tester.tap(find.byKey(const ValueKey('chip-5')));
-    expect(puzzle.maxAttempts, 5);
-
-    await tester.tap(find.byKey(const ValueKey('chip-Nelimitat')));
-    expect(puzzle.maxAttempts, isNull);
+  testWidgets('there is no choice about the number of attempts', (tester) async {
+    await _pump(tester, Puzzle(id: '0', type: PuzzleType.code));
+    expect(find.text('Încercări'), findsNothing);
   });
 
   testWidgets('there is no choice about when the hint appears', (tester) async {

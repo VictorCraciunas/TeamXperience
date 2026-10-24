@@ -3,7 +3,6 @@ import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/puzzle_rules/puzzle_rules_controller.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
-import 'package:teamxperience/ui/components/inputs/choice_chip_row.dart';
 import 'package:teamxperience/ui/theme/theme_context.dart';
 
 /// The "Reguli" tab of a puzzle: what counts as correct, the hint, and how many
@@ -93,19 +92,6 @@ class _PuzzleRulesFormState extends State<PuzzleRulesForm> {
           onChanged: (_) => _changed(),
         ),
         if (type == PuzzleType.code) ...[
-          gap,
-          ChoiceChipRow<int?>(
-            label: 'Încercări',
-            options: [
-              for (final attempts in PuzzleRulesController.attemptChoices)
-                ChoiceOption<int?>(attempts, attempts == null ? 'Nelimitat' : '$attempts'),
-            ],
-            selected: _controller.maxAttempts,
-            onChanged: (value) {
-              _controller.maxAttempts = value;
-              _changed();
-            },
-          ),
           gap,
           AppTextField(
             controller: _controller.messageController,

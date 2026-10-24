@@ -14,21 +14,18 @@ void main() {
           type: PuzzleType.code,
           code: 'XTREME',
           indiciu: 'Uită-te în sus',
-          maxAttempts: 5,
           wrongAnswerMessage: 'Aproape',
         ),
       );
       expect(c.answerController.text, 'XTREME');
       expect(c.hintController.text, 'Uită-te în sus');
       expect(c.messageController.text, 'Aproape');
-      expect(c.maxAttempts, 5);
     });
 
     test('an empty puzzle gives empty fields', () {
       final c = _controller(Puzzle(id: '0', type: PuzzleType.code));
       expect(c.answerController.text, '');
       expect(c.latitudeController.text, '');
-      expect(c.maxAttempts, isNull);
     });
   });
 
@@ -82,13 +79,6 @@ void main() {
       expect(puzzle.longitude, isNull);
     });
 
-    test('attempts are written, and cleared when unset', () {
-      final puzzle = Puzzle(id: '0', type: PuzzleType.code, maxAttempts: 3);
-      final c = _controller(puzzle)
-        ..maxAttempts = null;
-      c.apply();
-      expect(puzzle.maxAttempts, isNull);
-    });
   });
 
   group('coordinate checks', () {
@@ -117,9 +107,5 @@ void main() {
       expect(c.latitudeError, isNull);
       expect(c.longitudeError, isNull);
     });
-  });
-
-  test('the attempts offered are the ones in the design', () {
-    expect(PuzzleRulesController.attemptChoices, [3, 5, null]);
   });
 }

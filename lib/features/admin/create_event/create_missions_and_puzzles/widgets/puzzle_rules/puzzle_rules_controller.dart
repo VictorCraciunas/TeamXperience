@@ -11,7 +11,6 @@ class PuzzleRulesController {
     longitudeController.text = puzzle.longitude?.toString() ?? '';
     hintController.text = puzzle.indiciu ?? '';
     messageController.text = puzzle.wrongAnswerMessage ?? '';
-    maxAttempts = puzzle.maxAttempts;
   }
 
   final Puzzle puzzle;
@@ -21,12 +20,6 @@ class PuzzleRulesController {
   final longitudeController = TextEditingController();
   final hintController = TextEditingController();
   final messageController = TextEditingController();
-
-  /// Null means unlimited.
-  int? maxAttempts;
-
-  /// The attempts offered; null is "Nelimitat".
-  static const attemptChoices = <int?>[3, 5, null];
 
   String? _text(TextEditingController controller) {
     final value = controller.text.trim();
@@ -59,7 +52,6 @@ class PuzzleRulesController {
     puzzle.code = type == PuzzleType.code ? _text(answerController) : null;
     puzzle.wrongAnswerMessage = _text(messageController);
     puzzle.indiciu = _text(hintController);
-    puzzle.maxAttempts = maxAttempts;
 
     if (type == PuzzleType.geolocation) {
       puzzle.latitude = latitudeError == null ? _number(latitudeController) : null;
