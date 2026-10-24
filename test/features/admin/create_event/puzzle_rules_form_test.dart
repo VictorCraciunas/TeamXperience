@@ -18,11 +18,10 @@ Future<void> _pump(WidgetTester tester, Puzzle puzzle, {VoidCallback? onChanged}
 }
 
 void main() {
-  testWidgets('a code puzzle asks for the answer, hint and message', (tester) async {
+  testWidgets('a code puzzle asks for the answer and a hint', (tester) async {
     await _pump(tester, Puzzle(id: '0', type: PuzzleType.code));
     expect(find.text('Răspuns corect'), findsOneWidget);
     expect(find.text('Indiciu (opțional)'), findsOneWidget);
-    expect(find.text('Mesaj la răspuns greșit (opțional)'), findsOneWidget);
     expect(find.text('Latitudine'), findsNothing);
   });
 

@@ -14,12 +14,10 @@ void main() {
           type: PuzzleType.code,
           code: 'XTREME',
           indiciu: 'Uită-te în sus',
-          wrongAnswerMessage: 'Aproape',
         ),
       );
       expect(c.answerController.text, 'XTREME');
       expect(c.hintController.text, 'Uită-te în sus');
-      expect(c.messageController.text, 'Aproape');
     });
 
     test('an empty puzzle gives empty fields', () {
@@ -41,15 +39,13 @@ void main() {
     });
 
     test('empty text clears the field instead of keeping an empty string', () {
-      final puzzle = Puzzle(id: '0', type: PuzzleType.code, code: 'A', indiciu: 'x', wrongAnswerMessage: 'y');
+      final puzzle = Puzzle(id: '0', type: PuzzleType.code, code: 'A', indiciu: 'x');
       final c = _controller(puzzle)
         ..answerController.text = '  '
-        ..hintController.text = ''
-        ..messageController.text = ' ';
+        ..hintController.text = '';
       c.apply();
       expect(puzzle.code, isNull);
       expect(puzzle.indiciu, isNull);
-      expect(puzzle.wrongAnswerMessage, isNull);
     });
 
     test('the answer is only kept for a code puzzle', () {

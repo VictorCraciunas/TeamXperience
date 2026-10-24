@@ -91,15 +91,6 @@ class _PuzzleRulesFormState extends State<PuzzleRulesForm> {
           maxLines: null,
           onChanged: (_) => _changed(),
         ),
-        if (type == PuzzleType.code) ...[
-          gap,
-          AppTextField(
-            controller: _controller.messageController,
-            label: 'Mesaj la răspuns greșit (opțional)',
-            hint: 'Ex: Aproape! Mai încearcă.',
-            onChanged: (_) => _changed(),
-          ),
-        ],
       ],
     );
   }

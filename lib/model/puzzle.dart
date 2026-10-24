@@ -10,9 +10,6 @@ class Puzzle {
   double? longitude;
   String? indiciu;
 
-  /// What players are told after a wrong answer; null means the game's standard message.
-  String? wrongAnswerMessage;
-
   Puzzle({
     required this.id,
     List<Component>? components,
@@ -21,7 +18,6 @@ class Puzzle {
     this.latitude,
     this.longitude,
     this.indiciu,
-    this.wrongAnswerMessage,
   }) : components = components ?? [];
 
   int get componentsCount => components.length;
@@ -35,7 +31,6 @@ class Puzzle {
     latitude: latitude,
     longitude: longitude,
     indiciu: indiciu,
-    wrongAnswerMessage: wrongAnswerMessage,
   );
 
   Component addComponent(Component component) {
@@ -66,7 +61,6 @@ class Puzzle {
       latitude: (data['latitude'] as num?)?.toDouble(),
       longitude: (data['longitude'] as num?)?.toDouble(),
       indiciu: data['indiciu'] as String?,
-      wrongAnswerMessage: data['wrongAnswerMessage'] as String?,
     );
     return puzzle;
   }
@@ -80,7 +74,6 @@ class Puzzle {
       if (latitude != null) 'latitude': latitude,
       if (longitude != null) 'longitude': longitude,
       if (indiciu != null) 'indiciu': indiciu,
-      if (wrongAnswerMessage != null) 'wrongAnswerMessage': wrongAnswerMessage,
 
     };
   }

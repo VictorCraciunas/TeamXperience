@@ -10,7 +10,6 @@ class PuzzleRulesController {
     latitudeController.text = puzzle.latitude?.toString() ?? '';
     longitudeController.text = puzzle.longitude?.toString() ?? '';
     hintController.text = puzzle.indiciu ?? '';
-    messageController.text = puzzle.wrongAnswerMessage ?? '';
   }
 
   final Puzzle puzzle;
@@ -19,7 +18,6 @@ class PuzzleRulesController {
   final latitudeController = TextEditingController();
   final longitudeController = TextEditingController();
   final hintController = TextEditingController();
-  final messageController = TextEditingController();
 
   String? _text(TextEditingController controller) {
     final value = controller.text.trim();
@@ -50,7 +48,6 @@ class PuzzleRulesController {
     final type = puzzle.type;
 
     puzzle.code = type == PuzzleType.code ? _text(answerController) : null;
-    puzzle.wrongAnswerMessage = _text(messageController);
     puzzle.indiciu = _text(hintController);
 
     if (type == PuzzleType.geolocation) {
@@ -64,6 +61,5 @@ class PuzzleRulesController {
     latitudeController.dispose();
     longitudeController.dispose();
     hintController.dispose();
-    messageController.dispose();
   }
 }
