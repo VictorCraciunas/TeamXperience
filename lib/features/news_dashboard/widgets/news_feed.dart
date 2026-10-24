@@ -14,6 +14,7 @@ class NewsFeed extends StatelessWidget {
     required this.onTap,
     required this.onShare,
     this.header,
+    this.onDelete,
     this.emptyMessage = 'Nu există știri',
   });
 
@@ -25,8 +26,12 @@ class NewsFeed extends StatelessWidget {
   /// Scrolls with the posts as the first item (search, filters).
   final Widget? header;
 
+  /// When set (admins), every post gets a small x that calls it.
+  final void Function(Stire stire)? onDelete;
+
   @override
   Widget build(BuildContext context) {
+    final remove = onDelete;
     final top = header;
     final offset = top == null ? 0 : 1;
 
@@ -68,6 +73,7 @@ class NewsFeed extends StatelessWidget {
                   : null,
           onTap: () => onTap(stire),
           onShare: () => onShare(stire),
+          onDelete: remove == null ? null : () => remove(stire),
         );
       },
     );

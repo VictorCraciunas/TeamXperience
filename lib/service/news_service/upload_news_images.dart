@@ -9,11 +9,14 @@ class UploadNewsImagesHelper {
   // Helper methods for news images
   Future<Stire> uploadNewsImages(Stire stire) async {
     // Upload principal image if it's a local file
-    if (stire.principalImage != null &&
-        !isNetworkUrl(stire.principalImage!)) {
+    if (stire.principalImage != null && !isNetworkUrl(stire.principalImage!)) {
       final file = File(stire.principalImage!);
       if (await file.exists()) {
-        final url = await _imageRepo.uploadStireImage(file, stire.id!, "principal");
+        final url = await _imageRepo.uploadStireImage(
+          file,
+          stire.id!,
+          "principal",
+        );
         if (url != null) stire.principalImage = url;
       }
     }
@@ -37,7 +40,11 @@ class UploadNewsImagesHelper {
         final file = File(imagePath);
         if (await file.exists()) {
           final identifier = "secondary_$index";
-          final url = await _imageRepo.uploadStireImage(file, stire.id!, identifier);
+          final url = await _imageRepo.uploadStireImage(
+            file,
+            stire.id!,
+            identifier,
+          );
           if (url != null) {
             uploadedUrls.add(url);
           }

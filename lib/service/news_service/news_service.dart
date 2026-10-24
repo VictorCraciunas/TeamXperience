@@ -35,6 +35,14 @@ class NewsService {
     }
   }
 
+  Future<void> deleteStire(String id) async {
+    try {
+      await _stireRepo.deleteStire(id);
+    } catch (e) {
+      throw StireServiceException('Failed to delete news: $e');
+    }
+  }
+
   Future<Stire> updateStire(Stire stire) async {
     try {
       // Upload images if needed
@@ -48,5 +56,4 @@ class NewsService {
       throw StireServiceException('Failed to update news: $e');
     }
   }
-
 }

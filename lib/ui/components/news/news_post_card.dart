@@ -18,6 +18,7 @@ class NewsPostCard extends StatelessWidget {
     required this.onShare,
     this.imageUrl,
     this.tag,
+    this.onDelete,
   });
 
   final String title;
@@ -31,11 +32,15 @@ class NewsPostCard extends StatelessWidget {
   /// A small label on the image, for example "Privată".
   final String? tag;
 
+  /// When set (admins), a small x in the top right of the image calls it.
+  final VoidCallback? onDelete;
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final url = imageUrl;
     final label = tag;
+    final delete = onDelete;
     final fallback = ColoredBox(color: colors.navy);
 
     return Material(
@@ -59,10 +64,17 @@ class NewsPostCard extends StatelessWidget {
                       categoryLabel,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: colors.accent, fontSize: 12, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        color: colors.accent,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                  Text('  ·  ', style: TextStyle(color: colors.muted, fontSize: 12)),
+                  Text(
+                    '  ·  ',
+                    style: TextStyle(color: colors.muted, fontSize: 12),
+                  ),
                   Text(
                     dateLabel,
                     maxLines: 1,
@@ -79,14 +91,14 @@ class NewsPostCard extends StatelessWidget {
                   (url == null || url.isEmpty)
                       ? fallback
                       : CachedNetworkImage(
-                          imageUrl: url,
-                          fit: BoxFit.cover,
-                          placeholder: (_, __) => fallback,
-                          errorWidget: (_, __, ___) => fallback,
-                        ),
+                        imageUrl: url,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => fallback,
+                        errorWidget: (_, __, ___) => fallback,
+                      ),
                   if (label != null)
                     Positioned(
-                      right: 10,
+                      left: 10,
                       top: 10,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
@@ -94,10 +106,42 @@ class NewsPostCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(AppRadius.pill),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           child: Text(
                             label,
-                            style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (delete != null)
+                    Positioned(
+                      right: 6,
+                      top: 6,
+                      child: Tooltip(
+                        message: 'Șterge știrea',
+                        child: Material(
+                          color: const Color(0x99000000),
+                          shape: const CircleBorder(),
+                          child: InkWell(
+                            customBorder: const CircleBorder(),
+                            onTap: delete,
+                            child: const SizedBox(
+                              width: 40,
+                              height: 40,
+                              child: Icon(
+                                Icons.close,
+                                size: 18,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -118,14 +162,22 @@ class NewsPostCard extends StatelessWidget {
                           title,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: colors.text, fontSize: 16, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            color: colors.text,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           preview,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: colors.muted, fontSize: 13, height: 1.35),
+                          style: TextStyle(
+                            color: colors.muted,
+                            fontSize: 13,
+                            height: 1.35,
+                          ),
                         ),
                       ],
                     ),
@@ -133,7 +185,11 @@ class NewsPostCard extends StatelessWidget {
                   IconButton(
                     onPressed: onShare,
                     tooltip: 'Distribuie',
-                    icon: Icon(Icons.share_outlined, color: colors.text, size: 22),
+                    icon: Icon(
+                      Icons.share_outlined,
+                      color: colors.text,
+                      size: 22,
+                    ),
                   ),
                 ],
               ),

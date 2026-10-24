@@ -190,6 +190,32 @@ class _StiriDashboardState extends State<StiriDashboard> {
     return null;
   }
 
+  /// The x on a post (admins): confirm, then delete the news.
+  Future<void> _deleteStire(Stire stire) async {
+    final id = stire.id;
+    if (id == null) return;
+
+    final confirmed = await showAppDialog(
+      context,
+      title: 'Șterge știrea',
+      message:
+          'Vrei să ștergi "${stire.title ?? 'această știre'}"? Nu se poate anula.',
+      confirmLabel: 'Șterge',
+      cancelLabel: 'Anulează',
+      destructive: true,
+    );
+    if (!confirmed || !mounted) return;
+
+    try {
+      await context.read<NewsList>().deleteStire(id);
+      if (!mounted) return;
+      MySnackBars.successSnackBar(context, title: 'Știrea a fost ștearsă');
+    } catch (_) {
+      if (!mounted) return;
+      MySnackBars.errorSnackBar(context, title: 'Nu am putut șterge știrea');
+    }
+  }
+
   /// Long press on a category: confirm, then delete it. Returns true when it
   /// was deleted, so the sheet drops the chip. [known] is kept in step.
   Future<bool> _deleteCategory(
@@ -348,6 +374,7 @@ class _StiriDashboardState extends State<StiriDashboard> {
                   return NewsFeed(
                     header: _header(hasFilter),
                     news: controller.getDisplayedStiri(newsList),
+                    onDelete: _isAdmin ? _deleteStire : null,
                     emptyMessage:
                         controller.searchQuery.isNotEmpty
                             ? 'Nu s-au găsit știri'
