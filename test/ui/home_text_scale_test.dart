@@ -41,7 +41,6 @@ void main() {
       events: [_event],
       statsFor: (_) => const AdminEventStats(teams: 12, persons: 40),
       onTap: (_) {},
-      onSeeAll: () {},
     ),
   };
 

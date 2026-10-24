@@ -9,7 +9,6 @@ import '../../../../model/event.dart';
 import '../../../../model/stire.dart';
 import '../../../../state_management/events_state_management.dart';
 import '../../../../service/team_service/team_service.dart';
-import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 import '../logic/admin_event_stats.dart';
 
 class AdminHomeController extends ChangeNotifier {
@@ -102,10 +101,6 @@ class AdminHomeController extends ChangeNotifier {
 
   void navigateToNotificationFor(Event event) {
     Navigator.pushNamed(context, Routes.sendNotification, arguments: event);
-  }
-
-  void navigateToEventsTab() {
-    context.read<ShellController>().select(1);
   }
 
   void navigateToStiriDashboard() {
