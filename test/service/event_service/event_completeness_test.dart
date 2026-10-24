@@ -3,7 +3,7 @@ import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/event_status.dart';
 import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
-import 'package:teamxperience/features/admin/create_event/logic/event_completeness.dart';
+import 'package:teamxperience/service/event_service/event_completeness.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
