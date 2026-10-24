@@ -149,3 +149,38 @@ List<PublishProblem> publishProblems(Event event) {
 }
 
 bool canPublish(Event event) => publishProblems(event).isEmpty;
+
+/// How far along a draft is, from 0 (nothing filled in) to 1 (ready to
+/// publish). Each detail counts once, and each mission counts once.
+double draftProgress(Event event) {
+  const enrollment = {
+    EventIssue.noEnrollmentDates,
+    EventIssue.enrollmentOrder,
+    EventIssue.enrollmentAfterEvent,
+  };
+
+  // The enrolment checks are one detail, everything else is its own.
+  final detailChecks = EventIssue.values.length - enrollment.length + 1;
+  final failedDetails = <Object>{
+    for (final issue in eventIssues(event)) enrollment.contains(issue) ? 'enrollment' : issue,
+  };
+
+  final missions = event.missions;
+  final failedMissions = missions.where((m) => !isMissionComplete(m)).length;
+
+  final total = detailChecks + missions.length;
+  final failed = failedDetails.length + failedMissions;
+  return (1 - failed / total).clamp(0.0, 1.0);
+}
+
+/// One line for a draft card: the first thing to do, or that it is ready.
+String draftSummary(Event event, {bool withCount = false}) {
+  final problems = publishProblems(event);
+  if (problems.isEmpty) return 'Gata de publicat';
+
+  final first = problems.first.text;
+  if (withCount && problems.length > 1) {
+    return '$first · încă ${problems.length - 1}';
+  }
+  return first;
+}

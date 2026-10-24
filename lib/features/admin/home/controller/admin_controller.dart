@@ -44,6 +44,15 @@ class AdminHomeController extends ChangeNotifier {
     );
   }
 
+  /// Opens a draft in the event form to carry on where it was left.
+  void navigateToDraft(Event draft) {
+    Navigator.pushNamed(
+      context,
+      Routes.createEvent,
+      arguments: {'event': draft, 'isDraft': true},
+    );
+  }
+
   void navigateToEventDetails(Event event) {
     Navigator.pushNamed(
       context,

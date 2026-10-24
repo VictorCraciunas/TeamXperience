@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/features/admin/home/controller/admin_controller.dart';
 import 'package:teamxperience/features/admin/home/logic/admin_hero.dart';
+import 'package:teamxperience/features/admin/home/widgets/admin_drafts_panel.dart';
 import 'package:teamxperience/features/admin/home/widgets/admin_hero_actions.dart';
 import 'package:teamxperience/features/admin/home/widgets/admin_hero_section.dart';
 import 'package:teamxperience/features/admin/home/widgets/admin_quick_actions_panel.dart';
@@ -131,6 +132,16 @@ class _AdminHomeState extends State<AdminHome> {
             onNotify: controller.navigateToNotification,
           ),
         ),
+        if (eventList.draftEvents.isNotEmpty) ...[
+          const SizedBox(height: 14),
+          section(
+            'drafts',
+            AdminDraftsPanel(
+              drafts: eventList.draftEvents,
+              onTap: controller.navigateToDraft,
+            ),
+          ),
+        ],
         const SizedBox(height: 14),
         section(
           'upcoming',
