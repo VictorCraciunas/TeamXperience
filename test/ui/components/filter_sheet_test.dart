@@ -63,7 +63,7 @@ void main() {
     expect(find.text('Filtre'), findsOneWidget);
     expect(find.text('Perioadă'), findsOneWidget);
     expect(find.text('Luna asta'), findsOneWidget);
-    expect(find.text('Personalizat…'), findsOneWidget);
+    expect(find.text('Dată personalizată'), findsOneWidget);
     expect(find.text('Tip'), findsOneWidget);
     expect(find.text('Publice'), findsOneWidget);
     expect(find.text('Stare'), findsOneWidget);
@@ -117,9 +117,9 @@ void main() {
     expect(h.result?.selected, isEmpty);
   });
 
-  testWidgets('Personalizat… opens the calendar sheet and keeps the chosen range', (tester) async {
+  testWidgets('Dată personalizată opens the calendar sheet and keeps the chosen range', (tester) async {
     final h = await _open(tester);
-    await tester.tap(find.text('Personalizat…'));
+    await tester.tap(find.text('Dată personalizată'));
     await tester.pumpAndSettle();
     expect(find.text('Selectează perioada'), findsOneWidget);
     // The presets exist in both sheets; the calendar sheet is on top (last).
@@ -132,21 +132,21 @@ void main() {
     expect(h.result?.period.start, DateTime(2026, 10, 1));
   });
 
-  testWidgets('a custom period replaces the Personalizat… chip with its dates', (tester) async {
+  testWidgets('a custom period replaces the Dată personalizată chip with its dates', (tester) async {
     await _open(
       tester,
       period: PeriodSelection(start: DateTime(2026, 10, 5), end: DateTime(2026, 10, 9)),
     );
     expect(find.text('05 oct 2026 - 09 oct 2026'), findsOneWidget);
-    expect(find.text('Personalizat…'), findsNothing);
+    expect(find.text('Dată personalizată'), findsNothing);
   });
 
-  testWidgets('a preset period keeps the Personalizat… chip', (tester) async {
+  testWidgets('a preset period keeps the Dată personalizată chip', (tester) async {
     await _open(
       tester,
       period: PeriodSelection(start: DateTime(2026, 10, 1), end: DateTime(2026, 10, 31)),
     );
-    expect(find.text('Personalizat…'), findsOneWidget);
+    expect(find.text('Dată personalizată'), findsOneWidget);
   });
 
   testWidgets('dismissing the sheet returns null', (tester) async {

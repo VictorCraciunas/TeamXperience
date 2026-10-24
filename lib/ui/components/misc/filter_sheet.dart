@@ -171,7 +171,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                   onTap: () => setState(() => _period = preset.selection),
                 ),
               _Choice(
-                label: customRange ?? 'Personalizat…',
+                label: customRange ?? 'Dată personalizată',
                 selected: customRange != null,
                 onTap: _pickCustomPeriod,
               ),
