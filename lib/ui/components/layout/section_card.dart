@@ -58,7 +58,8 @@ class SectionCard extends StatelessWidget {
                 Flexible(
                   child: Text(
                     title,
-                    maxLines: 1,
+                    // Wraps to a second line rather than being cut with dots.
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: colors.text,

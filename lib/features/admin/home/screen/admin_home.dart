@@ -138,7 +138,6 @@ class _AdminHomeState extends State<AdminHome> {
             events: upcoming,
             statsFor: controller.statsFor,
             onTap: controller.navigateToEventDetails,
-            onSeeAll: controller.navigateToEventsTab,
           ),
         ),
       ],
