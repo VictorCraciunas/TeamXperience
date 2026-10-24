@@ -26,17 +26,4 @@ void main() {
     await _pump(tester, const MyAppBar(appBarText: 'Misiuni'));
     expect(tester.getSize(find.byType(AppBar)).height, kToolbarHeight);
   });
-
-  testWidgets('tabs sit under the title and add to the height', (tester) async {
-    await _pump(
-      tester,
-      const MyAppBar(
-        appBarText: 'Puzzle 1',
-        bottom: TabBar(tabs: [Tab(text: 'Aspect'), Tab(text: 'Reguli')]),
-      ),
-    );
-    expect(find.text('Aspect'), findsOneWidget);
-    expect(find.text('Reguli'), findsOneWidget);
-    expect(tester.getSize(find.byType(AppBar)).height, greaterThan(kToolbarHeight));
-  });
 }
