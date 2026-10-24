@@ -67,7 +67,10 @@ class _PuzzlePageState extends State<PuzzlePage> {
                   ),
                   SingleChildScrollView(
                     padding: _padding,
-                    child: PuzzleRulesForm(puzzle: puzzle),
+                    child: PuzzleRulesForm(
+                      puzzle: puzzle,
+                      onChanged: () => setState(() {}),
+                    ),
                   ),
                 ],
               ),

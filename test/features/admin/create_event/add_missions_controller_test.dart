@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/controller/add_missions_controller.dart';
 import 'package:teamxperience/model/component.dart';
@@ -77,13 +78,21 @@ void main() {
   });
 
   group('copying an old event', () {
-    test('clears the puzzle answers but keeps the missions', () {
-      final source = Mission(id: '0', puzzles: [_puzzle('0', type: PuzzleType.code, code: 'A')]);
+    test('keeps the missions and the puzzle types but clears answers, places and hints', () {
+      final source = Mission(id: '0', puzzles: [_puzzle('0', type: PuzzleType.code, code: 'A')..latitude = 45..longitude = 24]);
       final c = AddMissionsController(_event([source]), 'blueprint');
       final puzzle = c.event.missions.single.puzzles.single;
-      expect(puzzle.type, isNull);
+      expect(puzzle.type, PuzzleType.code);
       expect(puzzle.code, isNull);
+      expect(puzzle.latitude, isNull);
+      expect(puzzle.longitude, isNull);
       expect(puzzle.indiciu, isNull);
+    });
+
+    test('keeps what is on the screen of each puzzle', () {
+      final source = Mission(id: '0', puzzles: [_puzzle('0', type: PuzzleType.code, code: 'A')..components.add(Component(type: ComponentType.text, text: 'Salut'))]);
+      final c = AddMissionsController(_event([source]), 'blueprint');
+      expect(c.event.missions.single.puzzles.single.components.single.text, 'Salut');
     });
 
     test('does not change the event it was copied from', () {
