@@ -24,9 +24,8 @@
             {
               "type": "text",
               "text": "În ce an a fost construită prima casă din piață?",
-              "textColor": "#FFFFFF",
               "fontSize": 20,
-              "fontWeight": "bold",
+              "fontWeight": "Bold (700)",
               "textAlign": "center"
             },
             {
@@ -34,9 +33,7 @@
               "codeLength": 4,
               "inputType": "Separated",
               "capsLock": "Fără",
-              "frameBackgroundColor": "#101820",
-              "inputBackgroundColor": "#1B2A38",
-              "colorBorderInput": "#33FF66",
+              "colorBorderInput": "#2AA5A9",
               "inputCornerRadius": 8
             },
             {
@@ -57,7 +54,6 @@
             {
               "type": "text",
               "text": "Du-te la Podul Minciunilor.",
-              "textColor": "#FFFFFF",
               "fontSize": 18,
               "textAlign": "center"
             }
@@ -73,7 +69,6 @@
             {
               "type": "text",
               "text": "Fă o poză de echipă în fața Catedralei. Un organizator o aprobă.",
-              "textColor": "#FFFFFF",
               "fontSize": 18,
               "textAlign": "center"
             }

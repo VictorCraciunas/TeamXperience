@@ -226,4 +226,120 @@ void main() {
       expect(_import(_event(extra: {'type': 'SECRET'})).event, isNull);
     });
   });
+
+  group('values the app could not draw are refused', () {
+    EventImportResult withComponent(Map<String, dynamic> component) => _import(
+      _event(missions: [
+        {
+          'puzzles': [
+            {
+              'type': 'code',
+              'components': [component],
+            },
+          ],
+        },
+      ]),
+    );
+
+    void expectRefused(Map<String, dynamic> component, String key) {
+      final result = withComponent(component);
+      expect(result.event, isNull, reason: '$component');
+      expect(result.errors.single, allOf(contains(key), contains('Misiunea 1'), contains('componenta 1')));
+    }
+
+    void expectAccepted(Map<String, dynamic> component) {
+      final result = withComponent(component);
+      expect(result.errors, isEmpty, reason: '$component');
+    }
+
+    test('a colour that is not a hex colour', () {
+      expectRefused({'type': 'text', 'textColor': 'red'}, 'textColor');
+      expectRefused({'type': 'button', 'buttonColor': '#12345'}, 'buttonColor');
+      expectRefused({'type': 'code', 'colorBorderInput': 'verde'}, 'colorBorderInput');
+      expectRefused({'type': 'button', 'glowColor': '#GGGGGG'}, 'glowColor');
+    });
+
+    test('hex colours with or without the #', () {
+      expectAccepted({'type': 'text', 'textColor': '#33FF66'});
+      expectAccepted({'type': 'text', 'textColor': '33ff66'});
+    });
+
+    test('a font weight that is not one of the six', () {
+      expectRefused({'type': 'text', 'fontWeight': 'bold'}, 'fontWeight');
+      expectRefused({'type': 'button', 'fontWeight': 'Bold'}, 'fontWeight');
+      for (final weight in ['Thin (100)', 'Light (300)', 'Regular (400)', 'Medium (500)', 'Bold (700)', 'Black (900)']) {
+        expectAccepted({'type': 'text', 'fontWeight': weight});
+      }
+    });
+
+    test('a font that is not Poppins or Monospace', () {
+      expectRefused({'type': 'text', 'fontFamily': 'Arial'}, 'fontFamily');
+      expectAccepted({'type': 'text', 'fontFamily': 'Poppins'});
+      expectAccepted({'type': 'code', 'fontFamily': 'Monospace'});
+    });
+
+    test('text alignment', () {
+      expectRefused({'type': 'text', 'textAlign': 'middle'}, 'textAlign');
+      for (final align in ['left', 'center', 'right', 'justify']) {
+        expectAccepted({'type': 'text', 'textAlign': align});
+      }
+    });
+
+    test('the code input choices', () {
+      expectRefused({'type': 'code', 'inputType': 'Mixed'}, 'inputType');
+      expectRefused({'type': 'code', 'capsLock': 'yes'}, 'capsLock');
+      expectAccepted({'type': 'code', 'inputType': 'Separated', 'capsLock': 'CapsLock'});
+      expectAccepted({'type': 'code', 'inputType': 'Free', 'capsLock': 'Fără'});
+    });
+
+    test('text size from 8 to 72', () {
+      expectRefused({'type': 'text', 'fontSize': 7}, 'fontSize');
+      expectRefused({'type': 'button', 'fontSize': 73}, 'fontSize');
+      expectAccepted({'type': 'text', 'fontSize': 8});
+      expectAccepted({'type': 'code', 'fontSize': 72});
+    });
+
+    test('number of characters from 1 to 10, a whole number', () {
+      expectRefused({'type': 'code', 'codeLength': 0}, 'codeLength');
+      expectRefused({'type': 'code', 'codeLength': 11}, 'codeLength');
+      expectRefused({'type': 'code', 'codeLength': 4.5}, 'codeLength');
+      expectAccepted({'type': 'code', 'codeLength': 1});
+      expectAccepted({'type': 'code', 'codeLength': 10});
+    });
+
+    test('typewriter speed from 10 to 300', () {
+      expectRefused({'type': 'text', 'typewriterSpeed': 5}, 'typewriterSpeed');
+      expectRefused({'type': 'text', 'typewriterSpeed': 301}, 'typewriterSpeed');
+      expectAccepted({'type': 'text', 'typewriterSpeed': 10});
+      expectAccepted({'type': 'text', 'typewriterSpeed': 300});
+    });
+
+    test('corner radius from 0 to 50 on every component that has one', () {
+      expectRefused({'type': 'button', 'cornerRadius': 51}, 'cornerRadius');
+      expectRefused({'type': 'image', 'cornerRadius': -1}, 'cornerRadius');
+      expectRefused({'type': 'code', 'frameCornerRadius': 60}, 'frameCornerRadius');
+      expectRefused({'type': 'code', 'inputCornerRadius': 60}, 'inputCornerRadius');
+      expectAccepted({'type': 'button', 'cornerRadius': 0});
+      expectAccepted({'type': 'image', 'cornerRadius': 50});
+    });
+
+    test('box width from 0 to 200 on a code input, image height from 150 to 500', () {
+      expectRefused({'type': 'code', 'width': 201}, 'width');
+      expectRefused({'type': 'image', 'height': 149}, 'height');
+      expectRefused({'type': 'image', 'height': 501}, 'height');
+      expectAccepted({'type': 'code', 'width': 200});
+      expectAccepted({'type': 'image', 'height': 500});
+    });
+
+    test('options a component does not use are not checked', () {
+      expectAccepted({'type': 'text', 'width': 999, 'height': 999});
+    });
+
+    test('the mistake says what is allowed', () {
+      final result = withComponent({'type': 'text', 'fontSize': 500});
+      expect(result.errors.single, allOf(contains('8'), contains('72')));
+      final weight = withComponent({'type': 'text', 'fontWeight': 'bold'});
+      expect(weight.errors.single, contains('Bold (700)'));
+    });
+  });
 }
