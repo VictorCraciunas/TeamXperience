@@ -164,15 +164,27 @@ class _TypewriterTextState extends State<TypewriterText> with SingleTickerProvid
         // Add bounds checking to prevent RangeError
         final displayLength = _animation.value.clamp(0, widget.text.length);
 
-        return Text(
-          textAlign: widget.textAlign,
-          widget.text.substring(0, displayLength),
-          style: TextStyle(
-              color: widget.textColor,
-              fontSize: widget.fontSize,
-              fontWeight: widget.fontWeight,
-              fontFamily: widget.fontFamily
+        final style = TextStyle(
+          color: widget.textColor,
+          fontSize: widget.fontSize,
+          fontWeight: widget.fontWeight,
+          fontFamily: widget.fontFamily,
+        );
+
+        // The whole text is laid out from the start and the part not typed yet
+        // is transparent, so the block never grows, shifts or re-wraps.
+        return Text.rich(
+          TextSpan(
+            style: style,
+            children: [
+              TextSpan(text: widget.text.substring(0, displayLength)),
+              TextSpan(
+                text: widget.text.substring(displayLength),
+                style: const TextStyle(color: Colors.transparent),
+              ),
+            ],
           ),
+          textAlign: widget.textAlign,
         );
       },
     );
