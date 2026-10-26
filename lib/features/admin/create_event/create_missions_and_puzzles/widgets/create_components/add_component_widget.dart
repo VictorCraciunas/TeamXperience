@@ -10,6 +10,7 @@ import 'create_button/create_button_component.dart';
 import 'create_code/create_code_component.dart';
 import 'create_image/create_image_component.dart';
 import 'create_text/create_text_component.dart';
+import 'space_below_slider.dart';
 
 class AddComponentWidget extends StatefulWidget {
   final Puzzle puzzle;
@@ -73,6 +74,13 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
                         value == null ? 'Please select a component type' : null,
                 hint: "Selecteaza tipul de componenta",
               ),
+              if (type != null) ...[
+                const SizedBox(height: 20),
+                SpaceBelowSlider(
+                  value: widget.component.spaceBelow,
+                  onChanged: (value) => setState(() => widget.component.spaceBelow = value),
+                ),
+              ],
               if (type == ComponentType.text) ...[
                 TextComponentFieldsWidget(
                   refreshUI: widget.refreshUI,

@@ -153,6 +153,7 @@ Component _readComponent(Map<String, dynamic> map, String where, List<String> er
     width: type == ComponentType.code ? reader.decimal('width', min: 0, max: 200) : reader.decimal('width'),
     height: type == ComponentType.image ? reader.decimal('height', min: 150, max: 500) : reader.decimal('height'),
     typewriterSpeed: reader.whole('typewriterSpeed', min: 10, max: 300),
+    spaceBelow: reader.decimal('spaceBelow', min: 0, max: 120),
     textAlign: reader.choice('textAlign', _textAligns),
   );
 }

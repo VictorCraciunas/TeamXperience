@@ -50,6 +50,7 @@ Puzzle
 
 Component
   type: "text" | "image" | "button" | "code"        (required)
+  spaceBelow?: Number
   text?: String
   textColor?: HexColor
   fontSize?: Number
@@ -168,6 +169,7 @@ Keys you may see in an exported event but must **not** write: `eventId`, `status
 | Field | What it can hold |
 |---|---|
 | `type` | `"text"`, `"image"`, `"button"` or `"code"`. Required. |
+| `spaceBelow` | A number from 0 to 120: the space in pixels left under this component before the next one. When missing it is 40. Use a small value (for example `8`) to keep a title close to the text under it, and a large one (for example `90`) before a button. |
 
 ### Component `text`
 
@@ -178,7 +180,7 @@ Keys you may see in an exported event but must **not** write: `eventId`, `status
 | `fontSize` | A number from 8 to 72. The app's editor starts at 16. |
 | `fontWeight` | One of: `"Thin (100)"`, `"Light (300)"`, `"Regular (400)"`, `"Medium (500)"`, `"Bold (700)"`, `"Black (900)"`. Written exactly like that, with the number in brackets. |
 | `fontFamily` | `"Poppins"` or `"Monospace"`. |
-| `textAlign` | `"left"`, `"center"`, `"right"` or `"justify"`. Default: `"center"`. |
+| `textAlign` | `"left"`, `"center"`, `"right"` or `"justify"`. Default: `"center"`. The text takes the whole width of the screen, so `"left"` really puts it at the left edge. |
 | `animation` | `"none"` (appears at once) or `"typewriter"` (letters appear one by one). |
 | `typewriterSpeed` | Whole number of milliseconds per letter, from 10 to 300. Default 100. Only used with `"typewriter"`. |
 

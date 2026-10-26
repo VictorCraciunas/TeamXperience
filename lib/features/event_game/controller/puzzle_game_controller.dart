@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/features/event_game/logic/spaced_components.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
@@ -14,6 +15,9 @@ class PuzzleGameController {
   final ImageProvider background;
   final int missionIndex;
   List<List<Widget>> puzzleWidgets = [];
+
+  /// The space under each component of each puzzle; null means the usual gap.
+  List<List<double?>> puzzleSpaces = [];
   final ValueNotifier<int> selectedPuzzleNotifier = ValueNotifier(0);
   final ComponentToWidget componentToWidget = ComponentToWidget();
   String userInput = "";
@@ -43,6 +47,7 @@ class PuzzleGameController {
 
   void loadPuzzles() {
     puzzleWidgets.clear();
+    puzzleSpaces.clear();
     for (Puzzle puzzle in mission.puzzles) {
       List<Widget> widgets = [];
       for (var component in puzzle.components) {
@@ -63,6 +68,7 @@ class PuzzleGameController {
         widgets.add(widget);
       }
       puzzleWidgets.add(widgets);
+      puzzleSpaces.add([for (final component in puzzle.components) component.spaceBelow]);
     }
   }
 
@@ -126,6 +132,13 @@ class PuzzleGameController {
     return null;
   }
 
+  List<double?> getCurrentPuzzleSpaces() {
+    if (puzzleSpaces.isNotEmpty && selectedPuzzle < puzzleSpaces.length) {
+      return puzzleSpaces[selectedPuzzle];
+    }
+    return const [];
+  }
+
   List<Widget> getCurrentPuzzleWidgets() {
     if (puzzleWidgets.isNotEmpty && selectedPuzzle < puzzleWidgets.length) {
       return puzzleWidgets[selectedPuzzle];
@@ -140,29 +153,9 @@ class PuzzleGameController {
   int get totalPuzzles => mission.puzzles.length;
   int get currentPuzzleIndex => selectedPuzzle;
 
-  // Updated method to include sequential animations
+  /// The components with the gaps the organiser chose under them.
   List<Widget> buildComponentsWithSpacing(List<Widget> components, List<Animation<double>> animations) {
-    if (components.isEmpty) return components;
-
-    List<Widget> spacedComponents = [];
-    for (int i = 0; i < components.length; i++) {
-      // Wrap each component with animated opacity
-      Widget animatedComponent = Opacity(
-        opacity: animations.isNotEmpty && i < animations.length
-            ? animations[i].value
-            : 1.0,
-        child: components[i],
-      );
-
-      spacedComponents.add(animatedComponent);
-
-      // Add spacing between components (except after the last one)
-      if (i < components.length - 1) {
-        double spacing = 40.0;
-        spacedComponents.add(SizedBox(height: spacing));
-      }
-    }
-    return spacedComponents;
+    return spacedComponents(components, animations, getCurrentPuzzleSpaces());
   }
 
   void dispose() {
