@@ -6,7 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/enums/event_status.dart';
-import 'package:teamxperience/features/admin/create_event/start/event_json_sample.dart';
 import 'package:teamxperience/features/admin/create_event/start/import_errors_card.dart';
 import 'package:teamxperience/features/admin/create_event/start/import_event_controller.dart';
 import 'package:teamxperience/features/admin/create_event/start/import_event_page.dart';
@@ -136,11 +135,6 @@ void main() {
       expect(c.textController.text, 'ce era');
     });
 
-    test('copying the sample puts it on the clipboard', () async {
-      final c = ImportEventController(saveDraft: (e) async => e);
-      await c.copySample();
-      expect(clipboard, eventJsonSample);
-    });
   });
 
   group('page', () {
@@ -177,11 +171,11 @@ void main() {
       return service;
     }
 
-    testWidgets('explains what it does and has the three buttons', (tester) async {
+    testWidgets('explains what it does and has the two buttons', (tester) async {
       await pump(tester);
       expect(find.text('Import din JSON'), findsOneWidget);
       expect(find.text('Lipește'), findsOneWidget);
-      expect(find.text('Copiază un model'), findsOneWidget);
+      expect(find.text('Copiază un model'), findsNothing);
       expect(find.text('Importă ca ciornă'), findsOneWidget);
     });
 

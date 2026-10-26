@@ -67,26 +67,11 @@ class _ImportEventPageState extends State<ImportEventPage> {
                       style: TextStyle(color: context.colors.muted, fontSize: 13),
                     ),
                     const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AppButton(
-                            label: 'Lipește',
-                            variant: AppButtonVariant.secondary,
-                            foregroundColor: context.colors.text,
-                            onPressed: _controller.paste,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: AppButton(
-                            label: 'Copiază un model',
-                            variant: AppButtonVariant.secondary,
-                            foregroundColor: context.colors.text,
-                            onPressed: _controller.copySample,
-                          ),
-                        ),
-                      ],
+                    AppButton(
+                      label: 'Lipește',
+                      variant: AppButtonVariant.secondary,
+                      foregroundColor: context.colors.text,
+                      onPressed: _controller.paste,
                     ),
                     const SizedBox(height: 16),
                     AppTextField(

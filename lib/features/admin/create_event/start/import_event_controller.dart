@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:teamxperience/features/admin/create_event/start/event_json_sample.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/service/event_service/event_json_import.dart';
 
@@ -49,8 +48,6 @@ class ImportEventController extends ChangeNotifier {
     errors = const [];
     notifyListeners();
   }
-
-  Future<void> copySample() => Clipboard.setData(const ClipboardData(text: eventJsonSample));
 
   @override
   void dispose() {

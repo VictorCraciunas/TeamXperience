@@ -1,8 +1,8 @@
 # Importing an event from JSON
 
-In the app: admin Home → **Creează eveniment** → **Din JSON**. Paste the text, press **Importă ca ciornă**. The event is saved as a draft and opened in the event form, where you check it and publish it. Nothing is published by the import.
+In the app: admin Home → **Creează eveniment** → **Din JSON**. Copy the text from wherever you wrote it, press **Lipește** (or paste in the box), then press **Importă ca ciornă**. The event is saved as a draft and opened in the event form, where you check it and publish it. Nothing is published by the import.
 
-**Copiază un model** copies a complete example to the clipboard. The same example is in [event-import-sample.json](event-import-sample.json) (a test keeps the two identical).
+A complete example is in [event-import-sample.json](event-import-sample.json). A test checks that it imports and could be published.
 
 ## Rules
 

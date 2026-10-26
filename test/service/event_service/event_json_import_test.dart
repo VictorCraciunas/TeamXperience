@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
-import 'package:teamxperience/features/admin/create_event/start/event_json_sample.dart';
 import 'package:teamxperience/service/event_service/event_completeness.dart';
 import 'package:teamxperience/service/event_service/event_json_import.dart';
 
@@ -122,7 +121,9 @@ void main() {
     });
   });
 
-  group('the sample', () {
+  group('the sample in docs', () {
+    final eventJsonSample = File('docs/event-import-sample.json').readAsStringSync();
+
     test('imports without errors', () {
       final result = importEventFromJson(eventJsonSample);
       expect(result.errors, isEmpty);
@@ -134,11 +135,6 @@ void main() {
       if (event != null) {
         expect(publishProblems(event).map((p) => p.text), isEmpty);
       }
-    });
-
-    test('is the same as the example file in docs', () {
-      final file = File('docs/event-import-sample.json').readAsStringSync();
-      expect(file.replaceAll('\r\n', '\n'), eventJsonSample);
     });
 
     test('shows each puzzle type', () {
