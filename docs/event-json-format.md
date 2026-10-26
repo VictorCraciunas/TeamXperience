@@ -11,6 +11,7 @@ To have an AI write the JSON for you, give it [skills/event-json/SKILL.md](skill
 - Numbers can be whole (`18`) or decimal (`18.5`).
 - Ids are not written: missions and puzzles are numbered by their place in the list. `eventId`, `status` and `isStopped` in the file are ignored.
 - Images are links (`https://...`) or left out. Pictures cannot be inside the file.
+- Values must be exactly the ones the app offers: colours as `#RRGGBB`, font weight, font and alignment from the fixed lists, numbers inside the ranges of the editors. The skill file lists them all.
 - A mistake is reported with its place, for example `Misiunea 2, puzzle 1, componenta 3: „type” nu poate fi „video”`. Nothing is saved until all mistakes are fixed.
 
 ## Event

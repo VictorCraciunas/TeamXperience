@@ -25,7 +25,7 @@
               "type": "text",
               "text": "În ce an a fost construită prima casă din piață?",
               "fontSize": 20,
-              "fontWeight": "bold",
+              "fontWeight": "Bold (700)",
               "textAlign": "center"
             },
             {

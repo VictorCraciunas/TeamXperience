@@ -125,35 +125,45 @@ Component _readComponent(Map<String, dynamic> map, String where, List<String> er
     text: reader.text('text'),
     imageUrl: reader.text('imageUrl'),
     buttonLabel: reader.text('buttonLabel'),
-    buttonColor: reader.text('buttonColor'),
-    buttonColorOnTap: reader.text('buttonColorOnTap'),
-    buttonTextColor: reader.text('buttonTextColor'),
-    buttonTextColorOnTap: reader.text('buttonTextColorOnTap'),
-    borderColor: reader.text('borderColor'),
-    textColor: reader.text('textColor'),
+    buttonColor: reader.color('buttonColor'),
+    buttonColorOnTap: reader.color('buttonColorOnTap'),
+    buttonTextColor: reader.color('buttonTextColor'),
+    buttonTextColorOnTap: reader.color('buttonTextColorOnTap'),
+    borderColor: reader.color('borderColor'),
+    textColor: reader.color('textColor'),
     animation: reader.option('animation', AnimationType.values),
-    fontSize: reader.decimal('fontSize'),
-    fontWeight: reader.text('fontWeight'),
-    fontFamily: reader.text('fontFamily'),
-    codeLength: reader.whole('codeLength'),
-    cornerRadius: reader.decimal('cornerRadius'),
+    fontSize: reader.decimal('fontSize', min: 8, max: 72),
+    fontWeight: reader.choice('fontWeight', _fontWeights),
+    fontFamily: reader.choice('fontFamily', _fontFamilies),
+    codeLength: reader.whole('codeLength', min: 1, max: 10),
+    cornerRadius: reader.decimal('cornerRadius', min: 0, max: 50),
     enableFlicker: reader.flag('enableFlicker'),
     enableGlow: reader.flag('enableGlow'),
-    glowColor: reader.text('glowColor'),
-    inputType: reader.text('inputType'),
-    capsLock: reader.text('capsLock'),
-    frameCornerRadius: reader.decimal('frameCornerRadius'),
-    inputCornerRadius: reader.decimal('inputCornerRadius'),
-    frameBackgroundColor: reader.text('frameBackgroundColor'),
-    inputBackgroundColor: reader.text('inputBackgroundColor'),
-    colorBorderInput: reader.text('colorBorderInput'),
-    colorBorderContainer: reader.text('colorBorderContainer'),
-    width: reader.decimal('width'),
-    height: reader.decimal('height'),
-    typewriterSpeed: reader.whole('typewriterSpeed'),
-    textAlign: reader.text('textAlign'),
+    glowColor: reader.color('glowColor'),
+    inputType: reader.choice('inputType', _inputTypes),
+    capsLock: reader.choice('capsLock', _capsLocks),
+    frameCornerRadius: reader.decimal('frameCornerRadius', min: 0, max: 50),
+    inputCornerRadius: reader.decimal('inputCornerRadius', min: 0, max: 50),
+    frameBackgroundColor: reader.color('frameBackgroundColor'),
+    inputBackgroundColor: reader.color('inputBackgroundColor'),
+    colorBorderInput: reader.color('colorBorderInput'),
+    colorBorderContainer: reader.color('colorBorderContainer'),
+    // The box width only exists on a code input and the height on an image;
+    // on the other kinds they are not used, so they are not checked.
+    width: type == ComponentType.code ? reader.decimal('width', min: 0, max: 200) : reader.decimal('width'),
+    height: type == ComponentType.image ? reader.decimal('height', min: 150, max: 500) : reader.decimal('height'),
+    typewriterSpeed: reader.whole('typewriterSpeed', min: 10, max: 300),
+    textAlign: reader.choice('textAlign', _textAligns),
   );
 }
+
+/// What the editors of the app offer. Anything else would not show up in the
+/// component editor, or would not draw at all.
+const _fontWeights = ['Thin (100)', 'Light (300)', 'Regular (400)', 'Medium (500)', 'Bold (700)', 'Black (900)'];
+const _fontFamilies = ['Poppins', 'Monospace'];
+const _textAligns = ['left', 'center', 'right', 'justify'];
+const _inputTypes = ['Separated', 'Free'];
+const _capsLocks = ['CapsLock', 'Fără'];
 
 Map<String, dynamic> _object(Object? value, String where, List<String> errors) {
   if (value is Map<String, dynamic>) return value;
@@ -184,19 +194,57 @@ class _Reader {
     return null;
   }
 
-  double? decimal(String key) {
+  double? decimal(String key, {double? min, double? max}) {
     final value = map[key];
     if (value == null) return null;
-    if (value is num) return value.toDouble();
-    _fail(key, 'trebuie să fie un număr.');
+    if (value is! num) {
+      _fail(key, 'trebuie să fie un număr.');
+      return null;
+    }
+    if (!_inRange(value, min, max)) {
+      _fail(key, 'trebuie să fie între ${_show(min)} și ${_show(max)}.');
+      return null;
+    }
+    return value.toDouble();
+  }
+
+  int? whole(String key, {int? min, int? max}) {
+    final value = map[key];
+    if (value == null) return null;
+    if (value is! num || value != value.roundToDouble()) {
+      _fail(key, min == null ? 'trebuie să fie un număr întreg.' : 'trebuie să fie un număr întreg între $min și $max.');
+      return null;
+    }
+    if (!_inRange(value, min, max)) {
+      _fail(key, 'trebuie să fie între ${_show(min)} și ${_show(max)}.');
+      return null;
+    }
+    return value.toInt();
+  }
+
+  bool _inRange(num value, num? min, num? max) {
+    if (min != null && value < min) return false;
+    if (max != null && value > max) return false;
+    return true;
+  }
+
+  String _show(num? limit) => limit == null ? '…' : limit.toString().replaceAll(RegExp(r'\.0$'), '');
+
+  /// One of [allowed], written exactly like that.
+  String? choice(String key, List<String> allowed) {
+    final value = text(key);
+    if (value == null) return null;
+    if (allowed.contains(value)) return value;
+    _fail(key, 'nu poate fi „$value”. Valori posibile: ${allowed.join(', ')}.');
     return null;
   }
 
-  int? whole(String key) {
-    final value = map[key];
+  /// A colour written as 6 hex digits, with or without the #.
+  String? color(String key) {
+    final value = text(key);
     if (value == null) return null;
-    if (value is num && value == value.roundToDouble()) return value.toInt();
-    _fail(key, 'trebuie să fie un număr întreg.');
+    if (RegExp(r'^#?[0-9A-Fa-f]{6}$').hasMatch(value)) return value;
+    _fail(key, 'nu este o culoare. Scrie-o cu 6 cifre hex, de exemplu #33FF66.');
     return null;
   }
 

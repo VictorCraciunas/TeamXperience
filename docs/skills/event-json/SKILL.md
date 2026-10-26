@@ -12,7 +12,7 @@ You write one JSON object that describes a whole event: its details, its mission
 1. If the person has not told you the essentials, ask for them first (briefly, all in one message): event name, city/location, start point, date and time, who can join (public or private), how many missions, and for each puzzle what it asks and its answer or place.
 2. Write the **content in Romanian** unless asked otherwise.
 3. Answer with **one JSON code block** and nothing inside it except JSON (no comments, no trailing commas). Put any notes after the block, not inside it.
-4. Keep to the values listed in this file. Do not invent keys or values: the app ignores unknown keys, and a wrong value (for example a wrong `type`) makes the whole import fail.
+4. Keep to the values listed in this file. Do not invent keys or values: the app ignores unknown keys, but it **refuses the whole import** if a value is not one of the listed ones (a wrong `type`, a font weight, a colour that is not `#RRGGBB`, a number outside its range). The message says where the mistake is.
 5. Before answering, go through the checklist at the end.
 
 ## The whole shape

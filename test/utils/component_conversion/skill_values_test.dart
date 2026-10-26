@@ -1,0 +1,255 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:teamxperience/enums/animation_type.dart';
+import 'package:teamxperience/enums/component-type.dart';
+import 'package:teamxperience/model/component.dart';
+import 'package:teamxperience/service/event_service/event_completeness.dart';
+import 'package:teamxperience/service/event_service/event_json_import.dart';
+import 'package:teamxperience/utils/component_conversion/component_to_widget.dart';
+
+import '../../ui/pump_ui.dart';
+
+/// Everything docs/skills/event-json/SKILL.md says is allowed must draw on a
+/// phone-width screen, at both ends of every range it gives.
+Future<void> _draw(WidgetTester tester, Component component) async {
+  await pumpUi(
+    tester,
+    SingleChildScrollView(child: ComponentToWidget().convert(component)),
+    width: 360,
+  );
+  await tester.pump(const Duration(milliseconds: 50));
+  expect(tester.takeException(), isNull);
+}
+
+const _weights = ['Thin (100)', 'Light (300)', 'Regular (400)', 'Medium (500)', 'Bold (700)', 'Black (900)'];
+const _fonts = ['Poppins', 'Monospace'];
+const _aligns = ['left', 'center', 'right', 'justify'];
+
+/// The first ```json block after a heading of the skill file.
+String _jsonAfter(String heading) {
+  final text = File('docs/skills/event-json/SKILL.md').readAsStringSync().replaceAll('\r\n', '\n');
+  final start = text.indexOf(heading);
+  expect(start, greaterThanOrEqualTo(0), reason: heading);
+  final open = text.indexOf('```json\n', start) + '```json\n'.length;
+  final close = text.indexOf('\n```', open);
+  return text.substring(open, close);
+}
+
+void main() {
+  group('the example inside the skill', () {
+    test('is valid JSON the app imports without mistakes', () {
+      final result = importEventFromJson(_jsonAfter('## Small example'));
+      expect(result.errors, isEmpty);
+    });
+
+    test('can be published as it is', () {
+      final event = importEventFromJson(_jsonAfter('## Small example')).event;
+      expect(event, isNotNull);
+      if (event != null) expect(publishProblems(event).map((p) => p.text), isEmpty);
+    });
+
+    test('has a code puzzle that can be solved: answer length equals the boxes and a button is there', () {
+      final event = importEventFromJson(_jsonAfter('## Small example')).event;
+      final puzzle = event?.missions.first.puzzles.first;
+      final codeBox = puzzle?.components.firstWhere((c) => c.type == ComponentType.code);
+      expect(codeBox?.codeLength, puzzle?.code?.length);
+      expect(puzzle?.components.any((c) => c.type == ComponentType.button), isTrue);
+    });
+
+    test('is plain JSON: no comments and no trailing commas', () {
+      expect(() => jsonDecode(_jsonAfter('## Small example')), returnsNormally);
+    });
+
+    testWidgets('every component of it draws', (tester) async {
+      final event = importEventFromJson(_jsonAfter('## Small example')).event;
+      final components = event?.missions.expand((m) => m.puzzles).expand((p) => p.components) ?? [];
+      expect(components, isNotEmpty);
+      for (final component in components) {
+        await _draw(tester, component);
+      }
+    });
+  });
+
+  group('text', () {
+    for (final weight in _weights) {
+      testWidgets('weight $weight', (tester) async {
+        await _draw(tester, Component(type: ComponentType.text, text: 'Salut', fontWeight: weight));
+      });
+    }
+    for (final font in _fonts) {
+      testWidgets('font $font', (tester) async {
+        await _draw(tester, Component(type: ComponentType.text, text: 'Salut', fontFamily: font));
+      });
+    }
+    for (final align in _aligns) {
+      testWidgets('align $align', (tester) async {
+        await _draw(tester, Component(type: ComponentType.text, text: 'Salut', textAlign: align));
+      });
+    }
+    for (final size in [8.0, 72.0]) {
+      testWidgets('a long sentence at size $size', (tester) async {
+        await _draw(
+          tester,
+          Component(
+            type: ComponentType.text,
+            text: 'Du-te la Podul Minciunilor și caută inscripția de pe cea de-a treia piatră.',
+            fontSize: size,
+          ),
+        );
+      });
+    }
+    for (final animation in AnimationType.values) {
+      testWidgets('animation ${animation.name}', (tester) async {
+        await _draw(
+          tester,
+          Component(type: ComponentType.text, text: 'Salut', animation: animation, typewriterSpeed: 10),
+        );
+        await tester.pump(const Duration(seconds: 1));
+        expect(tester.takeException(), isNull);
+      });
+    }
+    testWidgets('typewriter at the slowest speed', (tester) async {
+      await _draw(
+        tester,
+        Component(type: ComponentType.text, text: 'Salut', animation: AnimationType.typewriter, typewriterSpeed: 300),
+      );
+    });
+  });
+
+  group('button', () {
+    for (final weight in _weights) {
+      testWidgets('weight $weight', (tester) async {
+        await _draw(tester, Component(type: ComponentType.button, buttonLabel: 'Verifică', fontWeight: weight));
+      });
+    }
+    for (final font in _fonts) {
+      testWidgets('font $font', (tester) async {
+        await _draw(tester, Component(type: ComponentType.button, buttonLabel: 'Verifică', fontFamily: font));
+      });
+    }
+    for (final radius in [0.0, 50.0]) {
+      testWidgets('corner radius $radius', (tester) async {
+        await _draw(tester, Component(type: ComponentType.button, buttonLabel: 'Verifică', cornerRadius: radius));
+      });
+    }
+    for (final size in [8.0, 72.0]) {
+      testWidgets('font size $size', (tester) async {
+        await _draw(tester, Component(type: ComponentType.button, buttonLabel: 'Verifică', fontSize: size));
+      });
+    }
+    testWidgets('a long label', (tester) async {
+      await _draw(tester, Component(type: ComponentType.button, buttonLabel: 'Am găsit comoara, verifică acum', fontSize: 20));
+    });
+    testWidgets('glow and flicker', (tester) async {
+      await _draw(
+        tester,
+        Component(
+          type: ComponentType.button,
+          buttonLabel: 'Verifică',
+          enableGlow: true,
+          glowColor: '#33FF66',
+          enableFlicker: true,
+        ),
+      );
+      await tester.pump(const Duration(seconds: 1));
+      expect(tester.takeException(), isNull);
+    });
+    testWidgets('all colours', (tester) async {
+      await _draw(
+        tester,
+        Component(
+          type: ComponentType.button,
+          buttonLabel: 'Verifică',
+          buttonColor: '#33FF66',
+          buttonColorOnTap: '#1FA34A',
+          buttonTextColor: '#000000',
+          buttonTextColorOnTap: '#FFFFFF',
+          borderColor: '#2AA5A9',
+        ),
+      );
+    });
+  });
+
+  group('code input', () {
+    for (final length in [1, 4, 5, 6, 10]) {
+      for (final type in ['Separated', 'Free']) {
+        testWidgets('$length characters, $type', (tester) async {
+          await _draw(tester, Component(type: ComponentType.code, codeLength: length, inputType: type));
+        });
+      }
+    }
+    for (final caps in ['CapsLock', 'Fără']) {
+      testWidgets('caps $caps', (tester) async {
+        await _draw(tester, Component(type: ComponentType.code, codeLength: 4, inputType: 'Separated', capsLock: caps));
+      });
+    }
+    for (final font in _fonts) {
+      testWidgets('font $font', (tester) async {
+        await _draw(tester, Component(type: ComponentType.code, codeLength: 4, inputType: 'Separated', fontFamily: font));
+      });
+    }
+    // The skill allows a box width from 0 to 200: on a 360 wide phone, 5 boxes of 200 do not fit.
+    for (final width in [0.0, 50.0, 200.0]) {
+      testWidgets('box width $width, 4 characters', (tester) async {
+        await _draw(tester, Component(type: ComponentType.code, codeLength: 4, inputType: 'Separated', width: width));
+      });
+      testWidgets('box width $width, 10 characters', (tester) async {
+        await _draw(tester, Component(type: ComponentType.code, codeLength: 10, inputType: 'Separated', width: width));
+      });
+    }
+    for (final radius in [0.0, 50.0]) {
+      testWidgets('corner radius $radius', (tester) async {
+        await _draw(
+          tester,
+          Component(
+            type: ComponentType.code,
+            codeLength: 4,
+            inputType: 'Separated',
+            frameCornerRadius: radius,
+            inputCornerRadius: radius,
+          ),
+        );
+      });
+    }
+    for (final size in [8.0, 72.0]) {
+      testWidgets('font size $size', (tester) async {
+        await _draw(tester, Component(type: ComponentType.code, codeLength: 4, inputType: 'Separated', fontSize: size));
+      });
+    }
+    testWidgets('all colours and glow', (tester) async {
+      await _draw(
+        tester,
+        Component(
+          type: ComponentType.code,
+          codeLength: 4,
+          inputType: 'Separated',
+          textColor: '#FFFFFF',
+          frameBackgroundColor: '#101820',
+          inputBackgroundColor: '#1B2A38',
+          colorBorderContainer: '#2AA5A9',
+          colorBorderInput: '#33FF66',
+          enableGlow: true,
+          glowColor: '#33FF66',
+        ),
+      );
+      await tester.pump(const Duration(seconds: 1));
+      expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('image', () {
+    for (final radius in [0.0, 50.0]) {
+      testWidgets('corner radius $radius', (tester) async {
+        await _draw(tester, Component(type: ComponentType.image, cornerRadius: radius));
+      });
+    }
+    for (final height in [150.0, 500.0]) {
+      testWidgets('height $height', (tester) async {
+        await _draw(tester, Component(type: ComponentType.image, height: height));
+      });
+    }
+  });
+}
