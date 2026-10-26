@@ -2,7 +2,7 @@
 
 In the app: admin Home → **Creează eveniment** → **Din JSON**. Copy the text from wherever you wrote it, press **Lipește** (or paste in the box), then press **Importă ca ciornă**. The event is saved as a draft and opened in the event form, where you check it and publish it. Nothing is published by the import.
 
-To have an AI write the JSON for you, give it [skills/event-json/SKILL.md](skills/event-json/SKILL.md): the full shape, a small example and every value the app accepts. A complete example is in [event-import-sample.json](event-import-sample.json). A test checks that it imports and could be published.
+To have an AI write the JSON for you, give it [skills/event-json/SKILL.md](skills/event-json/SKILL.md): the full shape, a small example and every value the app accepts. A complete example is in [event-import-sample.json](event-import-sample.json); a styled 2-mission game is in [event-examples/hacker-game.json](event-examples/hacker-game.json). A test checks that it imports and could be published.
 
 ## Rules
 
@@ -10,7 +10,7 @@ To have an AI write the JSON for you, give it [skills/event-json/SKILL.md](skill
 - Dates are text: `2026-11-20T18:00`.
 - Numbers can be whole (`18`) or decimal (`18.5`).
 - Ids are not written: missions and puzzles are numbered by their place in the list. `eventId`, `status` and `isStopped` in the file are ignored.
-- Images are links (`https://...`) or left out. Pictures cannot be inside the file.
+- Images are links (`https://...`) or left out. Pictures cannot be inside the file. A background can also name a picture bundled in the app, such as `assets/images/hacker_background.jpg`; the app then needs to be rebuilt after a new picture is added.
 - Values must be exactly the ones the app offers: colours as `#RRGGBB`, font weight, font and alignment from the fixed lists, numbers inside the ranges of the editors. The skill file lists them all.
 - A mistake is reported with its place, for example `Misiunea 2, puzzle 1, componenta 3: „type” nu poate fi „video”`. Nothing is saved until all mistakes are fixed.
 

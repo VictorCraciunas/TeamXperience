@@ -1,0 +1,232 @@
+{
+  "name": "Operațiunea Zero-Day",
+  "description": "Ești parte dintr-o echipă de hackeri. Spargeți firewall-ul, urmăriți serverul prin oraș și obțineți acces root înainte să vă prindă sistemul.",
+  "location": "Sibiu",
+  "punctDeStart": "Piața Mare, Sibiu",
+  "type": "PUBLIC",
+  "startCode": "ZERODAY",
+  "dateEvent": "2026-11-07T20:00",
+  "dateStartEnrollment": "2026-10-20T09:00",
+  "dateDeadlineEnrollment": "2026-11-06T23:59",
+  "lungimeTraseu": "2 km",
+  "durata": "2 ore",
+  "dificultate": "Medie",
+  "landingImageUrl": null,
+  "taskBackgroundImageUrl": "assets/images/hacker_background.jpg",
+  "missions": [
+    {
+      "puzzles": [
+        {
+          "type": "code",
+          "code": "HACK",
+          "indiciu": "Fiecare grup de 8 cifre este o literă (cod ASCII). Primul, 01001000, este H.",
+          "components": [
+            {
+              "type": "text",
+              "text": "> ACCES BLOCAT\n> Introdu parola pentru a intra în sistem.",
+              "textColor": "#33FF66",
+              "fontFamily": "Monospace",
+              "fontSize": 18,
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 30
+            },
+            {
+              "type": "text",
+              "text": "01001000 01000001 01000011 01001011",
+              "textColor": "#9DFFB8",
+              "fontFamily": "Monospace",
+              "fontSize": 16,
+              "textAlign": "center"
+            },
+            {
+              "type": "code",
+              "codeLength": 4,
+              "inputType": "Separated",
+              "capsLock": "CapsLock",
+              "textColor": "#33FF66",
+              "fontFamily": "Monospace",
+              "fontSize": 24,
+              "frameBackgroundColor": "#07110A",
+              "inputBackgroundColor": "#0B140B",
+              "colorBorderContainer": "#1F7A3A",
+              "colorBorderInput": "#33FF66",
+              "frameCornerRadius": 10,
+              "inputCornerRadius": 6,
+              "enableGlow": true,
+              "glowColor": "#33FF66"
+            },
+            {
+              "type": "button",
+              "buttonLabel": "EXECUTĂ",
+              "buttonColor": "#0B140B",
+              "buttonColorOnTap": "#33FF66",
+              "buttonTextColor": "#33FF66",
+              "buttonTextColorOnTap": "#0B140B",
+              "borderColor": "#33FF66",
+              "cornerRadius": 6,
+              "fontFamily": "Monospace",
+              "fontWeight": "Bold (700)",
+              "fontSize": 16,
+              "enableGlow": true,
+              "glowColor": "#33FF66"
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "code": "FIREWALL",
+          "indiciu": "Mută fiecare literă cu 3 poziții înapoi în alfabet: I devine F.",
+          "components": [
+            {
+              "type": "text",
+              "text": "> FIREWALL ACTIV\n> Mesaj interceptat. Fiecare literă a fost mutată cu 3 poziții înainte în alfabet.",
+              "textColor": "#33FF66",
+              "fontFamily": "Monospace",
+              "fontSize": 18,
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 30
+            },
+            {
+              "type": "text",
+              "text": "ILUHZDOO",
+              "textColor": "#9DFFB8",
+              "fontFamily": "Monospace",
+              "fontSize": 28,
+              "fontWeight": "Bold (700)",
+              "textAlign": "center"
+            },
+            {
+              "type": "code",
+              "codeLength": 8,
+              "inputType": "Separated",
+              "capsLock": "CapsLock",
+              "textColor": "#33FF66",
+              "fontFamily": "Monospace",
+              "fontSize": 22,
+              "frameBackgroundColor": "#07110A",
+              "inputBackgroundColor": "#0B140B",
+              "colorBorderContainer": "#1F7A3A",
+              "colorBorderInput": "#33FF66",
+              "frameCornerRadius": 10,
+              "inputCornerRadius": 6,
+              "enableGlow": true,
+              "glowColor": "#33FF66"
+            },
+            {
+              "type": "button",
+              "buttonLabel": "EXECUTĂ",
+              "buttonColor": "#0B140B",
+              "buttonColorOnTap": "#33FF66",
+              "buttonTextColor": "#33FF66",
+              "buttonTextColorOnTap": "#0B140B",
+              "borderColor": "#33FF66",
+              "cornerRadius": 6,
+              "fontFamily": "Monospace",
+              "fontWeight": "Bold (700)",
+              "fontSize": 16,
+              "enableGlow": true,
+              "glowColor": "#33FF66"
+            }
+          ]
+        },
+        {
+          "type": "geolocation",
+          "latitude": 45.7978,
+          "longitude": 24.1521,
+          "indiciu": "Serverul se află în inima orașului vechi, unde se adună toată lumea.",
+          "components": [
+            {
+              "type": "text",
+              "text": "> TRASARE SERVER\n> Serverul fizic a fost localizat. Mergi la punctul marcat pe hartă pentru a-l conecta.",
+              "textColor": "#33FF66",
+              "fontFamily": "Monospace",
+              "fontSize": 18,
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 30
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "puzzles": [
+        {
+          "type": "imageToUpload",
+          "components": [
+            {
+              "type": "text",
+              "text": "> DOVADĂ DE INTRUZIUNE\n> Fă o poză de echipă: toți cu gluga pe cap, privind ca niște hackeri în fața unui ecran sau a unei clădiri futuriste. Un admin o validează.",
+              "textColor": "#33FF66",
+              "fontFamily": "Monospace",
+              "fontSize": 18,
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 30
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "code": "ROOT",
+          "indiciu": "Cifrele hex sunt coduri de litere: 52 este R.",
+          "components": [
+            {
+              "type": "text",
+              "text": "> ULTIMUL PAS\n> Ai nevoie de privilegii maxime. Decodează mesajul hex:",
+              "textColor": "#33FF66",
+              "fontFamily": "Monospace",
+              "fontSize": 18,
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 30
+            },
+            {
+              "type": "text",
+              "text": "0x52  0x4F  0x4F  0x54",
+              "textColor": "#9DFFB8",
+              "fontFamily": "Monospace",
+              "fontSize": 24,
+              "fontWeight": "Bold (700)",
+              "textAlign": "center"
+            },
+            {
+              "type": "code",
+              "codeLength": 4,
+              "inputType": "Separated",
+              "capsLock": "CapsLock",
+              "textColor": "#33FF66",
+              "fontFamily": "Monospace",
+              "fontSize": 24,
+              "frameBackgroundColor": "#07110A",
+              "inputBackgroundColor": "#0B140B",
+              "colorBorderContainer": "#1F7A3A",
+              "colorBorderInput": "#33FF66",
+              "frameCornerRadius": 10,
+              "inputCornerRadius": 6,
+              "enableGlow": true,
+              "glowColor": "#33FF66"
+            },
+            {
+              "type": "button",
+              "buttonLabel": "ACCES ROOT",
+              "buttonColor": "#0B140B",
+              "buttonColorOnTap": "#33FF66",
+              "buttonTextColor": "#33FF66",
+              "buttonTextColorOnTap": "#0B140B",
+              "borderColor": "#33FF66",
+              "cornerRadius": 6,
+              "fontFamily": "Monospace",
+              "fontWeight": "Bold (700)",
+              "fontSize": 16,
+              "enableGlow": true,
+              "glowColor": "#33FF66"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

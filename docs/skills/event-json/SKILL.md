@@ -87,7 +87,7 @@ HexColor  = String like "#33FF66"
 
 ## Small example
 
-A one-mission event with a code puzzle. (A fuller one is in `docs/event-import-sample.json`.)
+A one-mission event with a code puzzle. (A fuller one is in `docs/event-import-sample.json`, and a styled 2-mission game in `docs/event-examples/hacker-game.json`.)
 
 ```json
 {
@@ -141,7 +141,7 @@ A one-mission event with a code puzzle. (A fuller one is in `docs/event-import-s
 | `durata` | Free text, for example `"2 ore"`, `"90 de minute"`. |
 | `dificultate` | Free text shown as written. Suggested: `"Ușoară"`, `"Medie"`, `"Grea"`. |
 | `landingImageUrl` | A link starting with `https://`, or `null`. The event's cover picture. Files cannot be put in the JSON. |
-| `taskBackgroundImageUrl` | A link starting with `https://`, or `null`. Background behind every puzzle. |
+| `taskBackgroundImageUrl` | A link starting with `https://`, `null`, or the name of a picture that is already inside the app. Background behind every puzzle. Pictures inside the app: `"assets/images/hacker_background.jpg"` (dark, falling green code, use light green text on it). |
 | `missions` | A list. The missions are played in the order written. |
 
 Keys you may see in an exported event but must **not** write: `eventId`, `status`, `isStopped`, `nrMissions`, `wizardStep`, `updatedAt`, `defaults`, and the `id` of missions and puzzles. They are ignored or set by the app.
