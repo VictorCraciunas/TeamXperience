@@ -149,7 +149,7 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
           currentIndex++;
           return Expanded(
             child: _buildCell(index, heightInput, widthInput, inputCornerRadius, inputBackgroundColor,
-                colorBorderInput,fontSize,fontFamily!,textColor, capsLock),
+                colorBorderInput,fontSize,fontFamily,textColor, capsLock),
           );
         });
 
@@ -172,7 +172,7 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
         animation: glowAnimation,
         builder: (context, child) => _buildFreeCell(
           heightInput, widthInput, inputCornerRadius, inputBackgroundColor,
-          colorBorderInput, fontSize, fontFamily!, textColor, capsLock,
+          colorBorderInput, fontSize, fontFamily, textColor, capsLock,
           enableGlow: enableGlow, glowColor: glowColor, glowValue: glowAnimation.value,
         ),
       );
@@ -209,7 +209,7 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
   }
 
   Widget _buildCell(int index, double heightInput, double widthInput, double? inputCornerRadius,
-      Color inputBackgroundColor, Color colorBorderInput,double fontSize, String fontFamily, Color textColor, String capsLock) {
+      Color inputBackgroundColor, Color colorBorderInput,double fontSize, String? fontFamily, Color textColor, String capsLock) {
     return Container(
       height: heightInput,
       width: widthInput,
@@ -263,7 +263,7 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
   }
 
   Widget _buildFreeCell(double heightInput, double widthInput, double? inputCornerRadius,
-      Color inputBackgroundColor, Color colorBorderInput, double fontSize, String fontFamily, Color textColor, String capsLock,
+      Color inputBackgroundColor, Color colorBorderInput, double fontSize, String? fontFamily, Color textColor, String capsLock,
       {bool enableGlow = false, Color glowColor = Colors.black, double glowValue = 0.0}) {
     return Container(
       height: heightInput,

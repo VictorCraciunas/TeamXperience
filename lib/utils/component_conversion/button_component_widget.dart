@@ -162,7 +162,7 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
             decoration: BoxDecoration(
               color: currentButtonColor,
               border: Border.all(color: currentBorderColor, width: 1.5),
-              borderRadius: BorderRadius.circular(widget.radius!),
+              borderRadius: BorderRadius.circular(widget.radius ?? 10),
               boxShadow:
                   widget.enableGlow == true
                       ? [
@@ -181,7 +181,7 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
               opacity:
                   widget.enableFlicker == true ? _flickerAnimation.value : 1,
               child: Text(
-                widget.buttonLabel!,
+                widget.buttonLabel ?? '',
                 style: TextStyle(
                   color: currentTextColor,
                   fontSize: widget.fontSize,
