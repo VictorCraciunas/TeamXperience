@@ -14,6 +14,7 @@ Event _event(List<Mission> missions) =>
     Event(eventId: 'e1', name: 'Hunt', missions: missions)..nrMissions = missions.length;
 
 void main() {
+  reorderTests();
   puzzleTests();
   group('missions', () {
     test('adding a mission numbers it after the last one', () {
@@ -157,6 +158,88 @@ void puzzleTests() {
     test('a puzzle that does not exist has no status', () {
       expect(build().puzzleStatus(0, 9), '');
       expect(build().puzzleStatus(5, 0), '');
+    });
+  });
+}
+
+void reorderTests() {
+  group('reordering', () {
+    Mission mission(String id, List<String> puzzleCodes) => Mission(
+          id: id,
+          puzzles: [
+            for (var i = 0; i < puzzleCodes.length; i++)
+              _puzzle('$i', type: PuzzleType.code, code: puzzleCodes[i]),
+          ],
+        );
+
+    AddMissionsController build() => AddMissionsController(
+          _event([mission('0', ['a1', 'a2']), mission('1', ['b1']), mission('2', ['c1', 'c2', 'c3'])]),
+          'create',
+        );
+
+    List<String?> firstCodes(AddMissionsController c) =>
+        c.event.missions.map((m) => m.puzzles.first.code).toList();
+
+    test('a mission moves to its new place and everything is numbered again', () {
+      final c = build();
+      c.moveMission(2, 0);
+      expect(firstCodes(c), ['c1', 'a1', 'b1']);
+      expect(c.event.missions.map((m) => m.id), ['0', '1', '2']);
+    });
+
+    test('a mission can move down', () {
+      final c = build();
+      c.moveMission(0, 2);
+      expect(firstCodes(c), ['b1', 'c1', 'a1']);
+    });
+
+    test('puzzles go with their mission', () {
+      final c = build();
+      c.moveMission(0, 1);
+      expect(c.event.missions[1].puzzles.map((p) => p.code), ['a1', 'a2']);
+    });
+
+    test('moving to the same place or out of range changes nothing', () {
+      final c = build();
+      c.moveMission(1, 1);
+      c.moveMission(-1, 0);
+      c.moveMission(0, 7);
+      c.moveMission(9, 0);
+      expect(firstCodes(c), ['a1', 'b1', 'c1']);
+    });
+
+    test('a puzzle moves inside its mission and is numbered again', () {
+      final c = build();
+      c.movePuzzle(2, 2, 0);
+      final puzzles = c.event.missions[2].puzzles;
+      expect(puzzles.map((p) => p.code), ['c3', 'c1', 'c2']);
+      expect(puzzles.map((p) => p.id), ['0', '1', '2']);
+    });
+
+    test('moving a puzzle does not touch the other missions', () {
+      final c = build();
+      c.movePuzzle(2, 0, 2);
+      expect(c.event.missions[0].puzzles.map((p) => p.code), ['a1', 'a2']);
+      expect(c.event.missions[1].puzzles.map((p) => p.code), ['b1']);
+    });
+
+    test('a puzzle that does not exist or a bad mission changes nothing', () {
+      final c = build();
+      c.movePuzzle(2, 5, 0);
+      c.movePuzzle(2, 0, 5);
+      c.movePuzzle(9, 0, 1);
+      expect(c.event.missions[2].puzzles.map((p) => p.code), ['c1', 'c2', 'c3']);
+    });
+
+    test('the screen is told about a move', () {
+      var told = 0;
+      final c = AddMissionsController(
+        _event([mission('0', ['a']), mission('1', ['b'])]),
+        'create',
+        onStateChanged: () => told++,
+      );
+      c.moveMission(0, 1);
+      expect(told, 1);
     });
   });
 }

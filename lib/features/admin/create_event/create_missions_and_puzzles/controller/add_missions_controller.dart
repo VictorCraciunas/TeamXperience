@@ -74,6 +74,36 @@ class AddMissionsController {
     onStateChanged?.call();
   }
 
+  /// Moves a mission from [from] to the place [to] (both positions in the list)
+  /// and numbers them all again.
+  void moveMission(int from, int to) {
+    final count = event.missions.length;
+    if (from == to || from < 0 || to < 0 || from >= count || to >= count) return;
+
+    final moved = [...event.missions];
+    moved.insert(to, moved.removeAt(from));
+    event.missions = [
+      for (var i = 0; i < moved.length; i++) Mission(id: i.toString(), puzzles: moved[i].puzzles),
+    ];
+    onStateChanged?.call();
+  }
+
+  /// Moves a puzzle inside its mission from [from] to [to] and numbers them
+  /// all again.
+  void movePuzzle(int mission, int from, int to) {
+    if (mission < 0 || mission >= event.missions.length) return;
+
+    final puzzles = event.missions[mission].puzzles;
+    final count = puzzles.length;
+    if (from == to || from < 0 || to < 0 || from >= count || to >= count) return;
+
+    puzzles.insert(to, puzzles.removeAt(from));
+    for (var i = 0; i < puzzles.length; i++) {
+      puzzles[i] = puzzles[i].withId(i.toString());
+    }
+    onStateChanged?.call();
+  }
+
   /// Adds a puzzle of [type] to a mission and returns its index, or -1 when
   /// there is no such mission.
   int addPuzzle(int mission, PuzzleType type) {
