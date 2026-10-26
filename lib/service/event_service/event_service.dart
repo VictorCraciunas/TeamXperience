@@ -4,6 +4,7 @@ import '../../backend/repo/event_repo.dart';
 import '../../exceptions/events_exceptions.dart';
 import '../../model/event.dart';
 import '../../model/user.dart';
+import 'event_status_changes.dart';
 
 class EventService {
   final EventRepo _eventRepo = EventRepo();
@@ -48,6 +49,39 @@ class EventService {
       return event;
     } catch (e) {
       throw EventServiceException('Failed to update event: $e');
+    }
+  }
+
+  /// Saves [event] as a draft, however little is filled in. Gives it an id the
+  /// first time, uploads any local images and stamps the time.
+  Future<Event> saveDraft(Event event, {int? wizardStep}) async {
+    try {
+      if (event.eventId.isEmpty) {
+        event.eventId = await _eventRepo.getNewEventId();
+      }
+      event = asDraft(event, now: DateTime.now(), wizardStep: wizardStep);
+      event = await _uploadImagesHelper.uploadEventImages(event);
+      await _eventRepo.createEvent(event);
+      return event;
+    } catch (e) {
+      throw EventServiceException('Failed to save draft: $e');
+    }
+  }
+
+  /// Publishes [event]. Throws [EventNotPublishableException] if it is not
+  /// complete; nothing is saved in that case.
+  Future<Event> publishEvent(Event event) async {
+    final ready = asPublished(event, now: DateTime.now());
+
+    try {
+      if (ready.eventId.isEmpty) {
+        ready.eventId = await _eventRepo.getNewEventId();
+      }
+      final uploaded = await _uploadImagesHelper.uploadEventImages(ready);
+      await _eventRepo.createEvent(uploaded);
+      return uploaded;
+    } catch (e) {
+      throw EventServiceException('Failed to publish event: $e');
     }
   }
 

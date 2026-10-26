@@ -16,11 +16,29 @@ class EventList extends ChangeNotifier {
   // Constructor
   EventList(this._eventService);
 
-  // Getters
-  List<Event> get events => List.unmodifiable(_events);
+  List<Event> get _published => _events.where((e) => !e.isDraft).toList();
+
+  // Getters. Drafts are only for organisers and are listed apart in
+  // [draftEvents]; everything else here is what players can see.
+  List<Event> get events => List.unmodifiable(_published);
+
+  /// Events still being built, most recently edited first.
+  List<Event> get draftEvents {
+    final drafts = _events.where((e) => e.isDraft).toList();
+    drafts.sort((a, b) {
+      final x = a.updatedAt;
+      final y = b.updatedAt;
+      if (x == null && y == null) return 0;
+      if (x == null) return 1;
+      if (y == null) return -1;
+      return y.compareTo(x);
+    });
+    return List.unmodifiable(drafts);
+  }
+
   List<Event> get upcomingEvents {
     final now = DateTime.now();
-    return _events.where((e) =>
+    return _published.where((e) =>
     e.dateEvent?.isAfter(now) ?? false
     ).toList()..sort((a, b) =>
         a.dateEvent!.compareTo(b.dateEvent!)
@@ -29,7 +47,7 @@ class EventList extends ChangeNotifier {
 
   List<Event> get liveEvents {
     final now = DateTime.now();
-    return _events.where((e) {
+    return _published.where((e) {
       final start = e.dateEvent;
       if (start == null) return false;
       if (e.isOver) return false;
@@ -39,7 +57,7 @@ class EventList extends ChangeNotifier {
 
   List<Event> get pastEvents {
     final now = DateTime.now();
-    return _events.where((e) =>
+    return _published.where((e) =>
     e.dateEvent?.isBefore(now) ?? false
     ).toList()..sort((a, b) =>
         b.dateEvent!.compareTo(a.dateEvent!)
@@ -108,6 +126,48 @@ class EventList extends ChangeNotifier {
       _setError(e.toString());
       rethrow;
     } finally {
+    }
+  }
+
+  /// Saves [event] as a draft (a new one gets its id here) and keeps the list
+  /// in step. Returns the saved event.
+  Future<Event> saveDraft(Event event, {int? wizardStep}) async {
+    clearError();
+
+    try {
+      final saved = await _eventService.saveDraft(event, wizardStep: wizardStep);
+      _replaceOrAdd(saved);
+      notifyListeners();
+      return saved;
+    } catch (e) {
+      _setError(e.toString());
+      rethrow;
+    }
+  }
+
+  /// Publishes a draft (or saves a published event again). If the event is not
+  /// complete this throws and the list is left as it was.
+  Future<Event> publishEvent(Event event) async {
+    clearError();
+
+    try {
+      final published = await _eventService.publishEvent(event);
+      _replaceOrAdd(published);
+      _sortEvents();
+      notifyListeners();
+      return published;
+    } catch (e) {
+      _setError(e.toString());
+      rethrow;
+    }
+  }
+
+  void _replaceOrAdd(Event event) {
+    final index = _events.indexWhere((e) => e.eventId == event.eventId);
+    if (index == -1) {
+      _events.add(event);
+    } else {
+      _events[index] = event;
     }
   }
 

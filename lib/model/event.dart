@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../enums/event_status.dart';
 import '../enums/event_type.dart';
+import 'event_defaults.dart';
 import 'mission.dart';
 
 class Event {
@@ -22,6 +24,20 @@ class Event {
   String? durata;
   String? dificultate;
   bool isStopped;
+
+  /// A draft is only visible to organisers. Events without a status are published.
+  EventStatus status;
+
+  /// The wizard step a draft was left at, so it can be resumed there.
+  int wizardStep;
+
+  /// When the event was last saved by an organiser.
+  DateTime? updatedAt;
+
+  /// The look every new component starts with.
+  EventDefaults? defaults;
+
+  bool get isDraft => status == EventStatus.draft;
 
   static const Duration maxDuration = Duration(hours: 3);
 
@@ -52,6 +68,10 @@ class Event {
     this.lungimeTraseu,
     this.durata,
     this.isStopped = false,
+    this.status = EventStatus.published,
+    this.wizardStep = 0,
+    this.updatedAt,
+    this.defaults,
   }) : missions = missions ?? [];
 
   Mission addMission(Mission mission) {
@@ -60,7 +80,8 @@ class Event {
   }
 
   factory Event.fromMap(Map<String, dynamic> map) {
-    final rawType = map['type'] as String;
+    // A draft can be saved half way, so most fields may be missing.
+    final rawType = map['type'] as String?;
     final rawList = map['missions'] as List<dynamic>? ?? [];
     final missions =
         rawList.map((e) => Mission.fromMap(e as Map<String, dynamic>)).toList();
@@ -68,14 +89,14 @@ class Event {
       eventId: map['eventId'],
       name: map['name'] as String? ?? '',
       missions: missions,
-      dateEvent: (map['dateEvent'] as Timestamp).toDate(),
+      dateEvent: (map['dateEvent'] as Timestamp?)?.toDate(),
       dateDeadlineEnrollment:
-          (map['dateDeadlineEnrollment'] as Timestamp).toDate(),
-      dateStartEnrollment: (map['dateStartEnrollment'] as Timestamp).toDate(),
+          (map['dateDeadlineEnrollment'] as Timestamp?)?.toDate(),
+      dateStartEnrollment: (map['dateStartEnrollment'] as Timestamp?)?.toDate(),
       location: map['location'] as String? ?? '',
       description: map['description'] as String? ?? '',
       nrMissions: map['nrMissions'] as int? ?? 0,
-      type: EventType.values.byName(rawType),
+      type: rawType == null ? null : EventType.values.byName(rawType),
       landingImageUrl: map['landingImageUrl'] as String? ?? '',
       taskBackgroundImageUrl: map['taskBackgroundImageUrl'] as String? ?? '',
       startCode: map['startCode'] as String? ?? '',
@@ -84,6 +105,12 @@ class Event {
       durata: map['durata'] as String? ?? '',
       lungimeTraseu: map['lungimeTraseu'] as String? ?? '',
       isStopped: map['isStopped'] as bool? ?? false,
+      status: EventStatus.fromName(map['status'] as String?),
+      wizardStep: map['wizardStep'] as int? ?? 0,
+      updatedAt: (map['updatedAt'] as Timestamp?)?.toDate(),
+      defaults: EventDefaults.fromMap(
+        (map['defaults'] as Map?)?.cast<String, dynamic>(),
+      ),
     );
   }
 
@@ -98,7 +125,7 @@ class Event {
       'location': location,
       'description': description,
       'nrMissions': nrMissions,
-      'type': type!.name,
+      'type': type?.name,
       'landingImageUrl': landingImageUrl,
       'taskBackgroundImageUrl': taskBackgroundImageUrl,
       'startCode': startCode,
@@ -107,6 +134,10 @@ class Event {
       'dificultate': dificultate,
       'punctDeStart': punctDeStart,
       'isStopped': isStopped,
+      'status': status.name,
+      'wizardStep': wizardStep,
+      'updatedAt': updatedAt,
+      'defaults': defaults?.toJson(),
     };
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/enums/event_type.dart';
+import 'package:teamxperience/features/admin/create_event/start/open_create_event_flow.dart';
 import 'package:teamxperience/features/events_dashboard/events_dashboard_admin/controller/events_dashboard_controller.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
@@ -86,11 +87,7 @@ class _EventsDashboardState extends State<EventsDashboard> {
   }
 
   void _createEvent() {
-    Navigator.pushNamed(
-      context,
-      Routes.createEvent,
-      arguments: {'event': null, 'isBlueprint': true},
-    );
+    openCreateEventFlow(context);
   }
 
   Future<void> _openFilter() async {

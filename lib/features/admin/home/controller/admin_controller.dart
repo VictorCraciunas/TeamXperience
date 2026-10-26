@@ -10,6 +10,7 @@ import '../../../../model/stire.dart';
 import '../../../../state_management/events_state_management.dart';
 import '../../../../service/team_service/team_service.dart';
 import '../logic/admin_event_stats.dart';
+import 'package:teamxperience/features/admin/create_event/start/open_create_event_flow.dart';
 
 class AdminHomeController extends ChangeNotifier {
   final BuildContext context;
@@ -35,11 +36,16 @@ class AdminHomeController extends ChangeNotifier {
     );
   }
 
-  void navigateToCreateEvent({Event? event}) {
+  void navigateToCreateEvent() {
+    openCreateEventFlow(context);
+  }
+
+  /// Opens a draft in the event form to carry on where it was left.
+  void navigateToDraft(Event draft) {
     Navigator.pushNamed(
       context,
       Routes.createEvent,
-      arguments: {'event': event, 'isBlueprint': true},
+      arguments: {'event': draft, 'isDraft': true},
     );
   }
 

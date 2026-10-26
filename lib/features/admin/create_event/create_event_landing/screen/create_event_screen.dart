@@ -32,9 +32,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
       final Event? event = args?['event'];
       final bool isBlueprint = args?['isBlueprint'] ?? false;
+      final bool isDraft = args?['isDraft'] ?? false;
 
       if (event == null) {
         mode = 'create';
+      } else if (isDraft) {
+        mode = 'draft';
       } else if (isBlueprint) {
         mode = 'blueprint';
       } else {
@@ -63,8 +66,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
         appBarText:
             mode == 'edit'
                 ? 'Editează Eveniment'
+                : mode == 'draft'
+                ? 'Continuă ciorna'
                 : mode == 'blueprint'
-                ? 'Crează din Șablon'
+                ? 'Din eveniment vechi'
                 : 'Eveniment Nou',
       ),
       body: SafeArea(
@@ -87,7 +92,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       });
                     },
                     child: UploadImage(
-                      labelText: 'Adaugă imagine eveniment',
+                      labelText: 'Adaugă imagine eveniment (opțional)',
                       imageUrl: controller.getLandingImageToDisplay(),
                     ),
                   ),
@@ -99,7 +104,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     label: 'Nume',
                     hint: 'Numele evenimentului',
                     validator:
-                        (v) => v!.isEmpty ? 'Introdu nume eveniment' : null,
+                        (v) =>
+                            (v ?? '').trim().isEmpty
+                                ? 'Introdu nume eveniment'
+                                : null,
                   ),
                   const SizedBox(height: 20),
 
@@ -109,7 +117,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     label: 'Locație',
                     hint: 'Locația evenimentului',
                     validator:
-                        (v) => v!.isEmpty ? 'Introdu locație eveniment' : null,
+                        (v) =>
+                            (v ?? '').trim().isEmpty
+                                ? 'Introdu locație eveniment'
+                                : null,
                   ),
                   const SizedBox(height: 20),
 
@@ -118,7 +129,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     label: 'Punct de start',
                     hint: 'Punctul de start al evenimentului',
                     validator:
-                        (v) => v!.isEmpty ? 'Introdu Punctul de start' : null,
+                        (v) =>
+                            (v ?? '').trim().isEmpty
+                                ? 'Introdu Punctul de start'
+                                : null,
                   ),
                   const SizedBox(height: 20),
 
@@ -131,7 +145,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     keyboardType: TextInputType.multiline,
                     validator:
                         (v) =>
-                            v!.isEmpty ? 'Introdu descriere eveniment' : null,
+                            (v ?? '').trim().isEmpty
+                                ? 'Introdu descriere eveniment'
+                                : null,
                   ),
                   const SizedBox(height: 20),
 
@@ -256,7 +272,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     controller: controller.startCodeController,
                     label: 'Cod start',
                     hint: 'Introdu codul de start al evenimentului',
-                    validator: (v) => v!.isEmpty ? 'Introdu cod start' : null,
+                    validator:
+                        (v) =>
+                            (v ?? '').trim().isEmpty
+                                ? 'Introdu cod start'
+                                : null,
                   ),
 
                   const SizedBox(height: 20),
@@ -269,7 +289,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       });
                     },
                     child: UploadImage(
-                      labelText: 'Adaugă imagine fundal misiuni',
+                      labelText: 'Adaugă imagine fundal misiuni (opțional)',
                       imageUrl: controller.getTaskBackgroundImageToDisplay(),
                     ),
                   ),
@@ -281,7 +301,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     label: 'Lungime traseu',
                     hint: 'Lungimea traseului',
                     validator:
-                        (v) => v!.isEmpty ? 'Introdu lungime traseu' : null,
+                        (v) =>
+                            (v ?? '').trim().isEmpty
+                                ? 'Introdu lungime traseu'
+                                : null,
                   ),
                   const SizedBox(height: 20),
 
@@ -290,7 +313,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     controller: controller.durataController,
                     label: 'Durata',
                     hint: 'Durata evenimentului',
-                    validator: (v) => v!.isEmpty ? 'Introdu durata' : null,
+                    validator:
+                        (v) =>
+                            (v ?? '').trim().isEmpty ? 'Introdu durata' : null,
                   ),
                   const SizedBox(height: 20),
 
@@ -299,7 +324,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     controller: controller.dificultateController,
                     label: 'Dificultate',
                     hint: 'Dificultatea evenimentului',
-                    validator: (v) => v!.isEmpty ? 'Introdu dificultate' : null,
+                    validator:
+                        (v) =>
+                            (v ?? '').trim().isEmpty
+                                ? 'Introdu dificultate'
+                                : null,
                   ),
 
                   const SizedBox(height: 20),
@@ -307,9 +336,18 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     label:
                         mode == 'edit'
                             ? 'Actualizează eveniment'
-                            : 'Creează eveniment',
+                            : 'Continuă la misiuni',
                     onPressed: () => controller.createEvent(context, mode),
                   ),
+                  if (mode != 'edit') ...[
+                    const SizedBox(height: 10),
+                    AppButton(
+                      label: 'Salvează ca ciornă',
+                      variant: AppButtonVariant.secondary,
+                      foregroundColor: context.colors.text,
+                      onPressed: () => controller.saveDraft(context, mode),
+                    ),
+                  ],
                   const SizedBox(height: 40),
                 ],
               ),
