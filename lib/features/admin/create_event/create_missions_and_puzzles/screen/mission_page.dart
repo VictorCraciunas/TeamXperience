@@ -66,36 +66,49 @@ class _MissionPageState extends State<MissionPage> {
       backgroundColor: context.colors.page,
       appBar: MyAppBar(appBarText: 'Misiunea ${widget.index + 1}'),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.page, 8, AppSpacing.page, 30),
-          children: [
-            for (var i = 0; i < puzzles.length; i++) ...[
-              PuzzleRow(
-                index: i,
-                type: puzzles[i].type,
-                status: _controller.puzzleStatus(widget.index, i),
-                done: _controller.puzzleStatus(widget.index, i) == 'Gata',
-                onTap: () => _openPuzzle(i),
-                onDelete: () => _confirmDelete(i),
-              ),
-              const SizedBox(height: 10),
-            ],
-            if (puzzles.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24),
-                child: Text(
-                  'Misiunea nu are încă puzzle-uri.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: context.colors.muted, fontSize: 13),
+        // Hold a puzzle and drag it to change the order.
+        child: ReorderableListView.builder(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.page,
+            8,
+            AppSpacing.page,
+            30,
+          ),
+          itemCount: puzzles.length,
+          onReorderItem:
+              (from, to) => _controller.movePuzzle(widget.index, from, to),
+          itemBuilder:
+              (context, i) => Padding(
+                key: ObjectKey(puzzles[i]),
+                padding: const EdgeInsets.only(bottom: 10),
+                child: PuzzleRow(
+                  index: i,
+                  type: puzzles[i].type,
+                  status: _controller.puzzleStatus(widget.index, i),
+                  done: _controller.puzzleStatus(widget.index, i) == 'Gata',
+                  onTap: () => _openPuzzle(i),
+                  onDelete: () => _confirmDelete(i),
                 ),
               ),
-            AppButton(
-              label: 'Adaugă puzzle',
-              variant: AppButtonVariant.secondary,
-              foregroundColor: context.colors.text,
-              onPressed: _addPuzzle,
-            ),
-          ],
+          footer: Column(
+            children: [
+              if (puzzles.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  child: Text(
+                    'Misiunea nu are încă puzzle-uri.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: context.colors.muted, fontSize: 13),
+                  ),
+                ),
+              AppButton(
+                label: 'Adaugă puzzle',
+                variant: AppButtonVariant.secondary,
+                foregroundColor: context.colors.text,
+                onPressed: _addPuzzle,
+              ),
+            ],
+          ),
         ),
       ),
     );

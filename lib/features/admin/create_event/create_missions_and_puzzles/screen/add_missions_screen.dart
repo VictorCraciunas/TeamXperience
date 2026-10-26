@@ -25,7 +25,8 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
     super.didChangeDependencies();
     if (_initialized) return;
 
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final Event event = args?['event'];
     _controller = AddMissionsController(
       event,
@@ -87,38 +88,50 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
       backgroundColor: context.colors.page,
       appBar: const MyAppBar(appBarText: 'Misiuni'),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.page, 8, AppSpacing.page, 30),
-          children: [
-            for (var i = 0; i < missions.length; i++) ...[
-              MissionCard(
-                index: i,
-                puzzleCount: missions[i].puzzles.length,
-                status: _controller.statusText(i),
-                done: _controller.isDone(i),
-                onTap: () => _openMission(i),
-                onDelete: () => _confirmDelete(i),
+        // Hold a mission and drag it to change the order.
+        child: ReorderableListView.builder(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.page,
+            8,
+            AppSpacing.page,
+            30,
+          ),
+          itemCount: missions.length,
+          onReorderItem: _controller.moveMission,
+          itemBuilder:
+              (context, i) => Padding(
+                key: ObjectKey(missions[i]),
+                padding: const EdgeInsets.only(bottom: 10),
+                child: MissionCard(
+                  index: i,
+                  puzzleCount: missions[i].puzzles.length,
+                  status: _controller.statusText(i),
+                  done: _controller.isDone(i),
+                  onTap: () => _openMission(i),
+                  onDelete: () => _confirmDelete(i),
+                ),
               ),
-              const SizedBox(height: 10),
-            ],
-            AppButton(
-              label: 'Adaugă misiune',
-              variant: AppButtonVariant.secondary,
-              foregroundColor: context.colors.text,
-              onPressed: _controller.addNewMission,
-            ),
-            const SizedBox(height: 24),
-            AppButton(label: _primaryLabel, onPressed: _save),
-            if (!_isPublished) ...[
-              const SizedBox(height: 10),
+          footer: Column(
+            children: [
               AppButton(
-                label: 'Salvează ca ciornă',
+                label: 'Adaugă misiune',
                 variant: AppButtonVariant.secondary,
                 foregroundColor: context.colors.text,
-                onPressed: _saveDraft,
+                onPressed: _controller.addNewMission,
               ),
+              const SizedBox(height: 24),
+              AppButton(label: _primaryLabel, onPressed: _save),
+              if (!_isPublished) ...[
+                const SizedBox(height: 10),
+                AppButton(
+                  label: 'Salvează ca ciornă',
+                  variant: AppButtonVariant.secondary,
+                  foregroundColor: context.colors.text,
+                  onPressed: _saveDraft,
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
