@@ -35,7 +35,8 @@ class AddMissionsController {
     if (mode == 'blueprint') _copyMissionsWithoutAnswers();
   }
 
-  /// A copy of an old event keeps its missions and puzzles but not the answers.
+  /// A copy of an old event keeps its missions, puzzles and their types but not
+  /// the answers, places or hints.
   /// The missions are copied first so the old event is left as it was.
   void _copyMissionsWithoutAnswers() {
     event.missions = [
@@ -45,7 +46,6 @@ class AddMissionsController {
           puzzles: [
             for (final puzzle in mission.puzzles)
               Puzzle.fromMap(puzzle.toJson())
-                ..type = null
                 ..code = null
                 ..latitude = null
                 ..longitude = null

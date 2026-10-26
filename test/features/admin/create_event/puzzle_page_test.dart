@@ -65,4 +65,15 @@ void main() {
     expect(find.text('XTREME'), findsOneWidget);
     expect(puzzle.code, 'XTREME');
   });
+
+  testWidgets('changing the type in Reguli updates the app bar', (tester) async {
+    await _pump(tester, Puzzle(id: '0', type: PuzzleType.code));
+    await tester.tap(find.text('Reguli'));
+    await tester.pump();
+    await tester.tap(find.text('Tip puzzle'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('choice-geolocation')));
+    await tester.pumpAndSettle();
+    expect(find.descendant(of: find.byType(AppBar), matching: find.text('Locație')), findsOneWidget);
+  });
 }

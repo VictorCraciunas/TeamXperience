@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/puzzle_rules/puzzle_rules_controller.dart';
+import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/puzzle_list/puzzle_type_sheet.dart';
+import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/puzzle_rules/puzzle_type_tile.dart';
 import 'package:teamxperience/model/puzzle.dart';
+import 'package:teamxperience/ui/components/feedback/app_dialog.dart';
 import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
 import 'package:teamxperience/ui/theme/theme_context.dart';
 
@@ -40,6 +43,27 @@ class _PuzzleRulesFormState extends State<PuzzleRulesForm> {
     widget.onChanged?.call();
   }
 
+  Future<void> _pickType() async {
+    final chosen = await showPuzzleTypeSheet(context);
+    if (chosen == null || chosen == widget.puzzle.type || !mounted) return;
+
+    if (_controller.hasDataToLose) {
+      final ok = await showAppDialog(
+        context,
+        title: 'Schimbi tipul?',
+        message: 'Se șterg răspunsul, locația și indiciul acestui puzzle.',
+        confirmLabel: 'Schimbă',
+        cancelLabel: 'Anulează',
+        destructive: true,
+      );
+      if (!ok || !mounted) return;
+    }
+
+    _controller.changeType(chosen);
+    setState(() {});
+    widget.onChanged?.call();
+  }
+
   @override
   Widget build(BuildContext context) {
     final type = widget.puzzle.type;
@@ -48,6 +72,8 @@ class _PuzzleRulesFormState extends State<PuzzleRulesForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        PuzzleTypeTile(type: type, onTap: _pickType),
+        gap,
         if (type == PuzzleType.code) ...[
           AppTextField(
             controller: _controller.answerController,

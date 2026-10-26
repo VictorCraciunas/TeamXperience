@@ -43,6 +43,30 @@ class PuzzleRulesController {
   String? get latitudeError => _coordinateError(latitudeController, 90, 'Latitudinea');
   String? get longitudeError => _coordinateError(longitudeController, 180, 'Longitudinea');
 
+  /// True when changing the type would throw away something the organiser typed.
+  bool get hasDataToLose =>
+      (puzzle.code ?? '').isNotEmpty ||
+      puzzle.latitude != null ||
+      puzzle.longitude != null ||
+      (puzzle.indiciu ?? '').isNotEmpty;
+
+  /// Gives the puzzle another type. What belonged to the old type (answer,
+  /// place) and the hint are cleared; what is on the puzzle screen is kept.
+  void changeType(PuzzleType type) {
+    if (puzzle.type == type) return;
+
+    puzzle
+      ..type = type
+      ..code = null
+      ..latitude = null
+      ..longitude = null
+      ..indiciu = null;
+    answerController.clear();
+    latitudeController.clear();
+    longitudeController.clear();
+    hintController.clear();
+  }
+
   /// Writes the form onto the puzzle.
   void apply() {
     final type = puzzle.type;
