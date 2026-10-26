@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/admin/create_event/start/create_event_start_sheet.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
 
@@ -17,5 +16,5 @@ Future<void> openCreateEventFlow(BuildContext context) async {
   );
   if (start == null) return;
 
-  navigator.pushNamed(Routes.createEvent, arguments: start.arguments);
+  navigator.pushNamed(start.route, arguments: start.arguments);
 }

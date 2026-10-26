@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/admin/create_event/start/create_event_start.dart';
 import 'package:teamxperience/features/admin/create_event/start/create_event_start_sheet.dart';
 import 'package:teamxperience/model/event.dart';
@@ -27,6 +28,20 @@ Future<void> _sheet(
 }
 
 void main() {
+  group('where each start goes', () {
+    test('everything except the import opens the event form', () {
+      final event = _event('a', 'x');
+      expect(const StartFromScratch().route, Routes.createEvent);
+      expect(StartFromEvent(event).route, Routes.createEvent);
+      expect(StartFromDraft(event).route, Routes.createEvent);
+    });
+
+    test('the import opens its own page', () {
+      expect(const StartFromJson().route, Routes.importEvent);
+      expect(const StartFromJson().arguments, isEmpty);
+    });
+  });
+
   group('CreateEventStart arguments', () {
     test('from scratch has no event', () {
       expect(const StartFromScratch().arguments, {'event': null});
@@ -49,6 +64,11 @@ void main() {
       expect(find.text('Eveniment nou'), findsOneWidget);
       expect(find.text('De la zero'), findsOneWidget);
       expect(find.text('Dintr-un eveniment vechi'), findsOneWidget);
+    });
+
+    testWidgets('offers importing an event from JSON', (tester) async {
+      await _sheet(tester);
+      expect(find.text('Din JSON'), findsOneWidget);
     });
 
     testWidgets('without drafts there is no Ciorne section', (tester) async {
@@ -115,6 +135,11 @@ void main() {
     testWidgets('De la zero', (tester) async {
       final result = await choose(tester, () => tester.tap(find.text('De la zero')));
       expect(result, isA<StartFromScratch>());
+    });
+
+    testWidgets('Din JSON', (tester) async {
+      final result = await choose(tester, () => tester.tap(find.text('Din JSON')));
+      expect(result, isA<StartFromJson>());
     });
 
     testWidgets('a draft', (tester) async {

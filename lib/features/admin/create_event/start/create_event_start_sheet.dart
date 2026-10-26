@@ -69,6 +69,13 @@ class CreateEventStartSheet extends StatelessWidget {
               subtitle: hasOldEvents ? 'Pornești de la misiunile lui' : 'Nu ai evenimente vechi',
               onTap: hasOldEvents ? () => _fromOldEvent(context) : null,
             ),
+            const SizedBox(height: 8),
+            _Option(
+              icon: Icons.data_object,
+              title: 'Din JSON',
+              subtitle: 'Lipești un eveniment scris în afara aplicației',
+              onTap: () => Navigator.of(context).pop(const StartFromJson()),
+            ),
             if (drafts.isNotEmpty) ...[
               const SizedBox(height: 20),
               Text(
