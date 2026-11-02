@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/utils/component_conversion/box_effects.dart';
 import 'package:teamxperience/utils/event_fonts.dart';
+import '../option_checkbox.dart';
 import '../optional_slider.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
@@ -61,6 +62,12 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
           _buildTextStylingSection(),
           const SizedBox(height: 20),
           _buildGlowEffectSection(),
+          const SizedBox(height: 20),
+          OptionCheckbox(
+            label: 'Animație la răspuns',
+            value: controller.answerFeedback,
+            onChanged: (value) => setState(() => controller.answerFeedback = value),
+          ),
           const SizedBox(height: 20),
           _buildSaveButton(),
           const SizedBox(height: 60),

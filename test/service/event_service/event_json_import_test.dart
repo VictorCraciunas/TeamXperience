@@ -592,6 +592,14 @@ void main() {
       expect(message, allOf(contains('none'), contains('typewriter'), contains('decode')));
     });
 
+    test('the answer feedback of a code input is true or false', () {
+      expectAccepted({'type': 'code', 'answerFeedback': true});
+      expectAccepted({'type': 'code', 'answerFeedback': false});
+      expectRefused({'type': 'code', 'answerFeedback': 'nu'}, 'answerFeedback');
+      final component = withComponent({'type': 'code', 'answerFeedback': false}).event?.missions.single.puzzles.single.components.single;
+      expect(component?.answerFeedback, isFalse);
+    });
+
     test('options a component does not use are not checked', () {
       expectAccepted({'type': 'text', 'width': 999, 'height': 999});
     });

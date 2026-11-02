@@ -92,6 +92,7 @@ Component
   boxHeight?: Number
   boldText?: true | false
   glowOn?: "frame" | "boxes"
+  answerFeedback?: true | false
   inputType?: "Separated" | "Free"
   capsLock?: "CapsLock" | "Fără"
   frameCornerRadius?: Number
@@ -278,6 +279,7 @@ The place where players type the answer of a `code` puzzle.
 | `shadowDistance` | A number from 0 to 20: how far the shadow is moved down and to the right. Default 0. |
 | `shadowBlur` | A number from 0 to 30: how soft the shadow is. Default 0. A shadow exists when `shadowDistance` or `shadowBlur` is more than 0. It follows the rounded corners. |
 | `shadowColor` | Hex colour of the shadow. Default is a dark shadow. |
+| `answerFeedback` | `true` (default) or `false`. When on, a wrong answer shakes the code input left and right and flashes it red, and a right answer makes it pop and flash green before the game goes on (about half a second). Write `false` to switch it off. It works with the phone's own setting: with animations off nothing moves. |
 | `glowOn` | `"frame"` (default): the glow is around all the boxes together. `"boxes"`: each box glows on its own. Only used with `enableGlow` and `"Separated"`; a single `"Free"` box glows either way. |
 | `fontSize` | A number from 8 to 72. Default 16. |
 | `fontFamily` | One of the fonts listed under "Fonts" below. |

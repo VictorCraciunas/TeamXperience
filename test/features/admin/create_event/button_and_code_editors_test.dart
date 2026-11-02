@@ -4,6 +4,7 @@ import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/add_component_widget.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/create_button/create_button_controller.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/create_code/code_component_controller.dart';
+import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/option_checkbox.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/optional_slider.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
@@ -245,6 +246,31 @@ void main() {
       await tester.pump();
       expect(find.textContaining('(automat)'), findsNothing);
       expect(find.text('100 px'), findsOneWidget);
+    });
+
+    testWidgets('has the answer feedback option, on', (tester) async {
+      await _openEditor(tester, code());
+      expect(find.text('Animație la răspuns'), findsOneWidget);
+      final box = tester.widget<Checkbox>(find.descendant(of: find.widgetWithText(OptionCheckbox, 'Animație la răspuns'), matching: find.byType(Checkbox)));
+      expect(box.value, isTrue);
+    });
+
+    test('the controller starts with the feedback on and writes it only when it is off', () {
+      final c = CodeComponentController();
+      expect(c.answerFeedback, isTrue);
+      final on = Component();
+      c.updateComponent(on);
+      expect(on.answerFeedback, isNull, reason: 'on is the usual, so nothing is written');
+
+      c.answerFeedback = false;
+      final off = Component();
+      c.updateComponent(off);
+      expect(off.answerFeedback, isFalse);
+    });
+
+    test('the controller loads a code input that has the feedback off', () {
+      final c = CodeComponentController()..initializeFromComponent(Component(type: ComponentType.code, answerFeedback: false));
+      expect(c.answerFeedback, isFalse);
     });
 
     testWidgets('where the glow is can be chosen when it is on and the boxes are separate', (tester) async {
