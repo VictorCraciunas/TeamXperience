@@ -12,7 +12,7 @@
   "durata": "2 ore",
   "dificultate": "Medie",
   "landingImageUrl": null,
-  "taskBackgroundImageUrl": "assets/images/hacker_background.jpg",
+  "taskBackgroundImageUrl": null,
   "screenAnimation": "slideFromLeft",
   "animationDuration": 450,
   "animationDelay": 180,
