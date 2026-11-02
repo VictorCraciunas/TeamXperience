@@ -67,6 +67,8 @@ Event _readEvent(Map<String, dynamic> map, List<String> errors) {
     taskBackgroundImageUrl: reader.text('taskBackgroundImageUrl'),
     type: reader.option('type', EventType.values),
     screenAnimation: reader.option('screenAnimation', ScreenAnimation.values) ?? ScreenAnimation.fade,
+    animationDuration: reader.whole('animationDuration', min: 200, max: 1500),
+    animationDelay: reader.whole('animationDelay', min: 0, max: 600),
     dateEvent: reader.date('dateEvent'),
     dateStartEnrollment: reader.date('dateStartEnrollment'),
     dateDeadlineEnrollment: reader.date('dateDeadlineEnrollment'),

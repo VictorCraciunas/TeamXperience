@@ -41,6 +41,12 @@ class Event {
   /// How the components of every puzzle appear when it opens.
   ScreenAnimation screenAnimation;
 
+  /// How long, in milliseconds, one component takes to come in (200 to 1500),
+  /// and how long after the one before the next starts (0 to 600). Null means
+  /// automatic: 2 seconds for the whole puzzle.
+  int? animationDuration;
+  int? animationDelay;
+
   bool get isDraft => status == EventStatus.draft;
 
   static const Duration maxDuration = Duration(hours: 3);
@@ -77,6 +83,8 @@ class Event {
     this.updatedAt,
     this.defaults,
     this.screenAnimation = ScreenAnimation.fade,
+    this.animationDuration,
+    this.animationDelay,
   }) : missions = missions ?? [];
 
   Mission addMission(Mission mission) {
@@ -117,6 +125,8 @@ class Event {
         (map['defaults'] as Map?)?.cast<String, dynamic>(),
       ),
       screenAnimation: ScreenAnimation.fromName(map['screenAnimation'] as String?),
+      animationDuration: (map['animationDuration'] as num?)?.toInt(),
+      animationDelay: (map['animationDelay'] as num?)?.toInt(),
     );
   }
 
@@ -145,6 +155,8 @@ class Event {
       'updatedAt': updatedAt,
       'defaults': defaults?.toJson(),
       'screenAnimation': screenAnimation.name,
+      'animationDuration': animationDuration,
+      'animationDelay': animationDelay,
     };
   }
 

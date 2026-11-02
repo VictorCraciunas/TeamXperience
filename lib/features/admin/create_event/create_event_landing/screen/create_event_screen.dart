@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/enums/screen_animation.dart';
+import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/optional_slider.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:intl/intl.dart';
 import 'package:teamxperience/features/admin/create_event/common_widgets/upload_image.dart';
@@ -312,6 +313,38 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       setState(() => controller.screenAnimation = value);
                     },
                   ),
+                  if (controller.screenAnimation != ScreenAnimation.none) ...[
+                    const SizedBox(height: 20),
+                    OptionalSlider(
+                      title: 'Durata unei componente',
+                      min: 200,
+                      max: 1500,
+                      divisions: 26,
+                      unit: 'ms',
+                      value: controller.animationDuration?.toDouble(),
+                      automaticValue: 600,
+                      automaticNote: 'automat',
+                      onChanged:
+                          (value) => setState(
+                            () => controller.animationDuration = value.round(),
+                          ),
+                    ),
+                    const SizedBox(height: 20),
+                    OptionalSlider(
+                      title: 'Pauza până la următoarea',
+                      min: 0,
+                      max: 600,
+                      divisions: 12,
+                      unit: 'ms',
+                      value: controller.animationDelay?.toDouble(),
+                      automaticValue: 250,
+                      automaticNote: 'automat',
+                      onChanged:
+                          (value) => setState(
+                            () => controller.animationDelay = value.round(),
+                          ),
+                    ),
+                  ],
                   const SizedBox(height: 20),
 
                   // Lungime traseu

@@ -4,7 +4,19 @@ enum ScreenAnimation {
   fade('Fade (implicit)'),
 
   /// All at once, with no animation.
-  none('Fără animație');
+  none('Fără animație'),
+
+  /// One after another, each sliding in from the left and fading in.
+  slideFromLeft('Slide din stânga'),
+  slideFromRight('Slide din dreapta'),
+  slideFromBottom('Slide de jos'),
+  slideFromTop('Slide de sus'),
+
+  /// Growing from small to full size while fading in.
+  zoom('Zoom'),
+
+  /// Coming up from below, going a little past the place and settling back.
+  bounce('Bounce');
 
   const ScreenAnimation(this.label);
 

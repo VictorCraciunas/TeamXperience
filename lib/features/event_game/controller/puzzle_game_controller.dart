@@ -155,7 +155,12 @@ class PuzzleGameController {
 
   /// The components with the gaps the organiser chose under them.
   List<Widget> buildComponentsWithSpacing(List<Widget> components, List<Animation<double>> animations) {
-    return spacedComponents(components, animations, getCurrentPuzzleSpaces());
+    return spacedComponents(
+      components,
+      animations,
+      getCurrentPuzzleSpaces(),
+      mode: event.screenAnimation,
+    );
   }
 
   void dispose() {

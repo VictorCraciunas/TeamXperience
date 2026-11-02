@@ -201,6 +201,42 @@ void animationTests() {
       expect(c.applyToOriginal().screenAnimation, ScreenAnimation.none);
     });
 
+    test('the timing starts as automatic', () {
+      final c = CreateEventController(null);
+      expect(c.animationDuration, isNull);
+      expect(c.animationDelay, isNull);
+      final event = c.buildNewEvent();
+      expect(event.animationDuration, isNull);
+      expect(event.animationDelay, isNull);
+    });
+
+    test('a chosen timing goes onto the event', () {
+      final c = CreateEventController(null)
+        ..screenAnimation = ScreenAnimation.zoom
+        ..animationDuration = 900
+        ..animationDelay = 100;
+      final event = c.buildNewEvent();
+      expect(event.screenAnimation, ScreenAnimation.zoom);
+      expect(event.animationDuration, 900);
+      expect(event.animationDelay, 100);
+    });
+
+    test('an event with a timing opens with it', () {
+      final c = CreateEventController(Event(eventId: 'e', name: 'x', animationDuration: 500, animationDelay: 50));
+      expect(c.animationDuration, 500);
+      expect(c.animationDelay, 50);
+    });
+
+    test('a timing that was set back to automatic is removed from the event', () {
+      final event = Event(eventId: 'e', name: 'x', animationDuration: 500, animationDelay: 50);
+      final c = CreateEventController(event)
+        ..animationDuration = null
+        ..animationDelay = null;
+      final saved = c.applyToOriginal();
+      expect(saved.animationDuration, isNull);
+      expect(saved.animationDelay, isNull);
+    });
+
     test('a copy of an old event keeps its choice', () {
       final c = CreateEventController(Event(eventId: 'e', name: 'x', screenAnimation: ScreenAnimation.none));
       expect(c.buildNewEvent().screenAnimation, ScreenAnimation.none);

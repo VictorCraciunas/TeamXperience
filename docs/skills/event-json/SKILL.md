@@ -35,7 +35,9 @@ Event
   dificultate: String                    (needed to publish)
   landingImageUrl?: String | null
   taskBackgroundImageUrl?: String | null
-  screenAnimation?: "fade" | "none"
+  screenAnimation?: "fade" | "none" | "slideFromLeft" | "slideFromRight" | "slideFromBottom" | "slideFromTop" | "zoom" | "bounce"
+  animationDuration?: Whole number
+  animationDelay?: Whole number
   missions: List<Mission>                (at least 1 to publish)
 
 Mission
@@ -160,7 +162,9 @@ A one-mission event with a code puzzle. (A fuller one is in `docs/event-import-s
 | `dificultate` | Free text shown as written. Suggested: `"Ușoară"`, `"Medie"`, `"Grea"`. |
 | `landingImageUrl` | A link starting with `https://`, or `null`. The event's cover picture. Files cannot be put in the JSON. |
 | `taskBackgroundImageUrl` | A link starting with `https://`, `null`, or the name of a picture that is already inside the app. Background behind every puzzle. Pictures inside the app: `"assets/images/hacker_background.jpg"` (dark, falling green code, use light green text on it). |
-| `screenAnimation` | How the components of a puzzle appear when it opens. `"fade"` (default): one after another, each fading in, over about 2 seconds. `"none"`: all at once, no animation. The typewriter of a text and the glow of a button are separate and still work with `"none"`. |
+| `screenAnimation` | How the components of a puzzle come in when it opens. The components come one after another, from top to bottom: `"fade"` (default) fades each in; `"slideFromLeft"`, `"slideFromRight"`, `"slideFromBottom"`, `"slideFromTop"` slide each in from that side while fading in; `"zoom"` grows each from small to full size; `"bounce"` brings each up from below, a little past its place, and settles it back. `"none"`: no animation, everything is there at once. A text with `"typewriter"`, and the glow of a button, still work with `"none"`. Pick one kind for the whole event and keep it calm: `"fade"` or `"slideFromBottom"` suit most games, `"bounce"` a playful one, `"slideFromLeft"` a terminal or hacker one. |
+| `animationDuration` | Whole milliseconds from 200 to 1500: how long one component takes to come in. When missing, the whole puzzle takes 2 seconds. Not used with `"none"`. |
+| `animationDelay` | Whole milliseconds from 0 to 600: how long after the one before the next component starts. `0` makes them all come in together. Missing means automatic. Not used with `"none"`. |
 | `missions` | A list. The missions are played in the order written. |
 
 Keys you may see in an exported event but must **not** write: `eventId`, `status`, `isStopped`, `nrMissions`, `wizardStep`, `updatedAt`, `defaults`, and the `id` of missions and puzzles. They are ignored or set by the app.
