@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
+import 'package:teamxperience/enums/screen_animation.dart';
 import 'package:teamxperience/service/event_service/event_completeness.dart';
 import 'package:teamxperience/service/event_service/event_json_import.dart';
 
@@ -224,6 +225,23 @@ void main() {
 
     test('a file with mistakes gives no event', () {
       expect(_import(_event(extra: {'type': 'SECRET'})).event, isNull);
+    });
+  });
+
+  group('the animation of the screen', () {
+    test('fade and none are accepted', () {
+      expect(_import(_event(extra: {'screenAnimation': 'fade'})).event?.screenAnimation, ScreenAnimation.fade);
+      expect(_import(_event(extra: {'screenAnimation': 'none'})).event?.screenAnimation, ScreenAnimation.none);
+    });
+
+    test('left out it fades, as the app always did', () {
+      expect(_import(_event()).event?.screenAnimation, ScreenAnimation.fade);
+    });
+
+    test('anything else is refused and the mistake lists what exists', () {
+      final result = _import(_event(extra: {'screenAnimation': 'slide'}));
+      expect(result.event, isNull);
+      expect(result.errors.single, allOf(contains('screenAnimation'), contains('slide'), contains('fade'), contains('none')));
     });
   });
 

@@ -27,7 +27,7 @@ Organisers can make an event look the way they want (fonts, colours, glow, shado
 | # | Branch | What |
 |---|---|---|
 | 01 | `visual/01-layout` | Text block uses the full width so alignment works; `spaceBelow` on every component (0 to 120, default 40). **Done:** `Component.spaceBelow`, `spacedComponents`, `FullWidth`, slider in the component editor, importer range, skill. The builder preview still uses its own 16 px gap. |
-| 02 | `visual/02-screen-animation` | Entrance of the whole screen: `fade` (today, default), `none`, and more later; duration and delay between components. **"none" is wanted.** |
+| 02 | `visual/02-screen-animation` | Entrance of the whole screen, set once per event (`Event.screenAnimation`): `fade` (today, default) or `none`. **Done:** enum, model, importer, form dropdown, game screen, skill. Duration and delay between components move to step 06 with the other entrances. |
 | 03 | `visual/03-button-and-code-box` | Button: `letterSpacing`, `paddingY`. Code input: `boxHeight`, bold on or off, glow on the frame or on each box. |
 | 04 | `visual/04-fonts` | Bundle the fonts from the gallery (Orbitron, Share Tech Mono, Press Start 2P, Cinzel, Special Elite, Caveat, Bebas Neue, Playfair Display). Needs the user's yes to download them. |
 | 05 | `visual/05-effects` | On every component: shadow, glow, border, opacity. On text: letter spacing, line height, italic, capitals, outline. Colours with transparency. |

@@ -4,6 +4,7 @@ import 'package:teamxperience/enums/animation_type.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
+import 'package:teamxperience/enums/screen_animation.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
@@ -64,6 +65,7 @@ Event _readEvent(Map<String, dynamic> map, List<String> errors) {
     landingImageUrl: reader.text('landingImageUrl'),
     taskBackgroundImageUrl: reader.text('taskBackgroundImageUrl'),
     type: reader.option('type', EventType.values),
+    screenAnimation: reader.option('screenAnimation', ScreenAnimation.values) ?? ScreenAnimation.fade,
     dateEvent: reader.date('dateEvent'),
     dateStartEnrollment: reader.date('dateStartEnrollment'),
     dateDeadlineEnrollment: reader.date('dateDeadlineEnrollment'),

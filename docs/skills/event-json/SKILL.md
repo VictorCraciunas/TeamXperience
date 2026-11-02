@@ -35,6 +35,7 @@ Event
   dificultate: String                    (needed to publish)
   landingImageUrl?: String | null
   taskBackgroundImageUrl?: String | null
+  screenAnimation?: "fade" | "none"
   missions: List<Mission>                (at least 1 to publish)
 
 Mission
@@ -143,6 +144,7 @@ A one-mission event with a code puzzle. (A fuller one is in `docs/event-import-s
 | `dificultate` | Free text shown as written. Suggested: `"Ușoară"`, `"Medie"`, `"Grea"`. |
 | `landingImageUrl` | A link starting with `https://`, or `null`. The event's cover picture. Files cannot be put in the JSON. |
 | `taskBackgroundImageUrl` | A link starting with `https://`, `null`, or the name of a picture that is already inside the app. Background behind every puzzle. Pictures inside the app: `"assets/images/hacker_background.jpg"` (dark, falling green code, use light green text on it). |
+| `screenAnimation` | How the components of a puzzle appear when it opens. `"fade"` (default): one after another, each fading in, over about 2 seconds. `"none"`: all at once, no animation. The typewriter of a text and the glow of a button are separate and still work with `"none"`. |
 | `missions` | A list. The missions are played in the order written. |
 
 Keys you may see in an exported event but must **not** write: `eventId`, `status`, `isStopped`, `nrMissions`, `wizardStep`, `updatedAt`, `defaults`, and the `id` of missions and puzzles. They are ignored or set by the app.

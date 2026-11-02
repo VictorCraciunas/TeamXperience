@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../enums/event_status.dart';
+import '../enums/screen_animation.dart';
 import '../enums/event_type.dart';
 import 'event_defaults.dart';
 import 'mission.dart';
@@ -37,6 +38,9 @@ class Event {
   /// The look every new component starts with.
   EventDefaults? defaults;
 
+  /// How the components of every puzzle appear when it opens.
+  ScreenAnimation screenAnimation;
+
   bool get isDraft => status == EventStatus.draft;
 
   static const Duration maxDuration = Duration(hours: 3);
@@ -72,6 +76,7 @@ class Event {
     this.wizardStep = 0,
     this.updatedAt,
     this.defaults,
+    this.screenAnimation = ScreenAnimation.fade,
   }) : missions = missions ?? [];
 
   Mission addMission(Mission mission) {
@@ -111,6 +116,7 @@ class Event {
       defaults: EventDefaults.fromMap(
         (map['defaults'] as Map?)?.cast<String, dynamic>(),
       ),
+      screenAnimation: ScreenAnimation.fromName(map['screenAnimation'] as String?),
     );
   }
 
@@ -138,6 +144,7 @@ class Event {
       'wizardStep': wizardStep,
       'updatedAt': updatedAt,
       'defaults': defaults?.toJson(),
+      'screenAnimation': screenAnimation.name,
     };
   }
 

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/enums/event_status.dart';
 import 'package:teamxperience/enums/event_type.dart';
+import 'package:teamxperience/enums/screen_animation.dart';
 import 'package:teamxperience/features/admin/create_event/create_event_landing/controller/create_event_controller.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
@@ -20,6 +21,8 @@ Event _draft() => Event(
 );
 
 void main() {
+  imageTests();
+  animationTests();
   group('opening the form', () {
     test('an event with no name does not crash it', () {
       final c = CreateEventController(
@@ -171,6 +174,92 @@ void main() {
             ..dateStartEnrollement = DateTime(2026, 10, 25)
             ..deadlineEnrollment = _closes;
       expect(c.enrollmentProblem(), 'Înscrierile se deschid după ce se închid');
+    });
+  });
+}
+
+void animationTests() {
+  group('the animation of the screen', () {
+    test('a new form fades, as events always did', () {
+      expect(CreateEventController(null).screenAnimation, ScreenAnimation.fade);
+      expect(CreateEventController(null).buildNewEvent().screenAnimation, ScreenAnimation.fade);
+    });
+
+    test('an event that has none starts with none', () {
+      final c = CreateEventController(Event(eventId: 'e', name: 'x', screenAnimation: ScreenAnimation.none));
+      expect(c.screenAnimation, ScreenAnimation.none);
+    });
+
+    test('the choice goes onto a new event', () {
+      final c = CreateEventController(null)..screenAnimation = ScreenAnimation.none;
+      expect(c.buildNewEvent().screenAnimation, ScreenAnimation.none);
+    });
+
+    test('the choice goes onto the event being edited', () {
+      final event = Event(eventId: 'e', name: 'x');
+      final c = CreateEventController(event)..screenAnimation = ScreenAnimation.none;
+      expect(c.applyToOriginal().screenAnimation, ScreenAnimation.none);
+    });
+
+    test('a copy of an old event keeps its choice', () {
+      final c = CreateEventController(Event(eventId: 'e', name: 'x', screenAnimation: ScreenAnimation.none));
+      expect(c.buildNewEvent().screenAnimation, ScreenAnimation.none);
+    });
+  });
+}
+
+void imageTests() {
+  group('the pictures of the event', () {
+    Event withImages() => Event(
+          eventId: 'e1',
+          name: 'Hunt',
+          landingImageUrl: 'https://example.com/cover.jpg',
+          taskBackgroundImageUrl: 'assets/images/hacker_background.jpg',
+          missions: [Mission(id: '0')],
+        );
+
+    test('continuing without picking new ones keeps the existing ones', () {
+      final event = withImages();
+      final saved = CreateEventController(event).applyToOriginal();
+      expect(saved.landingImageUrl, 'https://example.com/cover.jpg');
+      expect(saved.taskBackgroundImageUrl, 'assets/images/hacker_background.jpg');
+    });
+
+    test('a newly picked picture replaces the existing one', () {
+      final c = CreateEventController(withImages())..landingImageFile = File('/tmp/new.jpg');
+      final saved = c.applyToOriginal();
+      expect(saved.landingImageUrl, '/tmp/new.jpg');
+      expect(saved.taskBackgroundImageUrl, 'assets/images/hacker_background.jpg', reason: 'the other one is untouched');
+    });
+
+    test('a copy of an old event starts with its pictures, as the form shows them', () {
+      final copy = CreateEventController(withImages()).buildNewEvent();
+      expect(copy.eventId, '');
+      expect(copy.landingImageUrl, 'https://example.com/cover.jpg');
+      expect(copy.taskBackgroundImageUrl, 'assets/images/hacker_background.jpg');
+    });
+
+    test('a copy gets a picked picture instead of the old one', () {
+      final c = CreateEventController(withImages())..taskBackgroundImageFile = File('/tmp/bg.jpg');
+      expect(c.buildNewEvent().taskBackgroundImageUrl, '/tmp/bg.jpg');
+    });
+
+    test('an event without pictures stays without', () {
+      final saved = CreateEventController(Event(eventId: 'e', name: 'x')).applyToOriginal();
+      expect(saved.landingImageUrl, isNull);
+      expect(saved.taskBackgroundImageUrl, isNull);
+    });
+
+    test('an empty form has no pictures', () {
+      final event = CreateEventController(null).buildNewEvent();
+      expect(event.landingImageUrl, isNull);
+      expect(event.taskBackgroundImageUrl, isNull);
+    });
+
+    test('an empty text from an old database entry counts as no picture', () {
+      final event = Event(eventId: 'e', name: 'x', landingImageUrl: '', taskBackgroundImageUrl: '');
+      final saved = CreateEventController(event).applyToOriginal();
+      expect(saved.landingImageUrl ?? '', isEmpty);
     });
   });
 }

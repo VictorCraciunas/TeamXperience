@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
+import 'package:teamxperience/enums/screen_animation.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:intl/intl.dart';
 import 'package:teamxperience/features/admin/create_event/common_widgets/upload_image.dart';
@@ -292,6 +293,24 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       labelText: 'Adaugă imagine fundal misiuni (opțional)',
                       imageUrl: controller.getTaskBackgroundImageToDisplay(),
                     ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Animatia la deschiderea unui puzzle
+                  AppDropdown<ScreenAnimation>(
+                    label: 'Animație la deschiderea puzzle-ului',
+                    items: [
+                      for (final animation in ScreenAnimation.values)
+                        AppDropdownItem<ScreenAnimation>(
+                          value: animation,
+                          label: animation.label,
+                        ),
+                    ],
+                    value: controller.screenAnimation,
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() => controller.screenAnimation = value);
+                    },
                   ),
                   const SizedBox(height: 20),
 
