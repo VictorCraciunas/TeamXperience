@@ -68,6 +68,13 @@ class Component {
    double? shadowBlur;
    double? shadowDistance;
 
+   /// How visible a component is, from 0 (invisible) to 1. When missing: 1.
+   double? opacity;
+
+   /// Thickness of the border of an image (0 to 6, none when missing) or of a
+   /// button (when missing: 1.5).
+   double? borderWidth;
+
   Component({
     this.type,
     this.text,
@@ -112,6 +119,8 @@ class Component {
     this.shadowColor,
     this.shadowBlur,
     this.shadowDistance,
+    this.opacity,
+    this.borderWidth,
   });
 
    factory Component.fromMap(Map<String, dynamic> map) {
@@ -163,6 +172,8 @@ class Component {
        shadowColor: map['shadowColor'] as String?,
        shadowBlur: (map['shadowBlur'] as num?)?.toDouble(),
        shadowDistance: (map['shadowDistance'] as num?)?.toDouble(),
+       opacity: (map['opacity'] as num?)?.toDouble(),
+       borderWidth: (map['borderWidth'] as num?)?.toDouble(),
      );
    }
 
@@ -211,6 +222,8 @@ class Component {
        if (shadowColor != null) 'shadowColor': shadowColor,
        if (shadowBlur != null) 'shadowBlur': shadowBlur,
        if (shadowDistance != null) 'shadowDistance': shadowDistance,
+       if (opacity != null) 'opacity': opacity,
+       if (borderWidth != null) 'borderWidth': borderWidth,
      };
    }
 
