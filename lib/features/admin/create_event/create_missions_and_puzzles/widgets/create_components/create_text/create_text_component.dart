@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/utils/component_conversion/box_effects.dart';
 import '../hex_color_field.dart';
 import '../optional_slider.dart';
 import '../option_checkbox.dart';
@@ -120,6 +121,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
   Widget _buildPreviewSection() {
     final previewComponent = Component();
     controller.updateComponentFields(previewComponent);
+    BoxEffects.copy(widget.component, previewComponent, shadow: false);
     final previewWidget = ComponentToWidget().convert(previewComponent);
 
     return Column(

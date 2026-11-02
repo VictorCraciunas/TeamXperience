@@ -5,12 +5,18 @@ class ImageComponentWidget extends StatelessWidget {
   final String? imageUrl;
   final double height; // Added height parameter
   final double radius; // Added radius parameter for border radius
+  final List<BoxShadow>? shadows; // Shadow and glow around the picture
+  final double? borderWidth; // Thickness of the border, none when missing or 0
+  final Color? borderColor; // Colour of the border, black when missing
 
   const ImageComponentWidget({
     super.key,
     this.imageUrl,
     required this.height, // Require height
     required this.radius, // Require radius
+    this.shadows,
+    this.borderWidth,
+    this.borderColor,
   });
 
   // Helper to determine if the URL is a local file path or a network URL
@@ -42,6 +48,8 @@ class ImageComponentWidget extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(radius), // Apply custom radius
+          boxShadow: shadows,
+          border: (borderWidth ?? 0) > 0 ? Border.all(color: borderColor ?? Colors.black, width: borderWidth!) : null,
           image: DecorationImage(
             image: _isNetworkUrl(imageUrl)
                 ? NetworkImage(imageUrl!) // Network image

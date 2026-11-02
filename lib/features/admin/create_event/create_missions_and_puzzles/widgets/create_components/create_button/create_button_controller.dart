@@ -27,6 +27,7 @@ class ButtonComponentController {
   double fontSize = 15;
   double letterSpacing = 8;
   double paddingY = 5;
+  double borderWidth = 1.5;
 
   // Controllers
   final TextEditingController labelController = TextEditingController();
@@ -104,6 +105,7 @@ class ButtonComponentController {
     component.fontSize = fontSize;
     component.letterSpacing = letterSpacing;
     component.paddingY = paddingY;
+    component.borderWidth = borderWidth;
   }
 
   // Save component (handles both create and edit modes)
@@ -155,6 +157,7 @@ class ButtonComponentController {
       fontSize = component.fontSize ?? 15;
       letterSpacing = component.letterSpacing ?? 8;
       paddingY = component.paddingY ?? 5;
+      borderWidth = component.borderWidth ?? 1.5;
     }
   }
 }

@@ -495,6 +495,42 @@ void main() {
       expect(component?.enableGlow, isTrue);
     });
 
+    test('opacity from 0 to 1 on every kind of component', () {
+      for (final type in ['text', 'image', 'button', 'code']) {
+        expectAccepted({'type': type, 'opacity': 0});
+        expectAccepted({'type': type, 'opacity': 0.5});
+        expectAccepted({'type': type, 'opacity': 1});
+        expectRefused({'type': type, 'opacity': -0.1}, 'opacity');
+        expectRefused({'type': type, 'opacity': 1.1}, 'opacity');
+        expectRefused({'type': type, 'opacity': 'jumătate'}, 'opacity');
+      }
+    });
+
+    test('border width from 0 to 6', () {
+      expectAccepted({'type': 'image', 'borderWidth': 0});
+      expectAccepted({'type': 'button', 'borderWidth': 6});
+      expectAccepted({'type': 'image', 'borderWidth': 1.5});
+      expectRefused({'type': 'image', 'borderWidth': -1}, 'borderWidth');
+      expectRefused({'type': 'button', 'borderWidth': 7}, 'borderWidth');
+    });
+
+    test('the box effects are read onto the component', () {
+      final component = withComponent({
+        'type': 'image',
+        'opacity': 0.8,
+        'borderWidth': 2,
+        'borderColor': '#33FF66',
+        'shadowBlur': 6,
+        'shadowDistance': 3,
+        'enableGlow': true,
+        'glowColor': '#FF3EA5',
+      }).event?.missions.single.puzzles.single.components.single;
+      expect(component?.opacity, 0.8);
+      expect(component?.borderWidth, 2.0);
+      expect(component?.borderColor, '#33FF66');
+      expect(component?.shadowBlur, 6.0);
+    });
+
     test('options a component does not use are not checked', () {
       expectAccepted({'type': 'text', 'width': 999, 'height': 999});
     });

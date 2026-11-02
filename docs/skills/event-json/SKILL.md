@@ -52,6 +52,7 @@ Puzzle
 Component
   type: "text" | "image" | "button" | "code"        (required)
   spaceBelow?: Number
+  opacity?: Number
   text?: String
   textColor?: HexColor
   fontSize?: Number
@@ -70,6 +71,7 @@ Component
   animation?: "none" | "typewriter"
   typewriterSpeed?: Whole number
   imageUrl?: String
+  borderWidth?: Number
   cornerRadius?: Number
   height?: Number
   buttonLabel?: String
@@ -185,6 +187,7 @@ Keys you may see in an exported event but must **not** write: `eventId`, `status
 | Field | What it can hold |
 |---|---|
 | `type` | `"text"`, `"image"`, `"button"` or `"code"`. Required. |
+| `opacity` | A number from 0 to 1: how visible the component is. `1` (default) is fully visible, `0.5` half see-through, `0` invisible. Works on every kind. |
 | `spaceBelow` | A number from 0 to 120: the space in pixels left under this component before the next one. When missing it is 40. Use a small value (for example `8`) to keep a title close to the text under it, and a large one (for example `90`) before a button. |
 
 ### Component `text`
@@ -218,6 +221,13 @@ The glow and the shadow can be used together: the shadow is drawn behind the glo
 | `imageUrl` | A link starting with `https://`. |
 | `cornerRadius` | A number from 0 to 50. Default 10. |
 | `height` | A number from 150 to 500. Default 150. |
+| `borderWidth` | A number from 0 to 6: the thickness of a border around the picture. Default 0 (no border). |
+| `borderColor` | Hex colour of the border. Default black. Only used when `borderWidth` is more than 0. |
+| `enableGlow` | `true` puts a steady glow around the picture, in `glowColor`. |
+| `glowColor` | Hex colour of the glow. Only used when `enableGlow` is `true`. |
+| `shadowDistance` | A number from 0 to 20: how far the shadow is moved down and to the right. Default 0. |
+| `shadowBlur` | A number from 0 to 30: how soft the shadow is. Default 0. A shadow exists when `shadowDistance` or `shadowBlur` is more than 0. It follows the rounded corners. |
+| `shadowColor` | Hex colour of the shadow. Default is a dark shadow. |
 
 ### Component `button`
 
@@ -231,6 +241,10 @@ A `code` puzzle needs a button: pressing it checks the answer. For `geolocation`
 | `buttonTextColor` | Hex colour. Default black. |
 | `buttonTextColorOnTap` | Hex colour while pressed. Default white. |
 | `borderColor` | Hex colour. Default black. |
+| `borderWidth` | A number from 0 to 6: the thickness of the border. Default 1.5. `0` removes the border. |
+| `shadowDistance` | A number from 0 to 20: how far the shadow is moved down and to the right. Default 0. |
+| `shadowBlur` | A number from 0 to 30: how soft the shadow is. Default 0. A shadow exists when `shadowDistance` or `shadowBlur` is more than 0. It follows the rounded corners. |
+| `shadowColor` | Hex colour of the shadow. Default is a dark shadow. |
 | `cornerRadius` | A number from 0 to 50. Default 10. |
 | `fontSize` | A number from 8 to 72. |
 | `letterSpacing` | A number from 0 to 12: the space between the letters of the label. Default 8. `0` gives a compact button. |
@@ -255,6 +269,9 @@ The place where players type the answer of a `code` puzzle.
 | `width` | A number from 0 to 200: the width of one box. Default 50. |
 | `boxHeight` | A number from 20 to 100: the height of one box. When missing it is 1.5 times `fontSize`. |
 | `boldText` | `true` (default) or `false`: whether the typed characters are bold. |
+| `shadowDistance` | A number from 0 to 20: how far the shadow is moved down and to the right. Default 0. |
+| `shadowBlur` | A number from 0 to 30: how soft the shadow is. Default 0. A shadow exists when `shadowDistance` or `shadowBlur` is more than 0. It follows the rounded corners. |
+| `shadowColor` | Hex colour of the shadow. Default is a dark shadow. |
 | `glowOn` | `"frame"` (default): the glow is around all the boxes together. `"boxes"`: each box glows on its own. Only used with `enableGlow` and `"Separated"`; a single `"Free"` box glows either way. |
 | `fontSize` | A number from 8 to 72. Default 16. |
 | `fontFamily` | One of the fonts listed under "Fonts" below. |

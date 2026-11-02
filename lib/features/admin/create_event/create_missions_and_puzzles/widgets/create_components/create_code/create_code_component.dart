@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/utils/component_conversion/box_effects.dart';
 import 'package:teamxperience/utils/event_fonts.dart';
 import '../optional_slider.dart';
 import 'package:teamxperience/ui/ui.dart';
@@ -94,6 +95,7 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
     // Create a temporary Component for preview
     final previewComponent = Component();
     controller.updateComponent(previewComponent);
+    BoxEffects.copy(widget.component, previewComponent, shadow: true);
 
     // Use ComponentToWidget to convert to widget
     final previewWidget = ComponentToWidget().convert(previewComponent);
