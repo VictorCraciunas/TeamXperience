@@ -28,7 +28,7 @@ Organisers can make an event look the way they want (fonts, colours, glow, shado
 |---|---|---|
 | 01 | `visual/01-layout` | Text block uses the full width so alignment works; `spaceBelow` on every component (0 to 120, default 40). **Done:** `Component.spaceBelow`, `spacedComponents`, `FullWidth`, slider in the component editor, importer range, skill. The builder preview still uses its own 16 px gap. |
 | 02 | `visual/02-screen-animation` | Entrance of the whole screen, set once per event (`Event.screenAnimation`): `fade` (today, default) or `none`. **Done:** enum, model, importer, form dropdown, game screen, skill. Duration and delay between components move to step 06 with the other entrances. |
-| 03 | `visual/03-button-and-code-box` | Button: `letterSpacing`, `paddingY`. Code input: `boxHeight`, bold on or off, glow on the frame or on each box. |
+| 03 | `visual/03-button-and-code-box` | Button: `letterSpacing` (0 to 12, default 8), `paddingY` (0 to 30, default 5). Code input: `boxHeight` (20 to 100, default 1.5 x text), `boldText` (default on), `glowOn` (`frame` default, or `boxes`). **Done:** model, widgets, editors (the box height slider says "automat" until moved), importer, skill. |
 | 04 | `visual/04-fonts` | Bundle the fonts from the gallery (Orbitron, Share Tech Mono, Press Start 2P, Cinzel, Special Elite, Caveat, Bebas Neue, Playfair Display). Needs the user's yes to download them. |
 | 05 | `visual/05-effects` | On every component: shadow, glow, border, opacity. On text: letter spacing, line height, italic, capitals, outline. Colours with transparency. |
 | 06 | `visual/06-component-animation` | Entrance per component (slide, zoom, bounce); loop effects (pulse, float, shake, flicker, glitch). |

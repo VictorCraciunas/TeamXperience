@@ -32,6 +32,13 @@ class CodeComponentController {
   bool enableGlow = false;
   String glowColor = _defaultBlack;
   double widthInput = _defaultWidth;
+
+  /// The height of a box; null means automatic (1.5 times the text size).
+  double? boxHeight;
+  bool boldText = true;
+
+  /// Where the glow is: "frame" or "boxes".
+  String glowOn = 'frame';
   String textColor = _defaultBlack;
   double fontSize = _defaultFontSize;
   String? fontFamily = _defaultPoppins;
@@ -67,6 +74,9 @@ class CodeComponentController {
     enableGlow = component.enableGlow ?? enableGlow;
     glowColor = component.glowColor ?? glowColor;
     widthInput = component.width ?? widthInput;
+    boxHeight = component.boxHeight;
+    boldText = component.boldText ?? true;
+    glowOn = component.glowOn ?? 'frame';
     fontSize = component.fontSize ?? fontSize;
     fontFamily = component.fontFamily ?? fontFamily;
     textColor = component.textColor ?? textColor;
@@ -95,6 +105,9 @@ class CodeComponentController {
     component.enableGlow = enableGlow;
     component.glowColor = glowColor;
     component.width = widthInput;
+    component.boxHeight = boxHeight;
+    component.boldText = boldText;
+    component.glowOn = glowOn;
     component.fontSize = fontSize;
     component.fontFamily = fontFamily;
     component.textColor = textColor;

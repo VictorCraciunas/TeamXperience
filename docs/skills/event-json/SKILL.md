@@ -64,6 +64,8 @@ Component
   cornerRadius?: Number
   height?: Number
   buttonLabel?: String
+  letterSpacing?: Number
+  paddingY?: Number
   buttonColor?: HexColor
   buttonColorOnTap?: HexColor
   buttonTextColor?: HexColor
@@ -73,6 +75,9 @@ Component
   glowColor?: HexColor
   enableFlicker?: true | false
   codeLength?: Whole number
+  boxHeight?: Number
+  boldText?: true | false
+  glowOn?: "frame" | "boxes"
   inputType?: "Separated" | "Free"
   capsLock?: "CapsLock" | "Fără"
   frameCornerRadius?: Number
@@ -208,6 +213,8 @@ A `code` puzzle needs a button: pressing it checks the answer. For `geolocation`
 | `borderColor` | Hex colour. Default black. |
 | `cornerRadius` | A number from 0 to 50. Default 10. |
 | `fontSize` | A number from 8 to 72. |
+| `letterSpacing` | A number from 0 to 12: the space between the letters of the label. Default 8. `0` gives a compact button. |
+| `paddingY` | A number from 0 to 30: the space above and below the label inside the button. Default 5. A larger number makes a taller button. |
 | `fontWeight` | The same six values as for `text`. |
 | `fontFamily` | `"Poppins"` or `"Monospace"`. Default `"Poppins"`. |
 | `enableGlow` | `true` or `false`. |
@@ -226,6 +233,9 @@ The place where players type the answer of a `code` puzzle.
 | `frameCornerRadius` | A number from 0 to 50. The outer frame (only with `"Separated"`). Default 15. |
 | `inputCornerRadius` | A number from 0 to 50. Each box. Default 15. |
 | `width` | A number from 0 to 200: the width of one box. Default 50. |
+| `boxHeight` | A number from 20 to 100: the height of one box. When missing it is 1.5 times `fontSize`. |
+| `boldText` | `true` (default) or `false`: whether the typed characters are bold. |
+| `glowOn` | `"frame"` (default): the glow is around all the boxes together. `"boxes"`: each box glows on its own. Only used with `enableGlow` and `"Separated"`; a single `"Free"` box glows either way. |
 | `fontSize` | A number from 8 to 72. Default 16. |
 | `fontFamily` | `"Poppins"` or `"Monospace"`. |
 | `textColor` | Hex colour of the typed characters. |

@@ -156,6 +156,11 @@ Component _readComponent(Map<String, dynamic> map, String where, List<String> er
     height: type == ComponentType.image ? reader.decimal('height', min: 150, max: 500) : reader.decimal('height'),
     typewriterSpeed: reader.whole('typewriterSpeed', min: 10, max: 300),
     spaceBelow: reader.decimal('spaceBelow', min: 0, max: 120),
+    letterSpacing: reader.decimal('letterSpacing', min: 0, max: 12),
+    paddingY: reader.decimal('paddingY', min: 0, max: 30),
+    boxHeight: reader.decimal('boxHeight', min: 20, max: 100),
+    boldText: reader.flag('boldText'),
+    glowOn: reader.choice('glowOn', _glowPlaces),
     textAlign: reader.choice('textAlign', _textAligns),
   );
 }
@@ -167,6 +172,7 @@ const _fontFamilies = ['Poppins', 'Monospace'];
 const _textAligns = ['left', 'center', 'right', 'justify'];
 const _inputTypes = ['Separated', 'Free'];
 const _capsLocks = ['CapsLock', 'Fără'];
+const _glowPlaces = ['frame', 'boxes'];
 
 Map<String, dynamic> _object(Object? value, String where, List<String> errors) {
   if (value is Map<String, dynamic>) return value;

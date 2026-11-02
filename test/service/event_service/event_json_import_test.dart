@@ -381,6 +381,56 @@ void main() {
       expect(components?.last.spaceBelow, isNull);
     });
 
+    test('letter spacing from 0 to 12 and space above and below from 0 to 30 on a button', () {
+      expectRefused({'type': 'button', 'letterSpacing': -1}, 'letterSpacing');
+      expectRefused({'type': 'button', 'letterSpacing': 13}, 'letterSpacing');
+      expectRefused({'type': 'button', 'paddingY': -1}, 'paddingY');
+      expectRefused({'type': 'button', 'paddingY': 31}, 'paddingY');
+      for (final value in [0, 6.5, 12]) {
+        expectAccepted({'type': 'button', 'letterSpacing': value});
+      }
+      for (final value in [0, 15, 30]) {
+        expectAccepted({'type': 'button', 'paddingY': value});
+      }
+    });
+
+    test('box height from 20 to 100 on a code input', () {
+      expectRefused({'type': 'code', 'boxHeight': 19}, 'boxHeight');
+      expectRefused({'type': 'code', 'boxHeight': 101}, 'boxHeight');
+      expectAccepted({'type': 'code', 'boxHeight': 20});
+      expectAccepted({'type': 'code', 'boxHeight': 100});
+    });
+
+    test('bold text is true or false', () {
+      expectAccepted({'type': 'code', 'boldText': true});
+      expectAccepted({'type': 'code', 'boldText': false});
+      expectRefused({'type': 'code', 'boldText': 'da'}, 'boldText');
+    });
+
+    test('the glow of a code input is on the frame or on the boxes', () {
+      expectAccepted({'type': 'code', 'glowOn': 'frame'});
+      expectAccepted({'type': 'code', 'glowOn': 'boxes'});
+      expectRefused({'type': 'code', 'glowOn': 'all'}, 'glowOn');
+      final message = withComponent({'type': 'code', 'glowOn': 'all'}).errors.single;
+      expect(message, allOf(contains('frame'), contains('boxes')));
+    });
+
+    test('the new options are read onto the component', () {
+      final component = withComponent({
+        'type': 'code',
+        'boxHeight': 60,
+        'boldText': false,
+        'glowOn': 'boxes',
+        'letterSpacing': 3,
+        'paddingY': 12,
+      }).event?.missions.single.puzzles.single.components.single;
+      expect(component?.boxHeight, 60.0);
+      expect(component?.boldText, isFalse);
+      expect(component?.glowOn, 'boxes');
+      expect(component?.letterSpacing, 3.0);
+      expect(component?.paddingY, 12.0);
+    });
+
     test('options a component does not use are not checked', () {
       expectAccepted({'type': 'text', 'width': 999, 'height': 999});
     });

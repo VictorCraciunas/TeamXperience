@@ -240,6 +240,46 @@ void main() {
     });
   });
 
+  group('the options added for the button and the code input', () {
+    for (final spacing in [0.0, 12.0]) {
+      for (final padding in [0.0, 30.0]) {
+        testWidgets('button, spacing $spacing and padding $padding', (tester) async {
+          await _draw(
+            tester,
+            Component(type: ComponentType.button, buttonLabel: 'Am găsit comoara, verifică', letterSpacing: spacing, paddingY: padding),
+          );
+        });
+      }
+    }
+    for (final height in [20.0, 100.0]) {
+      for (final length in [1, 10]) {
+        testWidgets('code, box height $height with $length characters', (tester) async {
+          await _draw(tester, Component(type: ComponentType.code, codeLength: length, inputType: 'Separated', boxHeight: height));
+        });
+      }
+    }
+    for (final place in ['frame', 'boxes']) {
+      for (final type in ['Separated', 'Free']) {
+        testWidgets('code, glow on $place, $type, not bold', (tester) async {
+          await _draw(
+            tester,
+            Component(
+              type: ComponentType.code,
+              codeLength: 10,
+              inputType: type,
+              enableGlow: true,
+              glowColor: '#33FF66',
+              glowOn: place,
+              boldText: false,
+            ),
+          );
+          await tester.pump(const Duration(seconds: 1));
+          expect(tester.takeException(), isNull);
+        });
+      }
+    }
+  });
+
   group('image', () {
     for (final radius in [0.0, 50.0]) {
       testWidgets('corner radius $radius', (tester) async {
