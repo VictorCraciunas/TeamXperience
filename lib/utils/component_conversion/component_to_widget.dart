@@ -5,6 +5,7 @@ import 'package:teamxperience/utils/component_conversion/text_component_widget.d
 
 import 'button_component_widget.dart';
 import 'full_width.dart';
+import 'text_effects.dart';
 import 'code_component_widget.dart';
 import 'image_component_widget.dart';
 
@@ -26,6 +27,7 @@ class ComponentToWidget {
             fontFamily: component.fontFamily,
             typewriterSpeed: component.typewriterSpeed,
             textAlign: component.textAlign,
+            effects: TextEffects.fromComponent(component),
           ),
         );
       case ComponentType.image:

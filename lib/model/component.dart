@@ -54,6 +54,20 @@ class Component {
    /// default) or "boxes" (around each box).
    String? glowOn;
 
+   /// Line height of a text, as a multiple of the font size, from 0.8 to 2.
+   double? lineHeight;
+
+   /// Whether a text is slanted. When missing: no.
+   bool? italic;
+
+   /// Whether a text is shown in capitals. When missing: as written.
+   bool? uppercase;
+
+   /// The colour, blur (0 to 30) and distance (0 to 20) of the shadow of a text.
+   String? shadowColor;
+   double? shadowBlur;
+   double? shadowDistance;
+
   Component({
     this.type,
     this.text,
@@ -92,6 +106,12 @@ class Component {
     this.boxHeight,
     this.boldText,
     this.glowOn,
+    this.lineHeight,
+    this.italic,
+    this.uppercase,
+    this.shadowColor,
+    this.shadowBlur,
+    this.shadowDistance,
   });
 
    factory Component.fromMap(Map<String, dynamic> map) {
@@ -137,6 +157,12 @@ class Component {
        boxHeight: (map['boxHeight'] as num?)?.toDouble(),
        boldText: map['boldText'] as bool?,
        glowOn: map['glowOn'] as String?,
+       lineHeight: (map['lineHeight'] as num?)?.toDouble(),
+       italic: map['italic'] as bool?,
+       uppercase: map['uppercase'] as bool?,
+       shadowColor: map['shadowColor'] as String?,
+       shadowBlur: (map['shadowBlur'] as num?)?.toDouble(),
+       shadowDistance: (map['shadowDistance'] as num?)?.toDouble(),
      );
    }
 
@@ -179,6 +205,12 @@ class Component {
        if (boxHeight != null) 'boxHeight': boxHeight,
        if (boldText != null) 'boldText': boldText,
        if (glowOn != null) 'glowOn': glowOn,
+       if (lineHeight != null) 'lineHeight': lineHeight,
+       if (italic != null) 'italic': italic,
+       if (uppercase != null) 'uppercase': uppercase,
+       if (shadowColor != null) 'shadowColor': shadowColor,
+       if (shadowBlur != null) 'shadowBlur': shadowBlur,
+       if (shadowDistance != null) 'shadowDistance': shadowDistance,
      };
    }
 
