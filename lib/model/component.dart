@@ -34,6 +34,10 @@ class Component {
    int? typewriterSpeed; // ms per character
    String? textAlign;
 
+   /// Space under this component in the game, from 0 to 120. When missing the
+   /// usual 40 is used.
+   double? spaceBelow;
+
   Component({
     this.type,
     this.text,
@@ -66,6 +70,7 @@ class Component {
     this.width,
     this.typewriterSpeed,
     this.textAlign,
+    this.spaceBelow,
   });
 
    factory Component.fromMap(Map<String, dynamic> map) {
@@ -105,6 +110,7 @@ class Component {
        height: map['height'] as double?,
        typewriterSpeed: map['typewriterSpeed'] as int?,
        textAlign: map['textAlign'] as String?,
+       spaceBelow: (map['spaceBelow'] as num?)?.toDouble(),
      );
    }
 
@@ -141,6 +147,7 @@ class Component {
        if (height != null) 'height': height,
        if (typewriterSpeed != null) 'typewriterSpeed': typewriterSpeed,
        if (textAlign != null) 'textAlign': textAlign,
+       if (spaceBelow != null) 'spaceBelow': spaceBelow,
      };
    }
 

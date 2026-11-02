@@ -26,7 +26,7 @@ Organisers can make an event look the way they want (fonts, colours, glow, shado
 
 | # | Branch | What |
 |---|---|---|
-| 01 | `visual/01-layout` | Text block uses the full width so alignment works; `spaceBelow` on every component (0 to 120, default 40). |
+| 01 | `visual/01-layout` | Text block uses the full width so alignment works; `spaceBelow` on every component (0 to 120, default 40). **Done:** `Component.spaceBelow`, `spacedComponents`, `FullWidth`, slider in the component editor, importer range, skill. The builder preview still uses its own 16 px gap. |
 | 02 | `visual/02-screen-animation` | Entrance of the whole screen: `fade` (today, default), `none`, and more later; duration and delay between components. **"none" is wanted.** |
 | 03 | `visual/03-button-and-code-box` | Button: `letterSpacing`, `paddingY`. Code input: `boxHeight`, bold on or off, glow on the frame or on each box. |
 | 04 | `visual/04-fonts` | Bundle the fonts from the gallery (Orbitron, Share Tech Mono, Press Start 2P, Cinzel, Special Elite, Caveat, Bebas Neue, Playfair Display). Needs the user's yes to download them. |

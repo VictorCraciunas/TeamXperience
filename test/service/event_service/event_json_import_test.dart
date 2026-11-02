@@ -331,6 +331,38 @@ void main() {
       expectAccepted({'type': 'image', 'height': 500});
     });
 
+    test('space below from 0 to 120, on every kind of component', () {
+      for (final type in ['text', 'image', 'button', 'code']) {
+        expectAccepted({'type': type, 'spaceBelow': 0});
+        expectAccepted({'type': type, 'spaceBelow': 120});
+        expectAccepted({'type': type, 'spaceBelow': 12.5});
+        expectRefused({'type': type, 'spaceBelow': -1}, 'spaceBelow');
+        expectRefused({'type': type, 'spaceBelow': 121}, 'spaceBelow');
+        expectRefused({'type': type, 'spaceBelow': 'mult'}, 'spaceBelow');
+      }
+    });
+
+    test('space below is read onto the component', () {
+      final event = _import(
+        _event(missions: [
+          {
+            'puzzles': [
+              {
+                'type': 'code',
+                'components': [
+                  {'type': 'text', 'spaceBelow': 8},
+                  {'type': 'button'},
+                ],
+              },
+            ],
+          },
+        ]),
+      ).event;
+      final components = event?.missions.single.puzzles.single.components;
+      expect(components?.first.spaceBelow, 8.0);
+      expect(components?.last.spaceBelow, isNull);
+    });
+
     test('options a component does not use are not checked', () {
       expectAccepted({'type': 'text', 'width': 999, 'height': 999});
     });

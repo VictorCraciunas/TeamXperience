@@ -4,6 +4,7 @@ import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/utils/component_conversion/text_component_widget.dart';
 
 import 'button_component_widget.dart';
+import 'full_width.dart';
 import 'code_component_widget.dart';
 import 'image_component_widget.dart';
 
@@ -15,7 +16,7 @@ class ComponentToWidget {
   }) {
     switch (component.type!) {
       case ComponentType.text:
-        return Center(
+        return FullWidth(
           child: TextComponentWidget(
             text: component.text ?? '',
             textColor: component.textColor,
