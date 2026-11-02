@@ -1,0 +1,873 @@
+{
+  "name": "Protocolul Cerber",
+  "description": "O misiune de hacking prin centrul vechi al Sibiului. Echipa ta trebuie să spargă codurile lui CERBER, o inteligență artificială care a blocat rețeaua orașului, și să obțină acces root înainte să se închidă sistemul.",
+  "location": "Sibiu, Centrul Istoric",
+  "punctDeStart": "Piața Mare, la baza Turnului Sfatului",
+  "type": "PUBLIC",
+  "startCode": "CERBER",
+  "dateEvent": "2026-11-21T19:00",
+  "dateStartEnrollment": "2026-11-03T09:00",
+  "dateDeadlineEnrollment": "2026-11-20T23:59",
+  "lungimeTraseu": "1,5 km",
+  "durata": "2 ore",
+  "dificultate": "Medie",
+  "landingImageUrl": null,
+  "taskBackgroundImageUrl": "assets/images/hacker_background.jpg",
+  "screenAnimation": "slideFromLeft",
+  "animationDuration": 450,
+  "animationDelay": 180,
+  "missions": [
+    {
+      "puzzles": [
+        {
+          "type": "code",
+          "code": "GHOST",
+          "indiciu": "Fiecare grup de 8 cifre este o literă. 01000111 este G.",
+          "components": [
+            {
+              "type": "text",
+              "text": "MISIUNEA 1 // INFILTRARE",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 22,
+              "letterSpacing": 2,
+              "textColor": "#33FF66",
+              "textAlign": "left",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "loopEffect": "glitch",
+              "spaceBelow": 14
+            },
+            {
+              "type": "text",
+              "text": "> Conexiune detectată.\n> CERBER a blocat rețeaua orașului vechi.\n> Decodează parola trimisă de agentul nostru:",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 16,
+              "lineHeight": 1.5,
+              "textColor": "#9DFFB8",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 25,
+              "spaceBelow": 24
+            },
+            {
+              "type": "text",
+              "text": "01000111 01001000 01001111 01010011 01010100",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 18,
+              "letterSpacing": 1,
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "animation": "decode",
+              "typewriterSpeed": 40,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "spaceBelow": 28
+            },
+            {
+              "type": "code",
+              "codeLength": 5,
+              "inputType": "Separated",
+              "capsLock": "CapsLock",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 24,
+              "textColor": "#33FF66",
+              "frameBackgroundColor": "#07110A",
+              "inputBackgroundColor": "#0B140B",
+              "colorBorderContainer": "#1F7A3A",
+              "colorBorderInput": "#33FF66",
+              "frameCornerRadius": 10,
+              "inputCornerRadius": 6,
+              "boxHeight": 48,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "glowOn": "frame",
+              "spaceBelow": 30
+            },
+            {
+              "type": "button",
+              "buttonLabel": "EXECUTĂ",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 14,
+              "letterSpacing": 4,
+              "paddingY": 10,
+              "buttonColor": "#0B140B",
+              "buttonColorOnTap": "#33FF66",
+              "buttonTextColor": "#33FF66",
+              "buttonTextColorOnTap": "#0B140B",
+              "borderColor": "#33FF66",
+              "borderWidth": 2,
+              "cornerRadius": 6,
+              "enableGlow": true,
+              "glowColor": "#33FF66"
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "code": "PROXY",
+          "indiciu": "Mută fiecare literă cu 4 poziții înapoi în alfabet: T devine P.",
+          "components": [
+            {
+              "type": "text",
+              "text": "PAROLA CRIPTATĂ",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 22,
+              "letterSpacing": 2,
+              "textColor": "#33FF66",
+              "textAlign": "left",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "spaceBelow": 14
+            },
+            {
+              "type": "text",
+              "text": "> Prima barieră: un cifru Cezar.\n> Fiecare literă a fost mutată cu 4 poziții înainte în alfabet.",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 16,
+              "lineHeight": 1.5,
+              "textColor": "#9DFFB8",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 25,
+              "spaceBelow": 24
+            },
+            {
+              "type": "text",
+              "text": "TVSBC",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 34,
+              "letterSpacing": 8,
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "animation": "decode",
+              "typewriterSpeed": 90,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "spaceBelow": 28
+            },
+            {
+              "type": "code",
+              "codeLength": 5,
+              "inputType": "Separated",
+              "capsLock": "CapsLock",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 24,
+              "textColor": "#33FF66",
+              "frameBackgroundColor": "#07110A",
+              "inputBackgroundColor": "#0B140B",
+              "colorBorderContainer": "#1F7A3A",
+              "colorBorderInput": "#33FF66",
+              "frameCornerRadius": 10,
+              "inputCornerRadius": 6,
+              "boxHeight": 48,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "glowOn": "frame",
+              "spaceBelow": 30
+            },
+            {
+              "type": "button",
+              "buttonLabel": "EXECUTĂ",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 14,
+              "letterSpacing": 4,
+              "paddingY": 10,
+              "buttonColor": "#0B140B",
+              "buttonColorOnTap": "#33FF66",
+              "buttonTextColor": "#33FF66",
+              "buttonTextColorOnTap": "#0B140B",
+              "borderColor": "#33FF66",
+              "borderWidth": 2,
+              "cornerRadius": 6,
+              "enableGlow": true,
+              "glowColor": "#33FF66"
+            }
+          ]
+        },
+        {
+          "type": "geolocation",
+          "latitude": 45.7976125,
+          "longitude": 24.1521323,
+          "indiciu": "Caută turnul cu ceas din Piața Mare.",
+          "components": [
+            {
+              "type": "text",
+              "text": "PRIMUL NOD",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 22,
+              "letterSpacing": 2,
+              "textColor": "#33FF66",
+              "textAlign": "left",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "spaceBelow": 14
+            },
+            {
+              "type": "text",
+              "text": "> Primul nod fizic al rețelei este în Piața Mare, la baza unui turn care a văzut tot orașul.\n> Mergi acolo și conectează-te.",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 16,
+              "lineHeight": 1.5,
+              "textColor": "#9DFFB8",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 25
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "puzzles": [
+        {
+          "type": "code",
+          "code": "NODE",
+          "indiciu": "Cifrele hex sunt coduri de litere: 4E este N.",
+          "components": [
+            {
+              "type": "text",
+              "text": "MISIUNEA 2 // REȚEAUA",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 22,
+              "letterSpacing": 2,
+              "textColor": "#33FF66",
+              "textAlign": "left",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "loopEffect": "glitch",
+              "spaceBelow": 14
+            },
+            {
+              "type": "text",
+              "text": "> Ai intrat în rețea.\n> Fiecare nod cere o parolă scrisă în hexazecimal:",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 16,
+              "lineHeight": 1.5,
+              "textColor": "#9DFFB8",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 25,
+              "spaceBelow": 24
+            },
+            {
+              "type": "text",
+              "text": "0x4E  0x4F  0x44  0x45",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 24,
+              "letterSpacing": 2,
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "animation": "decode",
+              "typewriterSpeed": 70,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "spaceBelow": 28
+            },
+            {
+              "type": "code",
+              "codeLength": 4,
+              "inputType": "Separated",
+              "capsLock": "CapsLock",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 24,
+              "textColor": "#33FF66",
+              "frameBackgroundColor": "#07110A",
+              "inputBackgroundColor": "#0B140B",
+              "colorBorderContainer": "#1F7A3A",
+              "colorBorderInput": "#33FF66",
+              "frameCornerRadius": 10,
+              "inputCornerRadius": 6,
+              "boxHeight": 48,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "glowOn": "frame",
+              "spaceBelow": 30
+            },
+            {
+              "type": "button",
+              "buttonLabel": "EXECUTĂ",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 14,
+              "letterSpacing": 4,
+              "paddingY": 10,
+              "buttonColor": "#0B140B",
+              "buttonColorOnTap": "#33FF66",
+              "buttonTextColor": "#33FF66",
+              "buttonTextColorOnTap": "#0B140B",
+              "borderColor": "#33FF66",
+              "borderWidth": 2,
+              "cornerRadius": 6,
+              "enableGlow": true,
+              "glowColor": "#33FF66"
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "code": "SERVER",
+          "indiciu": "Citește literele în ordine inversă, de la ultima la prima.",
+          "components": [
+            {
+              "type": "text",
+              "text": "NUME RĂSTURNAT",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 22,
+              "letterSpacing": 2,
+              "textColor": "#33FF66",
+              "textAlign": "left",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "spaceBelow": 14
+            },
+            {
+              "type": "text",
+              "text": "> CERBER a răsturnat numele serverului principal.\n> Citește-l de la coadă la cap:",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 16,
+              "lineHeight": 1.5,
+              "textColor": "#9DFFB8",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 25,
+              "spaceBelow": 24
+            },
+            {
+              "type": "text",
+              "text": "REVRES",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 34,
+              "letterSpacing": 8,
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "animation": "decode",
+              "typewriterSpeed": 90,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "spaceBelow": 28
+            },
+            {
+              "type": "code",
+              "codeLength": 6,
+              "inputType": "Separated",
+              "capsLock": "CapsLock",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 24,
+              "textColor": "#33FF66",
+              "frameBackgroundColor": "#07110A",
+              "inputBackgroundColor": "#0B140B",
+              "colorBorderContainer": "#1F7A3A",
+              "colorBorderInput": "#33FF66",
+              "frameCornerRadius": 10,
+              "inputCornerRadius": 6,
+              "boxHeight": 48,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "glowOn": "frame",
+              "spaceBelow": 30
+            },
+            {
+              "type": "button",
+              "buttonLabel": "EXECUTĂ",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 14,
+              "letterSpacing": 4,
+              "paddingY": 10,
+              "buttonColor": "#0B140B",
+              "buttonColorOnTap": "#33FF66",
+              "buttonTextColor": "#33FF66",
+              "buttonTextColorOnTap": "#0B140B",
+              "borderColor": "#33FF66",
+              "borderWidth": 2,
+              "cornerRadius": 6,
+              "enableGlow": true,
+              "glowColor": "#33FF66"
+            }
+          ]
+        },
+        {
+          "type": "geolocation",
+          "latitude": 45.7983213,
+          "longitude": 24.1507979,
+          "indiciu": "Podul dintre Piața Mare și Piața Mică.",
+          "components": [
+            {
+              "type": "text",
+              "text": "NODUL ASCUNS",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 22,
+              "letterSpacing": 2,
+              "textColor": "#33FF66",
+              "textAlign": "left",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "spaceBelow": 14
+            },
+            {
+              "type": "text",
+              "text": "> Un releu secret se ascunde pe un pod care, se spune, minte.\n> Găsește-l și conectează-te.",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 16,
+              "lineHeight": 1.5,
+              "textColor": "#9DFFB8",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 25
+            }
+          ]
+        },
+        {
+          "type": "imageToUpload",
+          "components": [
+            {
+              "type": "text",
+              "text": "DOVADĂ DE INTRUZIUNE",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 22,
+              "letterSpacing": 2,
+              "textColor": "#33FF66",
+              "textAlign": "left",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "spaceBelow": 14
+            },
+            {
+              "type": "text",
+              "text": "> Sistemul cere o dovadă vizuală.\n> Fă o poză de echipă: toți cu gluga pe cap, privind ca niște hackeri. Un admin o validează.",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 16,
+              "lineHeight": 1.5,
+              "textColor": "#9DFFB8",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 25
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "puzzles": [
+        {
+          "type": "code",
+          "code": "KEY",
+          "indiciu": "Punctul este scurt, linia este lungă. -.- este K.",
+          "components": [
+            {
+              "type": "text",
+              "text": "MISIUNEA 3 // CRIPTOGRAFIA",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 20,
+              "letterSpacing": 2,
+              "textColor": "#33FF66",
+              "textAlign": "left",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "loopEffect": "glitch",
+              "spaceBelow": 14
+            },
+            {
+              "type": "text",
+              "text": "> Un mesaj în cod Morse a fost interceptat.\n> Punctul este scurt, linia este lungă.",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 16,
+              "lineHeight": 1.5,
+              "textColor": "#9DFFB8",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 25,
+              "spaceBelow": 24
+            },
+            {
+              "type": "text",
+              "text": "-.-    .    -.--",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 30,
+              "letterSpacing": 4,
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "animation": "decode",
+              "typewriterSpeed": 90,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "spaceBelow": 28
+            },
+            {
+              "type": "code",
+              "codeLength": 3,
+              "inputType": "Separated",
+              "capsLock": "CapsLock",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 24,
+              "textColor": "#33FF66",
+              "frameBackgroundColor": "#07110A",
+              "inputBackgroundColor": "#0B140B",
+              "colorBorderContainer": "#1F7A3A",
+              "colorBorderInput": "#33FF66",
+              "frameCornerRadius": 10,
+              "inputCornerRadius": 6,
+              "boxHeight": 48,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "glowOn": "frame",
+              "spaceBelow": 30
+            },
+            {
+              "type": "button",
+              "buttonLabel": "EXECUTĂ",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 14,
+              "letterSpacing": 4,
+              "paddingY": 10,
+              "buttonColor": "#0B140B",
+              "buttonColorOnTap": "#33FF66",
+              "buttonTextColor": "#33FF66",
+              "buttonTextColorOnTap": "#0B140B",
+              "borderColor": "#33FF66",
+              "borderWidth": 2,
+              "cornerRadius": 6,
+              "enableGlow": true,
+              "glowColor": "#33FF66"
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "code": "CRYPTO",
+          "indiciu": "ROT13 mută fiecare literă cu 13 poziții. P devine C.",
+          "components": [
+            {
+              "type": "text",
+              "text": "CIFRUL ROT13",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 22,
+              "letterSpacing": 2,
+              "textColor": "#33FF66",
+              "textAlign": "left",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "spaceBelow": 14
+            },
+            {
+              "type": "text",
+              "text": "> Un alt cifru: ROT13.\n> Fiecare literă a fost mutată cu 13 poziții în alfabet.",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 16,
+              "lineHeight": 1.5,
+              "textColor": "#9DFFB8",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 25,
+              "spaceBelow": 24
+            },
+            {
+              "type": "text",
+              "text": "PELCGB",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 34,
+              "letterSpacing": 8,
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "animation": "decode",
+              "typewriterSpeed": 90,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "spaceBelow": 28
+            },
+            {
+              "type": "code",
+              "codeLength": 6,
+              "inputType": "Separated",
+              "capsLock": "CapsLock",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 24,
+              "textColor": "#33FF66",
+              "frameBackgroundColor": "#07110A",
+              "inputBackgroundColor": "#0B140B",
+              "colorBorderContainer": "#1F7A3A",
+              "colorBorderInput": "#33FF66",
+              "frameCornerRadius": 10,
+              "inputCornerRadius": 6,
+              "boxHeight": 48,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "glowOn": "frame",
+              "spaceBelow": 30
+            },
+            {
+              "type": "button",
+              "buttonLabel": "EXECUTĂ",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 14,
+              "letterSpacing": 4,
+              "paddingY": 10,
+              "buttonColor": "#0B140B",
+              "buttonColorOnTap": "#33FF66",
+              "buttonTextColor": "#33FF66",
+              "buttonTextColorOnTap": "#0B140B",
+              "borderColor": "#33FF66",
+              "borderWidth": 2,
+              "cornerRadius": 6,
+              "enableGlow": true,
+              "glowColor": "#33FF66"
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "code": "DATA",
+          "indiciu": "68 este D, 65 este A.",
+          "components": [
+            {
+              "type": "text",
+              "text": "FRAGMENT ASCII",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 22,
+              "letterSpacing": 2,
+              "textColor": "#33FF66",
+              "textAlign": "left",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "spaceBelow": 14
+            },
+            {
+              "type": "text",
+              "text": "> Ultimul fragment de date este scris ca numere ASCII.\n> Fiecare număr este o literă.",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 16,
+              "lineHeight": 1.5,
+              "textColor": "#9DFFB8",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 25,
+              "spaceBelow": 24
+            },
+            {
+              "type": "text",
+              "text": "68   65   84   65",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 30,
+              "letterSpacing": 3,
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "animation": "decode",
+              "typewriterSpeed": 90,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "spaceBelow": 28
+            },
+            {
+              "type": "code",
+              "codeLength": 4,
+              "inputType": "Separated",
+              "capsLock": "CapsLock",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 24,
+              "textColor": "#33FF66",
+              "frameBackgroundColor": "#07110A",
+              "inputBackgroundColor": "#0B140B",
+              "colorBorderContainer": "#1F7A3A",
+              "colorBorderInput": "#33FF66",
+              "frameCornerRadius": 10,
+              "inputCornerRadius": 6,
+              "boxHeight": 48,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "glowOn": "frame",
+              "spaceBelow": 30
+            },
+            {
+              "type": "button",
+              "buttonLabel": "EXECUTĂ",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 14,
+              "letterSpacing": 4,
+              "paddingY": 10,
+              "buttonColor": "#0B140B",
+              "buttonColorOnTap": "#33FF66",
+              "buttonTextColor": "#33FF66",
+              "buttonTextColorOnTap": "#0B140B",
+              "borderColor": "#33FF66",
+              "borderWidth": 2,
+              "cornerRadius": 6,
+              "enableGlow": true,
+              "glowColor": "#33FF66"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "puzzles": [
+        {
+          "type": "geolocation",
+          "latitude": 45.797768,
+          "longitude": 24.1500813,
+          "indiciu": "Biserica evanghelică din Piața Huet, cu turnul înalt.",
+          "components": [
+            {
+              "type": "text",
+              "text": "MISIUNEA 4 // BACKDOOR",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 22,
+              "letterSpacing": 2,
+              "textColor": "#33FF66",
+              "textAlign": "left",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "loopEffect": "glitch",
+              "spaceBelow": 14
+            },
+            {
+              "type": "text",
+              "text": "> Ușa din spate a lui CERBER se află lângă o catedrală cu un turn înalt, în Piața Huet.\n> Ajungeți acolo.",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 16,
+              "lineHeight": 1.5,
+              "textColor": "#9DFFB8",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 25
+            }
+          ]
+        },
+        {
+          "type": "imageToUpload",
+          "components": [
+            {
+              "type": "text",
+              "text": "DOVADA FINALĂ",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 22,
+              "letterSpacing": 2,
+              "textColor": "#33FF66",
+              "textAlign": "left",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "spaceBelow": 14
+            },
+            {
+              "type": "text",
+              "text": "> Pozați echipa în fața catedralei, cu mâinile ca și cum ați tasta pe o tastatură invizibilă.\n> Un admin validează poza.",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 16,
+              "lineHeight": 1.5,
+              "textColor": "#9DFFB8",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 25
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "code": "HACKER",
+          "indiciu": "4 înseamnă A, 3 înseamnă E.",
+          "components": [
+            {
+              "type": "text",
+              "text": "ACCES ROOT",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 26,
+              "letterSpacing": 4,
+              "textColor": "#FF4D4D",
+              "textAlign": "left",
+              "enableGlow": true,
+              "glowColor": "#FF4D4D",
+              "loopEffect": "flicker",
+              "spaceBelow": 14
+            },
+            {
+              "type": "text",
+              "text": "> Ultima parolă. Este scrisă în limbajul hackerilor, cu cifre în loc de litere.\n> Descifreaz-o și CERBER cade.",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 16,
+              "lineHeight": 1.5,
+              "textColor": "#9DFFB8",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 25,
+              "spaceBelow": 24
+            },
+            {
+              "type": "text",
+              "text": "H4CK3R",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 36,
+              "letterSpacing": 8,
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "animation": "decode",
+              "typewriterSpeed": 110,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "spaceBelow": 28
+            },
+            {
+              "type": "code",
+              "codeLength": 6,
+              "inputType": "Separated",
+              "capsLock": "CapsLock",
+              "fontFamily": "Share Tech Mono",
+              "fontSize": 24,
+              "textColor": "#33FF66",
+              "frameBackgroundColor": "#07110A",
+              "inputBackgroundColor": "#0B140B",
+              "colorBorderContainer": "#1F7A3A",
+              "colorBorderInput": "#33FF66",
+              "frameCornerRadius": 10,
+              "inputCornerRadius": 6,
+              "boxHeight": 48,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "glowOn": "frame",
+              "spaceBelow": 30
+            },
+            {
+              "type": "button",
+              "buttonLabel": "ACCES ROOT",
+              "fontFamily": "Orbitron",
+              "fontWeight": "Bold (700)",
+              "fontSize": 14,
+              "letterSpacing": 4,
+              "paddingY": 12,
+              "buttonColor": "#0B140B",
+              "buttonColorOnTap": "#33FF66",
+              "buttonTextColor": "#33FF66",
+              "buttonTextColorOnTap": "#0B140B",
+              "borderColor": "#33FF66",
+              "borderWidth": 2,
+              "cornerRadius": 6,
+              "enableGlow": true,
+              "glowColor": "#33FF66",
+              "loopEffect": "pulse"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
