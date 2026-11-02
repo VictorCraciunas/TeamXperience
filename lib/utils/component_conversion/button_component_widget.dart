@@ -14,6 +14,8 @@ class ButtonComponentWidget extends StatefulWidget {
   final String? fontWeight; // Font weight
   final double? fontSize;
   final double? radius;
+  final double? letterSpacing; // Space between the letters, 8 when missing
+  final double? paddingY; // Space above and below the label, 5 when missing
   final VoidCallback? onPressed; // Add callback parameter
 
   const ButtonComponentWidget({
@@ -31,6 +33,8 @@ class ButtonComponentWidget extends StatefulWidget {
     this.fontWeight,
     this.fontSize,
     this.radius,
+    this.letterSpacing,
+    this.paddingY,
     this.onPressed,
   });
 
@@ -158,7 +162,7 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
           }),
           onPointerCancel: (_) => setState(() => _isTapped = false),
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 30),
+            padding: EdgeInsets.symmetric(vertical: widget.paddingY ?? 5.0, horizontal: 30),
             decoration: BoxDecoration(
               color: currentButtonColor,
               border: Border.all(color: currentBorderColor, width: 1.5),
@@ -187,7 +191,7 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
                   fontSize: widget.fontSize,
                   fontWeight: currentFontWeight,
                   fontFamily: widget.fontFamily ?? 'Poppins',
-                  letterSpacing: 8,
+                  letterSpacing: widget.letterSpacing ?? 8,
                 ),
               ),
             ),

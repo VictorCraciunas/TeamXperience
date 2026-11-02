@@ -118,7 +118,9 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
     final Color glowColor = _hexToColor(widget.component.glowColor, defaultColor: Colors.black);
     final double widthInput = widget.component.width ?? 50;
     final double fontSize = widget.component.fontSize ?? 16.0;
-    final double heightInput = fontSize * 1.5;
+    final double heightInput = widget.component.boxHeight ?? fontSize * 1.5;
+    final bool bold = widget.component.boldText != false;
+    final bool glowOnBoxes = enableGlow && widget.component.glowOn == 'boxes';
     final fontFamily = widget.component.fontFamily;
     final textColor = _hexToColor(widget.component.textColor);
     final capsLock = widget.component.capsLock ?? "Fără";
@@ -149,7 +151,8 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
           currentIndex++;
           return Expanded(
             child: _buildCell(index, heightInput, widthInput, inputCornerRadius, inputBackgroundColor,
-                colorBorderInput,fontSize,fontFamily,textColor, capsLock),
+                colorBorderInput,fontSize,fontFamily,textColor, capsLock,
+                bold: bold, glowOnBoxes: glowOnBoxes, glowColor: glowColor),
           );
         });
 
@@ -173,6 +176,7 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
         builder: (context, child) => _buildFreeCell(
           heightInput, widthInput, inputCornerRadius, inputBackgroundColor,
           colorBorderInput, fontSize, fontFamily, textColor, capsLock,
+          bold: bold,
           enableGlow: enableGlow, glowColor: glowColor, glowValue: glowAnimation.value,
         ),
       );
@@ -190,7 +194,7 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
                 color: frameBackgroundColor,
                 borderRadius: BorderRadius.circular(frameCornerRadius),
                 border: Border.all(color: colorBorderContainer, width: 1.5),
-                boxShadow: enableGlow == true
+                boxShadow: enableGlow == true && !glowOnBoxes
                     ? [
                   BoxShadow(
                     color: glowColor.withValues(alpha: (0.6 +glowAnimation.value * 0.2)),
@@ -209,62 +213,85 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
   }
 
   Widget _buildCell(int index, double heightInput, double widthInput, double? inputCornerRadius,
-      Color inputBackgroundColor, Color colorBorderInput,double fontSize, String? fontFamily, Color textColor, String capsLock) {
-    return Container(
-      height: heightInput,
-      width: widthInput,
-      decoration: BoxDecoration(
-        color: inputBackgroundColor,
-        borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
+      Color inputBackgroundColor, Color colorBorderInput,double fontSize, String? fontFamily, Color textColor, String capsLock,
+      {bool bold = true, bool glowOnBoxes = false, Color glowColor = Colors.black}) {
+    final field = TextField(
+      controller: controllers[index],
+      focusNode: focusNodes[index],
+      textAlign: TextAlign.center,
+      textAlignVertical: TextAlignVertical.center,
+      textCapitalization: capsLock == 'Fără' ? TextCapitalization.none : TextCapitalization.characters,
+      maxLength: 1,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: inputBackgroundColor,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
+          borderSide: BorderSide(color: colorBorderInput, width: 1),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
+          borderSide: BorderSide(color: colorBorderInput, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
+          borderSide: BorderSide(color: colorBorderInput, width: 1),
+        ),
+        contentPadding: EdgeInsets.zero,
+        counterText: '',
       ),
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      alignment: Alignment.center,
-      child: TextField(
-        controller: controllers[index],
-        focusNode: focusNodes[index],
-        textAlign: TextAlign.center,
-        textAlignVertical: TextAlignVertical.center,
-        textCapitalization: capsLock == 'Fără' ? TextCapitalization.none : TextCapitalization.characters,
-        maxLength: 1,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: inputBackgroundColor,
-          border: OutlineInputBorder(
+      onChanged: (value) {
+        if (value.length == 1 && index < controllers.length - 1) {
+          FocusScope.of(context).requestFocus(focusNodes[index + 1]);
+        } else if (value.isEmpty && index > 0) {
+          FocusScope.of(context).requestFocus(focusNodes[index - 1]);
+        }
+        // Note: _onTextChanged() is called automatically via the listener
+      },
+      style: TextStyle(
+          fontSize: fontSize,
+          fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+          fontFamily: fontFamily,
+          color: textColor
+      ),
+    );
+
+    // One box, with its own pulsing glow when the glow is asked for on the boxes.
+    Widget box(List<BoxShadow>? glow, Widget? child) => Container(
+          height: heightInput,
+          width: widthInput,
+          decoration: BoxDecoration(
+            color: inputBackgroundColor,
             borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
-            borderSide: BorderSide(color: colorBorderInput, width: 1),
+            boxShadow: glow,
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
-            borderSide: BorderSide(color: colorBorderInput, width: 1),
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          alignment: Alignment.center,
+          child: child,
+        );
+
+    if (!glowOnBoxes) return box(null, field);
+
+    return AnimatedBuilder(
+      animation: glowAnimation,
+      child: field,
+      builder: (context, child) => box(
+        [
+          BoxShadow(
+            color: glowColor.withValues(alpha: (0.6 + glowAnimation.value * 0.2)),
+            blurRadius: 10.0,
+            spreadRadius: 2.0 + (glowAnimation.value * 3.0),
+            offset: const Offset(0, 0),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
-            borderSide: BorderSide(color: colorBorderInput, width: 1),
-          ),
-          contentPadding: EdgeInsets.zero,
-          counterText: '',
-        ),
-        onChanged: (value) {
-          if (value.length == 1 && index < controllers.length - 1) {
-            FocusScope.of(context).requestFocus(focusNodes[index + 1]);
-          } else if (value.isEmpty && index > 0) {
-            FocusScope.of(context).requestFocus(focusNodes[index - 1]);
-          }
-          // Note: _onTextChanged() is called automatically via the listener
-        },
-        style:  TextStyle(
-            fontSize: fontSize,
-            fontWeight: FontWeight.bold,
-            fontFamily: fontFamily,
-            color: textColor
-        ),
+        ],
+        child,
       ),
     );
   }
 
   Widget _buildFreeCell(double heightInput, double widthInput, double? inputCornerRadius,
       Color inputBackgroundColor, Color colorBorderInput, double fontSize, String? fontFamily, Color textColor, String capsLock,
-      {bool enableGlow = false, Color glowColor = Colors.black, double glowValue = 0.0}) {
+      {bool bold = true, bool enableGlow = false, Color glowColor = Colors.black, double glowValue = 0.0}) {
     return Container(
       height: heightInput,
       width: widthInput,
@@ -308,7 +335,7 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
         ),
         style:  TextStyle(
             fontSize: fontSize,
-            fontWeight: FontWeight.bold,
+            fontWeight: bold ? FontWeight.bold : FontWeight.normal,
             fontFamily: fontFamily,
             color: textColor
         ),

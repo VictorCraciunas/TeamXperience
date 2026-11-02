@@ -38,6 +38,22 @@ class Component {
    /// usual 40 is used.
    double? spaceBelow;
 
+   /// Space between the letters of a button label, from 0 to 12. When missing: 8.
+   double? letterSpacing;
+
+   /// Space above and below the label inside a button, from 0 to 30. When missing: 5.
+   double? paddingY;
+
+   /// Height of a code input box, from 20 to 100. When missing: 1.5 times the text size.
+   double? boxHeight;
+
+   /// Whether the characters of a code input are bold. When missing: bold.
+   bool? boldText;
+
+   /// Where the glow of a code input is: "frame" (around all the boxes, the
+   /// default) or "boxes" (around each box).
+   String? glowOn;
+
   Component({
     this.type,
     this.text,
@@ -71,6 +87,11 @@ class Component {
     this.typewriterSpeed,
     this.textAlign,
     this.spaceBelow,
+    this.letterSpacing,
+    this.paddingY,
+    this.boxHeight,
+    this.boldText,
+    this.glowOn,
   });
 
    factory Component.fromMap(Map<String, dynamic> map) {
@@ -111,6 +132,11 @@ class Component {
        typewriterSpeed: map['typewriterSpeed'] as int?,
        textAlign: map['textAlign'] as String?,
        spaceBelow: (map['spaceBelow'] as num?)?.toDouble(),
+       letterSpacing: (map['letterSpacing'] as num?)?.toDouble(),
+       paddingY: (map['paddingY'] as num?)?.toDouble(),
+       boxHeight: (map['boxHeight'] as num?)?.toDouble(),
+       boldText: map['boldText'] as bool?,
+       glowOn: map['glowOn'] as String?,
      );
    }
 
@@ -148,6 +174,11 @@ class Component {
        if (typewriterSpeed != null) 'typewriterSpeed': typewriterSpeed,
        if (textAlign != null) 'textAlign': textAlign,
        if (spaceBelow != null) 'spaceBelow': spaceBelow,
+       if (letterSpacing != null) 'letterSpacing': letterSpacing,
+       if (paddingY != null) 'paddingY': paddingY,
+       if (boxHeight != null) 'boxHeight': boxHeight,
+       if (boldText != null) 'boldText': boldText,
+       if (glowOn != null) 'glowOn': glowOn,
      };
    }
 

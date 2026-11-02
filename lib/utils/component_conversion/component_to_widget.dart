@@ -57,6 +57,8 @@ class ComponentToWidget {
               // New: Font weight
               fontSize: component.fontSize,
               radius: component.cornerRadius,
+              letterSpacing: component.letterSpacing,
+              paddingY: component.paddingY,
               onPressed: onButtonPressed, // Pass the callback
             )
         );
