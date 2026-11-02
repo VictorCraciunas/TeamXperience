@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/utils/component_conversion/box_effects.dart';
 import 'package:teamxperience/utils/event_fonts.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
@@ -85,6 +86,8 @@ class _ButtonComponentFieldsWidgetState
         const SizedBox(height: 20),
         _buildPaddingSlider(),
         const SizedBox(height: 20),
+        _buildBorderWidthSlider(),
+        const SizedBox(height: 20),
         _buildSaveButton(),
         const SizedBox(height: 60),
       ],
@@ -95,6 +98,7 @@ class _ButtonComponentFieldsWidgetState
     // Create a temporary Component for preview
     final previewComponent = Component();
     controller.updateComponentFields(previewComponent);
+    BoxEffects.copy(widget.component, previewComponent, shadow: true);
     previewComponent.buttonLabel =
         controller.labelController.text.isEmpty
             ? 'Text'
@@ -307,6 +311,18 @@ class _ButtonComponentFieldsWidgetState
       value: controller.letterSpacing,
       label: controller.letterSpacing.toStringAsFixed(0),
       onChanged: (value) => setState(() => controller.letterSpacing = value),
+    );
+  }
+
+  Widget _buildBorderWidthSlider() {
+    return SliderWidget(
+      title: 'Grosime chenar',
+      min: 0,
+      max: 6,
+      divisions: 12,
+      value: controller.borderWidth,
+      label: controller.borderWidth.toStringAsFixed(1),
+      onChanged: (value) => setState(() => controller.borderWidth = value),
     );
   }
 

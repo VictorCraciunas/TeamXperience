@@ -307,6 +307,40 @@ void main() {
     });
   });
 
+  group('the box effects at both ends', () {
+    for (final type in ComponentType.values) {
+      for (final opacity in [0.0, 1.0]) {
+        testWidgets('opacity $opacity on ${type.name}', (tester) async {
+          await _draw(tester, Component(type: type, text: 'x', buttonLabel: 'x', codeLength: 4, inputType: 'Separated', opacity: opacity));
+        });
+      }
+    }
+    for (final type in [ComponentType.image, ComponentType.button, ComponentType.code]) {
+      for (final blur in [0.0, 30.0]) {
+        for (final distance in [0.0, 20.0]) {
+          testWidgets('shadow blur $blur distance $distance on ${type.name}', (tester) async {
+            await _draw(
+              tester,
+              Component(type: type, buttonLabel: 'x', codeLength: 10, inputType: 'Separated', shadowBlur: blur, shadowDistance: distance, shadowColor: '#000000'),
+            );
+          });
+        }
+      }
+    }
+    for (final width in [0.0, 6.0]) {
+      testWidgets('border width $width on an image and a button', (tester) async {
+        await _draw(tester, Component(type: ComponentType.image, borderWidth: width, borderColor: '#33FF66'));
+        await _draw(tester, Component(type: ComponentType.button, buttonLabel: 'OK', borderWidth: width));
+      });
+    }
+    testWidgets('a glowing image with a shadow and a border', (tester) async {
+      await _draw(
+        tester,
+        Component(type: ComponentType.image, enableGlow: true, glowColor: '#33FF66', shadowBlur: 10, shadowDistance: 5, borderWidth: 3, borderColor: '#FFFFFF'),
+      );
+    });
+  });
+
   group('image', () {
     for (final radius in [0.0, 50.0]) {
       testWidgets('corner radius $radius', (tester) async {

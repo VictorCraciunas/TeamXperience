@@ -10,6 +10,8 @@ import 'create_button/create_button_component.dart';
 import 'create_code/create_code_component.dart';
 import 'create_image/create_image_component.dart';
 import 'create_text/create_text_component.dart';
+import 'box_shadow_controls.dart';
+import 'opacity_slider.dart';
 import 'space_below_slider.dart';
 
 class AddComponentWidget extends StatefulWidget {
@@ -80,6 +82,20 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
                   value: widget.component.spaceBelow,
                   onChanged: (value) => setState(() => widget.component.spaceBelow = value),
                 ),
+                const SizedBox(height: 20),
+                OpacitySlider(
+                  value: widget.component.opacity,
+                  // Fully visible is "not set", so the component stays as it was.
+                  onChanged: (value) => setState(() => widget.component.opacity = value >= 1 ? null : value),
+                ),
+                // A text has its own shadow controls in its editor.
+                if (type != ComponentType.text) ...[
+                  const SizedBox(height: 20),
+                  BoxShadowControls(
+                    component: widget.component,
+                    onChanged: () => setState(() {}),
+                  ),
+                ],
               ],
               if (type == ComponentType.text) ...[
                 TextComponentFieldsWidget(

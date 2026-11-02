@@ -62,6 +62,16 @@ class BoxEffects {
     return result.isEmpty ? null : result;
   }
 
+  /// Copies the options the editors set directly on a component (opacity and,
+  /// when [shadow] is true, the shadow) onto the component a preview is built from.
+  static void copy(Component from, Component to, {required bool shadow}) {
+    to.opacity = from.opacity;
+    if (!shadow) return;
+    to.shadowColor = from.shadowColor;
+    to.shadowBlur = from.shadowBlur;
+    to.shadowDistance = from.shadowDistance;
+  }
+
   /// [child] with the shadow around it, following corners of [radius].
   Widget shadowAround(Widget child, double radius) {
     final shadows = shadowOnly;

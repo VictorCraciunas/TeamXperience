@@ -168,6 +168,8 @@ Component _readComponent(Map<String, dynamic> map, String where, List<String> er
     shadowColor: reader.color('shadowColor'),
     shadowBlur: reader.decimal('shadowBlur', min: 0, max: 30),
     shadowDistance: reader.decimal('shadowDistance', min: 0, max: 20),
+    opacity: reader.decimal('opacity', min: 0, max: 1),
+    borderWidth: reader.decimal('borderWidth', min: 0, max: 6),
     textAlign: reader.choice('textAlign', _textAligns),
   );
 }
