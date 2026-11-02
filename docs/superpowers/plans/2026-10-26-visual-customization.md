@@ -36,6 +36,23 @@ Organisers can make an event look the way they want (fonts, colours, glow, shado
 | 08 | `visual/08-backgrounds` | Background per mission or puzzle; overlays (scanlines, vignette); the missing `assets/images/default_background.png`. |
 | 09 | `visual/09-presets` | Themes ("hacker", "pirate", "retro", "detective") that set font, colours, background and button style for a whole event. |
 
+## Step 04 notes: the font files
+
+Source: the Google Fonts repository,  (files are fetched from ), all under the SIL Open Font License except Special Elite (Apache 2.0). The licence text is kept next to the fonts in .
+
+| Font | File | Size |
+|---|---|---|
+| Orbitron |  (variable) | 38,576 B |
+| Share Tech Mono |  | 43,272 B |
+| Press Start 2P |  | 118,204 B |
+| Cinzel |  (variable) | 125,468 B |
+| Special Elite |  | 166,180 B |
+| Caveat |  (variable) | 403,648 B |
+| Bebas Neue |  | 61,400 B |
+| Playfair Display |  (variable) | 300,724 B |
+
+About 1.2 MB in total. Four are variable fonts with no static files, so the weight is set with a  next to the  (one helper used by the text, button and code widgets). The other four have a single weight: asking for bold gives the font's own faux bold or nothing, and the editor says so.
+
 ## Open decisions
 
 - Where the screen animation choice is set (event level first, per puzzle later).
