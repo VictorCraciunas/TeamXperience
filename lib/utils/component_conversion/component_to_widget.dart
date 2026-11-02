@@ -8,6 +8,7 @@ import 'package:teamxperience/utils/color_conversion.dart';
 
 import 'box_effects.dart';
 import 'full_width.dart';
+import 'loop_effect_widget.dart';
 import 'text_effects.dart';
 import 'code_component_widget.dart';
 import 'image_component_widget.dart';
@@ -20,7 +21,8 @@ class ComponentToWidget {
     VoidCallback? onButtonPressed,
   }) {
     final built = _build(component, onTextChanged: onTextChanged, onButtonPressed: onButtonPressed);
-    return BoxEffects.fromComponent(component).withOpacity(built);
+    final moving = component.loopEffect == null ? built : LoopEffectWidget(effect: component.loopEffect, child: built);
+    return BoxEffects.fromComponent(component).withOpacity(moving);
   }
 
   Widget _build(Component component, {

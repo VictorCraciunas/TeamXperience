@@ -24,6 +24,7 @@
             {
               "type": "text",
               "text": "> ACCES BLOCAT\n> Introdu parola pentru a intra în sistem.",
+              "loopEffect": "glitch",
               "textColor": "#33FF66",
               "fontFamily": "Share Tech Mono",
               "fontSize": 18,

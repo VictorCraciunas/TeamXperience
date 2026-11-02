@@ -561,6 +561,28 @@ void main() {
       expect(component?.shadowBlur, 6.0);
     });
 
+    test('a loop effect is one of the five, on every kind of component', () {
+      for (final type in ['text', 'image', 'button', 'code']) {
+        for (final name in ['pulse', 'float', 'shake', 'flicker', 'glitch']) {
+          expectAccepted({'type': type, 'loopEffect': name});
+        }
+      }
+    });
+
+    test('any other loop effect is refused and the mistake lists the five', () {
+      expectRefused({'type': 'text', 'loopEffect': 'spin'}, 'loopEffect');
+      expectRefused({'type': 'text', 'loopEffect': 'none'}, 'loopEffect');
+      final message = withComponent({'type': 'text', 'loopEffect': 'spin'}).errors.single;
+      for (final name in ['pulse', 'float', 'shake', 'flicker', 'glitch']) {
+        expect(message, contains(name));
+      }
+    });
+
+    test('the loop effect is read onto the component', () {
+      final component = withComponent({'type': 'button', 'loopEffect': 'pulse'}).event?.missions.single.puzzles.single.components.single;
+      expect(component?.loopEffect?.name, 'pulse');
+    });
+
     test('options a component does not use are not checked', () {
       expectAccepted({'type': 'text', 'width': 999, 'height': 999});
     });

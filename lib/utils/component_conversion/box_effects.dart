@@ -62,10 +62,11 @@ class BoxEffects {
     return result.isEmpty ? null : result;
   }
 
-  /// Copies the options the editors set directly on a component (opacity and,
+  /// Copies the options the editors set directly on a component (opacity, the loop effect and,
   /// when [shadow] is true, the shadow) onto the component a preview is built from.
   static void copy(Component from, Component to, {required bool shadow}) {
     to.opacity = from.opacity;
+    to.loopEffect = from.loopEffect;
     if (!shadow) return;
     to.shadowColor = from.shadowColor;
     to.shadowBlur = from.shadowBlur;

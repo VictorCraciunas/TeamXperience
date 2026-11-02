@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/enums/component-type.dart';
+import 'package:teamxperience/enums/loop_effect.dart';
+import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
+import 'package:teamxperience/utils/component_conversion/loop_effect_widget.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/add_component_widget.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/create_button/create_button_controller.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/create_image/create_image_controller.dart';
@@ -84,6 +87,50 @@ void main() {
       await _open(tester, _of(ComponentType.button));
       await _toMin(tester, 'Opacitate');
       expect(tester.widgetList<Opacity>(find.byType(Opacity)).where((o) => o.opacity == 0.0), isNotEmpty);
+    });
+  });
+
+  group('the loop effect, in every editor', () {
+    Finder dropdown() => find.byWidgetPredicate((w) => w is AppDropdown<String> && w.label == 'Efect continuu');
+
+    Future<void> choose(WidgetTester tester, String label) async {
+      await tester.tap(dropdown());
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      await tester.tap(find.text(label).last);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+    }
+
+    for (final type in ComponentType.values) {
+      testWidgets('${type.name}: has the choice, starting with no effect', (tester) async {
+        await _open(tester, _of(type));
+        final field = tester.widget<AppDropdown<String>>(dropdown());
+        expect(field.value, 'none');
+        expect(field.items.map((i) => i.label), ['Fără efect', 'Pulse', 'Float', 'Shake', 'Flicker', 'Glitch']);
+      });
+    }
+
+    testWidgets('choosing one writes it onto the component', (tester) async {
+      final component = _of(ComponentType.button);
+      await _open(tester, component);
+      await choose(tester, 'Pulse');
+      expect(component.loopEffect, LoopEffect.pulse);
+    });
+
+    testWidgets('choosing "Fără efect" removes it again', (tester) async {
+      final component = _of(ComponentType.image)..loopEffect = LoopEffect.glitch;
+      await _open(tester, component);
+      expect(tester.widget<AppDropdown<String>>(dropdown()).value, 'glitch');
+      await choose(tester, 'Fără efect');
+      expect(component.loopEffect, isNull);
+    });
+
+    testWidgets('the preview moves once an effect is chosen', (tester) async {
+      await _open(tester, _of(ComponentType.button));
+      await choose(tester, 'Float');
+      expect(find.byType(LoopEffectWidget), findsWidgets);
+      expect(tester.widgetList<LoopEffectWidget>(find.byType(LoopEffectWidget)).any((w) => w.effect == LoopEffect.float), isTrue);
     });
   });
 
