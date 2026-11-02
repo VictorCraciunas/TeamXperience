@@ -9,6 +9,7 @@ import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/puzzle.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
 
 /// What came out of reading an event from JSON text: the event, or the list of
 /// everything that was wrong with the text (never both).
@@ -136,7 +137,7 @@ Component _readComponent(Map<String, dynamic> map, String where, List<String> er
     animation: reader.option('animation', AnimationType.values),
     fontSize: reader.decimal('fontSize', min: 8, max: 72),
     fontWeight: reader.choice('fontWeight', _fontWeights),
-    fontFamily: reader.choice('fontFamily', _fontFamilies),
+    fontFamily: reader.choice('fontFamily', eventFontNames),
     codeLength: reader.whole('codeLength', min: 1, max: 10),
     cornerRadius: reader.decimal('cornerRadius', min: 0, max: 50),
     enableFlicker: reader.flag('enableFlicker'),
@@ -168,7 +169,6 @@ Component _readComponent(Map<String, dynamic> map, String where, List<String> er
 /// What the editors of the app offer. Anything else would not show up in the
 /// component editor, or would not draw at all.
 const _fontWeights = ['Thin (100)', 'Light (300)', 'Regular (400)', 'Medium (500)', 'Bold (700)', 'Black (900)'];
-const _fontFamilies = ['Poppins', 'Monospace'];
 const _textAligns = ['left', 'center', 'right', 'justify'];
 const _inputTypes = ['Separated', 'Free'];
 const _capsLocks = ['CapsLock', 'Fără'];

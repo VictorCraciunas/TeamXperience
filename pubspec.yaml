@@ -119,6 +119,82 @@ flutter:
          - asset: assets/fonts/SpaceMono-Bold.ttf
            weight: 700
 
+     - family: Orbitron
+       fonts:
+         - asset: assets/fonts/Orbitron-Variable.ttf
+           weight: 100
+         - asset: assets/fonts/Orbitron-Variable.ttf
+           weight: 300
+         - asset: assets/fonts/Orbitron-Variable.ttf
+           weight: 400
+         - asset: assets/fonts/Orbitron-Variable.ttf
+           weight: 500
+         - asset: assets/fonts/Orbitron-Variable.ttf
+           weight: 700
+         - asset: assets/fonts/Orbitron-Variable.ttf
+           weight: 900
+
+     - family: Share Tech Mono
+       fonts:
+         - asset: assets/fonts/ShareTechMono-Regular.ttf
+
+     - family: Press Start 2P
+       fonts:
+         - asset: assets/fonts/PressStart2P-Regular.ttf
+
+     - family: Cinzel
+       fonts:
+         - asset: assets/fonts/Cinzel-Variable.ttf
+           weight: 100
+         - asset: assets/fonts/Cinzel-Variable.ttf
+           weight: 300
+         - asset: assets/fonts/Cinzel-Variable.ttf
+           weight: 400
+         - asset: assets/fonts/Cinzel-Variable.ttf
+           weight: 500
+         - asset: assets/fonts/Cinzel-Variable.ttf
+           weight: 700
+         - asset: assets/fonts/Cinzel-Variable.ttf
+           weight: 900
+
+     - family: Special Elite
+       fonts:
+         - asset: assets/fonts/SpecialElite-Regular.ttf
+
+     - family: Caveat
+       fonts:
+         - asset: assets/fonts/Caveat-Variable.ttf
+           weight: 100
+         - asset: assets/fonts/Caveat-Variable.ttf
+           weight: 300
+         - asset: assets/fonts/Caveat-Variable.ttf
+           weight: 400
+         - asset: assets/fonts/Caveat-Variable.ttf
+           weight: 500
+         - asset: assets/fonts/Caveat-Variable.ttf
+           weight: 700
+         - asset: assets/fonts/Caveat-Variable.ttf
+           weight: 900
+
+     - family: Bebas Neue
+       fonts:
+         - asset: assets/fonts/BebasNeue-Regular.ttf
+
+     - family: Playfair Display
+       fonts:
+         - asset: assets/fonts/PlayfairDisplay-Variable.ttf
+           weight: 100
+         - asset: assets/fonts/PlayfairDisplay-Variable.ttf
+           weight: 300
+         - asset: assets/fonts/PlayfairDisplay-Variable.ttf
+           weight: 400
+         - asset: assets/fonts/PlayfairDisplay-Variable.ttf
+           weight: 500
+         - asset: assets/fonts/PlayfairDisplay-Variable.ttf
+           weight: 700
+         - asset: assets/fonts/PlayfairDisplay-Variable.ttf
+           weight: 900
+
 
          # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

@@ -9,6 +9,7 @@ import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/service/event_service/event_completeness.dart';
 import 'package:teamxperience/service/event_service/event_json_import.dart';
 import 'package:teamxperience/utils/component_conversion/component_to_widget.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
 
 import '../../ui/pump_ui.dart';
 
@@ -25,7 +26,7 @@ Future<void> _draw(WidgetTester tester, Component component) async {
 }
 
 const _weights = ['Thin (100)', 'Light (300)', 'Regular (400)', 'Medium (500)', 'Bold (700)', 'Black (900)'];
-const _fonts = ['Poppins', 'Monospace'];
+final _fonts = eventFontNames;
 const _aligns = ['left', 'center', 'right', 'justify'];
 
 /// The first ```json block after a heading of the skill file.

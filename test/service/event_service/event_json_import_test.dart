@@ -8,6 +8,7 @@ import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/enums/screen_animation.dart';
 import 'package:teamxperience/service/event_service/event_completeness.dart';
 import 'package:teamxperience/service/event_service/event_json_import.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
 
 Map<String, dynamic> _event({
   Map<String, dynamic>? extra,
@@ -290,10 +291,25 @@ void main() {
       }
     });
 
-    test('a font that is not Poppins or Monospace', () {
+    test('a font that is not one of the app', () {
       expectRefused({'type': 'text', 'fontFamily': 'Arial'}, 'fontFamily');
-      expectAccepted({'type': 'text', 'fontFamily': 'Poppins'});
-      expectAccepted({'type': 'code', 'fontFamily': 'Monospace'});
+      expectRefused({'type': 'text', 'fontFamily': 'orbitron'}, 'fontFamily');
+      expectRefused({'type': 'text', 'fontFamily': 'ShareTechMono'}, 'fontFamily');
+    });
+
+    test('every font of the app is accepted on text, buttons and code inputs', () {
+      for (final font in eventFontNames) {
+        for (final type in ['text', 'button', 'code']) {
+          expectAccepted({'type': type, 'fontFamily': font});
+        }
+      }
+    });
+
+    test('the mistake for a font lists all of them', () {
+      final message = withComponent({'type': 'text', 'fontFamily': 'Arial'}).errors.single;
+      for (final font in eventFontNames) {
+        expect(message, contains(font));
+      }
     });
 
     test('text alignment', () {

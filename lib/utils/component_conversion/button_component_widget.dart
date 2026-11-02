@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
 
 class ButtonComponentWidget extends StatefulWidget {
   final String? buttonLabel;
@@ -191,6 +192,7 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
                   fontSize: widget.fontSize,
                   fontWeight: currentFontWeight,
                   fontFamily: widget.fontFamily ?? 'Poppins',
+                  fontVariations: fontVariationsFor(widget.fontFamily ?? 'Poppins', currentFontWeight),
                   letterSpacing: widget.letterSpacing ?? 8,
                 ),
               ),

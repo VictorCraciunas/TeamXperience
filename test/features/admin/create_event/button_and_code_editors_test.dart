@@ -6,6 +6,8 @@ import 'package:teamxperience/features/admin/create_event/create_missions_and_pu
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/create_code/code_component_controller.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/optional_slider.dart';
 import 'package:teamxperience/model/component.dart';
+import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/ui/theme/app_theme.dart';
 
@@ -191,6 +193,33 @@ void main() {
       await tester.drag(_sliderOf('Spațiu între litere'), const Offset(-2000, 0));
       await tester.pump();
       expect(spacing(), 0);
+    });
+  });
+
+  group('the font list of the editors', () {
+    List<String> fontsOf(WidgetTester tester) {
+      final dropdown = tester.widget<AppDropdown<String>>(
+        find.byWidgetPredicate((w) => w is AppDropdown<String> && w.label == 'Tip Font'),
+      );
+      return [for (final item in dropdown.items) item.value];
+    }
+
+    testWidgets('text', (tester) async {
+      await _openEditor(tester, Component(type: ComponentType.text, text: 'Salut'));
+      expect(fontsOf(tester), eventFontNames);
+    });
+
+    testWidgets('button', (tester) async {
+      await _openEditor(tester, Component(type: ComponentType.button, buttonLabel: 'Ok'));
+      expect(fontsOf(tester), eventFontNames);
+    });
+
+    testWidgets('code input', (tester) async {
+      await _openEditor(
+        tester,
+        Component(type: ComponentType.code, codeLength: 4, inputType: 'Separated', capsLock: 'CapsLock'),
+      );
+      expect(fontsOf(tester), eventFontNames);
     });
   });
 
