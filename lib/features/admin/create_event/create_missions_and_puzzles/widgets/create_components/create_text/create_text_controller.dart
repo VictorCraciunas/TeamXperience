@@ -15,6 +15,19 @@ class TextComponentController {
   int typewriterSpeed = 100; // ms per character
   String textAlign = 'center';
 
+  // Extras. Each starts as "nothing added", so a text stays as it always was.
+  double letterSpacing = 0;
+
+  /// A multiple of the font size; null means the font's own.
+  double? lineHeight;
+  bool italic = false;
+  bool uppercase = false;
+  bool enableGlow = false;
+  String glowColor = '#000000';
+  double shadowBlur = 0;
+  double shadowDistance = 0;
+  String shadowColor = '#000000';
+
   final TextEditingController textColorController = TextEditingController();
   final TextEditingController textController = TextEditingController();
   final ColorConversion colorConversion = ColorConversion();
@@ -50,6 +63,18 @@ class TextComponentController {
     component.fontWeight = fontWeight;
     component.fontFamily = fontFamily;
     component.textAlign = textAlign;
+
+    // Only what was chosen is written, so a plain text stays plain.
+    component.letterSpacing = letterSpacing > 0 ? letterSpacing : null;
+    component.lineHeight = lineHeight;
+    component.italic = italic ? true : null;
+    component.uppercase = uppercase ? true : null;
+    component.enableGlow = enableGlow ? true : null;
+    component.glowColor = enableGlow ? glowColor : null;
+    final hasShadow = shadowBlur > 0 || shadowDistance > 0;
+    component.shadowBlur = shadowBlur > 0 ? shadowBlur : null;
+    component.shadowDistance = shadowDistance > 0 ? shadowDistance : null;
+    component.shadowColor = hasShadow ? shadowColor : null;
     if (animation == AnimationType.typewriter) {
       component.typewriterSpeed = typewriterSpeed;
     }
@@ -97,6 +122,15 @@ class TextComponentController {
       fontFamily = component.fontFamily;
       typewriterSpeed = component.typewriterSpeed ?? 100;
       textAlign = component.textAlign ?? 'center';
+      letterSpacing = component.letterSpacing ?? 0;
+      lineHeight = component.lineHeight;
+      italic = component.italic ?? false;
+      uppercase = component.uppercase ?? false;
+      enableGlow = component.enableGlow ?? false;
+      glowColor = component.glowColor ?? glowColor;
+      shadowBlur = component.shadowBlur ?? 0;
+      shadowDistance = component.shadowDistance ?? 0;
+      shadowColor = component.shadowColor ?? shadowColor;
     }
   }
 

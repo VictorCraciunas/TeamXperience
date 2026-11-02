@@ -447,6 +447,54 @@ void main() {
       expect(component?.paddingY, 12.0);
     });
 
+    test('line height from 0.8 to 2, on a text', () {
+      expectRefused({'type': 'text', 'lineHeight': 0.7}, 'lineHeight');
+      expectRefused({'type': 'text', 'lineHeight': 2.1}, 'lineHeight');
+      expectAccepted({'type': 'text', 'lineHeight': 0.8});
+      expectAccepted({'type': 'text', 'lineHeight': 2});
+      expectAccepted({'type': 'text', 'lineHeight': 1.5});
+    });
+
+    test('italic and capitals are true or false', () {
+      for (final key in ['italic', 'uppercase']) {
+        expectAccepted({'type': 'text', key: true});
+        expectAccepted({'type': 'text', key: false});
+        expectRefused({'type': 'text', key: 'da'}, key);
+      }
+    });
+
+    test('the shadow of a text: blur 0 to 30, distance 0 to 20, a colour', () {
+      expectRefused({'type': 'text', 'shadowBlur': -1}, 'shadowBlur');
+      expectRefused({'type': 'text', 'shadowBlur': 31}, 'shadowBlur');
+      expectRefused({'type': 'text', 'shadowDistance': -1}, 'shadowDistance');
+      expectRefused({'type': 'text', 'shadowDistance': 21}, 'shadowDistance');
+      expectRefused({'type': 'text', 'shadowColor': 'negru'}, 'shadowColor');
+      expectAccepted({'type': 'text', 'shadowBlur': 0, 'shadowDistance': 0, 'shadowColor': '#000000'});
+      expectAccepted({'type': 'text', 'shadowBlur': 30, 'shadowDistance': 20});
+    });
+
+    test('the text effects are read onto the component', () {
+      final component = withComponent({
+        'type': 'text',
+        'text': 'x',
+        'lineHeight': 1.5,
+        'italic': true,
+        'uppercase': true,
+        'shadowColor': '#112233',
+        'shadowBlur': 6,
+        'shadowDistance': 4,
+        'enableGlow': true,
+        'glowColor': '#33FF66',
+      }).event?.missions.single.puzzles.single.components.single;
+      expect(component?.lineHeight, 1.5);
+      expect(component?.italic, isTrue);
+      expect(component?.uppercase, isTrue);
+      expect(component?.shadowColor, '#112233');
+      expect(component?.shadowBlur, 6.0);
+      expect(component?.shadowDistance, 4.0);
+      expect(component?.enableGlow, isTrue);
+    });
+
     test('options a component does not use are not checked', () {
       expectAccepted({'type': 'text', 'width': 999, 'height': 999});
     });
