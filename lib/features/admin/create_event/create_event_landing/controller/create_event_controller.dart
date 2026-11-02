@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/routes.dart';
+import 'package:teamxperience/enums/screen_animation.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/service/event_service/event_completeness.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
@@ -41,6 +42,9 @@ class CreateEventController {
   // EventType field
   EventType? selectedType;
 
+  /// How the components of a puzzle appear when it opens.
+  ScreenAnimation screenAnimation = ScreenAnimation.fade;
+
   Event? originalEvent;
 
   /// The draft saved from this form, so saving again updates it instead of
@@ -55,6 +59,7 @@ class CreateEventController {
       descriptionController.text = event.description ?? "";
       startCodeController.text = event.startCode ?? "";
       selectedType = event.type;
+      screenAnimation = event.screenAnimation;
       dateEvent = event.dateEvent;
       deadlineEnrollment = event.dateDeadlineEnrollment;
       dateStartEnrollement = event.dateStartEnrollment;
@@ -97,6 +102,7 @@ class CreateEventController {
       ..durata = durataController.text.trim()
       ..dificultate = dificultateController.text.trim()
       ..type = selectedType
+      ..screenAnimation = screenAnimation
       ..dateEvent = dateEvent
       ..dateDeadlineEnrollment = deadlineEnrollment
       ..dateStartEnrollment = dateStartEnrollement
