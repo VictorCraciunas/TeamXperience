@@ -39,6 +39,9 @@ class CodeComponentController {
 
   /// Where the glow is: "frame" or "boxes".
   String glowOn = 'frame';
+
+  /// Whether the input shakes on a wrong answer and pops on a right one.
+  bool answerFeedback = true;
   String textColor = _defaultBlack;
   double fontSize = _defaultFontSize;
   String? fontFamily = _defaultPoppins;
@@ -77,6 +80,7 @@ class CodeComponentController {
     boxHeight = component.boxHeight;
     boldText = component.boldText ?? true;
     glowOn = component.glowOn ?? 'frame';
+    answerFeedback = component.answerFeedback ?? true;
     fontSize = component.fontSize ?? fontSize;
     fontFamily = component.fontFamily ?? fontFamily;
     textColor = component.textColor ?? textColor;
@@ -108,6 +112,8 @@ class CodeComponentController {
     component.boxHeight = boxHeight;
     component.boldText = boldText;
     component.glowOn = glowOn;
+    // On is the usual, so only "off" is written.
+    component.answerFeedback = answerFeedback ? null : false;
     component.fontSize = fontSize;
     component.fontFamily = fontFamily;
     component.textColor = textColor;

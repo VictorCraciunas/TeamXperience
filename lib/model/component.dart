@@ -79,6 +79,10 @@ class Component {
    /// A movement the component repeats while the puzzle is open. When missing: none.
    LoopEffect? loopEffect;
 
+   /// Whether a code input shakes on a wrong answer and pops on a right one.
+   /// When missing: yes. Only `false` switches it off.
+   bool? answerFeedback;
+
   Component({
     this.type,
     this.text,
@@ -126,6 +130,7 @@ class Component {
     this.opacity,
     this.borderWidth,
     this.loopEffect,
+    this.answerFeedback,
   });
 
    factory Component.fromMap(Map<String, dynamic> map) {
@@ -180,6 +185,7 @@ class Component {
        opacity: (map['opacity'] as num?)?.toDouble(),
        borderWidth: (map['borderWidth'] as num?)?.toDouble(),
        loopEffect: LoopEffect.fromName(map['loopEffect'] as String?),
+       answerFeedback: map['answerFeedback'] as bool?,
      );
    }
 
@@ -231,6 +237,7 @@ class Component {
        if (opacity != null) 'opacity': opacity,
        if (borderWidth != null) 'borderWidth': borderWidth,
        if (loopEffect != null) 'loopEffect': loopEffect!.name,
+       if (answerFeedback != null) 'answerFeedback': answerFeedback,
      };
    }
 

@@ -71,7 +71,7 @@ Component
   shadowColor?: HexColor
   shadowBlur?: Number
   shadowDistance?: Number
-  animation?: "none" | "typewriter"
+  animation?: "none" | "typewriter" | "decode"
   typewriterSpeed?: Whole number
   imageUrl?: String
   borderWidth?: Number
@@ -92,6 +92,7 @@ Component
   boxHeight?: Number
   boldText?: true | false
   glowOn?: "frame" | "boxes"
+  answerFeedback?: true | false
   inputType?: "Separated" | "Free"
   capsLock?: "CapsLock" | "Fără"
   frameCornerRadius?: Number
@@ -206,8 +207,8 @@ Keys you may see in an exported event but must **not** write: `eventId`, `status
 | `fontWeight` | One of: `"Thin (100)"`, `"Light (300)"`, `"Regular (400)"`, `"Medium (500)"`, `"Bold (700)"`, `"Black (900)"`. Written exactly like that, with the number in brackets. |
 | `fontFamily` | One of the fonts listed under "Fonts" below. |
 | `textAlign` | `"left"`, `"center"`, `"right"` or `"justify"`. Default: `"center"`. The text takes the whole width of the screen, so `"left"` really puts it at the left edge. |
-| `animation` | `"none"` (appears at once) or `"typewriter"` (letters appear one by one). |
-| `typewriterSpeed` | Whole number of milliseconds per letter, from 10 to 300. Default 100. Only used with `"typewriter"`. |
+| `animation` | How the letters appear: `"none"` (all at once), `"typewriter"` (one by one, like typing) or `"decode"` (scrambled letters and signs that settle on the real letters from left to right, good for a hacker or spy game). Both `"typewriter"` and `"decode"` use `typewriterSpeed`. A decoding text takes the room of the finished text from the start. |
+| `typewriterSpeed` | Whole number of milliseconds per letter, from 10 to 300. Default 100. Used with `"typewriter"` and `"decode"`. |
 | `letterSpacing` | A number from 0 to 12: extra space between the letters, in pixels. Default 0. Good for titles. |
 | `lineHeight` | A number from 0.8 to 2: the height of a line as a multiple of the font size. Default is the font's own (about 1.2). Use 1.5 or more for easy reading of long text. |
 | `italic` | `true` slants the text. Default `false`. |
@@ -278,6 +279,7 @@ The place where players type the answer of a `code` puzzle.
 | `shadowDistance` | A number from 0 to 20: how far the shadow is moved down and to the right. Default 0. |
 | `shadowBlur` | A number from 0 to 30: how soft the shadow is. Default 0. A shadow exists when `shadowDistance` or `shadowBlur` is more than 0. It follows the rounded corners. |
 | `shadowColor` | Hex colour of the shadow. Default is a dark shadow. |
+| `answerFeedback` | `true` (default) or `false`. When on, a wrong answer shakes the code input left and right and flashes it red, and a right answer makes it pop and flash green before the game goes on (about half a second). Write `false` to switch it off. It works with the phone's own setting: with animations off nothing moves. |
 | `glowOn` | `"frame"` (default): the glow is around all the boxes together. `"boxes"`: each box glows on its own. Only used with `enableGlow` and `"Separated"`; a single `"Free"` box glows either way. |
 | `fontSize` | A number from 8 to 72. Default 16. |
 | `fontFamily` | One of the fonts listed under "Fonts" below. |

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/features/event_game/logic/answer_check.dart';
 import 'package:teamxperience/features/event_game/logic/spaced_components.dart';
+import 'package:teamxperience/utils/component_conversion/answer_feedback.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
@@ -21,6 +23,11 @@ class PuzzleGameController {
   final ValueNotifier<int> selectedPuzzleNotifier = ValueNotifier(0);
   final ComponentToWidget componentToWidget = ComponentToWidget();
   String userInput = "";
+
+  /// Tells the code input of the puzzle that an answer was checked.
+  final AnswerFeedback answerFeedback = AnswerFeedback();
+  bool _advancing = false;
+  bool _disposed = false;
   late BuildContext context;
   TeamService teamService = TeamService();
   final RouteService routeService = RouteService();
@@ -56,6 +63,7 @@ class PuzzleGameController {
           widget = componentToWidget.convert(
             component,
             onTextChanged: (String value) => handleCodeInput(value),
+            feedback: answerFeedback,
           );
         } else if (component.type == ComponentType.button) {
           widget = componentToWidget.convert(
@@ -83,8 +91,20 @@ class PuzzleGameController {
     }
 
     if (puzzle.type == PuzzleType.code) {
-      if (userInput.trim().toLowerCase() == (puzzle.code ?? '').trim().toLowerCase()) {
-        navigate();
+      if (isCorrectAnswer(userInput, puzzle.code)) {
+        final pause = pauseAfterCorrectAnswer(puzzle);
+        if (pause == Duration.zero) {
+          navigate();
+        } else if (!_advancing) {
+          // Let the pop be seen before going on.
+          _advancing = true;
+          answerFeedback.correct();
+          Future.delayed(pause, () {
+            if (!_disposed) navigate();
+          });
+        }
+      } else {
+        answerFeedback.wrong();
       }
     } else {
       navigate();
@@ -92,6 +112,7 @@ class PuzzleGameController {
   }
 
   void navigate() async {
+    _advancing = false;
     if (hasNextPuzzle()) {
       selectedPuzzleNotifier.value++;
       userInput = "";
@@ -164,6 +185,8 @@ class PuzzleGameController {
   }
 
   void dispose() {
+    _disposed = true;
+    answerFeedback.dispose();
     selectedPuzzleNotifier.dispose();
   }
 }

@@ -6,6 +6,7 @@ import 'package:teamxperience/utils/component_conversion/text_component_widget.d
 import 'button_component_widget.dart';
 import 'package:teamxperience/utils/color_conversion.dart';
 
+import 'answer_feedback.dart';
 import 'box_effects.dart';
 import 'full_width.dart';
 import 'loop_effect_widget.dart';
@@ -19,8 +20,9 @@ class ComponentToWidget {
   Widget convert(Component component, {
     Function(String)? onTextChanged,
     VoidCallback? onButtonPressed,
+    AnswerFeedback? feedback,
   }) {
-    final built = _build(component, onTextChanged: onTextChanged, onButtonPressed: onButtonPressed);
+    final built = _build(component, onTextChanged: onTextChanged, onButtonPressed: onButtonPressed, feedback: feedback);
     final moving = component.loopEffect == null ? built : LoopEffectWidget(effect: component.loopEffect, child: built);
     return BoxEffects.fromComponent(component).withOpacity(moving);
   }
@@ -28,6 +30,7 @@ class ComponentToWidget {
   Widget _build(Component component, {
     Function(String)? onTextChanged,
     VoidCallback? onButtonPressed,
+    AnswerFeedback? feedback,
   }) {
     final box = BoxEffects.fromComponent(component);
     switch (component.type!) {
@@ -87,7 +90,7 @@ class ComponentToWidget {
         final separated = component.inputType == 'Separated';
         final radius = separated ? (component.frameCornerRadius ?? 15.0) : (component.inputCornerRadius ?? 25.0);
         return Center(
-          child: box.shadowAround(CodeComponentWidget(component: component, onTextChanged: onTextChanged), radius),
+          child: box.shadowAround(CodeComponentWidget(component: component, onTextChanged: onTextChanged, feedback: feedback), radius),
         );
     }
   }

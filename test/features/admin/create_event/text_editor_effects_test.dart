@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:teamxperience/enums/animation_type.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/add_component_widget.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/create_text/create_text_controller.dart';
@@ -115,6 +116,23 @@ void main() {
       expect(component.shadowColor, '#000000');
     });
 
+    test('the speed is written for the typewriter and for decode, not for no animation', () {
+      for (final animation in [AnimationType.typewriter, AnimationType.decode]) {
+        final component = Component();
+        TextComponentController()
+          ..animation = animation
+          ..typewriterSpeed = 40
+          ..updateComponentFields(component);
+        expect(component.typewriterSpeed, 40, reason: animation.name);
+      }
+      final plain = Component();
+      TextComponentController()
+        ..animation = AnimationType.none
+        ..typewriterSpeed = 40
+        ..updateComponentFields(plain);
+      expect(plain.typewriterSpeed, isNull);
+    });
+
     test('options that were switched off are removed from a text that had them', () {
       final component = Component(type: ComponentType.text, italic: true, uppercase: true, shadowBlur: 5, shadowDistance: 5, lineHeight: 1.5, letterSpacing: 4);
       TextComponentController().updateComponentFields(component);
@@ -179,6 +197,16 @@ void main() {
       await tester.pump();
       expect(find.textContaining('(automat)'), findsNothing);
       expect(find.text('2.0 ×'), findsOneWidget);
+    });
+
+    testWidgets('the speed slider is there for the decode effect, as for the typewriter', (tester) async {
+      await _open(tester, Component(type: ComponentType.text, text: 'Salut', animation: AnimationType.decode, typewriterSpeed: 60));
+      expect(_sliderOf('Viteză Typewriter (ms/caracter)'), findsOneWidget);
+    });
+
+    testWidgets('and not when the text has no animation', (tester) async {
+      await _open(tester, Component(type: ComponentType.text, text: 'Salut', animation: AnimationType.none));
+      expect(find.text('Viteză Typewriter (ms/caracter)'), findsNothing);
     });
 
     testWidgets('a text that already has effects shows them', (tester) async {

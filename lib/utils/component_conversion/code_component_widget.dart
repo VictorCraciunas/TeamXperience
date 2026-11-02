@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/utils/component_conversion/answer_feedback.dart';
 import 'package:teamxperience/utils/event_fonts.dart';
 import 'package:teamxperience/model/component.dart';
 
@@ -6,17 +7,21 @@ class CodeComponentWidget extends StatefulWidget {
   final Component component;
   final Function(String)? onTextChanged;
 
+  /// Tells the input that an answer was checked, so it can shake or pop.
+  final AnswerFeedback? feedback;
+
   const CodeComponentWidget({
     super.key,
     required this.component,
-    this.onTextChanged
+    this.onTextChanged,
+    this.feedback,
   });
 
   @override
   CodeComponentWidgetState createState() => CodeComponentWidgetState();
 }
 
-class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTickerProviderStateMixin {
+class CodeComponentWidgetState extends State<CodeComponentWidget> with TickerProviderStateMixin {
   late List<TextEditingController> controllers;
   late List<FocusNode> focusNodes;
 
@@ -26,9 +31,15 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
   // Keep track of the length we last built for
   late int _lastLength;
 
+  // The reaction to a checked answer (a shake when wrong, a pop when right).
+  late final AnimationController _answerController;
+  AnswerResult? _answerResult;
+
   @override
   void initState() {
     super.initState();
+    _answerController = AnimationController(vsync: this);
+    widget.feedback?.addListener(_onAnswer);
     _lastLength = widget.component.codeLength ?? 5;
     _initControllers(_lastLength);
     glowController = AnimationController(vsync: this,duration: const Duration(milliseconds: 1000));
@@ -50,7 +61,29 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
   }
 
   @override
+  void didUpdateWidget(CodeComponentWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.feedback != widget.feedback) {
+      oldWidget.feedback?.removeListener(_onAnswer);
+      widget.feedback?.addListener(_onAnswer);
+    }
+  }
+
+  /// Plays the reaction to the answer that was just checked.
+  void _onAnswer() {
+    final result = widget.feedback?.last;
+    if (result == null || widget.component.answerFeedback == false) return;
+    if (MediaQuery.maybeOf(context)?.disableAnimations ?? false) return;
+
+    _answerResult = result;
+    _answerController.duration = answerDuration(result);
+    _answerController.forward(from: 0);
+  }
+
+  @override
   void dispose() {
+    widget.feedback?.removeListener(_onAnswer);
+    _answerController.dispose();
     glowController.dispose();
     _disposeControllers();
     super.dispose();
@@ -184,7 +217,7 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
     }
 
     // Wrap in outer Container only for Separated mode
-    return inputType == 'Separated'
+    final tree = inputType == 'Separated'
         ? AnimatedBuilder(
       animation: glowAnimation,
       builder: (context,child)=>
@@ -211,6 +244,37 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
           ),
     )
         : content;
+
+    return _withAnswerReaction(tree);
+  }
+
+  /// [child] shaken, made bigger and tinted while the reaction to an answer plays.
+  Widget _withAnswerReaction(Widget child) {
+    return AnimatedBuilder(
+      animation: _answerController,
+      child: child,
+      builder: (context, child) {
+        final result = _answerResult;
+        if (result == null || !_answerController.isAnimating) return child!;
+
+        final frame = answerFrame(result, _answerController.value);
+        Widget reacting = child!;
+        if (frame.dx != 0 || frame.scale != 1) {
+          reacting = Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.translationValues(frame.dx, 0, 0)..scaleByDouble(frame.scale, frame.scale, 1, 1),
+            child: reacting,
+          );
+        }
+        if (frame.flash > 0) {
+          reacting = ColorFiltered(
+            colorFilter: ColorFilter.mode(answerFrameColor(result).withValues(alpha: 0.45 * frame.flash), BlendMode.srcATop),
+            child: reacting,
+          );
+        }
+        return reacting;
+      },
+    );
   }
 
   Widget _buildCell(int index, double heightInput, double widthInput, double? inputCornerRadius,

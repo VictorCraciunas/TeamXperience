@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/animation_type.dart';
+import 'package:teamxperience/utils/component_conversion/decode_text.dart';
 import 'package:teamxperience/utils/component_conversion/text_effects.dart';
 import 'package:teamxperience/utils/event_fonts.dart';
 
@@ -70,6 +71,20 @@ class TextComponentWidget extends StatelessWidget {
 
     if (animation == AnimationType.typewriter && text.isNotEmpty) {
       return TypewriterText(
+        key: ValueKey(text),
+        text: text,
+        textColor: currentColor,
+        fontSize: fontSize,
+        fontWeight: currentFontWeight,
+        fontFamily: fontFamily,
+        msPerCharacter: typewriterSpeed ?? 100,
+        textAlign: currentTextAlign,
+        effects: effects,
+      );
+    }
+
+    if (animation == AnimationType.decode && text.isNotEmpty) {
+      return DecodeText(
         key: ValueKey(text),
         text: text,
         textColor: currentColor,

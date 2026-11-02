@@ -75,7 +75,7 @@ class TextComponentController {
     component.shadowBlur = shadowBlur > 0 ? shadowBlur : null;
     component.shadowDistance = shadowDistance > 0 ? shadowDistance : null;
     component.shadowColor = hasShadow ? shadowColor : null;
-    if (animation == AnimationType.typewriter) {
+    if (animation == AnimationType.typewriter || animation == AnimationType.decode) {
       component.typewriterSpeed = typewriterSpeed;
     }
   }

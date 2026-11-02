@@ -174,6 +174,7 @@ Component _readComponent(Map<String, dynamic> map, String where, List<String> er
     opacity: reader.decimal('opacity', min: 0, max: 1),
     borderWidth: reader.decimal('borderWidth', min: 0, max: 6),
     loopEffect: reader.option('loopEffect', LoopEffect.values),
+    answerFeedback: reader.flag('answerFeedback'),
     textAlign: reader.choice('textAlign', _textAligns),
   );
 }
