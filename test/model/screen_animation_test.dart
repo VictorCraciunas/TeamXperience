@@ -4,8 +4,8 @@ import 'package:teamxperience/model/event.dart';
 
 void main() {
   group('ScreenAnimation', () {
-    test('has fade and none', () {
-      expect(ScreenAnimation.values.map((a) => a.name), ['fade', 'none']);
+    test('starts with fade and none, the two it had first', () {
+      expect(ScreenAnimation.values.take(2).map((a) => a.name), ['fade', 'none']);
     });
 
     test('is read from its name', () {
@@ -34,6 +34,25 @@ void main() {
       final event = Event(eventId: 'e', screenAnimation: ScreenAnimation.none);
       expect(event.toJson()['screenAnimation'], 'none');
       expect(Event.fromMap({...event.toJson(), 'eventId': 'e'}).screenAnimation, ScreenAnimation.none);
+    });
+
+    test('has no chosen timing unless asked', () {
+      final event = Event(eventId: 'e');
+      expect(event.animationDuration, isNull);
+      expect(event.animationDelay, isNull);
+    });
+
+    test('the timing is written and read back, a delay of 0 included', () {
+      final event = Event(eventId: 'e', animationDuration: 800, animationDelay: 0);
+      final back = Event.fromMap({...event.toJson(), 'eventId': 'e'});
+      expect(back.animationDuration, 800);
+      expect(back.animationDelay, 0);
+    });
+
+    test('a timing saved as a decimal is read as a whole number', () {
+      final back = Event.fromMap({'eventId': 'e', 'animationDuration': 600.0, 'animationDelay': 250.0});
+      expect(back.animationDuration, 600);
+      expect(back.animationDelay, 250);
     });
 
     test('an event saved before the option existed fades', () {

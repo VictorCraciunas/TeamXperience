@@ -239,10 +239,40 @@ void main() {
       expect(_import(_event()).event?.screenAnimation, ScreenAnimation.fade);
     });
 
+    test('every kind of entrance is accepted', () {
+      for (final name in ['fade', 'none', 'slideFromLeft', 'slideFromRight', 'slideFromBottom', 'slideFromTop', 'zoom', 'bounce']) {
+        final result = _import(_event(extra: {'screenAnimation': name}));
+        expect(result.errors, isEmpty, reason: name);
+        expect(result.event?.screenAnimation.name, name);
+      }
+    });
+
+    test('the duration is 200 to 1500 and the delay 0 to 600, whole milliseconds', () {
+      expect(_import(_event(extra: {'animationDuration': 200, 'animationDelay': 0})).errors, isEmpty);
+      expect(_import(_event(extra: {'animationDuration': 1500, 'animationDelay': 600})).errors, isEmpty);
+      expect(_import(_event(extra: {'animationDuration': 199})).errors.single, contains('animationDuration'));
+      expect(_import(_event(extra: {'animationDuration': 1501})).errors.single, contains('animationDuration'));
+      expect(_import(_event(extra: {'animationDelay': -1})).errors.single, contains('animationDelay'));
+      expect(_import(_event(extra: {'animationDelay': 601})).errors.single, contains('animationDelay'));
+      expect(_import(_event(extra: {'animationDelay': 100.5})).errors.single, contains('animationDelay'));
+    });
+
+    test('the timing is read onto the event', () {
+      final event = _import(_event(extra: {'screenAnimation': 'bounce', 'animationDuration': 700, 'animationDelay': 150})).event;
+      expect(event?.animationDuration, 700);
+      expect(event?.animationDelay, 150);
+    });
+
+    test('left out, the timing is automatic', () {
+      final event = _import(_event()).event;
+      expect(event?.animationDuration, isNull);
+      expect(event?.animationDelay, isNull);
+    });
+
     test('anything else is refused and the mistake lists what exists', () {
-      final result = _import(_event(extra: {'screenAnimation': 'slide'}));
+      final result = _import(_event(extra: {'screenAnimation': 'spin'}));
       expect(result.event, isNull);
-      expect(result.errors.single, allOf(contains('screenAnimation'), contains('slide'), contains('fade'), contains('none')));
+      expect(result.errors.single, allOf(contains('screenAnimation'), contains('spin'), contains('fade'), contains('none'), contains('bounce')));
     });
   });
 

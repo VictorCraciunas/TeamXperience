@@ -45,6 +45,11 @@ class CreateEventController {
   /// How the components of a puzzle appear when it opens.
   ScreenAnimation screenAnimation = ScreenAnimation.fade;
 
+  /// How long one component takes to come in and the pause before the next one,
+  /// in milliseconds; null means automatic.
+  int? animationDuration;
+  int? animationDelay;
+
   Event? originalEvent;
 
   /// The draft saved from this form, so saving again updates it instead of
@@ -60,6 +65,8 @@ class CreateEventController {
       startCodeController.text = event.startCode ?? "";
       selectedType = event.type;
       screenAnimation = event.screenAnimation;
+      animationDuration = event.animationDuration;
+      animationDelay = event.animationDelay;
       dateEvent = event.dateEvent;
       deadlineEnrollment = event.dateDeadlineEnrollment;
       dateStartEnrollement = event.dateStartEnrollment;
@@ -103,6 +110,8 @@ class CreateEventController {
       ..dificultate = dificultateController.text.trim()
       ..type = selectedType
       ..screenAnimation = screenAnimation
+      ..animationDuration = animationDuration
+      ..animationDelay = animationDelay
       ..dateEvent = dateEvent
       ..dateDeadlineEnrollment = deadlineEnrollment
       ..dateStartEnrollment = dateStartEnrollement
