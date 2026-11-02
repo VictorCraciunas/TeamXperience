@@ -29,6 +29,8 @@
               "fontSize": 18,
               "textAlign": "left",
               "animation": "typewriter",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
               "typewriterSpeed": 30
             },
             {
@@ -86,11 +88,14 @@
               "fontSize": 18,
               "textAlign": "left",
               "animation": "typewriter",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
               "typewriterSpeed": 30
             },
             {
               "type": "text",
               "text": "ILUHZDOO",
+              "letterSpacing": 6,
               "textColor": "#9DFFB8",
               "fontFamily": "Share Tech Mono",
               "fontSize": 28,
@@ -145,6 +150,8 @@
               "fontSize": 18,
               "textAlign": "left",
               "animation": "typewriter",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
               "typewriterSpeed": 30
             }
           ]
@@ -164,6 +171,8 @@
               "fontSize": 18,
               "textAlign": "left",
               "animation": "typewriter",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
               "typewriterSpeed": 30
             }
           ]
@@ -181,11 +190,14 @@
               "fontSize": 18,
               "textAlign": "left",
               "animation": "typewriter",
+              "enableGlow": true,
+              "glowColor": "#33FF66",
               "typewriterSpeed": 30
             },
             {
               "type": "text",
               "text": "0x52  0x4F  0x4F  0x54",
+              "letterSpacing": 2,
               "textColor": "#9DFFB8",
               "fontFamily": "Share Tech Mono",
               "fontSize": 24,

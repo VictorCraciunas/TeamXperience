@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../hex_color_field.dart';
+import '../optional_slider.dart';
+import '../option_checkbox.dart';
 import 'package:teamxperience/utils/event_fonts.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/enums/animation_type.dart';
@@ -87,6 +90,26 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
         _buildFontSizeSlider(),
         const SizedBox(height: 16),
         _buildTextColorPicker(),
+        const SizedBox(height: 16),
+        _buildLetterSpacingSlider(),
+        const SizedBox(height: 16),
+        _buildLineHeightSlider(),
+        const SizedBox(height: 16),
+        OptionCheckbox(
+          label: 'Cursiv',
+          value: controller.italic,
+          onChanged: (value) => setState(() => controller.italic = value),
+        ),
+        const SizedBox(height: 16),
+        OptionCheckbox(
+          label: 'Majuscule',
+          value: controller.uppercase,
+          onChanged: (value) => setState(() => controller.uppercase = value),
+        ),
+        const SizedBox(height: 16),
+        _buildGlowSection(),
+        const SizedBox(height: 16),
+        _buildShadowSection(),
         const SizedBox(height: 16),
         _buildSaveButton(),
         const SizedBox(height: 60),
@@ -227,6 +250,97 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
           controller.fontSize = value;
         });
       },
+    );
+  }
+
+  Widget _buildLetterSpacingSlider() {
+    return SliderWidget(
+      title: 'Spațiu între litere',
+      min: 0,
+      max: 12,
+      divisions: 12,
+      value: controller.letterSpacing,
+      label: controller.letterSpacing.toStringAsFixed(0),
+      onChanged: (value) => setState(() => controller.letterSpacing = value),
+    );
+  }
+
+  Widget _buildLineHeightSlider() {
+    return OptionalSlider(
+      title: 'Înălțime rând',
+      min: 0.8,
+      max: 2,
+      divisions: 12,
+      unit: '×',
+      decimals: 1,
+      value: controller.lineHeight,
+      automaticValue: 1.2,
+      automaticNote: 'automat',
+      onChanged: (value) => setState(() => controller.lineHeight = value),
+    );
+  }
+
+  Widget _buildGlowSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        OptionCheckbox(
+          label: 'Glow text',
+          value: controller.enableGlow,
+          onChanged: (value) {
+            setState(() {
+              controller.enableGlow = value;
+              // A glow starts in the colour of the text.
+              if (value) controller.glowColor = controller.textColor;
+            });
+          },
+        ),
+        if (controller.enableGlow) ...[
+          const SizedBox(height: 16),
+          HexColorField(
+            label: 'Culoare glow',
+            hex: controller.glowColor,
+            onChanged: (color) => setState(() => controller.glowColor = color),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildShadowSection() {
+    final hasShadow = controller.shadowBlur > 0 || controller.shadowDistance > 0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SliderWidget(
+          title: 'Încețoșare umbră',
+          min: 0,
+          max: 30,
+          divisions: 30,
+          value: controller.shadowBlur,
+          label: controller.shadowBlur.toStringAsFixed(0),
+          onChanged: (value) => setState(() => controller.shadowBlur = value),
+        ),
+        const SizedBox(height: 16),
+        SliderWidget(
+          title: 'Distanță umbră',
+          min: 0,
+          max: 20,
+          divisions: 20,
+          value: controller.shadowDistance,
+          label: controller.shadowDistance.toStringAsFixed(0),
+          onChanged: (value) => setState(() => controller.shadowDistance = value),
+        ),
+        if (hasShadow) ...[
+          const SizedBox(height: 16),
+          HexColorField(
+            label: 'Culoare umbră',
+            hex: controller.shadowColor,
+            onChanged: (color) => setState(() => controller.shadowColor = color),
+          ),
+        ],
+      ],
     );
   }
 

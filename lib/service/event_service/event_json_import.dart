@@ -162,6 +162,12 @@ Component _readComponent(Map<String, dynamic> map, String where, List<String> er
     boxHeight: reader.decimal('boxHeight', min: 20, max: 100),
     boldText: reader.flag('boldText'),
     glowOn: reader.choice('glowOn', _glowPlaces),
+    lineHeight: reader.decimal('lineHeight', min: 0.8, max: 2),
+    italic: reader.flag('italic'),
+    uppercase: reader.flag('uppercase'),
+    shadowColor: reader.color('shadowColor'),
+    shadowBlur: reader.decimal('shadowBlur', min: 0, max: 30),
+    shadowDistance: reader.decimal('shadowDistance', min: 0, max: 20),
     textAlign: reader.choice('textAlign', _textAligns),
   );
 }

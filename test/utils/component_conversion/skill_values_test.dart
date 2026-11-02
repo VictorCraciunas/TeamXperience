@@ -281,6 +281,32 @@ void main() {
     }
   });
 
+  group('the text effects at both ends', () {
+    for (final value in [0.0, 12.0]) {
+      testWidgets('letter spacing $value on a long text', (tester) async {
+        await _draw(tester, Component(type: ComponentType.text, text: 'Serverul fizic a fost localizat. Mergi la punctul marcat.', letterSpacing: value, fontSize: 24));
+      });
+    }
+    for (final value in [0.8, 2.0]) {
+      testWidgets('line height $value', (tester) async {
+        await _draw(tester, Component(type: ComponentType.text, text: 'Serverul fizic a fost localizat. Mergi la punctul marcat pe hartă.', lineHeight: value, fontSize: 24));
+      });
+    }
+    for (final blur in [0.0, 30.0]) {
+      for (final distance in [0.0, 20.0]) {
+        testWidgets('shadow blur $blur distance $distance', (tester) async {
+          await _draw(tester, Component(type: ComponentType.text, text: 'Salut', shadowBlur: blur, shadowDistance: distance, shadowColor: '#000000', fontSize: 30));
+        });
+      }
+    }
+    testWidgets('glow, italic and capitals together', (tester) async {
+      await _draw(
+        tester,
+        Component(type: ComponentType.text, text: 'Operațiunea Zero-Day', italic: true, uppercase: true, enableGlow: true, glowColor: '#33FF66', fontSize: 28),
+      );
+    });
+  });
+
   group('image', () {
     for (final radius in [0.0, 50.0]) {
       testWidgets('corner radius $radius', (tester) async {

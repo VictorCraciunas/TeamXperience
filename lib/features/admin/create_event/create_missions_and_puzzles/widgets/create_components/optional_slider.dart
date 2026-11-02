@@ -17,6 +17,7 @@ class OptionalSlider extends StatelessWidget {
     required this.automaticValue,
     required this.automaticNote,
     required this.onChanged,
+    this.decimals = 0,
   });
 
   final String title;
@@ -29,10 +30,13 @@ class OptionalSlider extends StatelessWidget {
   final String automaticNote;
   final ValueChanged<double> onChanged;
 
+  /// How many decimals the shown value has.
+  final int decimals;
+
   @override
   Widget build(BuildContext context) {
     final shown = (value ?? automaticValue).clamp(min, max).toDouble();
-    final text = '${shown.round()} $unit';
+    final text = '${shown.toStringAsFixed(decimals)} $unit';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
