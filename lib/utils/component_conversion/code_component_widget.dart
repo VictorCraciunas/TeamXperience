@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
 import 'package:teamxperience/model/component.dart';
 
 class CodeComponentWidget extends StatefulWidget {
@@ -252,6 +253,7 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
           fontSize: fontSize,
           fontWeight: bold ? FontWeight.bold : FontWeight.normal,
           fontFamily: fontFamily,
+          fontVariations: fontVariationsFor(fontFamily, bold ? FontWeight.w700 : FontWeight.w400),
           color: textColor
       ),
     );
@@ -337,6 +339,7 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
             fontSize: fontSize,
             fontWeight: bold ? FontWeight.bold : FontWeight.normal,
             fontFamily: fontFamily,
+            fontVariations: fontVariationsFor(fontFamily, bold ? FontWeight.w700 : FontWeight.w400),
             color: textColor
         ),
         // Note: _onTextChanged() is called automatically via the listener for free mode too

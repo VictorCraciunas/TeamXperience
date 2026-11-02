@@ -186,7 +186,7 @@ Keys you may see in an exported event but must **not** write: `eventId`, `status
 | `textColor` | Hex colour `"#RRGGBB"`, for example `"#1B1B1B"`. When missing: black. |
 | `fontSize` | A number from 8 to 72. The app's editor starts at 16. |
 | `fontWeight` | One of: `"Thin (100)"`, `"Light (300)"`, `"Regular (400)"`, `"Medium (500)"`, `"Bold (700)"`, `"Black (900)"`. Written exactly like that, with the number in brackets. |
-| `fontFamily` | `"Poppins"` or `"Monospace"`. |
+| `fontFamily` | One of the fonts listed under "Fonts" below. |
 | `textAlign` | `"left"`, `"center"`, `"right"` or `"justify"`. Default: `"center"`. The text takes the whole width of the screen, so `"left"` really puts it at the left edge. |
 | `animation` | `"none"` (appears at once) or `"typewriter"` (letters appear one by one). |
 | `typewriterSpeed` | Whole number of milliseconds per letter, from 10 to 300. Default 100. Only used with `"typewriter"`. |
@@ -216,7 +216,7 @@ A `code` puzzle needs a button: pressing it checks the answer. For `geolocation`
 | `letterSpacing` | A number from 0 to 12: the space between the letters of the label. Default 8. `0` gives a compact button. |
 | `paddingY` | A number from 0 to 30: the space above and below the label inside the button. Default 5. A larger number makes a taller button. |
 | `fontWeight` | The same six values as for `text`. |
-| `fontFamily` | `"Poppins"` or `"Monospace"`. Default `"Poppins"`. |
+| `fontFamily` | One of the fonts listed under "Fonts" below. Default `"Poppins"`. |
 | `enableGlow` | `true` or `false`. |
 | `glowColor` | Hex colour of the glow. Only used when `enableGlow` is `true`. |
 | `enableFlicker` | `true` or `false`. The button flickers. |
@@ -237,7 +237,7 @@ The place where players type the answer of a `code` puzzle.
 | `boldText` | `true` (default) or `false`: whether the typed characters are bold. |
 | `glowOn` | `"frame"` (default): the glow is around all the boxes together. `"boxes"`: each box glows on its own. Only used with `enableGlow` and `"Separated"`; a single `"Free"` box glows either way. |
 | `fontSize` | A number from 8 to 72. Default 16. |
-| `fontFamily` | `"Poppins"` or `"Monospace"`. |
+| `fontFamily` | One of the fonts listed under "Fonts" below. |
 | `textColor` | Hex colour of the typed characters. |
 | `frameBackgroundColor` | Hex colour of the frame (only with `"Separated"`). |
 | `inputBackgroundColor` | Hex colour of the boxes. |
@@ -245,6 +245,25 @@ The place where players type the answer of a `code` puzzle.
 | `colorBorderInput` | Hex colour of each box border. |
 | `enableGlow` | `true` or `false`. |
 | `glowColor` | Hex colour of the glow. Only used when `enableGlow` is `true`. |
+
+### Fonts
+
+Write the name exactly as in this list, with the capitals and the spaces. Anything else makes the import fail.
+
+| `fontFamily` | Looks | Weights |
+|---|---|---|
+| `"Poppins"` | Clean, modern, rounded. The default. | All six |
+| `"Monospace"` | Typewriter or code, every letter the same width. | Regular and bold |
+| `"Orbitron"` | Sci-fi, wide, geometric. Good for tech and space. | All six (starts at 400) |
+| `"Share Tech Mono"` | Terminal, hacker, code. Narrow monospace. | One weight |
+| `"Press Start 2P"` | Retro arcade game. Very wide, use a small `fontSize` (10 to 16). | One weight |
+| `"Cinzel"` | Ancient, Roman, medieval. Capitals look best. | All six (starts at 400) |
+| `"Special Elite"` | Old typewriter, detective files. | One weight |
+| `"Caveat"` | Handwriting, notes, treasure maps. Use a larger `fontSize` (24 to 36). | Up to 700 |
+| `"Bebas Neue"` | Tall, bold titles, all capitals. | One weight |
+| `"Playfair Display"` | Elegant serif, mystery, luxury. | All six (starts at 400) |
+
+"All six" means the six `fontWeight` values work. For "One weight" fonts the weight changes little or nothing: leave `fontWeight` out. Where a font starts at 400, `"Thin (100)"` and `"Light (300)"` look like regular. Pair a title font with a plain one: for example `"Bebas Neue"` for the title text and `"Poppins"` for the rest.
 
 ### Colours
 
@@ -271,7 +290,7 @@ The puzzle screen shows the picture in `taskBackgroundImageUrl` behind the compo
 - [ ] Every `code` puzzle has `code`, a `code` component with a matching `codeLength`, and a `button` component.
 - [ ] Every `geolocation` puzzle has both `latitude` and `longitude`.
 - [ ] Every puzzle has at least one component, and every component has a valid `type`.
-- [ ] `fontWeight` values are written exactly as listed, `fontFamily` is `Poppins` or `Monospace`.
+- [ ] `fontWeight` values are written exactly as listed, `fontFamily` is one of the ten fonts, spelled as in the list.
 - [ ] Colours are `#RRGGBB`.
 - [ ] No `id`, `eventId`, `status` keys.
 - [ ] Images are `https://` links or left out.

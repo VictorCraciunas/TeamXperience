@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/animation_type.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
 
 class TextComponentWidget extends StatelessWidget {
   final String text;
@@ -84,7 +85,8 @@ class TextComponentWidget extends StatelessWidget {
           color: currentColor,
           fontSize: fontSize,
           fontWeight: currentFontWeight,
-          fontFamily: fontFamily
+          fontFamily: fontFamily,
+          fontVariations: fontVariationsFor(fontFamily, currentFontWeight),
       ),
     );
   }
@@ -169,6 +171,7 @@ class _TypewriterTextState extends State<TypewriterText> with SingleTickerProvid
           fontSize: widget.fontSize,
           fontWeight: widget.fontWeight,
           fontFamily: widget.fontFamily,
+          fontVariations: fontVariationsFor(widget.fontFamily, widget.fontWeight),
         );
 
         // The whole text is laid out from the start and the part not typed yet

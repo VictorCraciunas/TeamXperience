@@ -29,12 +29,29 @@ Organisers can make an event look the way they want (fonts, colours, glow, shado
 | 01 | `visual/01-layout` | Text block uses the full width so alignment works; `spaceBelow` on every component (0 to 120, default 40). **Done:** `Component.spaceBelow`, `spacedComponents`, `FullWidth`, slider in the component editor, importer range, skill. The builder preview still uses its own 16 px gap. |
 | 02 | `visual/02-screen-animation` | Entrance of the whole screen, set once per event (`Event.screenAnimation`): `fade` (today, default) or `none`. **Done:** enum, model, importer, form dropdown, game screen, skill. Duration and delay between components move to step 06 with the other entrances. |
 | 03 | `visual/03-button-and-code-box` | Button: `letterSpacing` (0 to 12, default 8), `paddingY` (0 to 30, default 5). Code input: `boxHeight` (20 to 100, default 1.5 x text), `boldText` (default on), `glowOn` (`frame` default, or `boxes`). **Done:** model, widgets, editors (the box height slider says "automat" until moved), importer, skill. |
-| 04 | `visual/04-fonts` | Bundle the fonts from the gallery (Orbitron, Share Tech Mono, Press Start 2P, Cinzel, Special Elite, Caveat, Bebas Neue, Playfair Display). Needs the user's yes to download them. |
+| 04 | `visual/04-fonts` | Bundle the fonts from the gallery (Orbitron, Share Tech Mono, Press Start 2P, Cinzel, Special Elite, Caveat, Bebas Neue, Playfair Display). **Done:** downloaded with the user's yes, `lib/utils/event_fonts.dart` is the one list (editors, importer, skill, tests), variable fonts get `FontVariation` weights, licences in `assets/fonts/licenses/`. |
 | 05 | `visual/05-effects` | On every component: shadow, glow, border, opacity. On text: letter spacing, line height, italic, capitals, outline. Colours with transparency. |
 | 06 | `visual/06-component-animation` | Entrance per component (slide, zoom, bounce); loop effects (pulse, float, shake, flicker, glitch). |
 | 07 | `visual/07-text-effects-and-feedback` | Text decode and glitch effects; shake and flash on a wrong or correct code. |
 | 08 | `visual/08-backgrounds` | Background per mission or puzzle; overlays (scanlines, vignette); the missing `assets/images/default_background.png`. |
 | 09 | `visual/09-presets` | Themes ("hacker", "pirate", "retro", "detective") that set font, colours, background and button style for a whole event. |
+
+## Step 04 notes: the font files
+
+Source: the Google Fonts repository, `github.com/google/fonts` (files fetched from `raw.githubusercontent.com/google/fonts/main/...`), all under the SIL Open Font License except Special Elite (Apache 2.0). The licence texts are kept next to the fonts in `assets/fonts/licenses/`. The user said yes to downloading these on 2026-11-02.
+
+| Font | File in the repository | Size |
+|---|---|---|
+| Orbitron | `ofl/orbitron/Orbitron[wght].ttf` (variable) | 38,576 B |
+| Share Tech Mono | `ofl/sharetechmono/ShareTechMono-Regular.ttf` | 43,272 B |
+| Press Start 2P | `ofl/pressstart2p/PressStart2P-Regular.ttf` | 118,204 B |
+| Cinzel | `ofl/cinzel/Cinzel[wght].ttf` (variable) | 125,468 B |
+| Special Elite | `apache/specialelite/SpecialElite-Regular.ttf` | 166,180 B |
+| Caveat | `ofl/caveat/Caveat[wght].ttf` (variable) | 403,648 B |
+| Bebas Neue | `ofl/bebasneue/BebasNeue-Regular.ttf` | 61,400 B |
+| Playfair Display | `ofl/playfairdisplay/PlayfairDisplay[wght].ttf` (variable) | 300,724 B |
+
+About 1.2 MB in total. Four are variable fonts with no static files, so the weight is set with a `FontVariation('wght', ...)` next to the `fontWeight` (one helper used by the text, button and code widgets). The other four have a single weight: asking for bold gives the font's own faux bold or nothing, and the editor says so.
 
 ## Open decisions
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
 import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
@@ -139,9 +140,8 @@ class _ButtonComponentFieldsWidgetState
   Widget _buildFontFamilyDropdown() {
     return AppDropdown<String>(
       label: 'Tip Font',
-      items: const [
-        AppDropdownItem<String>(value: 'Poppins', label: 'Poppins'),
-        AppDropdownItem<String>(value: 'Monospace', label: 'Monospace'),
+      items: [
+        for (final font in eventFonts) AppDropdownItem<String>(value: font.family, label: font.family),
       ],
       value: controller.fontFamily,
       onChanged: (value) => setState(() => controller.fontFamily = value),
