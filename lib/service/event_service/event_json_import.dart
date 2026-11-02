@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:teamxperience/enums/animation_type.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/event_type.dart';
+import 'package:teamxperience/enums/loop_effect.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/enums/screen_animation.dart';
 import 'package:teamxperience/model/component.dart';
@@ -172,6 +173,7 @@ Component _readComponent(Map<String, dynamic> map, String where, List<String> er
     shadowDistance: reader.decimal('shadowDistance', min: 0, max: 20),
     opacity: reader.decimal('opacity', min: 0, max: 1),
     borderWidth: reader.decimal('borderWidth', min: 0, max: 6),
+    loopEffect: reader.option('loopEffect', LoopEffect.values),
     textAlign: reader.choice('textAlign', _textAligns),
   );
 }

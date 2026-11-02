@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/enums/component-type.dart';
+import 'package:teamxperience/enums/loop_effect.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/puzzle.dart';
 
@@ -87,6 +88,18 @@ class _AddComponentWidgetState extends State<AddComponentWidget> {
                   value: widget.component.opacity,
                   // Fully visible is "not set", so the component stays as it was.
                   onChanged: (value) => setState(() => widget.component.opacity = value >= 1 ? null : value),
+                ),
+                const SizedBox(height: 20),
+                AppDropdown<String>(
+                  label: 'Efect continuu',
+                  items: [
+                    const AppDropdownItem<String>(value: 'none', label: 'Fără efect'),
+                    for (final effect in LoopEffect.values)
+                      AppDropdownItem<String>(value: effect.name, label: effect.label),
+                  ],
+                  value: widget.component.loopEffect?.name ?? 'none',
+                  onChanged:
+                      (value) => setState(() => widget.component.loopEffect = LoopEffect.fromName(value)),
                 ),
                 // A text has its own shadow controls in its editor.
                 if (type != ComponentType.text) ...[

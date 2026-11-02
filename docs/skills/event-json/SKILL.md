@@ -55,6 +55,7 @@ Component
   type: "text" | "image" | "button" | "code"        (required)
   spaceBelow?: Number
   opacity?: Number
+  loopEffect?: "pulse" | "float" | "shake" | "flicker" | "glitch"
   text?: String
   textColor?: HexColor
   fontSize?: Number
@@ -191,6 +192,7 @@ Keys you may see in an exported event but must **not** write: `eventId`, `status
 | Field | What it can hold |
 |---|---|
 | `type` | `"text"`, `"image"`, `"button"` or `"code"`. Required. |
+| `loopEffect` | A movement the component repeats for as long as the puzzle is open. `"pulse"`: grows a little and comes back. `"float"`: rises a little and comes back. `"shake"`: a short shake left and right every 2 seconds. `"flicker"`: dims and comes back, like a faulty light. `"glitch"`: still, with a quick jump sideways now and then. Missing means no effect. Works on every kind, together with the entrance of the event. Use one or two per puzzle, on what matters (a button, a title): everything moving at once is tiring. The movement is only drawn; it stops if the phone has animations switched off. |
 | `opacity` | A number from 0 to 1: how visible the component is. `1` (default) is fully visible, `0.5` half see-through, `0` invisible. Works on every kind. |
 | `spaceBelow` | A number from 0 to 120: the space in pixels left under this component before the next one. When missing it is 40. Use a small value (for example `8`) to keep a title close to the text under it, and a large one (for example `90`) before a button. |
 

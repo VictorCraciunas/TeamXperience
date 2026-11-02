@@ -1,5 +1,6 @@
 import '../enums/animation_type.dart';
 import '../enums/component-type.dart';
+import '../enums/loop_effect.dart';
 
 class Component {
    ComponentType? type;
@@ -75,6 +76,9 @@ class Component {
    /// button (when missing: 1.5).
    double? borderWidth;
 
+   /// A movement the component repeats while the puzzle is open. When missing: none.
+   LoopEffect? loopEffect;
+
   Component({
     this.type,
     this.text,
@@ -121,6 +125,7 @@ class Component {
     this.shadowDistance,
     this.opacity,
     this.borderWidth,
+    this.loopEffect,
   });
 
    factory Component.fromMap(Map<String, dynamic> map) {
@@ -174,6 +179,7 @@ class Component {
        shadowDistance: (map['shadowDistance'] as num?)?.toDouble(),
        opacity: (map['opacity'] as num?)?.toDouble(),
        borderWidth: (map['borderWidth'] as num?)?.toDouble(),
+       loopEffect: LoopEffect.fromName(map['loopEffect'] as String?),
      );
    }
 
@@ -224,6 +230,7 @@ class Component {
        if (shadowDistance != null) 'shadowDistance': shadowDistance,
        if (opacity != null) 'opacity': opacity,
        if (borderWidth != null) 'borderWidth': borderWidth,
+       if (loopEffect != null) 'loopEffect': loopEffect!.name,
      };
    }
 
