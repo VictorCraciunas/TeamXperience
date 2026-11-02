@@ -80,6 +80,10 @@ class _ButtonComponentFieldsWidgetState
         const SizedBox(height: 20),
         _buildFontSizeSlider(),
         const SizedBox(height: 20),
+        _buildLetterSpacingSlider(),
+        const SizedBox(height: 20),
+        _buildPaddingSlider(),
+        const SizedBox(height: 20),
         _buildSaveButton(),
         const SizedBox(height: 60),
       ],
@@ -291,6 +295,30 @@ class _ButtonComponentFieldsWidgetState
       value: controller.fontSize,
       label: controller.fontSize.toStringAsFixed(0),
       onChanged: (value) => setState(() => controller.fontSize = value),
+    );
+  }
+
+  Widget _buildLetterSpacingSlider() {
+    return SliderWidget(
+      title: 'Spațiu între litere',
+      min: 0,
+      max: 12,
+      divisions: 12,
+      value: controller.letterSpacing,
+      label: controller.letterSpacing.toStringAsFixed(0),
+      onChanged: (value) => setState(() => controller.letterSpacing = value),
+    );
+  }
+
+  Widget _buildPaddingSlider() {
+    return SliderWidget(
+      title: 'Spațiu sus și jos',
+      min: 0,
+      max: 30,
+      divisions: 30,
+      value: controller.paddingY,
+      label: controller.paddingY.toStringAsFixed(0),
+      onChanged: (value) => setState(() => controller.paddingY = value),
     );
   }
 

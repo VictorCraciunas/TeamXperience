@@ -25,6 +25,8 @@ class ButtonComponentController {
   bool enableFlicker = false;
   bool enableGlow = false;
   double fontSize = 15;
+  double letterSpacing = 8;
+  double paddingY = 5;
 
   // Controllers
   final TextEditingController labelController = TextEditingController();
@@ -100,6 +102,8 @@ class ButtonComponentController {
     component.enableFlicker = enableFlicker;
     component.enableGlow = enableGlow;
     component.fontSize = fontSize;
+    component.letterSpacing = letterSpacing;
+    component.paddingY = paddingY;
   }
 
   // Save component (handles both create and edit modes)
@@ -149,6 +153,8 @@ class ButtonComponentController {
       enableFlicker = component.enableFlicker ?? false;
       enableGlow = component.enableGlow ?? false;
       fontSize = component.fontSize ?? 15;
+      letterSpacing = component.letterSpacing ?? 8;
+      paddingY = component.paddingY ?? 5;
     }
   }
 }
