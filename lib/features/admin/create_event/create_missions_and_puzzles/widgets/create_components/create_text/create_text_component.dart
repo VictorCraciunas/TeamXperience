@@ -77,7 +77,7 @@ class _TextComponentFieldsWidgetState extends State<TextComponentFieldsWidget> {
         _buildTextContentField(),
         const SizedBox(height: 16),
         _buildAnimationDropdown(),
-        if (controller.animation == AnimationType.typewriter) ...[
+        if (controller.animation == AnimationType.typewriter || controller.animation == AnimationType.decode) ...[
           const SizedBox(height: 16),
           _buildTypewriterSpeedSlider(),
         ],

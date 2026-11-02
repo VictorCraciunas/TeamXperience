@@ -583,6 +583,15 @@ void main() {
       expect(component?.loopEffect?.name, 'pulse');
     });
 
+    test('the text animations are none, typewriter and decode', () {
+      for (final name in ['none', 'typewriter', 'decode']) {
+        expectAccepted({'type': 'text', 'animation': name});
+      }
+      expectRefused({'type': 'text', 'animation': 'wave'}, 'animation');
+      final message = withComponent({'type': 'text', 'animation': 'wave'}).errors.single;
+      expect(message, allOf(contains('none'), contains('typewriter'), contains('decode')));
+    });
+
     test('options a component does not use are not checked', () {
       expectAccepted({'type': 'text', 'width': 999, 'height': 999});
     });

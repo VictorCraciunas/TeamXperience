@@ -198,6 +198,8 @@
             {
               "type": "text",
               "text": "0x52  0x4F  0x4F  0x54",
+              "animation": "decode",
+              "typewriterSpeed": 80,
               "letterSpacing": 2,
               "textColor": "#9DFFB8",
               "fontFamily": "Share Tech Mono",
