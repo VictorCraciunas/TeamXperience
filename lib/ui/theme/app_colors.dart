@@ -24,6 +24,11 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.successSoft,
     required this.warningSoft,
     required this.dangerSoft,
+    required this.onNavy,
+    required this.onNavyMuted,
+    required this.onNavyFaint,
+    required this.tickOnNavy,
+    required this.heroButton,
   });
 
   final Color page;
@@ -53,6 +58,21 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color warningSoft;
   final Color dangerSoft;
 
+  /// Text and icons on a [navy] fill (cards, the date tile, selected chips).
+  final Color onNavy;
+
+  /// Secondary text on a [navy] fill.
+  final Color onNavyMuted;
+
+  /// Tiles and dividers on a [navy] fill.
+  final Color onNavyFaint;
+
+  /// Teal accents on a [navy] fill (route dashes, progress).
+  final Color tickOnNavy;
+
+  /// Round buttons over a hero image (back, share).
+  final Color heroButton;
+
   static const AppColors light = AppColors(
     page: Color(0xFFE7ECF3),
     panel: Color(0xFFFFFFFF),
@@ -75,6 +95,11 @@ class AppColors extends ThemeExtension<AppColors> {
     successSoft: Color(0xFFE2F4EA),
     warningSoft: Color(0xFFFBEFD8),
     dangerSoft: Color(0xFFFBE5E6),
+    onNavy: Color(0xFFFFFFFF),
+    onNavyMuted: Color(0x66FFFFFF),
+    onNavyFaint: Color(0x1AFFFFFF),
+    tickOnNavy: Color(0xFF53C4C7),
+    heroButton: Color(0xE6FFFFFF),
   );
 
   static const AppColors dark = AppColors(
@@ -99,6 +124,11 @@ class AppColors extends ThemeExtension<AppColors> {
     successSoft: Color(0xFF173226),
     warningSoft: Color(0xFF352A14),
     dangerSoft: Color(0xFF3A1B1D),
+    onNavy: Color(0xFFF2F4F8),
+    onNavyMuted: Color(0x66F2F4F8),
+    onNavyFaint: Color(0x1AF2F4F8),
+    tickOnNavy: Color(0xFF53C4C7),
+    heroButton: Color(0xE6171B22),
   );
 
   LinearGradient get ctaGradient => const LinearGradient(
@@ -130,6 +160,11 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? successSoft,
     Color? warningSoft,
     Color? dangerSoft,
+    Color? onNavy,
+    Color? onNavyMuted,
+    Color? onNavyFaint,
+    Color? tickOnNavy,
+    Color? heroButton,
   }) {
     return AppColors(
       page: page ?? this.page,
@@ -153,6 +188,11 @@ class AppColors extends ThemeExtension<AppColors> {
       successSoft: successSoft ?? this.successSoft,
       warningSoft: warningSoft ?? this.warningSoft,
       dangerSoft: dangerSoft ?? this.dangerSoft,
+      onNavy: onNavy ?? this.onNavy,
+      onNavyMuted: onNavyMuted ?? this.onNavyMuted,
+      onNavyFaint: onNavyFaint ?? this.onNavyFaint,
+      tickOnNavy: tickOnNavy ?? this.tickOnNavy,
+      heroButton: heroButton ?? this.heroButton,
     );
   }
 
@@ -183,6 +223,11 @@ class AppColors extends ThemeExtension<AppColors> {
       successSoft: mix(successSoft, other.successSoft),
       warningSoft: mix(warningSoft, other.warningSoft),
       dangerSoft: mix(dangerSoft, other.dangerSoft),
+      onNavy: mix(onNavy, other.onNavy),
+      onNavyMuted: mix(onNavyMuted, other.onNavyMuted),
+      onNavyFaint: mix(onNavyFaint, other.onNavyFaint),
+      tickOnNavy: mix(tickOnNavy, other.tickOnNavy),
+      heroButton: mix(heroButton, other.heroButton),
     );
   }
 }
