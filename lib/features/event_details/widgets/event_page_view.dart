@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:teamxperience/features/event_details/logic/event_page_content.dart';
 import 'package:teamxperience/features/event_details/logic/event_page_data.dart';
@@ -65,7 +66,8 @@ class EventPageView extends StatelessWidget {
     final place = [event.location ?? '', event.area ?? ''].where((s) => s.trim().isNotEmpty).join(' · ');
 
     final sections = <RouteTrailSection>[
-      if (story.isNotEmpty) RouteTrailSection(child: TrailSectionBody(title: 'Povestea', child: StorySection(text: story))),
+      if (story.isNotEmpty)
+        RouteTrailSection(child: TrailSectionBody(title: 'Povestea', child: StorySection(text: story))),
       if (event.missions.isNotEmpty)
         RouteTrailSection(
           child: TrailSectionBody(
@@ -76,9 +78,11 @@ class EventPageView extends StatelessWidget {
                 MissionTeaserCard(shown: teasers.shown, secret: teasers.secret),
                 if (kinds.isNotEmpty) ...[
                   const SizedBox(height: 8),
-                  Wrap(spacing: 5, runSpacing: 5, children: [
-                    for (final kind in kinds) AppChip(label: puzzleKindLabel(kind), icon: _kindIcon(kind)),
-                  ]),
+                  Wrap(
+                    spacing: 5,
+                    runSpacing: 5,
+                    children: [for (final kind in kinds) AppChip(label: puzzleKindLabel(kind), icon: _kindIcon(kind))],
+                  ),
                 ],
               ],
             ),
@@ -104,58 +108,69 @@ class EventPageView extends StatelessWidget {
       ),
     ];
 
-    return Scaffold(
-      appBar: appBar,
-      bottomNavigationBar: data.isAdmin
-          ? null
-          : EventSignupBar(
-              bar: signupBar(event: event, now: now, team: data.team, teamsCount: data.teamsCount),
-              onAction: onSignupAction,
-            ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            EventHero(
-              name: event.name ?? '',
-              place: place,
-              imageUrl: event.landingImageUrl,
-              badge: heroBadge(event, now),
-              showButtons: showHeroButtons,
-              onBack: onBack,
-              onShare: onShare,
-            ),
-            RouteStrip(
-              centerLabel: routeSummary(event.effectiveRouteKm, event.missions.length),
-              startLabel: event.punctDeStart ?? '',
-              endLabel: event.finishPoint ?? '',
-              mapLabel: 'Hartă',
-              onMapTap: event.hasStartPin ? onOpenMap : null,
-            ),
-            EventFacts(event: event, teamsCount: data.teamsCount),
-            RouteTrail(sections: sections),
-            if (adminActions.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(AppSpacing.page, 0, AppSpacing.page, AppSpacing.page),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    for (var i = 0; i < adminActions.length; i++) ...[
-                      if (i > 0) const SizedBox(height: AppSpacing.md),
-                      adminActions[i],
-                    ],
-                  ],
+    // The hero is navy, so the status bar icons over it are light.
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: appBar == null ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+      child: Scaffold(
+        appBar: appBar,
+        bottomNavigationBar:
+            data.isAdmin
+                ? null
+                : EventSignupBar(
+                  bar: signupBar(
+                    event: event,
+                    now: now,
+                    team: data.team,
+                    teamsCount: data.teamsCount,
+                    teamLoading: data.teamLoading,
+                  ),
+                  onAction: onSignupAction,
                 ),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              EventHero(
+                name: event.name ?? '',
+                place: place,
+                imageUrl: event.landingImageUrl,
+                badge: heroBadge(event, now),
+                showButtons: showHeroButtons,
+                onBack: onBack,
+                onShare: onShare,
               ),
-          ],
+              RouteStrip(
+                centerLabel: routeSummary(event.effectiveRouteKm, event.missions.length),
+                startLabel: event.punctDeStart ?? '',
+                endLabel: event.finishPoint ?? '',
+                mapLabel: 'Hartă',
+                onMapTap: event.hasStartPin ? onOpenMap : null,
+              ),
+              EventFacts(event: event, teamsCount: data.teamsCount),
+              RouteTrail(sections: sections),
+              if (adminActions.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(AppSpacing.page, 0, AppSpacing.page, AppSpacing.page),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (var i = 0; i < adminActions.length; i++) ...[
+                        if (i > 0) const SizedBox(height: AppSpacing.md),
+                        adminActions[i],
+                      ],
+                    ],
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   static IconData _kindIcon(PuzzleKind kind) => switch (kind) {
-        PuzzleKind.codes => TablerIcons.key,
-        PuzzleKind.photos => TablerIcons.camera,
-        PuzzleKind.places => TablerIcons.current_location,
-      };
+    PuzzleKind.codes => TablerIcons.key,
+    PuzzleKind.photos => TablerIcons.camera,
+    PuzzleKind.places => TablerIcons.current_location,
+  };
 }

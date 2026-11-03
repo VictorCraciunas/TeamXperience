@@ -30,6 +30,10 @@ class EventDetailsController extends ChangeNotifier {
   TeamService service = TeamService();
   List<Team> teams = [];
   Team? _team;
+
+  /// A registered player's team is looked up after the page opens; until then
+  /// the bar must not offer sign-up again.
+  late bool _teamLoading = !isAdmin && (user?.isRegisterToEvent(event.eventId) ?? false);
   int _organiserEvents = 0;
   bool _disposed = false;
 
@@ -45,6 +49,7 @@ class EventDetailsController extends ChangeNotifier {
         teamsCount: teams.length,
         organiserEventsCount: _organiserEvents,
         isAdmin: isAdmin,
+        teamLoading: _teamLoading,
       );
 
   /// Loads the registered teams and the player's own team. A lookup that
@@ -63,6 +68,7 @@ class EventDetailsController extends ChangeNotifier {
         debugPrint('Event details: team lookup failed: $e');
       }
     }
+    _teamLoading = false;
     if (!_disposed) notifyListeners();
   }
 

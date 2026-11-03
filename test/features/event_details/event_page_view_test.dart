@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/dev/sample_event.dart';
 import 'package:teamxperience/features/event_details/logic/event_page_data.dart';
@@ -165,5 +166,11 @@ void main() {
     ));
     await _see(tester, 'Vezi echipele înscrise');
     expect(find.text('Înscrie echipa'), findsNothing);
+  });
+
+  testWidgets('the status bar icons are light over the navy hero', (tester) async {
+    await _pump(tester);
+    final region = tester.widget<AnnotatedRegion<SystemUiOverlayStyle>>(find.byType(AnnotatedRegion<SystemUiOverlayStyle>).first);
+    expect(region.value.statusBarIconBrightness, Brightness.light);
   });
 }

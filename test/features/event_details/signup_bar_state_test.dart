@@ -105,4 +105,9 @@ void main() {
       ..dateDeadlineEnrollment = DateTime(2027, 3, 30, 23, 59);
     expect(bar(DateTime(2027, 3, 28, 12), e: e).title, 'Mai sunt 2 zile');
   });
+
+  test('while a registered player team loads, the bar waits instead of offering sign-up', () {
+    final b = signupBar(event: _event(), now: open, team: null, teamsCount: 12, teamLoading: true);
+    expect((b.title, b.actionLabel, b.action), ('Se încarcă echipa ta…', null, SignupAction.none));
+  });
 }

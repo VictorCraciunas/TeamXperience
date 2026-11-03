@@ -42,9 +42,18 @@ String _teamsLine(int n) => switch (n) {
     };
 
 /// The bar for [event] at [now]. [team] is the player's team, or null when
-/// they have none (or it could not be found).
-SignupBar signupBar({required Event event, required DateTime now, Team? team, required int teamsCount}) {
+/// they have none (or it could not be found). [teamLoading] is true while a
+/// registered player's team is still being looked up, so sign-up is not
+/// offered to them in the meantime.
+SignupBar signupBar({
+  required Event event,
+  required DateTime now,
+  Team? team,
+  required int teamsCount,
+  bool teamLoading = false,
+}) {
   if (isOverAt(event, now)) return const SignupBar(title: 'Evenimentul s-a încheiat');
+  if (team == null && teamLoading) return const SignupBar(title: 'Se încarcă echipa ta…');
 
   if (team != null) {
     if (team.hasStarted && !team.hasFinished) {
