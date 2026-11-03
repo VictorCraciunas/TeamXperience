@@ -23,8 +23,12 @@ class MissionTeaser {
   return (shown: shown, secret: e.missions.length - shown.length);
 }
 
-/// "Încă 4 misiuni secrete".
-String secretMissionsLine(int n) => n == 1 ? 'Încă o misiune secretă' : 'Încă $n misiuni secrete';
+/// "Încă 4 misiuni secrete", or "4 misiuni secrete" when [alone] (no public
+/// mission above it).
+String secretMissionsLine(int n, {bool alone = false}) {
+  if (alone) return n == 1 ? 'O misiune secretă' : '$n misiuni secrete';
+  return n == 1 ? 'Încă o misiune secretă' : 'Încă $n misiuni secrete';
+}
 
 /// The kinds of puzzle the chips under the missions name.
 enum PuzzleKind { codes, photos, places }

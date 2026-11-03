@@ -20,7 +20,7 @@ class MissionTeaserCard extends StatelessWidget {
         children: [
           for (var i = 0; i < shown.length; i++)
             MissionTeaserRow(teaser: shown[i], divider: i < shown.length - 1 || secret > 0),
-          if (secret > 0) SecretMissionsRow(count: secret),
+          if (secret > 0) SecretMissionsRow(count: secret, alone: shown.isEmpty),
         ],
       ),
     );

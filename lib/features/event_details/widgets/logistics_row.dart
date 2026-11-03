@@ -17,7 +17,8 @@ class LogisticsRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 12 * 1.45, child: Icon(icon, size: 15, color: context.colors.accent)),
+        // The mockup's 15 px icon sits on a 15 x 1.45 line.
+        SizedBox(height: 15 * 1.45, child: Icon(icon, size: 15, color: context.colors.accent)),
         const SizedBox(width: 8),
         Expanded(
           child: Text.rich(TextSpan(children: [

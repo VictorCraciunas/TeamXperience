@@ -30,21 +30,33 @@ class OrganiserCard extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(name, style: AppTextStyles.cardTitle(context), maxLines: 1, overflow: TextOverflow.ellipsis),
                 Text(
                   eventsCount == 1 ? 'un eveniment organizat' : '$eventsCount evenimente organizate',
                   style: AppTextStyles.smallMuted(context),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
           if (message != null)
-            IconButton(
-              onPressed: message,
-              tooltip: 'Scrie-i organizatorului',
-              icon: Icon(TablerIcons.message_circle, size: 18, color: colors.accent),
+            // As tall as the circle, so the card keeps the mockup's height.
+            Semantics(
+              button: true,
+              label: 'Scrie-i organizatorului',
+              child: InkResponse(
+                onTap: message,
+                radius: 22,
+                child: SizedBox(
+                  width: 34,
+                  height: 34,
+                  child: Icon(TablerIcons.message_circle, size: 18, color: colors.accent),
+                ),
+              ),
             ),
         ],
       ),

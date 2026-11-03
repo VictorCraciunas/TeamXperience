@@ -7,9 +7,12 @@ import 'dashed_circle.dart';
 
 /// The last row of the mission card: how many missions stay secret.
 class SecretMissionsRow extends StatelessWidget {
-  const SecretMissionsRow({super.key, required this.count});
+  const SecretMissionsRow({super.key, required this.count, this.alone = false});
 
   final int count;
+
+  /// No public mission above it, so it does not say "Încă".
+  final bool alone;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +34,7 @@ class SecretMissionsRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(secretMissionsLine(count), style: AppTextStyles.cardTitle(context)),
+                  Text(secretMissionsLine(count, alone: alone), style: AppTextStyles.cardTitle(context)),
                   Text('Se deblochează în ziua jocului', style: AppTextStyles.smallMuted(context)),
                 ],
               ),

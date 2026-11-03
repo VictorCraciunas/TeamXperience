@@ -51,7 +51,7 @@ String initialsOf(String name) {
   final words = name.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
   if (words.isEmpty) return '';
   if (words.length > 1) return (words[0][0] + words[1][0]).toUpperCase();
-  final capitals = RegExp('[A-ZĂÂÎȘȚ]').allMatches(words[0]).map((m) => m.group(0)!).toList();
+  final capitals = RegExp('[A-ZĂÂÎȘȚ]').allMatches(words[0]).map((m) => m.group(0) ?? '').toList();
   if (capitals.length >= 2) return capitals.take(2).join();
   return words[0][0].toUpperCase();
 }

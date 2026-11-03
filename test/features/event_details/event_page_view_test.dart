@@ -109,7 +109,7 @@ void main() {
   testWidgets('only secret missions show only the secret row', (tester) async {
     final e = sampleEvent()..missions = [Mission(id: '0', title: 'A'), Mission(id: '1')];
     await _pump(tester, event: e);
-    await _see(tester, 'Încă 2 misiuni secrete');
+    await _see(tester, '2 misiuni secrete');
     expect(find.text('A'), findsNothing);
   });
 
