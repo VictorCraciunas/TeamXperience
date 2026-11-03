@@ -1,7 +1,8 @@
 import 'package:teamxperience/model/event.dart';
 
-/// What happens when a team types the start code.
-enum StartCodeResult { ok, wrong, tooEarly, closed }
+/// What happens when a team types the start code. [noTeam] and [failed] come
+/// from the team lookup after the code itself was right.
+enum StartCodeResult { ok, wrong, tooEarly, closed, noTeam, failed }
 
 /// The code without any spaces and in lower case, so "Har ti" matches "HARTI".
 String normaliseCode(String code) => code.replaceAll(RegExp(r'\s'), '').toLowerCase();
