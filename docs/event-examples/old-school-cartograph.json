@@ -1,0 +1,656 @@
+{
+  "name": "Moștenirea Cartografului",
+  "description": "O vânătoare de comori ca pe vremuri: hartă, ghicitori, scrisori cifrate și drumuri pe jos prin centrul vechi al Sibiului. Un cartograf bătrân a ascuns o comoară și a lăsat doar câteva indicii pe hârtie veche.",
+  "location": "Sibiu, Centrul Istoric",
+  "punctDeStart": "Piața Mare, lângă Turnul Sfatului",
+  "type": "PUBLIC",
+  "startCode": "CARTOGRAF",
+  "dateEvent": "2026-11-28T15:00",
+  "dateStartEnrollment": "2026-11-03T09:00",
+  "dateDeadlineEnrollment": "2026-11-27T23:59",
+  "lungimeTraseu": "1,2 km",
+  "durata": "2 ore",
+  "dificultate": "Ușoară",
+  "landingImageUrl": null,
+  "taskBackgroundImageUrl": null,
+  "screenAnimation": "fade",
+  "animationDuration": 600,
+  "animationDelay": 150,
+  "missions": [
+    {
+      "puzzles": [
+        {
+          "type": "code",
+          "code": "CEAS",
+          "indiciu": "Se află în turnul din Piața Mare.",
+          "components": [
+            {
+              "type": "text",
+              "text": "Capitolul I",
+              "fontFamily": "Cinzel",
+              "fontWeight": "Bold (700)",
+              "fontSize": 24,
+              "letterSpacing": 2,
+              "textColor": "#8B1E1E",
+              "textAlign": "center",
+              "spaceBelow": 10
+            },
+            {
+              "type": "text",
+              "text": "✦  ✦  ✦",
+              "fontFamily": "Cinzel",
+              "fontSize": 16,
+              "textColor": "#8B5E3C",
+              "textAlign": "center",
+              "spaceBelow": 22
+            },
+            {
+              "type": "text",
+              "text": "Dragă căutătorule,\nam ascuns ceva de preț în acest oraș. Ca să afli unde, trebuie să rezolvi, pe rând, ghicitorile mele.\nPrima:",
+              "fontFamily": "Special Elite",
+              "fontSize": 17,
+              "lineHeight": 1.5,
+              "textColor": "#3B2A1A",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 35,
+              "spaceBelow": 24
+            },
+            {
+              "type": "text",
+              "text": "„Am o față cu cifre, dar nu zâmbesc.\nArăt ora fără să vorbesc.”",
+              "fontFamily": "Caveat",
+              "fontWeight": "Bold (700)",
+              "fontSize": 30,
+              "textColor": "#8B1E1E",
+              "textAlign": "center",
+              "italic": true,
+              "spaceBelow": 28,
+              "animation": "none"
+            },
+            {
+              "type": "text",
+              "text": "Ce sunt?",
+              "fontFamily": "Special Elite",
+              "fontSize": 17,
+              "lineHeight": 1.5,
+              "textColor": "#3B2A1A",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 35,
+              "spaceBelow": 28
+            },
+            {
+              "type": "code",
+              "codeLength": 4,
+              "inputType": "Separated",
+              "capsLock": "CapsLock",
+              "fontFamily": "Special Elite",
+              "fontSize": 24,
+              "textColor": "#3B2A1A",
+              "frameBackgroundColor": "#F4E8CF",
+              "inputBackgroundColor": "#FFF8E6",
+              "colorBorderContainer": "#8B5E3C",
+              "colorBorderInput": "#5A3A1E",
+              "frameCornerRadius": 6,
+              "inputCornerRadius": 3,
+              "boxHeight": 52,
+              "shadowDistance": 3,
+              "shadowBlur": 6,
+              "spaceBelow": 30
+            },
+            {
+              "type": "button",
+              "buttonLabel": "TRIMITE RĂSPUNSUL",
+              "fontFamily": "Cinzel",
+              "fontWeight": "Bold (700)",
+              "fontSize": 14,
+              "letterSpacing": 3,
+              "paddingY": 10,
+              "buttonColor": "#5A3A1E",
+              "buttonColorOnTap": "#8B1E1E",
+              "buttonTextColor": "#F4E8CF",
+              "buttonTextColorOnTap": "#FFF8E6",
+              "borderColor": "#3B2A1A",
+              "borderWidth": 2,
+              "cornerRadius": 4,
+              "shadowDistance": 3,
+              "shadowBlur": 5
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "code": "DOUAZECI",
+          "indiciu": "XIV înseamnă 14, VI înseamnă 6. Scrie rezultatul cu litere, fără diacritice.",
+          "components": [
+            {
+              "type": "text",
+              "text": "Numere vechi",
+              "fontFamily": "Cinzel",
+              "fontWeight": "Bold (700)",
+              "fontSize": 24,
+              "letterSpacing": 2,
+              "textColor": "#8B1E1E",
+              "textAlign": "center",
+              "spaceBelow": 10
+            },
+            {
+              "type": "text",
+              "text": "✦  ✦  ✦",
+              "fontFamily": "Cinzel",
+              "fontSize": 16,
+              "textColor": "#8B5E3C",
+              "textAlign": "center",
+              "spaceBelow": 22
+            },
+            {
+              "type": "text",
+              "text": "Negustorii de odinioară numărau cu litere romane. Rezolvă socoteala și scrie rezultatul cu litere, fără diacritice:",
+              "fontFamily": "Special Elite",
+              "fontSize": 17,
+              "lineHeight": 1.5,
+              "textColor": "#3B2A1A",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 35,
+              "spaceBelow": 24
+            },
+            {
+              "type": "text",
+              "text": "XIV + VI = ?",
+              "fontFamily": "Caveat",
+              "fontWeight": "Bold (700)",
+              "fontSize": 38,
+              "textColor": "#8B1E1E",
+              "textAlign": "center",
+              "italic": true,
+              "spaceBelow": 28,
+              "letterSpacing": 4,
+              "animation": "none"
+            },
+            {
+              "type": "code",
+              "codeLength": 8,
+              "inputType": "Separated",
+              "capsLock": "CapsLock",
+              "fontFamily": "Special Elite",
+              "fontSize": 24,
+              "textColor": "#3B2A1A",
+              "frameBackgroundColor": "#F4E8CF",
+              "inputBackgroundColor": "#FFF8E6",
+              "colorBorderContainer": "#8B5E3C",
+              "colorBorderInput": "#5A3A1E",
+              "frameCornerRadius": 6,
+              "inputCornerRadius": 3,
+              "boxHeight": 52,
+              "shadowDistance": 3,
+              "shadowBlur": 6,
+              "spaceBelow": 30
+            },
+            {
+              "type": "button",
+              "buttonLabel": "TRIMITE RĂSPUNSUL",
+              "fontFamily": "Cinzel",
+              "fontWeight": "Bold (700)",
+              "fontSize": 14,
+              "letterSpacing": 3,
+              "paddingY": 10,
+              "buttonColor": "#5A3A1E",
+              "buttonColorOnTap": "#8B1E1E",
+              "buttonTextColor": "#F4E8CF",
+              "buttonTextColorOnTap": "#FFF8E6",
+              "borderColor": "#3B2A1A",
+              "borderWidth": 2,
+              "cornerRadius": 4,
+              "shadowDistance": 3,
+              "shadowBlur": 5
+            }
+          ]
+        },
+        {
+          "type": "geolocation",
+          "latitude": 45.7976125,
+          "longitude": 24.1521323,
+          "indiciu": "Turnul cu ceas din Piața Mare.",
+          "components": [
+            {
+              "type": "text",
+              "text": "Primul semn",
+              "fontFamily": "Cinzel",
+              "fontWeight": "Bold (700)",
+              "fontSize": 24,
+              "letterSpacing": 2,
+              "textColor": "#8B1E1E",
+              "textAlign": "center",
+              "spaceBelow": 10
+            },
+            {
+              "type": "text",
+              "text": "✦  ✦  ✦",
+              "fontFamily": "Cinzel",
+              "fontSize": 16,
+              "textColor": "#8B5E3C",
+              "textAlign": "center",
+              "spaceBelow": 22
+            },
+            {
+              "type": "text",
+              "text": "Cartograful își începea toate drumurile la baza turnului care numără orele orașului.\nMergeți acolo, ca să primiți următoarea pagină.",
+              "fontFamily": "Special Elite",
+              "fontSize": 17,
+              "lineHeight": 1.5,
+              "textColor": "#3B2A1A",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 35,
+              "spaceBelow": 24
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "puzzles": [
+        {
+          "type": "code",
+          "code": "HARTA",
+          "indiciu": "Cu ea nu te rătăcești.",
+          "components": [
+            {
+              "type": "text",
+              "text": "Capitolul II",
+              "fontFamily": "Cinzel",
+              "fontWeight": "Bold (700)",
+              "fontSize": 24,
+              "letterSpacing": 2,
+              "textColor": "#8B1E1E",
+              "textAlign": "center",
+              "spaceBelow": 10
+            },
+            {
+              "type": "text",
+              "text": "✦  ✦  ✦",
+              "fontFamily": "Cinzel",
+              "fontSize": 16,
+              "textColor": "#8B5E3C",
+              "textAlign": "center",
+              "spaceBelow": 22
+            },
+            {
+              "type": "text",
+              "text": "Bravo! Mergem mai departe.",
+              "fontFamily": "Special Elite",
+              "fontSize": 17,
+              "lineHeight": 1.5,
+              "textColor": "#3B2A1A",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 35,
+              "spaceBelow": 24
+            },
+            {
+              "type": "text",
+              "text": "„Am râuri fără apă, orașe fără case\nși drumuri fără pași.”",
+              "fontFamily": "Caveat",
+              "fontWeight": "Bold (700)",
+              "fontSize": 30,
+              "textColor": "#8B1E1E",
+              "textAlign": "center",
+              "italic": true,
+              "spaceBelow": 28,
+              "animation": "none"
+            },
+            {
+              "type": "text",
+              "text": "Ce sunt?",
+              "fontFamily": "Special Elite",
+              "fontSize": 17,
+              "lineHeight": 1.5,
+              "textColor": "#3B2A1A",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 35,
+              "spaceBelow": 28
+            },
+            {
+              "type": "code",
+              "codeLength": 5,
+              "inputType": "Separated",
+              "capsLock": "CapsLock",
+              "fontFamily": "Special Elite",
+              "fontSize": 24,
+              "textColor": "#3B2A1A",
+              "frameBackgroundColor": "#F4E8CF",
+              "inputBackgroundColor": "#FFF8E6",
+              "colorBorderContainer": "#8B5E3C",
+              "colorBorderInput": "#5A3A1E",
+              "frameCornerRadius": 6,
+              "inputCornerRadius": 3,
+              "boxHeight": 52,
+              "shadowDistance": 3,
+              "shadowBlur": 6,
+              "spaceBelow": 30
+            },
+            {
+              "type": "button",
+              "buttonLabel": "TRIMITE RĂSPUNSUL",
+              "fontFamily": "Cinzel",
+              "fontWeight": "Bold (700)",
+              "fontSize": 14,
+              "letterSpacing": 3,
+              "paddingY": 10,
+              "buttonColor": "#5A3A1E",
+              "buttonColorOnTap": "#8B1E1E",
+              "buttonTextColor": "#F4E8CF",
+              "buttonTextColorOnTap": "#FFF8E6",
+              "borderColor": "#3B2A1A",
+              "borderWidth": 2,
+              "cornerRadius": 4,
+              "shadowDistance": 3,
+              "shadowBlur": 5
+            }
+          ]
+        },
+        {
+          "type": "geolocation",
+          "latitude": 45.7983213,
+          "longitude": 24.1507979,
+          "indiciu": "Podul dintre Piața Mare și Piața Mică.",
+          "components": [
+            {
+              "type": "text",
+              "text": "Podul care ține minciuna",
+              "fontFamily": "Cinzel",
+              "fontWeight": "Bold (700)",
+              "fontSize": 24,
+              "letterSpacing": 2,
+              "textColor": "#8B1E1E",
+              "textAlign": "center",
+              "spaceBelow": 10
+            },
+            {
+              "type": "text",
+              "text": "✦  ✦  ✦",
+              "fontFamily": "Cinzel",
+              "fontSize": 16,
+              "textColor": "#8B5E3C",
+              "textAlign": "center",
+              "spaceBelow": 22
+            },
+            {
+              "type": "text",
+              "text": "Se spune că podul acesta scârțâie atunci când cineva spune o minciună.\nMergeți pe el și spuneți doar adevărul.",
+              "fontFamily": "Special Elite",
+              "fontSize": 17,
+              "lineHeight": 1.5,
+              "textColor": "#3B2A1A",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 35,
+              "spaceBelow": 24
+            }
+          ]
+        },
+        {
+          "type": "imageToUpload",
+          "components": [
+            {
+              "type": "text",
+              "text": "Portretul echipei",
+              "fontFamily": "Cinzel",
+              "fontWeight": "Bold (700)",
+              "fontSize": 24,
+              "letterSpacing": 2,
+              "textColor": "#8B1E1E",
+              "textAlign": "center",
+              "spaceBelow": 10
+            },
+            {
+              "type": "text",
+              "text": "✦  ✦  ✦",
+              "fontFamily": "Cinzel",
+              "fontSize": 16,
+              "textColor": "#8B5E3C",
+              "textAlign": "center",
+              "spaceBelow": 22
+            },
+            {
+              "type": "text",
+              "text": "Cartograful a păstrat în sertar un portret de familie, cu fețe serioase, ca pe vremuri.\nFăceți o poză de echipă în care nimeni nu zâmbește. Un organizator o aprobă.",
+              "fontFamily": "Special Elite",
+              "fontSize": 17,
+              "lineHeight": 1.5,
+              "textColor": "#3B2A1A",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 35,
+              "spaceBelow": 24
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "puzzles": [
+        {
+          "type": "code",
+          "code": "COMOARA",
+          "indiciu": "Fiecare literă a fost mutată cu 3 poziții înainte: A devine D.",
+          "components": [
+            {
+              "type": "text",
+              "text": "Capitolul III",
+              "fontFamily": "Cinzel",
+              "fontWeight": "Bold (700)",
+              "fontSize": 24,
+              "letterSpacing": 2,
+              "textColor": "#8B1E1E",
+              "textAlign": "center",
+              "spaceBelow": 10
+            },
+            {
+              "type": "text",
+              "text": "✦  ✦  ✦",
+              "fontFamily": "Cinzel",
+              "fontSize": 16,
+              "textColor": "#8B5E3C",
+              "textAlign": "center",
+              "spaceBelow": 22
+            },
+            {
+              "type": "text",
+              "text": "Aproape ați ajuns. Cartograful a scris numele a ceea ce ascunde cu un cifru vechi, mutând fiecare literă cu 3 poziții înainte în alfabet:",
+              "fontFamily": "Special Elite",
+              "fontSize": 17,
+              "lineHeight": 1.5,
+              "textColor": "#3B2A1A",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 35,
+              "spaceBelow": 24
+            },
+            {
+              "type": "text",
+              "text": "F R P R D U D",
+              "fontFamily": "Caveat",
+              "fontWeight": "Bold (700)",
+              "fontSize": 40,
+              "textColor": "#8B1E1E",
+              "textAlign": "center",
+              "italic": true,
+              "spaceBelow": 28,
+              "letterSpacing": 8,
+              "animation": "none"
+            },
+            {
+              "type": "code",
+              "codeLength": 7,
+              "inputType": "Separated",
+              "capsLock": "CapsLock",
+              "fontFamily": "Special Elite",
+              "fontSize": 24,
+              "textColor": "#3B2A1A",
+              "frameBackgroundColor": "#F4E8CF",
+              "inputBackgroundColor": "#FFF8E6",
+              "colorBorderContainer": "#8B5E3C",
+              "colorBorderInput": "#5A3A1E",
+              "frameCornerRadius": 6,
+              "inputCornerRadius": 3,
+              "boxHeight": 52,
+              "shadowDistance": 3,
+              "shadowBlur": 6,
+              "spaceBelow": 30
+            },
+            {
+              "type": "button",
+              "buttonLabel": "TRIMITE RĂSPUNSUL",
+              "fontFamily": "Cinzel",
+              "fontWeight": "Bold (700)",
+              "fontSize": 14,
+              "letterSpacing": 3,
+              "paddingY": 10,
+              "buttonColor": "#5A3A1E",
+              "buttonColorOnTap": "#8B1E1E",
+              "buttonTextColor": "#F4E8CF",
+              "buttonTextColorOnTap": "#FFF8E6",
+              "borderColor": "#3B2A1A",
+              "borderWidth": 2,
+              "cornerRadius": 4,
+              "shadowDistance": 3,
+              "shadowBlur": 5
+            }
+          ]
+        },
+        {
+          "type": "geolocation",
+          "latitude": 45.797768,
+          "longitude": 24.1500813,
+          "indiciu": "Biserica cu turnul înalt din Piața Huet.",
+          "components": [
+            {
+              "type": "text",
+              "text": "Ultimul drum",
+              "fontFamily": "Cinzel",
+              "fontWeight": "Bold (700)",
+              "fontSize": 24,
+              "letterSpacing": 2,
+              "textColor": "#8B1E1E",
+              "textAlign": "center",
+              "spaceBelow": 10
+            },
+            {
+              "type": "text",
+              "text": "✦  ✦  ✦",
+              "fontFamily": "Cinzel",
+              "fontSize": 16,
+              "textColor": "#8B5E3C",
+              "textAlign": "center",
+              "spaceBelow": 22
+            },
+            {
+              "type": "text",
+              "text": "Ultimul indiciu este lângă biserica cu turnul înalt, în Piața Huet.\nMergeți acolo.",
+              "fontFamily": "Special Elite",
+              "fontSize": 17,
+              "lineHeight": 1.5,
+              "textColor": "#3B2A1A",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 35,
+              "spaceBelow": 24
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "code": "OCHI",
+          "indiciu": "Casele din Sibiu au ferestre mici pe acoperiș.",
+          "components": [
+            {
+              "type": "text",
+              "text": "Secretul orașului",
+              "fontFamily": "Cinzel",
+              "fontWeight": "Bold (700)",
+              "fontSize": 24,
+              "letterSpacing": 2,
+              "textColor": "#8B1E1E",
+              "textAlign": "center",
+              "spaceBelow": 10
+            },
+            {
+              "type": "text",
+              "text": "✦  ✦  ✦",
+              "fontFamily": "Cinzel",
+              "fontSize": 16,
+              "textColor": "#8B5E3C",
+              "textAlign": "center",
+              "spaceBelow": 22
+            },
+            {
+              "type": "text",
+              "text": "Ultima întrebare. Ridicați privirea.",
+              "fontFamily": "Special Elite",
+              "fontSize": 17,
+              "lineHeight": 1.5,
+              "textColor": "#3B2A1A",
+              "textAlign": "left",
+              "animation": "typewriter",
+              "typewriterSpeed": 35,
+              "spaceBelow": 24
+            },
+            {
+              "type": "text",
+              "text": "„Ce au casele sibiene pe acoperiș,\nca și cum ne-ar urmări?”",
+              "fontFamily": "Caveat",
+              "fontWeight": "Bold (700)",
+              "fontSize": 30,
+              "textColor": "#8B1E1E",
+              "textAlign": "center",
+              "italic": true,
+              "spaceBelow": 28,
+              "animation": "none"
+            },
+            {
+              "type": "code",
+              "codeLength": 4,
+              "inputType": "Separated",
+              "capsLock": "CapsLock",
+              "fontFamily": "Special Elite",
+              "fontSize": 24,
+              "textColor": "#3B2A1A",
+              "frameBackgroundColor": "#F4E8CF",
+              "inputBackgroundColor": "#FFF8E6",
+              "colorBorderContainer": "#8B5E3C",
+              "colorBorderInput": "#5A3A1E",
+              "frameCornerRadius": 6,
+              "inputCornerRadius": 3,
+              "boxHeight": 52,
+              "shadowDistance": 3,
+              "shadowBlur": 6,
+              "spaceBelow": 30
+            },
+            {
+              "type": "button",
+              "buttonLabel": "TRIMITE RĂSPUNSUL",
+              "fontFamily": "Cinzel",
+              "fontWeight": "Bold (700)",
+              "fontSize": 14,
+              "letterSpacing": 3,
+              "paddingY": 10,
+              "buttonColor": "#5A3A1E",
+              "buttonColorOnTap": "#8B1E1E",
+              "buttonTextColor": "#F4E8CF",
+              "buttonTextColorOnTap": "#FFF8E6",
+              "borderColor": "#3B2A1A",
+              "borderWidth": 2,
+              "cornerRadius": 4,
+              "shadowDistance": 3,
+              "shadowBlur": 5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
