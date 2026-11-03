@@ -44,3 +44,17 @@ String puzzleKindLabel(PuzzleKind k) => switch (k) {
       PuzzleKind.photos => 'Fotografii',
       PuzzleKind.places => 'Locuri pe hartă',
     };
+
+/// The organiser of events without a name.
+const defaultOrganiser = 'TeamXperience';
+
+String _organiserOf(String? name) {
+  final trimmed = name?.trim() ?? '';
+  return trimmed.isEmpty ? defaultOrganiser : trimmed;
+}
+
+/// How many of [published] the organiser named [name] runs.
+int organiserEventsCount(List<Event> published, String? name) {
+  final wanted = _organiserOf(name);
+  return published.where((e) => _organiserOf(e.organiserName) == wanted).length;
+}

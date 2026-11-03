@@ -63,4 +63,17 @@ void main() {
       expect([for (final k in PuzzleKind.values) puzzleKindLabel(k)], ['Coduri', 'Fotografii', 'Locuri pe hartă']);
     });
   });
+
+  test('organiser events count matches the name, blank counting as TeamXperience', () {
+    final events = [
+      Event(eventId: '1'),
+      Event(eventId: '2', organiserName: 'TeamXperience'),
+      Event(eventId: '3', organiserName: '  '),
+      Event(eventId: '4', organiserName: 'Asociația Sibiu'),
+    ];
+    expect(organiserEventsCount(events, null), 3);
+    expect(organiserEventsCount(events, 'TeamXperience'), 3);
+    expect(organiserEventsCount(events, ' Asociația Sibiu '), 1);
+    expect(organiserEventsCount(events, 'Altcineva'), 0);
+  });
 }

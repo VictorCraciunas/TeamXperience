@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
-import 'package:teamxperience/ui/ui.dart';
-import 'package:provider/provider.dart'; // Add this import
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/event_details/controller/event_details_controller.dart';
-import 'package:teamxperience/features/event_details/widgets/already_registered_card.dart';
-import 'package:teamxperience/features/event_details/widgets/detail_widget.dart';
+import 'package:teamxperience/features/event_details/widgets/event_page_view.dart';
 import 'package:teamxperience/model/event.dart';
-import 'package:teamxperience/state_management/user_provider.dart'; // Add this import
-import 'package:teamxperience/utils/calendar_helper.dart';
-import 'package:teamxperience/utils/image_helper.dart';
-import 'package:teamxperience/ui/components/event/event_image.dart';
-import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
+import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
+import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 class EventDetailsScreen extends StatefulWidget {
   const EventDetailsScreen({super.key});
@@ -23,222 +16,63 @@ class EventDetailsScreen extends StatefulWidget {
 
 class _EventDetailsScreenState extends State<EventDetailsScreen> {
   late EventDetailsController controller;
-  late bool isAdmin;
   bool _initialized = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_initialized) {
-      final arguments =
-          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-      final event = arguments['event'] as Event;
-      isAdmin = arguments['isAdmin'] as bool? ?? false;
-
-      controller = EventDetailsController(event, context);
-      _initialized = true;
-    }
-  }
-
-  void _navigateToRegisterTeam() {
-    Navigator.pushNamed(
-      context,
-      Routes.registerTeam,
-      arguments: controller.event,
-    );
-  }
-
-  void _navigateToTeamDetails() {
-    Navigator.pushNamed(
-      context,
-      Routes.registerTeamDetails,
-      arguments: {'event': controller.event, 'user': controller.user},
-    );
+    if (_initialized) return;
+    final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ?? const {};
+    final event = arguments['event'] as Event;
+    final isAdmin = arguments['isAdmin'] as bool? ?? false;
+    controller = EventDetailsController(event, context, isAdmin: isAdmin);
+    _initialized = true;
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  List<Widget> _adminActions() => [
+        AppButton(
+          label: 'Vezi echipele înscrise',
+          onPressed: () => Navigator.pushNamed(context, Routes.eventRegisteredTeams, arguments: controller.event),
+        ),
+        AppButton(
+          label: 'Gestionează evenimentul',
+          onPressed: () => Navigator.pushNamed(context, Routes.eventManagement, arguments: controller.event),
+          leading: const AppSvgIcon('assets/images/notification2.svg', width: 24, height: 24),
+        ),
+      ];
+
+  @override
   Widget build(BuildContext context) {
-    final eventDateTime = CalendarHelper.formatEventDateTime(
-      controller.event.dateEvent,
-    );
-    final eventDate = eventDateTime['date'] ?? '';
-    final eventTime = eventDateTime['time'] ?? '';
-
-    return Consumer<UserProvider>(
-      // Wrap the entire Scaffold with Consumer
-      builder: (context, userProvider, child) {
-        final currentUser = userProvider.currentUser;
-        final isRegistered =
-            currentUser?.isRegisterToEvent(controller.event.eventId) ?? false;
-
-        return Scaffold(
-          appBar:
-              isAdmin == true
-                  ? MyAppBar(
-                    appBarText: "Detalii Eveniment",
-                    iconString: 'assets/images/menu.svg',
-                    showDropdown: true,
-                    event: controller.event,
-                  )
-                  : const MyAppBar(appBarText: "Detalii Eveniment"),
-          bottomNavigationBar:
-              isAdmin == true
-                  ? SafeArea(
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      child: AppButton(
-                        label: "Vezi echipele înscrise",
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            Routes.eventRegisteredTeams,
-                            arguments: controller.event,
-                          );
-                        },
-                      ),
-                    ),
-                  )
-                  : !isRegistered
-                  ? SafeArea(
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      child: AppButton(
-                        label:
-                            !isRegistered
-                                ? "Înscrie-ți echipa"
-                                : "Vezi detalii înscriere",
-                        onPressed: () {
-                          if (!isAdmin) {
-                            if (!isRegistered) {
-                              _navigateToRegisterTeam();
-                            } else {
-                              _navigateToTeamDetails();
-                            }
-                          }
-                        },
-                        leading: AppSvgIcon(
-                          'assets/images/user_icon.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                      ),
-                    ),
-                  )
-                  : null,
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 15),
-                    AnimatedBuilder(
-                      animation: controller,
-                      builder: (context, child) {
-                        final totalPeople = controller.teams.fold<int>(
-                          0,
-                          (sum, team) => sum + team.userIds.length,
-                        );
-
-                        return EventImage(
-                          event: controller.event,
-                          eventImageCache: ImageHelper.eventImageCache,
-                          isAdmin: isAdmin,
-                          height: 194,
-                          nrTeams: controller.teams.length,
-                          nrPerson: totalPeople,
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      controller.event.name ?? "Nu avem nume eveniment",
-                      style: TextStyle(
-                        fontSize: 19,
-                        fontWeight: FontWeight.w600,
-                        color: context.colors.text,
-                      ),
-                    ),
-                    if (isRegistered == true)
-                      AlreadyRegisteredCard(
-                        event: controller.event,
-                        onDetailsTap: () => _navigateToTeamDetails(),
-                      ),
-                    const SizedBox(height: 20),
-                    DetailWidget(
-                      text1: eventDate,
-                      text2: eventTime,
-                      iconPath: 'assets/images/calendar_icon.svg',
-                    ),
-                    const SizedBox(height: 10),
-                    DetailWidget(
-                      text1: controller.event.location ?? "No Location",
-                      text2:
-                          'Punct de start: ${controller.event.punctDeStart ?? "No starting point"}',
-                      iconPath: 'assets/images/location_map.svg',
-                    ),
-                    const SizedBox(height: 30),
-                    Text(
-                      controller.event.description ?? "No description",
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w300,
-                        color: context.colors.text,
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-
-                    // ------ Detalii ------
-                    Text(
-                      "Detalii",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: context.colors.text,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    DetailWidget(
-                      text1: "Lungime traseu",
-                      text2:
-                          controller.event.lungimeTraseu ?? "No track length",
-                      iconPath: 'assets/images/traseu.svg',
-                    ),
-                    const SizedBox(height: 10),
-                    DetailWidget(
-                      text1: "Durata",
-                      text2: controller.event.durata ?? "No duration",
-                      iconPath: 'assets/images/timer.svg',
-                    ),
-                    const SizedBox(height: 10),
-                    DetailWidget(
-                      text1: "Dificultate",
-                      text2: controller.event.dificultate ?? "No dificulty ",
-                      iconPath: 'assets/images/location_map.svg',
-                    ),
-                    const SizedBox(height: 20),
-                    if (isAdmin == true)
-                      AppButton(
-                        label: "Gestionează evenimentul",
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            Routes.eventManagement,
-                            arguments: controller.event,
-                          );
-                        },
-                        leading: AppSvgIcon(
-                          'assets/images/notification2.svg',
-                          width: 24,
-                          height: 24,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, _) {
+        final isAdmin = controller.isAdmin;
+        final event = controller.event;
+        return EventPageView(
+          event: event,
+          data: controller.data,
+          now: DateTime.now(),
+          onBack: () => Navigator.maybePop(context),
+          onShare: controller.share,
+          onOpenMap: event.hasStartPin ? controller.openMap : null,
+          onMessageOrganiser: controller.messageOrganiser,
+          onSignupAction: controller.onSignupAction,
+          showHeroButtons: !isAdmin,
+          adminActions: isAdmin ? _adminActions() : const [],
+          appBar: isAdmin
+              ? MyAppBar(
+                  appBarText: 'Detalii Eveniment',
+                  iconString: 'assets/images/menu.svg',
+                  showDropdown: true,
+                  event: event,
+                )
+              : null,
         );
       },
     );

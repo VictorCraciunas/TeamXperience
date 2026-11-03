@@ -56,8 +56,6 @@ class EventPageView extends StatelessWidget {
   /// The admin app bar; players have none, the hero is the top.
   final PreferredSizeWidget? appBar;
 
-  static const _organiser = 'TeamXperience';
-
   @override
   Widget build(BuildContext context) {
     final teasers = missionTeasers(event);
@@ -98,7 +96,7 @@ class EventPageView extends StatelessWidget {
         child: TrailSectionBody(
           title: 'Organizator',
           child: OrganiserCard(
-            name: organiser.isEmpty ? _organiser : organiser,
+            name: organiser.isEmpty ? defaultOrganiser : organiser,
             eventsCount: data.organiserEventsCount,
             onMessage: onMessageOrganiser,
           ),
