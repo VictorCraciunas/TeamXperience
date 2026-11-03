@@ -51,6 +51,9 @@ class Event {
 
   static const Duration maxDuration = Duration(hours: 3);
 
+  /// How long after the start teams can still type the start code.
+  static const Duration enterWindow = Duration(minutes: 60);
+
   bool get hasExpired {
     final start = dateEvent;
     if (start == null) return false;

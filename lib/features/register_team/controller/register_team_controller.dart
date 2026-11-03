@@ -78,20 +78,21 @@ class RegisterTeamController {
         thirdStep = true;
       } else {
         // Final step - submit form
-        final user = Provider.of<UserProvider>(context, listen: false).currentUser;
-        if (user != null) {
-          await teamService.addTeam(
-            numeEchipaController.text,
-            componentaEchipeiController.text,
-            numeCapitanController.text,
-            numarDeTelefonController.text,
-            emailCapitanController.text,
-            int.tryParse(numarPersoaneController.text) ?? 0,
-            user,
-            event,
-            context
-          );
-        }
+        final userProvider = context.read<UserProvider>();
+        final user = userProvider.currentUser;
+        if (user == null) return;
+        await teamService.addTeam(
+          numeEchipaController.text,
+          componentaEchipeiController.text,
+          numeCapitanController.text,
+          numarDeTelefonController.text,
+          emailCapitanController.text,
+          int.tryParse(numarPersoaneController.text) ?? 0,
+          user,
+          event,
+        );
+        userProvider.addRegisteredEvent(event.eventId);
+        if (!context.mounted) return;
         MySnackBars.successSnackBar(context, title: "Succes", message: "Ai inregistrat echipa cu succes");
         navigateToTeamDetails();
       }

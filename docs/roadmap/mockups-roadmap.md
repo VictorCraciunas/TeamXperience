@@ -394,7 +394,7 @@ Each step needs the logic phase shown in brackets.
 
 - Dark mode pass on every new screen. The event theme stays as authored.
 - Empty, loading and error states for each list: no events, no team, no memories, offline.
-- Outdoor use: tap targets at least 48 px, high contrast in the game, no text under 12 px, works one-handed.
+- Outdoor use: tap targets at least 48 px, high contrast in the game, works one-handed. Text sizes follow the mockups 1:1 (1 CSS px = 1 dp, so 11 px captions stay 11).
 - Animations from the mockups: countdown tick, route dot pulse on "now", code box shake, pop on correct answer (exists).
 - `flutter analyze` and `flutter test` clean. `no_hardcoded_colors_test` keeps passing (new feature files add nothing to the allow-list).
 - Golden tests for the U1 components and the main screens at 390×844.

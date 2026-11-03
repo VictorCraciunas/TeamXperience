@@ -7,6 +7,7 @@ import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import '../../../model/event.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
+import 'package:teamxperience/ui/components/feedback/snackbars.dart';
 
 class EnterCode extends StatefulWidget {
   const EnterCode({super.key});
@@ -23,6 +24,13 @@ class _EnterCodeState extends State<EnterCode> {
     super.didChangeDependencies();
     final event = ModalRoute.of(context)!.settings.arguments as Event;
     controller = EnterCodeController(event, context);
+  }
+
+  Future<void> _submit() async {
+    final result = await controller.submit();
+    final message = EnterCodeController.messageFor(result);
+    if (message == null || !mounted) return;
+    MySnackBars.errorSnackBar(context, title: message.$1, message: message.$2);
   }
 
   @override
@@ -84,7 +92,7 @@ class _EnterCodeState extends State<EnterCode> {
                   const SizedBox(height: 20), // Spacing before button
                   AppButton(
                     label: "Trimite codul",
-                    onPressed: () => controller.navigateToGame(),
+                    onPressed: _submit,
                     leading: SvgPicture.asset(
                       'assets/images/incepe_jocul.svg',
                       width: 19,
