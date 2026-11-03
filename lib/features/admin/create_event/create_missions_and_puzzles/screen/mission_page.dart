@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/controller/add_missions_controller.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/screen/puzzle_page.dart';
+import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/mission_list/mission_text_fields.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/puzzle_list/puzzle_row.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/puzzle_list/puzzle_type_sheet.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
@@ -73,6 +74,18 @@ class _MissionPageState extends State<MissionPage> {
             8,
             AppSpacing.page,
             30,
+          ),
+          header: Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+            child: MissionTextFields(
+              mission: _controller.event.missions[widget.index],
+              onChanged: ({title, teaser, isTeaserPublic}) => _controller.setMissionText(
+                widget.index,
+                title: title,
+                teaser: teaser,
+                isTeaserPublic: isTeaserPublic,
+              ),
+            ),
           ),
           itemCount: puzzles.length,
           onReorderItem:

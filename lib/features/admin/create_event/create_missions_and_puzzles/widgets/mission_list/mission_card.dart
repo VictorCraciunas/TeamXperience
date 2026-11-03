@@ -8,6 +8,7 @@ class MissionCard extends StatelessWidget {
   const MissionCard({
     super.key,
     required this.index,
+    this.title,
     required this.puzzleCount,
     required this.status,
     required this.done,
@@ -16,11 +17,19 @@ class MissionCard extends StatelessWidget {
   });
 
   final int index;
+
+  /// Shown after the number when set ("1 · Scara Pasajului").
+  final String? title;
   final int puzzleCount;
   final String status;
   final bool done;
   final VoidCallback onTap;
   final VoidCallback onDelete;
+
+  String get _heading {
+    final name = title?.trim() ?? '';
+    return name.isEmpty ? 'Misiunea ${index + 1}' : '${index + 1} · $name';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +56,7 @@ class MissionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Misiunea ${index + 1}',
+                      _heading,
                       style: TextStyle(
                         color: colors.text,
                         fontSize: 14,

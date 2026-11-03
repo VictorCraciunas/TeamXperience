@@ -54,6 +54,19 @@ class AddMissionsController {
     event.nrMissions = event.missions.length;
   }
 
+  /// Sets the title, the event-page line and whether the page shows the
+  /// mission. Text is trimmed and blank is stored as nothing; fields not given
+  /// stay as they are.
+  void setMissionText(int index, {String? title, String? teaser, bool? isTeaserPublic}) {
+    if (index < 0 || index >= event.missions.length) return;
+    final mission = event.missions[index];
+    String? clean(String text) => text.trim().isEmpty ? null : text.trim();
+    if (title != null) mission.title = clean(title);
+    if (teaser != null) mission.teaser = clean(teaser);
+    if (isTeaserPublic != null) mission.isTeaserPublic = isTeaserPublic;
+    onStateChanged?.call();
+  }
+
   void addNewMission() {
     event.addMission(Mission(id: event.missions.length.toString()));
     event.nrMissions = event.missions.length;
