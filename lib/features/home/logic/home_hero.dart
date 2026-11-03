@@ -3,7 +3,7 @@ import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 
 /// How long after the start a registered team may still enter the start code.
-const Duration enterCodeWindow = Duration(minutes: 60);
+const Duration enterCodeWindow = Event.enterWindow;
 
 sealed class HomeHero {
   const HomeHero();
