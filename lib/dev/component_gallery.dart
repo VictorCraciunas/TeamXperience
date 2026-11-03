@@ -14,6 +14,7 @@ import 'package:teamxperience/ui/components/route/route_trail_section.dart';
 import 'package:teamxperience/ui/components/route/waypoint_dot.dart';
 import 'package:teamxperience/ui/ui.dart';
 
+import 'event_page_preview_launcher.dart';
 import 'gallery_section.dart';
 import 'parchment_swatches.dart';
 
@@ -35,6 +36,7 @@ class ComponentGallery extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.only(top: AppSpacing.lg),
         children: [
+          const GallerySection(title: 'Ecrane', child: EventPagePreviewLauncher()),
           GallerySection(
             title: 'Route strip',
             child: RouteStrip(
