@@ -95,8 +95,8 @@ void _mockupStyles() {
 
     const expected = {
       'heroTitle': (19.0, FontWeight.w500, 1.2),
-      'trailHeading': (14.0, FontWeight.w500, null),
-      'cardTitle': (12.0, FontWeight.w500, null),
+      'trailHeading': (14.0, FontWeight.w500, 1.45),
+      'cardTitle': (12.0, FontWeight.w500, 1.45),
       'pageBody': (12.0, FontWeight.w400, 1.45),
       'smallMuted': (11.0, FontWeight.w400, 1.45),
       'factValue': (18.0, FontWeight.w500, 1.0),

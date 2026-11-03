@@ -70,10 +70,10 @@ abstract class AppTextStyles {
       TextStyle(color: c.text, fontSize: 19, fontWeight: FontWeight.w500, height: 1.2);
 
   static TextStyle _trailHeading(AppColors c) =>
-      TextStyle(color: c.text, fontSize: 14, fontWeight: FontWeight.w500);
+      TextStyle(color: c.text, fontSize: 14, fontWeight: FontWeight.w500, height: 1.45);
 
   static TextStyle _cardTitle(AppColors c) =>
-      TextStyle(color: c.text, fontSize: 12, fontWeight: FontWeight.w500);
+      TextStyle(color: c.text, fontSize: 12, fontWeight: FontWeight.w500, height: 1.45);
 
   static TextStyle _pageBody(AppColors c) =>
       TextStyle(color: c.text, fontSize: 12, fontWeight: FontWeight.w400, height: 1.45);

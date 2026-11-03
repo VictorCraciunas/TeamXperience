@@ -91,4 +91,47 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('a long action label with an icon shrinks instead of overflowing', (tester) async {
+    await pumpUi(
+      tester,
+      StickyActionBar(
+        title: 'A început',
+        detail: '42 min să intri',
+        inlineDetail: true,
+        leadingIcon: TablerIcons.player_play,
+        tone: BarTone.accent,
+        actionLabel: 'Introdu codul de start acum',
+        actionIcon: TablerIcons.player_play,
+        onAction: () {},
+      ),
+      width: 320,
+      textScale: 1.3,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('the bar has the mockup height (1 + 10 + 37.4 button + 10)', (tester) async {
+    await pumpUi(
+      tester,
+      StickyActionBar(title: 'A', detail: 'B', actionLabel: 'C', onAction: () {}),
+    );
+    expect(tester.getSize(find.byType(StickyActionBar)).height, closeTo(58.4, 0.5));
+  });
+
+  testWidgets('the leading icon sits 8 before the text', (tester) async {
+    await pumpUi(
+      tester,
+      StickyActionBar(
+        title: 'Vulpile',
+        leadingIcon: TablerIcons.circle_check,
+        actionLabel: 'Echipa ta',
+        prominent: false,
+        onAction: () {},
+      ),
+    );
+    final iconRight = tester.getTopRight(find.byIcon(TablerIcons.circle_check)).dx;
+    final textLeft = tester.getTopLeft(find.text('Vulpile')).dx;
+    expect(textLeft - iconRight, 8);
+  });
 }
