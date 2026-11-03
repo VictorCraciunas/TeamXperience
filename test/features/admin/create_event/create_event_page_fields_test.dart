@@ -102,4 +102,10 @@ void main() {
     expect(CreateEventController.startPinProblem('45.79, 24.15'), isNull);
     expect(CreateEventController.startPinProblem('Piața Mare'), 'Coordonate greșite');
   });
+
+  test('old text the form cannot read is kept when the field stays empty', () {
+    final old = Event(eventId: 'o', lungimeTraseu: 'tot centrul', durata: 'o după-amiază', dificultate: 'pentru toți');
+    final saved = CreateEventController(old).applyToOriginal();
+    expect((saved.lungimeTraseu, saved.durata, saved.dificultate), ('tot centrul', 'o după-amiază', 'pentru toți'));
+  });
 }

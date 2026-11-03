@@ -97,29 +97,35 @@ class Event {
 
   bool get isOver => isStopped || hasExpired;
 
-  /// The route length, from [routeLengthKm] or the first number in [lungimeTraseu].
+  /// The route length, from [routeLengthKm] or the first number in
+  /// [lungimeTraseu] ("4,5 km", "3.5km", "500 m").
   double? get effectiveRouteKm {
     final km = routeLengthKm;
     if (km != null) return km;
-    final match = RegExp(r'\d+(?:[.,]\d+)?').firstMatch(lungimeTraseu ?? '');
-    if (match == null) return null;
-    return double.tryParse(match.group(0)!.replaceAll(',', '.'));
+    final match = RegExp(r'(\d+(?:[.,]\d+)?)\s*(km|m(?![a-z]))?').firstMatch((lungimeTraseu ?? '').toLowerCase());
+    final value = _number(match?.group(1));
+    if (match == null || value == null) return null;
+    return match.group(2) == 'm' ? value / 1000 : value;
   }
 
   /// The duration in minutes, from [durationMinutes] or [durata] ("2 h",
-  /// "2 ore", "1h30", "1 oră 30 min", "90 min").
+  /// "2 ore", "1,5 ore", "2-3 ore", "1h30", "1 oră 30 min", "aprox. 90 min").
+  /// A bare number reads as nothing: it could be hours or minutes.
   int? get effectiveDurationMinutes {
     final minutes = durationMinutes;
     if (minutes != null) return minutes;
-    final text = (durata ?? '').toLowerCase();
-    final hours = RegExp(r'(\d+)\s*(?:h|ore|oră|ora)').firstMatch(text);
-    if (hours != null) {
-      final rest = RegExp(r'(\d+)').allMatches(text.substring(hours.end)).firstOrNull;
-      return int.parse(hours.group(1)!) * 60 + (rest == null ? 0 : int.parse(rest.group(1)!));
+    // A range counts from its start: "2-3 ore" is 2 hours.
+    final text = (durata ?? '').toLowerCase().replaceAllMapped(RegExp(r'(\d+)\s*[-–]\s*\d+'), (m) => m.group(1) ?? '');
+    final hours = RegExp(r'(\d+(?:[.,]\d+)?)\s*(?:ore|oră|ora|h)').firstMatch(text);
+    final hourValue = _number(hours?.group(1));
+    if (hours != null && hourValue != null) {
+      final rest = _number(RegExp(r'(\d+)').firstMatch(text.substring(hours.end))?.group(1)) ?? 0;
+      return (hourValue * 60 + rest).round();
     }
-    final onlyMinutes = RegExp(r'^\s*(\d+)\s*min').firstMatch(text);
-    return onlyMinutes == null ? null : int.parse(onlyMinutes.group(1)!);
+    return _number(RegExp(r'(\d+)\s*(?:de\s+)?min').firstMatch(text)?.group(1))?.round();
   }
+
+  static double? _number(String? text) => text == null ? null : double.tryParse(text.replaceAll(',', '.'));
 
   /// The difficulty, from [difficulty] or the words in [dificultate].
   Difficulty? get effectiveDifficulty {
@@ -128,7 +134,7 @@ class Event {
     final text = _plain(dificultate ?? '');
     if (text.contains('usor') || text.contains('usoar')) return Difficulty.easy;
     if (text.contains('medi')) return Difficulty.medium;
-    if (text.contains('grea') || text.contains('dific')) return Difficulty.hard;
+    if (text.contains('grea') || text.contains('greu') || text.contains('dific')) return Difficulty.hard;
     return null;
   }
 

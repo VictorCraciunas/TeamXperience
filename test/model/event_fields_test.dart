@@ -116,4 +116,26 @@ void main() {
     expect(Difficulty.fromName(null), isNull);
     expect(Difficulty.fromName('medium'), Difficulty.medium);
   });
+
+  group('realistic old text', () {
+    test('route length in metres or glued to km', () {
+      expect(Event(eventId: 'e', lungimeTraseu: '500 m').effectiveRouteKm, 0.5);
+      expect(Event(eventId: 'e', lungimeTraseu: '3.5km').effectiveRouteKm, 3.5);
+      expect(Event(eventId: 'e', lungimeTraseu: '1,2 km').effectiveRouteKm, 1.2);
+    });
+
+    test('decimal hours, ranges and minutes anywhere', () {
+      expect(Event(eventId: 'e', durata: '1,5 ore').effectiveDurationMinutes, 90);
+      expect(Event(eventId: 'e', durata: '1.5h').effectiveDurationMinutes, 90);
+      expect(Event(eventId: 'e', durata: '2-3 ore').effectiveDurationMinutes, 120);
+      expect(Event(eventId: 'e', durata: 'aprox. 90 min').effectiveDurationMinutes, 90);
+      expect(Event(eventId: 'e', durata: '90 de minute').effectiveDurationMinutes, 90);
+      expect(Event(eventId: 'e', durata: '120').effectiveDurationMinutes, isNull, reason: 'a bare number could be hours or minutes');
+    });
+
+    test('Greu and Mediu', () {
+      expect(Event(eventId: 'e', dificultate: 'Greu').effectiveDifficulty, Difficulty.hard);
+      expect(Event(eventId: 'e', dificultate: 'Mediu').effectiveDifficulty, Difficulty.medium);
+    });
+  });
 }

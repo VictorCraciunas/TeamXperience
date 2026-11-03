@@ -199,10 +199,11 @@ class CreateEventController {
       ]
       ..story = _textOrNull(storyController)
       ..organiserName = _textOrNull(organiserController)
-      // Cards and older screens still read the text fields.
-      ..lungimeTraseu = km == null ? '' : formatKm(km)
-      ..durata = minutes == null ? '' : formatDuration(minutes)
-      ..dificultate = level == null ? '' : difficultyLabel(level);
+      // Cards and older screens still read the text fields. An empty number
+      // keeps the old text, so text the form could not read is not lost.
+      ..lungimeTraseu = km == null ? (event.lungimeTraseu ?? '') : formatKm(km)
+      ..durata = minutes == null ? (event.durata ?? '') : formatDuration(minutes)
+      ..dificultate = level == null ? (event.dificultate ?? '') : difficultyLabel(level);
   }
 
   /// A new event from the form (it gets an id when saved). If the form was
