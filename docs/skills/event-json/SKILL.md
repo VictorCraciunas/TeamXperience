@@ -307,6 +307,7 @@ Write the name exactly as in this list, with the capitals and the spaces. Anythi
 | `"Caveat"` | Handwriting, notes, treasure maps. Use a larger `fontSize` (24 to 36). | Up to 700 |
 | `"Bebas Neue"` | Tall, bold titles, all capitals. | One weight |
 | `"Playfair Display"` | Elegant serif, mystery, luxury. | All six (starts at 400) |
+| `"Gelasio"` | Book serif like Georgia: letters, diaries, old maps, long story text. | 400 to 700 |
 
 "All six" means the six `fontWeight` values work. For "One weight" fonts the weight changes little or nothing: leave `fontWeight` out. Where a font starts at 400, `"Thin (100)"` and `"Light (300)"` look like regular. Pair a title font with a plain one: for example `"Bebas Neue"` for the title text and `"Poppins"` for the rest.
 

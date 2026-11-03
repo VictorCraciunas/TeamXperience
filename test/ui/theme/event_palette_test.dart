@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/ui/ui.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
 
 Future<EventPalette> _read(WidgetTester tester, ThemeData theme, {EventPalette? scope}) async {
   late EventPalette palette;
@@ -16,6 +17,8 @@ Future<EventPalette> _read(WidgetTester tester, ThemeData theme, {EventPalette? 
 }
 
 void main() {
+  _voiceFontIsAnAppFont();
+
   testWidgets('inside a scope the event palette is used', (tester) async {
     final p = await _read(tester, AppTheme.light, scope: EventPalette.parchment);
     expect(p.accent, const Color(0xFF8A3B12));
@@ -48,5 +51,11 @@ void main() {
   test('parchment uses the voice font', () {
     expect(EventPalette.parchment.voiceFont, AppFonts.voice);
     expect(AppFonts.voice, 'Gelasio');
+  });
+}
+
+void _voiceFontIsAnAppFont() {
+  test('the voice font is one of the app fonts', () {
+    expect(isEventFont(AppFonts.voice), isTrue);
   });
 }
