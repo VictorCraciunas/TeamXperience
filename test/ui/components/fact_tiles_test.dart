@@ -46,4 +46,24 @@ void main() {
     await pumpUi(tester, _row(), width: 320, textScale: 1.3);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('an icon tile has the mockup height and value position', (tester) async {
+    await pumpUi(
+      tester,
+      const Align(
+        alignment: Alignment.topLeft,
+        child: SizedBox(width: 80, child: FactTile(icon: TablerIcons.clock, value: 'A', label: 'B')),
+      ),
+    );
+    // 1 border + 6 padding, icon line 15 x 1.45, value 12 x 1.45, label 11 x 1.45.
+    final top = tester.getTopLeft(find.byType(FactTile)).dy;
+    expect(tester.getSize(find.byType(FactTile)).height, closeTo(7 + 21.75 + 17.4 + 15.95 + 7, 0.5));
+    expect(tester.getTopLeft(find.text('A')).dy - top, closeTo(7 + 21.75, 0.5));
+  });
+
+  testWidgets('the date tile starts its text 6 from the top', (tester) async {
+    await pumpUi(tester, _row());
+    final top = tester.getTopLeft(find.byType(DateFactTile)).dy;
+    expect(tester.getTopLeft(find.text('14')).dy - top, closeTo(6, 0.05));
+  });
 }

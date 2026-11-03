@@ -35,46 +35,49 @@ class RouteStrip extends StatelessWidget {
     final small = AppTextStyles.smallMuted(context);
 
     return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colors.panel,
-        border: Border(bottom: BorderSide(color: colors.border)),
-      ),
+      decoration: BoxDecoration(color: colors.panel, border: Border(bottom: BorderSide(color: colors.border))),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        // 1 more at the bottom for the border, which Flutter draws inside.
+        padding: const EdgeInsets.fromLTRB(14, 12, 14, 13),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                Icon(TablerIcons.map_pin, size: 16, color: colors.accent),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      const DashedLine(),
-                      ColoredBox(
-                        color: colors.panel,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: Text(
-                            centerLabel,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: small.copyWith(color: colors.text),
+            // The mockup's icons sit on a 16 x 1.45 line.
+            ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 16 * 1.45),
+              child: Row(
+                children: [
+                  Icon(TablerIcons.map_pin, size: 16, color: colors.accent),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        const DashedLine(),
+                        ColoredBox(
+                          color: colors.panel,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            child: Text(
+                              centerLabel,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: small.copyWith(color: colors.text),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 6),
-                Icon(TablerIcons.flag, size: 16, color: colors.navy),
-                if (label != null && tap != null) ...[
                   const SizedBox(width: 6),
-                  AppChip(label: label, icon: TablerIcons.map, style: AppChipStyle.outlined, onTap: tap),
+                  Icon(TablerIcons.flag, size: 16, color: colors.navy),
+                  if (label != null && tap != null) ...[
+                    const SizedBox(width: 6),
+                    AppChip(label: label, icon: TablerIcons.map, style: AppChipStyle.outlined, onTap: tap),
+                  ],
                 ],
-              ],
+              ),
             ),
             const SizedBox(height: 4),
             Row(

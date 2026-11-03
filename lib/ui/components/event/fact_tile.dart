@@ -20,7 +20,9 @@ class FactTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final tileIcon = icon;
-    final top = leading ?? (tileIcon == null ? null : Icon(tileIcon, size: 15, color: colors.accent));
+    // In the mockup the icon sits on a 15 x 1.45 line.
+    final top = leading ??
+        (tileIcon == null ? null : SizedBox(height: 15 * 1.45, child: Icon(tileIcon, size: 15, color: colors.accent)));
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -29,7 +31,8 @@ class FactTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.card),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(6),
+        // The mockup's 6 plus the 1 px border, which Flutter draws inside.
+        padding: const EdgeInsets.all(7),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

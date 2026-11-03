@@ -51,4 +51,9 @@ void main() {
     await pumpUi(tester, AppChip(label: 'Toate', onTap: () {}));
     expect(tester.getSize(find.byType(AppChip)).height, greaterThanOrEqualTo(32));
   });
+
+  testWidgets('a chip is as tall as in the mockup (11 x 1.45 + 2 x 3 + 2 x 1 border)', (tester) async {
+    await pumpUi(tester, const Align(alignment: Alignment.topLeft, child: AppChip(label: 'A')));
+    expect(tester.getSize(find.byType(AppChip)).height, closeTo(23.95, 0.5));
+  });
 }
