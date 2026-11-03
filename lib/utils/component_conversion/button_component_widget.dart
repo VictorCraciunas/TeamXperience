@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
 
 class ButtonComponentWidget extends StatefulWidget {
   final String? buttonLabel;
@@ -14,6 +15,9 @@ class ButtonComponentWidget extends StatefulWidget {
   final String? fontWeight; // Font weight
   final double? fontSize;
   final double? radius;
+  final double? letterSpacing; // Space between the letters, 8 when missing
+  final double? paddingY; // Space above and below the label, 5 when missing
+  final double? borderWidth; // Thickness of the border, 1.5 when missing
   final VoidCallback? onPressed; // Add callback parameter
 
   const ButtonComponentWidget({
@@ -31,6 +35,9 @@ class ButtonComponentWidget extends StatefulWidget {
     this.fontWeight,
     this.fontSize,
     this.radius,
+    this.letterSpacing,
+    this.paddingY,
+    this.borderWidth,
     this.onPressed,
   });
 
@@ -158,10 +165,10 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
           }),
           onPointerCancel: (_) => setState(() => _isTapped = false),
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 30),
+            padding: EdgeInsets.symmetric(vertical: widget.paddingY ?? 5.0, horizontal: 30),
             decoration: BoxDecoration(
               color: currentButtonColor,
-              border: Border.all(color: currentBorderColor, width: 1.5),
+              border: Border.all(color: currentBorderColor, width: widget.borderWidth ?? 1.5),
               borderRadius: BorderRadius.circular(widget.radius ?? 10),
               boxShadow:
                   widget.enableGlow == true
@@ -187,7 +194,8 @@ class _ButtonComponentWidgetState extends State<ButtonComponentWidget>
                   fontSize: widget.fontSize,
                   fontWeight: currentFontWeight,
                   fontFamily: widget.fontFamily ?? 'Poppins',
-                  letterSpacing: 8,
+                  fontVariations: fontVariationsFor(widget.fontFamily ?? 'Poppins', currentFontWeight),
+                  letterSpacing: widget.letterSpacing ?? 8,
                 ),
               ),
             ),

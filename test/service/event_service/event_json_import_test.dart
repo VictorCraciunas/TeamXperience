@@ -5,8 +5,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
+import 'package:teamxperience/enums/screen_animation.dart';
 import 'package:teamxperience/service/event_service/event_completeness.dart';
 import 'package:teamxperience/service/event_service/event_json_import.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
 
 Map<String, dynamic> _event({
   Map<String, dynamic>? extra,
@@ -227,6 +229,53 @@ void main() {
     });
   });
 
+  group('the animation of the screen', () {
+    test('fade and none are accepted', () {
+      expect(_import(_event(extra: {'screenAnimation': 'fade'})).event?.screenAnimation, ScreenAnimation.fade);
+      expect(_import(_event(extra: {'screenAnimation': 'none'})).event?.screenAnimation, ScreenAnimation.none);
+    });
+
+    test('left out it fades, as the app always did', () {
+      expect(_import(_event()).event?.screenAnimation, ScreenAnimation.fade);
+    });
+
+    test('every kind of entrance is accepted', () {
+      for (final name in ['fade', 'none', 'slideFromLeft', 'slideFromRight', 'slideFromBottom', 'slideFromTop', 'zoom', 'bounce']) {
+        final result = _import(_event(extra: {'screenAnimation': name}));
+        expect(result.errors, isEmpty, reason: name);
+        expect(result.event?.screenAnimation.name, name);
+      }
+    });
+
+    test('the duration is 200 to 1500 and the delay 0 to 600, whole milliseconds', () {
+      expect(_import(_event(extra: {'animationDuration': 200, 'animationDelay': 0})).errors, isEmpty);
+      expect(_import(_event(extra: {'animationDuration': 1500, 'animationDelay': 600})).errors, isEmpty);
+      expect(_import(_event(extra: {'animationDuration': 199})).errors.single, contains('animationDuration'));
+      expect(_import(_event(extra: {'animationDuration': 1501})).errors.single, contains('animationDuration'));
+      expect(_import(_event(extra: {'animationDelay': -1})).errors.single, contains('animationDelay'));
+      expect(_import(_event(extra: {'animationDelay': 601})).errors.single, contains('animationDelay'));
+      expect(_import(_event(extra: {'animationDelay': 100.5})).errors.single, contains('animationDelay'));
+    });
+
+    test('the timing is read onto the event', () {
+      final event = _import(_event(extra: {'screenAnimation': 'bounce', 'animationDuration': 700, 'animationDelay': 150})).event;
+      expect(event?.animationDuration, 700);
+      expect(event?.animationDelay, 150);
+    });
+
+    test('left out, the timing is automatic', () {
+      final event = _import(_event()).event;
+      expect(event?.animationDuration, isNull);
+      expect(event?.animationDelay, isNull);
+    });
+
+    test('anything else is refused and the mistake lists what exists', () {
+      final result = _import(_event(extra: {'screenAnimation': 'spin'}));
+      expect(result.event, isNull);
+      expect(result.errors.single, allOf(contains('screenAnimation'), contains('spin'), contains('fade'), contains('none'), contains('bounce')));
+    });
+  });
+
   group('values the app could not draw are refused', () {
     EventImportResult withComponent(Map<String, dynamic> component) => _import(
       _event(missions: [
@@ -272,10 +321,25 @@ void main() {
       }
     });
 
-    test('a font that is not Poppins or Monospace', () {
+    test('a font that is not one of the app', () {
       expectRefused({'type': 'text', 'fontFamily': 'Arial'}, 'fontFamily');
-      expectAccepted({'type': 'text', 'fontFamily': 'Poppins'});
-      expectAccepted({'type': 'code', 'fontFamily': 'Monospace'});
+      expectRefused({'type': 'text', 'fontFamily': 'orbitron'}, 'fontFamily');
+      expectRefused({'type': 'text', 'fontFamily': 'ShareTechMono'}, 'fontFamily');
+    });
+
+    test('every font of the app is accepted on text, buttons and code inputs', () {
+      for (final font in eventFontNames) {
+        for (final type in ['text', 'button', 'code']) {
+          expectAccepted({'type': type, 'fontFamily': font});
+        }
+      }
+    });
+
+    test('the mistake for a font lists all of them', () {
+      final message = withComponent({'type': 'text', 'fontFamily': 'Arial'}).errors.single;
+      for (final font in eventFontNames) {
+        expect(message, contains(font));
+      }
     });
 
     test('text alignment', () {
@@ -329,6 +393,211 @@ void main() {
       expectRefused({'type': 'image', 'height': 501}, 'height');
       expectAccepted({'type': 'code', 'width': 200});
       expectAccepted({'type': 'image', 'height': 500});
+    });
+
+    test('space below from 0 to 120, on every kind of component', () {
+      for (final type in ['text', 'image', 'button', 'code']) {
+        expectAccepted({'type': type, 'spaceBelow': 0});
+        expectAccepted({'type': type, 'spaceBelow': 120});
+        expectAccepted({'type': type, 'spaceBelow': 12.5});
+        expectRefused({'type': type, 'spaceBelow': -1}, 'spaceBelow');
+        expectRefused({'type': type, 'spaceBelow': 121}, 'spaceBelow');
+        expectRefused({'type': type, 'spaceBelow': 'mult'}, 'spaceBelow');
+      }
+    });
+
+    test('space below is read onto the component', () {
+      final event = _import(
+        _event(missions: [
+          {
+            'puzzles': [
+              {
+                'type': 'code',
+                'components': [
+                  {'type': 'text', 'spaceBelow': 8},
+                  {'type': 'button'},
+                ],
+              },
+            ],
+          },
+        ]),
+      ).event;
+      final components = event?.missions.single.puzzles.single.components;
+      expect(components?.first.spaceBelow, 8.0);
+      expect(components?.last.spaceBelow, isNull);
+    });
+
+    test('letter spacing from 0 to 12 and space above and below from 0 to 30 on a button', () {
+      expectRefused({'type': 'button', 'letterSpacing': -1}, 'letterSpacing');
+      expectRefused({'type': 'button', 'letterSpacing': 13}, 'letterSpacing');
+      expectRefused({'type': 'button', 'paddingY': -1}, 'paddingY');
+      expectRefused({'type': 'button', 'paddingY': 31}, 'paddingY');
+      for (final value in [0, 6.5, 12]) {
+        expectAccepted({'type': 'button', 'letterSpacing': value});
+      }
+      for (final value in [0, 15, 30]) {
+        expectAccepted({'type': 'button', 'paddingY': value});
+      }
+    });
+
+    test('box height from 20 to 100 on a code input', () {
+      expectRefused({'type': 'code', 'boxHeight': 19}, 'boxHeight');
+      expectRefused({'type': 'code', 'boxHeight': 101}, 'boxHeight');
+      expectAccepted({'type': 'code', 'boxHeight': 20});
+      expectAccepted({'type': 'code', 'boxHeight': 100});
+    });
+
+    test('bold text is true or false', () {
+      expectAccepted({'type': 'code', 'boldText': true});
+      expectAccepted({'type': 'code', 'boldText': false});
+      expectRefused({'type': 'code', 'boldText': 'da'}, 'boldText');
+    });
+
+    test('the glow of a code input is on the frame or on the boxes', () {
+      expectAccepted({'type': 'code', 'glowOn': 'frame'});
+      expectAccepted({'type': 'code', 'glowOn': 'boxes'});
+      expectRefused({'type': 'code', 'glowOn': 'all'}, 'glowOn');
+      final message = withComponent({'type': 'code', 'glowOn': 'all'}).errors.single;
+      expect(message, allOf(contains('frame'), contains('boxes')));
+    });
+
+    test('the new options are read onto the component', () {
+      final component = withComponent({
+        'type': 'code',
+        'boxHeight': 60,
+        'boldText': false,
+        'glowOn': 'boxes',
+        'letterSpacing': 3,
+        'paddingY': 12,
+      }).event?.missions.single.puzzles.single.components.single;
+      expect(component?.boxHeight, 60.0);
+      expect(component?.boldText, isFalse);
+      expect(component?.glowOn, 'boxes');
+      expect(component?.letterSpacing, 3.0);
+      expect(component?.paddingY, 12.0);
+    });
+
+    test('line height from 0.8 to 2, on a text', () {
+      expectRefused({'type': 'text', 'lineHeight': 0.7}, 'lineHeight');
+      expectRefused({'type': 'text', 'lineHeight': 2.1}, 'lineHeight');
+      expectAccepted({'type': 'text', 'lineHeight': 0.8});
+      expectAccepted({'type': 'text', 'lineHeight': 2});
+      expectAccepted({'type': 'text', 'lineHeight': 1.5});
+    });
+
+    test('italic and capitals are true or false', () {
+      for (final key in ['italic', 'uppercase']) {
+        expectAccepted({'type': 'text', key: true});
+        expectAccepted({'type': 'text', key: false});
+        expectRefused({'type': 'text', key: 'da'}, key);
+      }
+    });
+
+    test('the shadow of a text: blur 0 to 30, distance 0 to 20, a colour', () {
+      expectRefused({'type': 'text', 'shadowBlur': -1}, 'shadowBlur');
+      expectRefused({'type': 'text', 'shadowBlur': 31}, 'shadowBlur');
+      expectRefused({'type': 'text', 'shadowDistance': -1}, 'shadowDistance');
+      expectRefused({'type': 'text', 'shadowDistance': 21}, 'shadowDistance');
+      expectRefused({'type': 'text', 'shadowColor': 'negru'}, 'shadowColor');
+      expectAccepted({'type': 'text', 'shadowBlur': 0, 'shadowDistance': 0, 'shadowColor': '#000000'});
+      expectAccepted({'type': 'text', 'shadowBlur': 30, 'shadowDistance': 20});
+    });
+
+    test('the text effects are read onto the component', () {
+      final component = withComponent({
+        'type': 'text',
+        'text': 'x',
+        'lineHeight': 1.5,
+        'italic': true,
+        'uppercase': true,
+        'shadowColor': '#112233',
+        'shadowBlur': 6,
+        'shadowDistance': 4,
+        'enableGlow': true,
+        'glowColor': '#33FF66',
+      }).event?.missions.single.puzzles.single.components.single;
+      expect(component?.lineHeight, 1.5);
+      expect(component?.italic, isTrue);
+      expect(component?.uppercase, isTrue);
+      expect(component?.shadowColor, '#112233');
+      expect(component?.shadowBlur, 6.0);
+      expect(component?.shadowDistance, 4.0);
+      expect(component?.enableGlow, isTrue);
+    });
+
+    test('opacity from 0 to 1 on every kind of component', () {
+      for (final type in ['text', 'image', 'button', 'code']) {
+        expectAccepted({'type': type, 'opacity': 0});
+        expectAccepted({'type': type, 'opacity': 0.5});
+        expectAccepted({'type': type, 'opacity': 1});
+        expectRefused({'type': type, 'opacity': -0.1}, 'opacity');
+        expectRefused({'type': type, 'opacity': 1.1}, 'opacity');
+        expectRefused({'type': type, 'opacity': 'jumătate'}, 'opacity');
+      }
+    });
+
+    test('border width from 0 to 6', () {
+      expectAccepted({'type': 'image', 'borderWidth': 0});
+      expectAccepted({'type': 'button', 'borderWidth': 6});
+      expectAccepted({'type': 'image', 'borderWidth': 1.5});
+      expectRefused({'type': 'image', 'borderWidth': -1}, 'borderWidth');
+      expectRefused({'type': 'button', 'borderWidth': 7}, 'borderWidth');
+    });
+
+    test('the box effects are read onto the component', () {
+      final component = withComponent({
+        'type': 'image',
+        'opacity': 0.8,
+        'borderWidth': 2,
+        'borderColor': '#33FF66',
+        'shadowBlur': 6,
+        'shadowDistance': 3,
+        'enableGlow': true,
+        'glowColor': '#FF3EA5',
+      }).event?.missions.single.puzzles.single.components.single;
+      expect(component?.opacity, 0.8);
+      expect(component?.borderWidth, 2.0);
+      expect(component?.borderColor, '#33FF66');
+      expect(component?.shadowBlur, 6.0);
+    });
+
+    test('a loop effect is one of the five, on every kind of component', () {
+      for (final type in ['text', 'image', 'button', 'code']) {
+        for (final name in ['pulse', 'float', 'shake', 'flicker', 'glitch']) {
+          expectAccepted({'type': type, 'loopEffect': name});
+        }
+      }
+    });
+
+    test('any other loop effect is refused and the mistake lists the five', () {
+      expectRefused({'type': 'text', 'loopEffect': 'spin'}, 'loopEffect');
+      expectRefused({'type': 'text', 'loopEffect': 'none'}, 'loopEffect');
+      final message = withComponent({'type': 'text', 'loopEffect': 'spin'}).errors.single;
+      for (final name in ['pulse', 'float', 'shake', 'flicker', 'glitch']) {
+        expect(message, contains(name));
+      }
+    });
+
+    test('the loop effect is read onto the component', () {
+      final component = withComponent({'type': 'button', 'loopEffect': 'pulse'}).event?.missions.single.puzzles.single.components.single;
+      expect(component?.loopEffect?.name, 'pulse');
+    });
+
+    test('the text animations are none, typewriter and decode', () {
+      for (final name in ['none', 'typewriter', 'decode']) {
+        expectAccepted({'type': 'text', 'animation': name});
+      }
+      expectRefused({'type': 'text', 'animation': 'wave'}, 'animation');
+      final message = withComponent({'type': 'text', 'animation': 'wave'}).errors.single;
+      expect(message, allOf(contains('none'), contains('typewriter'), contains('decode')));
+    });
+
+    test('the answer feedback of a code input is true or false', () {
+      expectAccepted({'type': 'code', 'answerFeedback': true});
+      expectAccepted({'type': 'code', 'answerFeedback': false});
+      expectRefused({'type': 'code', 'answerFeedback': 'nu'}, 'answerFeedback');
+      final component = withComponent({'type': 'code', 'answerFeedback': false}).event?.missions.single.puzzles.single.components.single;
+      expect(component?.answerFeedback, isFalse);
     });
 
     test('options a component does not use are not checked', () {

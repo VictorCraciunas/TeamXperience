@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/utils/component_conversion/box_effects.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
+import '../option_checkbox.dart';
+import '../optional_slider.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
 import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
@@ -59,6 +63,12 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
           const SizedBox(height: 20),
           _buildGlowEffectSection(),
           const SizedBox(height: 20),
+          OptionCheckbox(
+            label: 'Animație la răspuns',
+            value: controller.answerFeedback,
+            onChanged: (value) => setState(() => controller.answerFeedback = value),
+          ),
+          const SizedBox(height: 20),
           _buildSaveButton(),
           const SizedBox(height: 60),
         ],
@@ -92,6 +102,7 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
     // Create a temporary Component for preview
     final previewComponent = Component();
     controller.updateComponent(previewComponent);
+    BoxEffects.copy(widget.component, previewComponent, shadow: true);
 
     // Use ComponentToWidget to convert to widget
     final previewWidget = ComponentToWidget().convert(previewComponent);
@@ -178,6 +189,8 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
         const SizedBox(height: 20),
         _buildInputWidthSlider(),
         const SizedBox(height: 20),
+        _buildBoxHeightSlider(),
+        const SizedBox(height: 20),
         _buildInputRadiusSlider(),
         const SizedBox(height: 20),
         _buildFrameBackgroundColorPicker(),
@@ -212,6 +225,55 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
       value: controller.widthInput,
       label: controller.widthInput.toStringAsFixed(0),
       onChanged: (value) => setState(() => controller.widthInput = value),
+    );
+  }
+
+  Widget _buildBoxHeightSlider() {
+    return OptionalSlider(
+      title: 'Înălțime casete',
+      min: 20,
+      max: 100,
+      divisions: 80,
+      unit: 'px',
+      value: controller.boxHeight,
+      automaticValue: controller.fontSize * 1.5,
+      automaticNote: 'automat',
+      onChanged: (value) => setState(() => controller.boxHeight = value),
+    );
+  }
+
+  Widget _buildBoldCheckbox() {
+    return Row(
+      children: [
+        Transform.scale(
+          scale: 1.5,
+          child: Checkbox(
+            value: controller.boldText,
+            onChanged: (value) => setState(() => controller.boldText = value ?? true),
+            activeColor: context.colors.accent,
+            checkColor: context.colors.onTick,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+            side: BorderSide(width: 1.5, color: context.colors.accent),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Text(
+          'Text îngroșat',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: context.colors.text),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGlowPlaceDropdown() {
+    return AppDropdown<String>(
+      label: 'Glow pe',
+      items: const [
+        AppDropdownItem<String>(value: 'frame', label: 'Chenarul din jur'),
+        AppDropdownItem<String>(value: 'boxes', label: 'Fiecare casetă'),
+      ],
+      value: controller.glowOn,
+      onChanged: (value) => setState(() => controller.glowOn = value ?? 'frame'),
     );
   }
 
@@ -271,6 +333,8 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
         const SizedBox(height: 20),
         _buildFontSizeSlider(),
         const SizedBox(height: 20),
+        _buildBoldCheckbox(),
+        const SizedBox(height: 20),
         _buildTextColorPicker(),
       ],
     );
@@ -279,9 +343,8 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
   Widget _buildFontFamilyDropdown() {
     return AppDropdown<String>(
       label: 'Tip Font',
-      items: const [
-        AppDropdownItem<String>(value: 'Poppins', label: 'Poppins'),
-        AppDropdownItem<String>(value: 'Monospace', label: 'Monospace'),
+      items: [
+        for (final font in eventFonts) AppDropdownItem<String>(value: font.family, label: font.family),
       ],
       value: controller.fontFamily,
       onChanged: (value) => setState(() => controller.fontFamily = value),
@@ -315,6 +378,10 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
     return Column(
       children: [
         _buildGlowCheckbox(),
+        if (controller.enableGlow && controller.inputType == 'Separated') ...[
+          const SizedBox(height: 20),
+          _buildGlowPlaceDropdown(),
+        ],
         const SizedBox(height: 20),
         _buildGlowColorPicker(),
       ],

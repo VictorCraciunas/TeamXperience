@@ -11,6 +11,12 @@ class ImageComponentController {
   double height = 150;
   File? image;
 
+  // Extras. Each starts as "nothing added", so an image stays as it always was.
+  double borderWidth = 0;
+  String borderColor = '#000000';
+  bool enableGlow = false;
+  String glowColor = '#000000';
+
   final ComponentToWidget componentToWidget = ComponentToWidget();
 
   // Pick an image from the gallery
@@ -36,6 +42,12 @@ class ImageComponentController {
     component.imageUrl = image!.path;
     component.cornerRadius = radius;
     component.height = height;
+
+    // Only what was chosen is written, so a plain image stays plain.
+    component.borderWidth = borderWidth > 0 ? borderWidth : null;
+    component.borderColor = borderWidth > 0 ? borderColor : null;
+    component.enableGlow = enableGlow ? true : null;
+    component.glowColor = enableGlow ? glowColor : null;
   }
 
   // Save component (handles both create and edit modes)
@@ -74,6 +86,10 @@ class ImageComponentController {
     if (component.type == ComponentType.image) {
       radius = component.cornerRadius ?? radius;
       height = component.height ?? height;
+      borderWidth = component.borderWidth ?? 0;
+      borderColor = component.borderColor ?? borderColor;
+      enableGlow = component.enableGlow ?? false;
+      glowColor = component.glowColor ?? glowColor;
       if (component.imageUrl != null) {
         image = File(component.imageUrl!);
       }

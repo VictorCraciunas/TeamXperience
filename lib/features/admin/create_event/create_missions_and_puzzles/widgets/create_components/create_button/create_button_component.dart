@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/utils/component_conversion/box_effects.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
 import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
@@ -80,6 +82,12 @@ class _ButtonComponentFieldsWidgetState
         const SizedBox(height: 20),
         _buildFontSizeSlider(),
         const SizedBox(height: 20),
+        _buildLetterSpacingSlider(),
+        const SizedBox(height: 20),
+        _buildPaddingSlider(),
+        const SizedBox(height: 20),
+        _buildBorderWidthSlider(),
+        const SizedBox(height: 20),
         _buildSaveButton(),
         const SizedBox(height: 60),
       ],
@@ -90,6 +98,7 @@ class _ButtonComponentFieldsWidgetState
     // Create a temporary Component for preview
     final previewComponent = Component();
     controller.updateComponentFields(previewComponent);
+    BoxEffects.copy(widget.component, previewComponent, shadow: true);
     previewComponent.buttonLabel =
         controller.labelController.text.isEmpty
             ? 'Text'
@@ -135,9 +144,8 @@ class _ButtonComponentFieldsWidgetState
   Widget _buildFontFamilyDropdown() {
     return AppDropdown<String>(
       label: 'Tip Font',
-      items: const [
-        AppDropdownItem<String>(value: 'Poppins', label: 'Poppins'),
-        AppDropdownItem<String>(value: 'Monospace', label: 'Monospace'),
+      items: [
+        for (final font in eventFonts) AppDropdownItem<String>(value: font.family, label: font.family),
       ],
       value: controller.fontFamily,
       onChanged: (value) => setState(() => controller.fontFamily = value),
@@ -291,6 +299,42 @@ class _ButtonComponentFieldsWidgetState
       value: controller.fontSize,
       label: controller.fontSize.toStringAsFixed(0),
       onChanged: (value) => setState(() => controller.fontSize = value),
+    );
+  }
+
+  Widget _buildLetterSpacingSlider() {
+    return SliderWidget(
+      title: 'Spațiu între litere',
+      min: 0,
+      max: 12,
+      divisions: 12,
+      value: controller.letterSpacing,
+      label: controller.letterSpacing.toStringAsFixed(0),
+      onChanged: (value) => setState(() => controller.letterSpacing = value),
+    );
+  }
+
+  Widget _buildBorderWidthSlider() {
+    return SliderWidget(
+      title: 'Grosime chenar',
+      min: 0,
+      max: 6,
+      divisions: 12,
+      value: controller.borderWidth,
+      label: controller.borderWidth.toStringAsFixed(1),
+      onChanged: (value) => setState(() => controller.borderWidth = value),
+    );
+  }
+
+  Widget _buildPaddingSlider() {
+    return SliderWidget(
+      title: 'Spațiu sus și jos',
+      min: 0,
+      max: 30,
+      divisions: 30,
+      value: controller.paddingY,
+      label: controller.paddingY.toStringAsFixed(0),
+      onChanged: (value) => setState(() => controller.paddingY = value),
     );
   }
 

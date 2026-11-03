@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/features/event_game/logic/answer_check.dart';
+import 'package:teamxperience/features/event_game/logic/spaced_components.dart';
+import 'package:teamxperience/utils/component_conversion/answer_feedback.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
@@ -14,9 +17,17 @@ class PuzzleGameController {
   final ImageProvider background;
   final int missionIndex;
   List<List<Widget>> puzzleWidgets = [];
+
+  /// The space under each component of each puzzle; null means the usual gap.
+  List<List<double?>> puzzleSpaces = [];
   final ValueNotifier<int> selectedPuzzleNotifier = ValueNotifier(0);
   final ComponentToWidget componentToWidget = ComponentToWidget();
   String userInput = "";
+
+  /// Tells the code input of the puzzle that an answer was checked.
+  final AnswerFeedback answerFeedback = AnswerFeedback();
+  bool _advancing = false;
+  bool _disposed = false;
   late BuildContext context;
   TeamService teamService = TeamService();
   final RouteService routeService = RouteService();
@@ -43,6 +54,7 @@ class PuzzleGameController {
 
   void loadPuzzles() {
     puzzleWidgets.clear();
+    puzzleSpaces.clear();
     for (Puzzle puzzle in mission.puzzles) {
       List<Widget> widgets = [];
       for (var component in puzzle.components) {
@@ -51,6 +63,7 @@ class PuzzleGameController {
           widget = componentToWidget.convert(
             component,
             onTextChanged: (String value) => handleCodeInput(value),
+            feedback: answerFeedback,
           );
         } else if (component.type == ComponentType.button) {
           widget = componentToWidget.convert(
@@ -63,6 +76,7 @@ class PuzzleGameController {
         widgets.add(widget);
       }
       puzzleWidgets.add(widgets);
+      puzzleSpaces.add([for (final component in puzzle.components) component.spaceBelow]);
     }
   }
 
@@ -77,8 +91,20 @@ class PuzzleGameController {
     }
 
     if (puzzle.type == PuzzleType.code) {
-      if (userInput.trim().toLowerCase() == (puzzle.code ?? '').trim().toLowerCase()) {
-        navigate();
+      if (isCorrectAnswer(userInput, puzzle.code)) {
+        final pause = pauseAfterCorrectAnswer(puzzle);
+        if (pause == Duration.zero) {
+          navigate();
+        } else if (!_advancing) {
+          // Let the pop be seen before going on.
+          _advancing = true;
+          answerFeedback.correct();
+          Future.delayed(pause, () {
+            if (!_disposed) navigate();
+          });
+        }
+      } else {
+        answerFeedback.wrong();
       }
     } else {
       navigate();
@@ -86,6 +112,7 @@ class PuzzleGameController {
   }
 
   void navigate() async {
+    _advancing = false;
     if (hasNextPuzzle()) {
       selectedPuzzleNotifier.value++;
       userInput = "";
@@ -126,6 +153,13 @@ class PuzzleGameController {
     return null;
   }
 
+  List<double?> getCurrentPuzzleSpaces() {
+    if (puzzleSpaces.isNotEmpty && selectedPuzzle < puzzleSpaces.length) {
+      return puzzleSpaces[selectedPuzzle];
+    }
+    return const [];
+  }
+
   List<Widget> getCurrentPuzzleWidgets() {
     if (puzzleWidgets.isNotEmpty && selectedPuzzle < puzzleWidgets.length) {
       return puzzleWidgets[selectedPuzzle];
@@ -140,32 +174,19 @@ class PuzzleGameController {
   int get totalPuzzles => mission.puzzles.length;
   int get currentPuzzleIndex => selectedPuzzle;
 
-  // Updated method to include sequential animations
+  /// The components with the gaps the organiser chose under them.
   List<Widget> buildComponentsWithSpacing(List<Widget> components, List<Animation<double>> animations) {
-    if (components.isEmpty) return components;
-
-    List<Widget> spacedComponents = [];
-    for (int i = 0; i < components.length; i++) {
-      // Wrap each component with animated opacity
-      Widget animatedComponent = Opacity(
-        opacity: animations.isNotEmpty && i < animations.length
-            ? animations[i].value
-            : 1.0,
-        child: components[i],
-      );
-
-      spacedComponents.add(animatedComponent);
-
-      // Add spacing between components (except after the last one)
-      if (i < components.length - 1) {
-        double spacing = 40.0;
-        spacedComponents.add(SizedBox(height: spacing));
-      }
-    }
-    return spacedComponents;
+    return spacedComponents(
+      components,
+      animations,
+      getCurrentPuzzleSpaces(),
+      mode: event.screenAnimation,
+    );
   }
 
   void dispose() {
+    _disposed = true;
+    answerFeedback.dispose();
     selectedPuzzleNotifier.dispose();
   }
 }

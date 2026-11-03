@@ -1,5 +1,7 @@
 import 'package:teamxperience/ui/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/features/event_game/logic/component_fades.dart';
+import 'package:teamxperience/features/event_game/logic/entrance.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/features/event_game/controller/puzzle_game_controller.dart';
 import 'package:teamxperience/features/event_game/widgets/geolocation_puzzle_widget.dart';
@@ -48,23 +50,26 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
   void _createAnimations(int componentCount) {
     if (componentCount == 0) return;
 
-    _animations = List.generate(componentCount, (index) {
-      double start = index / componentCount;
-      double end = (index + 1) / componentCount;
-
-      return Tween<double>(
-        begin: 0.0,
-        end: 1.0,
-      ).animate(CurvedAnimation(
-        parent: _animationController,
-        curve: Interval(start, end, curve: Curves.easeIn),
-      ));
-    });
+    _animations = componentFades(
+      _animationController,
+      componentCount,
+      controller.event.screenAnimation,
+      timing: _timing,
+    );
   }
 
-  void _startAnimation() {
-    _animationController.reset();
-    _animationController.forward();
+  EntranceTiming get _timing => EntranceTiming(
+    durationMs: controller.event.animationDuration,
+    delayMs: controller.event.animationDelay,
+  );
+
+  void _startAnimation(int componentCount) {
+    startEntrance(
+      _animationController,
+      controller.event.screenAnimation,
+      count: componentCount,
+      timing: _timing,
+    );
   }
 
   @override
@@ -108,7 +113,7 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
 
                 // Start animation when puzzle changes
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _startAnimation();
+                  _startAnimation(components.length);
                 });
 
                 if (isGeolocation && currentPuzzle != null) {

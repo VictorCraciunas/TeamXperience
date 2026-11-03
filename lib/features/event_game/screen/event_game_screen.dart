@@ -1,16 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:teamxperience/enums/missions_state.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/ui/components/event/mission_state_widget.dart';
-import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
 import '../../../constants/routes.dart';
 import '../../../model/event.dart';
 import '../controller/event_game_controller.dart';
+import '../widgets/game_back_button.dart';
 
 class EventGameScreen extends StatefulWidget {
   const EventGameScreen({super.key});
@@ -91,6 +89,7 @@ class _EventGameScreenState extends State<EventGameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: context.colors.panel,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -107,37 +106,23 @@ class _EventGameScreenState extends State<EventGameScreen> {
                           width: double.infinity,
                           height: 268,
                         ),
-                        SafeArea(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 20.0),
-                            child: GestureDetector(
-                              child: Container(
-                                padding: const EdgeInsets.all(8.0),
-                                decoration: BoxDecoration(
-                                  color: const Color(0x90FFFFFF),
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: AppSvgIcon(
-                                  'assets/images/back_icon.svg',
-                                  width: 24,
-                                  height: 24,
-                                ),
-                              ),
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
+                        const Align(
+                          alignment: Alignment.topLeft,
+                          child: GameBackButton(),
                         ),
                       ],
-                    ),
+                    )
+                  else ...const [
+                    Align(alignment: Alignment.topLeft, child: GameBackButton()),
+                    SizedBox(height: 30),
+                  ],
                   Transform.translate(
                     offset: const Offset(0, -30),
                     child: Container(
                       width: double.infinity,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
+                      decoration: BoxDecoration(
+                        color: context.colors.panel,
+                        borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(30),
                           topRight: Radius.circular(30),
                         ),

@@ -1,5 +1,6 @@
 import '../enums/animation_type.dart';
 import '../enums/component-type.dart';
+import '../enums/loop_effect.dart';
 
 class Component {
    ComponentType? type;
@@ -34,6 +35,54 @@ class Component {
    int? typewriterSpeed; // ms per character
    String? textAlign;
 
+   /// Space under this component in the game, from 0 to 120. When missing the
+   /// usual 40 is used.
+   double? spaceBelow;
+
+   /// Space between the letters of a button label, from 0 to 12. When missing: 8.
+   double? letterSpacing;
+
+   /// Space above and below the label inside a button, from 0 to 30. When missing: 5.
+   double? paddingY;
+
+   /// Height of a code input box, from 20 to 100. When missing: 1.5 times the text size.
+   double? boxHeight;
+
+   /// Whether the characters of a code input are bold. When missing: bold.
+   bool? boldText;
+
+   /// Where the glow of a code input is: "frame" (around all the boxes, the
+   /// default) or "boxes" (around each box).
+   String? glowOn;
+
+   /// Line height of a text, as a multiple of the font size, from 0.8 to 2.
+   double? lineHeight;
+
+   /// Whether a text is slanted. When missing: no.
+   bool? italic;
+
+   /// Whether a text is shown in capitals. When missing: as written.
+   bool? uppercase;
+
+   /// The colour, blur (0 to 30) and distance (0 to 20) of the shadow of a text.
+   String? shadowColor;
+   double? shadowBlur;
+   double? shadowDistance;
+
+   /// How visible a component is, from 0 (invisible) to 1. When missing: 1.
+   double? opacity;
+
+   /// Thickness of the border of an image (0 to 6, none when missing) or of a
+   /// button (when missing: 1.5).
+   double? borderWidth;
+
+   /// A movement the component repeats while the puzzle is open. When missing: none.
+   LoopEffect? loopEffect;
+
+   /// Whether a code input shakes on a wrong answer and pops on a right one.
+   /// When missing: yes. Only `false` switches it off.
+   bool? answerFeedback;
+
   Component({
     this.type,
     this.text,
@@ -66,6 +115,22 @@ class Component {
     this.width,
     this.typewriterSpeed,
     this.textAlign,
+    this.spaceBelow,
+    this.letterSpacing,
+    this.paddingY,
+    this.boxHeight,
+    this.boldText,
+    this.glowOn,
+    this.lineHeight,
+    this.italic,
+    this.uppercase,
+    this.shadowColor,
+    this.shadowBlur,
+    this.shadowDistance,
+    this.opacity,
+    this.borderWidth,
+    this.loopEffect,
+    this.answerFeedback,
   });
 
    factory Component.fromMap(Map<String, dynamic> map) {
@@ -105,6 +170,22 @@ class Component {
        height: map['height'] as double?,
        typewriterSpeed: map['typewriterSpeed'] as int?,
        textAlign: map['textAlign'] as String?,
+       spaceBelow: (map['spaceBelow'] as num?)?.toDouble(),
+       letterSpacing: (map['letterSpacing'] as num?)?.toDouble(),
+       paddingY: (map['paddingY'] as num?)?.toDouble(),
+       boxHeight: (map['boxHeight'] as num?)?.toDouble(),
+       boldText: map['boldText'] as bool?,
+       glowOn: map['glowOn'] as String?,
+       lineHeight: (map['lineHeight'] as num?)?.toDouble(),
+       italic: map['italic'] as bool?,
+       uppercase: map['uppercase'] as bool?,
+       shadowColor: map['shadowColor'] as String?,
+       shadowBlur: (map['shadowBlur'] as num?)?.toDouble(),
+       shadowDistance: (map['shadowDistance'] as num?)?.toDouble(),
+       opacity: (map['opacity'] as num?)?.toDouble(),
+       borderWidth: (map['borderWidth'] as num?)?.toDouble(),
+       loopEffect: LoopEffect.fromName(map['loopEffect'] as String?),
+       answerFeedback: map['answerFeedback'] as bool?,
      );
    }
 
@@ -141,6 +222,22 @@ class Component {
        if (height != null) 'height': height,
        if (typewriterSpeed != null) 'typewriterSpeed': typewriterSpeed,
        if (textAlign != null) 'textAlign': textAlign,
+       if (spaceBelow != null) 'spaceBelow': spaceBelow,
+       if (letterSpacing != null) 'letterSpacing': letterSpacing,
+       if (paddingY != null) 'paddingY': paddingY,
+       if (boxHeight != null) 'boxHeight': boxHeight,
+       if (boldText != null) 'boldText': boldText,
+       if (glowOn != null) 'glowOn': glowOn,
+       if (lineHeight != null) 'lineHeight': lineHeight,
+       if (italic != null) 'italic': italic,
+       if (uppercase != null) 'uppercase': uppercase,
+       if (shadowColor != null) 'shadowColor': shadowColor,
+       if (shadowBlur != null) 'shadowBlur': shadowBlur,
+       if (shadowDistance != null) 'shadowDistance': shadowDistance,
+       if (opacity != null) 'opacity': opacity,
+       if (borderWidth != null) 'borderWidth': borderWidth,
+       if (loopEffect != null) 'loopEffect': loopEffect!.name,
+       if (answerFeedback != null) 'answerFeedback': answerFeedback,
      };
    }
 

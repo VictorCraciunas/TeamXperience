@@ -9,6 +9,7 @@ import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/service/event_service/event_completeness.dart';
 import 'package:teamxperience/service/event_service/event_json_import.dart';
 import 'package:teamxperience/utils/component_conversion/component_to_widget.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
 
 import '../../ui/pump_ui.dart';
 
@@ -25,7 +26,7 @@ Future<void> _draw(WidgetTester tester, Component component) async {
 }
 
 const _weights = ['Thin (100)', 'Light (300)', 'Regular (400)', 'Medium (500)', 'Bold (700)', 'Black (900)'];
-const _fonts = ['Poppins', 'Monospace'];
+final _fonts = eventFontNames;
 const _aligns = ['left', 'center', 'right', 'justify'];
 
 /// The first ```json block after a heading of the skill file.
@@ -237,6 +238,106 @@ void main() {
       );
       await tester.pump(const Duration(seconds: 1));
       expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('the options added for the button and the code input', () {
+    for (final spacing in [0.0, 12.0]) {
+      for (final padding in [0.0, 30.0]) {
+        testWidgets('button, spacing $spacing and padding $padding', (tester) async {
+          await _draw(
+            tester,
+            Component(type: ComponentType.button, buttonLabel: 'Am găsit comoara, verifică', letterSpacing: spacing, paddingY: padding),
+          );
+        });
+      }
+    }
+    for (final height in [20.0, 100.0]) {
+      for (final length in [1, 10]) {
+        testWidgets('code, box height $height with $length characters', (tester) async {
+          await _draw(tester, Component(type: ComponentType.code, codeLength: length, inputType: 'Separated', boxHeight: height));
+        });
+      }
+    }
+    for (final place in ['frame', 'boxes']) {
+      for (final type in ['Separated', 'Free']) {
+        testWidgets('code, glow on $place, $type, not bold', (tester) async {
+          await _draw(
+            tester,
+            Component(
+              type: ComponentType.code,
+              codeLength: 10,
+              inputType: type,
+              enableGlow: true,
+              glowColor: '#33FF66',
+              glowOn: place,
+              boldText: false,
+            ),
+          );
+          await tester.pump(const Duration(seconds: 1));
+          expect(tester.takeException(), isNull);
+        });
+      }
+    }
+  });
+
+  group('the text effects at both ends', () {
+    for (final value in [0.0, 12.0]) {
+      testWidgets('letter spacing $value on a long text', (tester) async {
+        await _draw(tester, Component(type: ComponentType.text, text: 'Serverul fizic a fost localizat. Mergi la punctul marcat.', letterSpacing: value, fontSize: 24));
+      });
+    }
+    for (final value in [0.8, 2.0]) {
+      testWidgets('line height $value', (tester) async {
+        await _draw(tester, Component(type: ComponentType.text, text: 'Serverul fizic a fost localizat. Mergi la punctul marcat pe hartă.', lineHeight: value, fontSize: 24));
+      });
+    }
+    for (final blur in [0.0, 30.0]) {
+      for (final distance in [0.0, 20.0]) {
+        testWidgets('shadow blur $blur distance $distance', (tester) async {
+          await _draw(tester, Component(type: ComponentType.text, text: 'Salut', shadowBlur: blur, shadowDistance: distance, shadowColor: '#000000', fontSize: 30));
+        });
+      }
+    }
+    testWidgets('glow, italic and capitals together', (tester) async {
+      await _draw(
+        tester,
+        Component(type: ComponentType.text, text: 'Operațiunea Zero-Day', italic: true, uppercase: true, enableGlow: true, glowColor: '#33FF66', fontSize: 28),
+      );
+    });
+  });
+
+  group('the box effects at both ends', () {
+    for (final type in ComponentType.values) {
+      for (final opacity in [0.0, 1.0]) {
+        testWidgets('opacity $opacity on ${type.name}', (tester) async {
+          await _draw(tester, Component(type: type, text: 'x', buttonLabel: 'x', codeLength: 4, inputType: 'Separated', opacity: opacity));
+        });
+      }
+    }
+    for (final type in [ComponentType.image, ComponentType.button, ComponentType.code]) {
+      for (final blur in [0.0, 30.0]) {
+        for (final distance in [0.0, 20.0]) {
+          testWidgets('shadow blur $blur distance $distance on ${type.name}', (tester) async {
+            await _draw(
+              tester,
+              Component(type: type, buttonLabel: 'x', codeLength: 10, inputType: 'Separated', shadowBlur: blur, shadowDistance: distance, shadowColor: '#000000'),
+            );
+          });
+        }
+      }
+    }
+    for (final width in [0.0, 6.0]) {
+      testWidgets('border width $width on an image and a button', (tester) async {
+        await _draw(tester, Component(type: ComponentType.image, borderWidth: width, borderColor: '#33FF66'));
+        await _draw(tester, Component(type: ComponentType.button, buttonLabel: 'OK', borderWidth: width));
+      });
+    }
+    testWidgets('a glowing image with a shadow and a border', (tester) async {
+      await _draw(
+        tester,
+        Component(type: ComponentType.image, enableGlow: true, glowColor: '#33FF66', shadowBlur: 10, shadowDistance: 5, borderWidth: 3, borderColor: '#FFFFFF'),
+      );
     });
   });
 

@@ -35,6 +35,9 @@ Event
   dificultate: String                    (needed to publish)
   landingImageUrl?: String | null
   taskBackgroundImageUrl?: String | null
+  screenAnimation?: "fade" | "none" | "slideFromLeft" | "slideFromRight" | "slideFromBottom" | "slideFromTop" | "zoom" | "bounce"
+  animationDuration?: Whole number
+  animationDelay?: Whole number
   missions: List<Mission>                (at least 1 to publish)
 
 Mission
@@ -50,18 +53,33 @@ Puzzle
 
 Component
   type: "text" | "image" | "button" | "code"        (required)
+  spaceBelow?: Number
+  opacity?: Number
+  loopEffect?: "pulse" | "float" | "shake" | "flicker" | "glitch"
   text?: String
   textColor?: HexColor
   fontSize?: Number
   fontWeight?: String
   fontFamily?: String
   textAlign?: String
-  animation?: "none" | "typewriter"
+  letterSpacing?: Number
+  lineHeight?: Number
+  italic?: true | false
+  uppercase?: true | false
+  enableGlow?: true | false
+  glowColor?: HexColor
+  shadowColor?: HexColor
+  shadowBlur?: Number
+  shadowDistance?: Number
+  animation?: "none" | "typewriter" | "decode"
   typewriterSpeed?: Whole number
   imageUrl?: String
+  borderWidth?: Number
   cornerRadius?: Number
   height?: Number
   buttonLabel?: String
+  letterSpacing?: Number
+  paddingY?: Number
   buttonColor?: HexColor
   buttonColorOnTap?: HexColor
   buttonTextColor?: HexColor
@@ -71,6 +89,10 @@ Component
   glowColor?: HexColor
   enableFlicker?: true | false
   codeLength?: Whole number
+  boxHeight?: Number
+  boldText?: true | false
+  glowOn?: "frame" | "boxes"
+  answerFeedback?: true | false
   inputType?: "Separated" | "Free"
   capsLock?: "CapsLock" | "Fără"
   frameCornerRadius?: Number
@@ -142,6 +164,9 @@ A one-mission event with a code puzzle. (A fuller one is in `docs/event-import-s
 | `dificultate` | Free text shown as written. Suggested: `"Ușoară"`, `"Medie"`, `"Grea"`. |
 | `landingImageUrl` | A link starting with `https://`, or `null`. The event's cover picture. Files cannot be put in the JSON. |
 | `taskBackgroundImageUrl` | A link starting with `https://`, `null`, or the name of a picture that is already inside the app. Background behind every puzzle. Pictures inside the app: `"assets/images/hacker_background.jpg"` (dark, falling green code, use light green text on it). |
+| `screenAnimation` | How the components of a puzzle come in when it opens. The components come one after another, from top to bottom: `"fade"` (default) fades each in; `"slideFromLeft"`, `"slideFromRight"`, `"slideFromBottom"`, `"slideFromTop"` slide each in from that side while fading in; `"zoom"` grows each from small to full size; `"bounce"` brings each up from below, a little past its place, and settles it back. `"none"`: no animation, everything is there at once. A text with `"typewriter"`, and the glow of a button, still work with `"none"`. Pick one kind for the whole event and keep it calm: `"fade"` or `"slideFromBottom"` suit most games, `"bounce"` a playful one, `"slideFromLeft"` a terminal or hacker one. |
+| `animationDuration` | Whole milliseconds from 200 to 1500: how long one component takes to come in. When missing, the whole puzzle takes 2 seconds. Not used with `"none"`. |
+| `animationDelay` | Whole milliseconds from 0 to 600: how long after the one before the next component starts. `0` makes them all come in together. Missing means automatic. Not used with `"none"`. |
 | `missions` | A list. The missions are played in the order written. |
 
 Keys you may see in an exported event but must **not** write: `eventId`, `status`, `isStopped`, `nrMissions`, `wizardStep`, `updatedAt`, `defaults`, and the `id` of missions and puzzles. They are ignored or set by the app.
@@ -168,6 +193,9 @@ Keys you may see in an exported event but must **not** write: `eventId`, `status
 | Field | What it can hold |
 |---|---|
 | `type` | `"text"`, `"image"`, `"button"` or `"code"`. Required. |
+| `loopEffect` | A movement the component repeats for as long as the puzzle is open. `"pulse"`: grows a little and comes back. `"float"`: rises a little and comes back. `"shake"`: a short shake left and right every 2 seconds. `"flicker"`: dims and comes back, like a faulty light. `"glitch"`: still, with a quick jump sideways now and then. Missing means no effect. Works on every kind, together with the entrance of the event. Use one or two per puzzle, on what matters (a button, a title): everything moving at once is tiring. The movement is only drawn; it stops if the phone has animations switched off. |
+| `opacity` | A number from 0 to 1: how visible the component is. `1` (default) is fully visible, `0.5` half see-through, `0` invisible. Works on every kind. |
+| `spaceBelow` | A number from 0 to 120: the space in pixels left under this component before the next one. When missing it is 40. Use a small value (for example `8`) to keep a title close to the text under it, and a large one (for example `90`) before a button. |
 
 ### Component `text`
 
@@ -177,10 +205,21 @@ Keys you may see in an exported event but must **not** write: `eventId`, `status
 | `textColor` | Hex colour `"#RRGGBB"`, for example `"#1B1B1B"`. When missing: black. |
 | `fontSize` | A number from 8 to 72. The app's editor starts at 16. |
 | `fontWeight` | One of: `"Thin (100)"`, `"Light (300)"`, `"Regular (400)"`, `"Medium (500)"`, `"Bold (700)"`, `"Black (900)"`. Written exactly like that, with the number in brackets. |
-| `fontFamily` | `"Poppins"` or `"Monospace"`. |
-| `textAlign` | `"left"`, `"center"`, `"right"` or `"justify"`. Default: `"center"`. |
-| `animation` | `"none"` (appears at once) or `"typewriter"` (letters appear one by one). |
-| `typewriterSpeed` | Whole number of milliseconds per letter, from 10 to 300. Default 100. Only used with `"typewriter"`. |
+| `fontFamily` | One of the fonts listed under "Fonts" below. |
+| `textAlign` | `"left"`, `"center"`, `"right"` or `"justify"`. Default: `"center"`. The text takes the whole width of the screen, so `"left"` really puts it at the left edge. |
+| `animation` | How the letters appear: `"none"` (all at once), `"typewriter"` (one by one, like typing) or `"decode"` (scrambled letters and signs that settle on the real letters from left to right, good for a hacker or spy game). Both `"typewriter"` and `"decode"` use `typewriterSpeed`. A decoding text takes the room of the finished text from the start. |
+| `typewriterSpeed` | Whole number of milliseconds per letter, from 10 to 300. Default 100. Used with `"typewriter"` and `"decode"`. |
+| `letterSpacing` | A number from 0 to 12: extra space between the letters, in pixels. Default 0. Good for titles. |
+| `lineHeight` | A number from 0.8 to 2: the height of a line as a multiple of the font size. Default is the font's own (about 1.2). Use 1.5 or more for easy reading of long text. |
+| `italic` | `true` slants the text. Default `false`. |
+| `uppercase` | `true` shows the text in CAPITALS, also the Romanian letters. The text stays as written in the event. Default `false`. |
+| `enableGlow` | `true` puts a soft glow around the letters in `glowColor`. When `glowColor` is missing the glow has the colour of the text. A steady glow, it does not pulse. |
+| `glowColor` | Hex colour of the glow. Only used when `enableGlow` is `true`. |
+| `shadowDistance` | A number from 0 to 20: how far the shadow of the letters is moved down and to the right. Default 0. |
+| `shadowBlur` | A number from 0 to 30: how soft the shadow is. Default 0 (a hard edge). A shadow exists when `shadowDistance` or `shadowBlur` is more than 0. |
+| `shadowColor` | Hex colour of the shadow. Default is a dark shadow. |
+
+The glow and the shadow can be used together: the shadow is drawn behind the glow. On a dark background use a glow; on a light background use a shadow.
 
 ### Component `image`
 
@@ -189,6 +228,13 @@ Keys you may see in an exported event but must **not** write: `eventId`, `status
 | `imageUrl` | A link starting with `https://`. |
 | `cornerRadius` | A number from 0 to 50. Default 10. |
 | `height` | A number from 150 to 500. Default 150. |
+| `borderWidth` | A number from 0 to 6: the thickness of a border around the picture. Default 0 (no border). |
+| `borderColor` | Hex colour of the border. Default black. Only used when `borderWidth` is more than 0. |
+| `enableGlow` | `true` puts a steady glow around the picture, in `glowColor`. |
+| `glowColor` | Hex colour of the glow. Only used when `enableGlow` is `true`. |
+| `shadowDistance` | A number from 0 to 20: how far the shadow is moved down and to the right. Default 0. |
+| `shadowBlur` | A number from 0 to 30: how soft the shadow is. Default 0. A shadow exists when `shadowDistance` or `shadowBlur` is more than 0. It follows the rounded corners. |
+| `shadowColor` | Hex colour of the shadow. Default is a dark shadow. |
 
 ### Component `button`
 
@@ -202,10 +248,16 @@ A `code` puzzle needs a button: pressing it checks the answer. For `geolocation`
 | `buttonTextColor` | Hex colour. Default black. |
 | `buttonTextColorOnTap` | Hex colour while pressed. Default white. |
 | `borderColor` | Hex colour. Default black. |
+| `borderWidth` | A number from 0 to 6: the thickness of the border. Default 1.5. `0` removes the border. |
+| `shadowDistance` | A number from 0 to 20: how far the shadow is moved down and to the right. Default 0. |
+| `shadowBlur` | A number from 0 to 30: how soft the shadow is. Default 0. A shadow exists when `shadowDistance` or `shadowBlur` is more than 0. It follows the rounded corners. |
+| `shadowColor` | Hex colour of the shadow. Default is a dark shadow. |
 | `cornerRadius` | A number from 0 to 50. Default 10. |
 | `fontSize` | A number from 8 to 72. |
+| `letterSpacing` | A number from 0 to 12: the space between the letters of the label. Default 8. `0` gives a compact button. |
+| `paddingY` | A number from 0 to 30: the space above and below the label inside the button. Default 5. A larger number makes a taller button. |
 | `fontWeight` | The same six values as for `text`. |
-| `fontFamily` | `"Poppins"` or `"Monospace"`. Default `"Poppins"`. |
+| `fontFamily` | One of the fonts listed under "Fonts" below. Default `"Poppins"`. |
 | `enableGlow` | `true` or `false`. |
 | `glowColor` | Hex colour of the glow. Only used when `enableGlow` is `true`. |
 | `enableFlicker` | `true` or `false`. The button flickers. |
@@ -222,8 +274,15 @@ The place where players type the answer of a `code` puzzle.
 | `frameCornerRadius` | A number from 0 to 50. The outer frame (only with `"Separated"`). Default 15. |
 | `inputCornerRadius` | A number from 0 to 50. Each box. Default 15. |
 | `width` | A number from 0 to 200: the width of one box. Default 50. |
+| `boxHeight` | A number from 20 to 100: the height of one box. When missing it is 1.5 times `fontSize`. |
+| `boldText` | `true` (default) or `false`: whether the typed characters are bold. |
+| `shadowDistance` | A number from 0 to 20: how far the shadow is moved down and to the right. Default 0. |
+| `shadowBlur` | A number from 0 to 30: how soft the shadow is. Default 0. A shadow exists when `shadowDistance` or `shadowBlur` is more than 0. It follows the rounded corners. |
+| `shadowColor` | Hex colour of the shadow. Default is a dark shadow. |
+| `answerFeedback` | `true` (default) or `false`. When on, a wrong answer shakes the code input left and right and flashes it red, and a right answer makes it pop and flash green before the game goes on (about half a second). Write `false` to switch it off. It works with the phone's own setting: with animations off nothing moves. |
+| `glowOn` | `"frame"` (default): the glow is around all the boxes together. `"boxes"`: each box glows on its own. Only used with `enableGlow` and `"Separated"`; a single `"Free"` box glows either way. |
 | `fontSize` | A number from 8 to 72. Default 16. |
-| `fontFamily` | `"Poppins"` or `"Monospace"`. |
+| `fontFamily` | One of the fonts listed under "Fonts" below. |
 | `textColor` | Hex colour of the typed characters. |
 | `frameBackgroundColor` | Hex colour of the frame (only with `"Separated"`). |
 | `inputBackgroundColor` | Hex colour of the boxes. |
@@ -231,6 +290,25 @@ The place where players type the answer of a `code` puzzle.
 | `colorBorderInput` | Hex colour of each box border. |
 | `enableGlow` | `true` or `false`. |
 | `glowColor` | Hex colour of the glow. Only used when `enableGlow` is `true`. |
+
+### Fonts
+
+Write the name exactly as in this list, with the capitals and the spaces. Anything else makes the import fail.
+
+| `fontFamily` | Looks | Weights |
+|---|---|---|
+| `"Poppins"` | Clean, modern, rounded. The default. | All six |
+| `"Monospace"` | Typewriter or code, every letter the same width. | Regular and bold |
+| `"Orbitron"` | Sci-fi, wide, geometric. Good for tech and space. | All six (starts at 400) |
+| `"Share Tech Mono"` | Terminal, hacker, code. Narrow monospace. | One weight |
+| `"Press Start 2P"` | Retro arcade game. Very wide, use a small `fontSize` (10 to 16). | One weight |
+| `"Cinzel"` | Ancient, Roman, medieval. Capitals look best. | All six (starts at 400) |
+| `"Special Elite"` | Old typewriter, detective files. | One weight |
+| `"Caveat"` | Handwriting, notes, treasure maps. Use a larger `fontSize` (24 to 36). | Up to 700 |
+| `"Bebas Neue"` | Tall, bold titles, all capitals. | One weight |
+| `"Playfair Display"` | Elegant serif, mystery, luxury. | All six (starts at 400) |
+
+"All six" means the six `fontWeight` values work. For "One weight" fonts the weight changes little or nothing: leave `fontWeight` out. Where a font starts at 400, `"Thin (100)"` and `"Light (300)"` look like regular. Pair a title font with a plain one: for example `"Bebas Neue"` for the title text and `"Poppins"` for the rest.
 
 ### Colours
 
@@ -257,7 +335,7 @@ The puzzle screen shows the picture in `taskBackgroundImageUrl` behind the compo
 - [ ] Every `code` puzzle has `code`, a `code` component with a matching `codeLength`, and a `button` component.
 - [ ] Every `geolocation` puzzle has both `latitude` and `longitude`.
 - [ ] Every puzzle has at least one component, and every component has a valid `type`.
-- [ ] `fontWeight` values are written exactly as listed, `fontFamily` is `Poppins` or `Monospace`.
+- [ ] `fontWeight` values are written exactly as listed, `fontFamily` is one of the ten fonts, spelled as in the list.
 - [ ] Colours are `#RRGGBB`.
 - [ ] No `id`, `eventId`, `status` keys.
 - [ ] Images are `https://` links or left out.

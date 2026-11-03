@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/utils/component_conversion/box_effects.dart';
+import '../hex_color_field.dart';
+import '../option_checkbox.dart';
 import '../../../../../../../enums/component-type.dart';
 import '../../../../../../../model/component.dart';
 import '../../../../../../../model/puzzle.dart';
@@ -57,6 +60,10 @@ class _ImageComponentFieldsWidgetState
         const SizedBox(height: 20),
         _buildHeightSlider(),
         const SizedBox(height: 20),
+        _buildBorderSection(),
+        const SizedBox(height: 20),
+        _buildGlowSection(),
+        const SizedBox(height: 20),
         _buildSaveButton(),
       ],
     );
@@ -83,6 +90,7 @@ class _ImageComponentFieldsWidgetState
     // Create a temporary Component for preview
     final previewComponent = Component();
     controller.updateComponentFields(previewComponent);
+    BoxEffects.copy(widget.component, previewComponent, shadow: true);
 
     // Use ComponentToWidget to convert to widget
     final previewWidget = ComponentToWidget().convert(previewComponent);
@@ -99,6 +107,52 @@ class _ImageComponentFieldsWidgetState
       value: controller.radius,
       label: controller.radius.toStringAsFixed(0),
       onChanged: (value) => setState(() => controller.radius = value),
+    );
+  }
+
+  Widget _buildBorderSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SliderWidget(
+          title: 'Grosime chenar',
+          min: 0,
+          max: 6,
+          divisions: 12,
+          value: controller.borderWidth,
+          label: controller.borderWidth.toStringAsFixed(1),
+          onChanged: (value) => setState(() => controller.borderWidth = value),
+        ),
+        if (controller.borderWidth > 0) ...[
+          const SizedBox(height: 16),
+          HexColorField(
+            label: 'Culoare chenar',
+            hex: controller.borderColor,
+            onChanged: (color) => setState(() => controller.borderColor = color),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildGlowSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        OptionCheckbox(
+          label: 'Glow imagine',
+          value: controller.enableGlow,
+          onChanged: (value) => setState(() => controller.enableGlow = value),
+        ),
+        if (controller.enableGlow) ...[
+          const SizedBox(height: 16),
+          HexColorField(
+            label: 'Culoare glow',
+            hex: controller.glowColor,
+            onChanged: (color) => setState(() => controller.glowColor = color),
+          ),
+        ],
+      ],
     );
   }
 

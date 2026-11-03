@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/animation_type.dart';
+import 'package:teamxperience/utils/component_conversion/decode_text.dart';
+import 'package:teamxperience/utils/component_conversion/text_effects.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
 
 class TextComponentWidget extends StatelessWidget {
   final String text;
@@ -10,6 +13,7 @@ class TextComponentWidget extends StatelessWidget {
   final String? fontFamily;
   final int? typewriterSpeed;
   final String? textAlign;
+  final TextEffects effects;
 
   const TextComponentWidget({
     super.key,
@@ -21,6 +25,7 @@ class TextComponentWidget extends StatelessWidget {
     this.fontFamily,
     this.typewriterSpeed,
     this.textAlign,
+    this.effects = const TextEffects(),
   });
 
   TextAlign _mapTextAlign(String? align) {
@@ -74,17 +79,35 @@ class TextComponentWidget extends StatelessWidget {
         fontFamily: fontFamily,
         msPerCharacter: typewriterSpeed ?? 100,
         textAlign: currentTextAlign,
+        effects: effects,
+      );
+    }
+
+    if (animation == AnimationType.decode && text.isNotEmpty) {
+      return DecodeText(
+        key: ValueKey(text),
+        text: text,
+        textColor: currentColor,
+        fontSize: fontSize,
+        fontWeight: currentFontWeight,
+        fontFamily: fontFamily,
+        msPerCharacter: typewriterSpeed ?? 100,
+        textAlign: currentTextAlign,
+        effects: effects,
       );
     }
 
     return Text(
       textAlign: currentTextAlign,
-      text,
-      style: TextStyle(
+      effects.apply(text),
+      style: effects.style(
+        TextStyle(
           color: currentColor,
           fontSize: fontSize,
           fontWeight: currentFontWeight,
-          fontFamily: fontFamily
+          fontFamily: fontFamily,
+          fontVariations: fontVariationsFor(fontFamily, currentFontWeight),
+        ),
       ),
     );
   }
@@ -98,6 +121,7 @@ class TypewriterText extends StatefulWidget {
   final String? fontFamily;
   final int msPerCharacter;
   final TextAlign textAlign;
+  final TextEffects effects;
 
   const TypewriterText({
     super.key,
@@ -108,6 +132,7 @@ class TypewriterText extends StatefulWidget {
     this.fontFamily,
     this.msPerCharacter = 100,
     this.textAlign = TextAlign.center,
+    this.effects = const TextEffects(),
   });
 
   @override
@@ -116,6 +141,9 @@ class TypewriterText extends StatefulWidget {
 
 class _TypewriterTextState extends State<TypewriterText> with SingleTickerProviderStateMixin {
   AnimationController? _controller;
+
+  /// The text as shown: in capitals when asked for.
+  String get _shown => widget.effects.apply(widget.text);
   late Animation<int> _animation;
 
   @override
@@ -138,13 +166,13 @@ class _TypewriterTextState extends State<TypewriterText> with SingleTickerProvid
     _controller?.dispose();
 
     _controller = AnimationController(
-      duration: Duration(milliseconds: widget.text.length * widget.msPerCharacter),
+      duration: Duration(milliseconds: _shown.length * widget.msPerCharacter),
       vsync: this,
     );
 
     _animation = IntTween(
         begin: 0,
-        end: widget.text.length
+        end: _shown.length
     ).animate(_controller!);
 
     _controller!.forward();
@@ -162,13 +190,16 @@ class _TypewriterTextState extends State<TypewriterText> with SingleTickerProvid
       animation: _animation,
       builder: (context, child) {
         // Add bounds checking to prevent RangeError
-        final displayLength = _animation.value.clamp(0, widget.text.length);
+        final displayLength = _animation.value.clamp(0, _shown.length);
 
-        final style = TextStyle(
-          color: widget.textColor,
-          fontSize: widget.fontSize,
-          fontWeight: widget.fontWeight,
-          fontFamily: widget.fontFamily,
+        final style = widget.effects.style(
+          TextStyle(
+            color: widget.textColor,
+            fontSize: widget.fontSize,
+            fontWeight: widget.fontWeight,
+            fontFamily: widget.fontFamily,
+            fontVariations: fontVariationsFor(widget.fontFamily, widget.fontWeight),
+          ),
         );
 
         // The whole text is laid out from the start and the part not typed yet
@@ -177,9 +208,9 @@ class _TypewriterTextState extends State<TypewriterText> with SingleTickerProvid
           TextSpan(
             style: style,
             children: [
-              TextSpan(text: widget.text.substring(0, displayLength)),
+              TextSpan(text: _shown.substring(0, displayLength)),
               TextSpan(
-                text: widget.text.substring(displayLength),
+                text: _shown.substring(displayLength),
                 style: const TextStyle(color: Colors.transparent),
               ),
             ],

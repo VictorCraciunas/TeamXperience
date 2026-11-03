@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'package:teamxperience/enums/animation_type.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/event_type.dart';
+import 'package:teamxperience/enums/loop_effect.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
+import 'package:teamxperience/enums/screen_animation.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/puzzle.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
 
 /// What came out of reading an event from JSON text: the event, or the list of
 /// everything that was wrong with the text (never both).
@@ -64,6 +67,9 @@ Event _readEvent(Map<String, dynamic> map, List<String> errors) {
     landingImageUrl: reader.text('landingImageUrl'),
     taskBackgroundImageUrl: reader.text('taskBackgroundImageUrl'),
     type: reader.option('type', EventType.values),
+    screenAnimation: reader.option('screenAnimation', ScreenAnimation.values) ?? ScreenAnimation.fade,
+    animationDuration: reader.whole('animationDuration', min: 200, max: 1500),
+    animationDelay: reader.whole('animationDelay', min: 0, max: 600),
     dateEvent: reader.date('dateEvent'),
     dateStartEnrollment: reader.date('dateStartEnrollment'),
     dateDeadlineEnrollment: reader.date('dateDeadlineEnrollment'),
@@ -134,7 +140,7 @@ Component _readComponent(Map<String, dynamic> map, String where, List<String> er
     animation: reader.option('animation', AnimationType.values),
     fontSize: reader.decimal('fontSize', min: 8, max: 72),
     fontWeight: reader.choice('fontWeight', _fontWeights),
-    fontFamily: reader.choice('fontFamily', _fontFamilies),
+    fontFamily: reader.choice('fontFamily', eventFontNames),
     codeLength: reader.whole('codeLength', min: 1, max: 10),
     cornerRadius: reader.decimal('cornerRadius', min: 0, max: 50),
     enableFlicker: reader.flag('enableFlicker'),
@@ -153,6 +159,22 @@ Component _readComponent(Map<String, dynamic> map, String where, List<String> er
     width: type == ComponentType.code ? reader.decimal('width', min: 0, max: 200) : reader.decimal('width'),
     height: type == ComponentType.image ? reader.decimal('height', min: 150, max: 500) : reader.decimal('height'),
     typewriterSpeed: reader.whole('typewriterSpeed', min: 10, max: 300),
+    spaceBelow: reader.decimal('spaceBelow', min: 0, max: 120),
+    letterSpacing: reader.decimal('letterSpacing', min: 0, max: 12),
+    paddingY: reader.decimal('paddingY', min: 0, max: 30),
+    boxHeight: reader.decimal('boxHeight', min: 20, max: 100),
+    boldText: reader.flag('boldText'),
+    glowOn: reader.choice('glowOn', _glowPlaces),
+    lineHeight: reader.decimal('lineHeight', min: 0.8, max: 2),
+    italic: reader.flag('italic'),
+    uppercase: reader.flag('uppercase'),
+    shadowColor: reader.color('shadowColor'),
+    shadowBlur: reader.decimal('shadowBlur', min: 0, max: 30),
+    shadowDistance: reader.decimal('shadowDistance', min: 0, max: 20),
+    opacity: reader.decimal('opacity', min: 0, max: 1),
+    borderWidth: reader.decimal('borderWidth', min: 0, max: 6),
+    loopEffect: reader.option('loopEffect', LoopEffect.values),
+    answerFeedback: reader.flag('answerFeedback'),
     textAlign: reader.choice('textAlign', _textAligns),
   );
 }
@@ -160,10 +182,10 @@ Component _readComponent(Map<String, dynamic> map, String where, List<String> er
 /// What the editors of the app offer. Anything else would not show up in the
 /// component editor, or would not draw at all.
 const _fontWeights = ['Thin (100)', 'Light (300)', 'Regular (400)', 'Medium (500)', 'Bold (700)', 'Black (900)'];
-const _fontFamilies = ['Poppins', 'Monospace'];
 const _textAligns = ['left', 'center', 'right', 'justify'];
 const _inputTypes = ['Separated', 'Free'];
 const _capsLocks = ['CapsLock', 'Fără'];
+const _glowPlaces = ['frame', 'boxes'];
 
 Map<String, dynamic> _object(Object? value, String where, List<String> errors) {
   if (value is Map<String, dynamic>) return value;

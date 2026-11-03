@@ -1,21 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/utils/component_conversion/answer_feedback.dart';
+import 'package:teamxperience/utils/event_fonts.dart';
 import 'package:teamxperience/model/component.dart';
 
 class CodeComponentWidget extends StatefulWidget {
   final Component component;
   final Function(String)? onTextChanged;
 
+  /// Tells the input that an answer was checked, so it can shake or pop.
+  final AnswerFeedback? feedback;
+
   const CodeComponentWidget({
     super.key,
     required this.component,
-    this.onTextChanged
+    this.onTextChanged,
+    this.feedback,
   });
 
   @override
   CodeComponentWidgetState createState() => CodeComponentWidgetState();
 }
 
-class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTickerProviderStateMixin {
+class CodeComponentWidgetState extends State<CodeComponentWidget> with TickerProviderStateMixin {
   late List<TextEditingController> controllers;
   late List<FocusNode> focusNodes;
 
@@ -25,9 +31,15 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
   // Keep track of the length we last built for
   late int _lastLength;
 
+  // The reaction to a checked answer (a shake when wrong, a pop when right).
+  late final AnimationController _answerController;
+  AnswerResult? _answerResult;
+
   @override
   void initState() {
     super.initState();
+    _answerController = AnimationController(vsync: this);
+    widget.feedback?.addListener(_onAnswer);
     _lastLength = widget.component.codeLength ?? 5;
     _initControllers(_lastLength);
     glowController = AnimationController(vsync: this,duration: const Duration(milliseconds: 1000));
@@ -49,7 +61,29 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
   }
 
   @override
+  void didUpdateWidget(CodeComponentWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.feedback != widget.feedback) {
+      oldWidget.feedback?.removeListener(_onAnswer);
+      widget.feedback?.addListener(_onAnswer);
+    }
+  }
+
+  /// Plays the reaction to the answer that was just checked.
+  void _onAnswer() {
+    final result = widget.feedback?.last;
+    if (result == null || widget.component.answerFeedback == false) return;
+    if (MediaQuery.maybeOf(context)?.disableAnimations ?? false) return;
+
+    _answerResult = result;
+    _answerController.duration = answerDuration(result);
+    _answerController.forward(from: 0);
+  }
+
+  @override
   void dispose() {
+    widget.feedback?.removeListener(_onAnswer);
+    _answerController.dispose();
     glowController.dispose();
     _disposeControllers();
     super.dispose();
@@ -118,7 +152,9 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
     final Color glowColor = _hexToColor(widget.component.glowColor, defaultColor: Colors.black);
     final double widthInput = widget.component.width ?? 50;
     final double fontSize = widget.component.fontSize ?? 16.0;
-    final double heightInput = fontSize * 1.5;
+    final double heightInput = widget.component.boxHeight ?? fontSize * 1.5;
+    final bool bold = widget.component.boldText != false;
+    final bool glowOnBoxes = enableGlow && widget.component.glowOn == 'boxes';
     final fontFamily = widget.component.fontFamily;
     final textColor = _hexToColor(widget.component.textColor);
     final capsLock = widget.component.capsLock ?? "Fără";
@@ -149,7 +185,8 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
           currentIndex++;
           return Expanded(
             child: _buildCell(index, heightInput, widthInput, inputCornerRadius, inputBackgroundColor,
-                colorBorderInput,fontSize,fontFamily,textColor, capsLock),
+                colorBorderInput,fontSize,fontFamily,textColor, capsLock,
+                bold: bold, glowOnBoxes: glowOnBoxes, glowColor: glowColor),
           );
         });
 
@@ -173,13 +210,14 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
         builder: (context, child) => _buildFreeCell(
           heightInput, widthInput, inputCornerRadius, inputBackgroundColor,
           colorBorderInput, fontSize, fontFamily, textColor, capsLock,
+          bold: bold,
           enableGlow: enableGlow, glowColor: glowColor, glowValue: glowAnimation.value,
         ),
       );
     }
 
     // Wrap in outer Container only for Separated mode
-    return inputType == 'Separated'
+    final tree = inputType == 'Separated'
         ? AnimatedBuilder(
       animation: glowAnimation,
       builder: (context,child)=>
@@ -190,7 +228,7 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
                 color: frameBackgroundColor,
                 borderRadius: BorderRadius.circular(frameCornerRadius),
                 border: Border.all(color: colorBorderContainer, width: 1.5),
-                boxShadow: enableGlow == true
+                boxShadow: enableGlow == true && !glowOnBoxes
                     ? [
                   BoxShadow(
                     color: glowColor.withValues(alpha: (0.6 +glowAnimation.value * 0.2)),
@@ -206,65 +244,120 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
           ),
     )
         : content;
+
+    return _withAnswerReaction(tree);
+  }
+
+  /// [child] shaken, made bigger and tinted while the reaction to an answer plays.
+  Widget _withAnswerReaction(Widget child) {
+    return AnimatedBuilder(
+      animation: _answerController,
+      child: child,
+      builder: (context, child) {
+        final result = _answerResult;
+        if (result == null || !_answerController.isAnimating) return child!;
+
+        final frame = answerFrame(result, _answerController.value);
+        Widget reacting = child!;
+        if (frame.dx != 0 || frame.scale != 1) {
+          reacting = Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.translationValues(frame.dx, 0, 0)..scaleByDouble(frame.scale, frame.scale, 1, 1),
+            child: reacting,
+          );
+        }
+        if (frame.flash > 0) {
+          reacting = ColorFiltered(
+            colorFilter: ColorFilter.mode(answerFrameColor(result).withValues(alpha: 0.45 * frame.flash), BlendMode.srcATop),
+            child: reacting,
+          );
+        }
+        return reacting;
+      },
+    );
   }
 
   Widget _buildCell(int index, double heightInput, double widthInput, double? inputCornerRadius,
-      Color inputBackgroundColor, Color colorBorderInput,double fontSize, String? fontFamily, Color textColor, String capsLock) {
-    return Container(
-      height: heightInput,
-      width: widthInput,
-      decoration: BoxDecoration(
-        color: inputBackgroundColor,
-        borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
+      Color inputBackgroundColor, Color colorBorderInput,double fontSize, String? fontFamily, Color textColor, String capsLock,
+      {bool bold = true, bool glowOnBoxes = false, Color glowColor = Colors.black}) {
+    final field = TextField(
+      controller: controllers[index],
+      focusNode: focusNodes[index],
+      textAlign: TextAlign.center,
+      textAlignVertical: TextAlignVertical.center,
+      textCapitalization: capsLock == 'Fără' ? TextCapitalization.none : TextCapitalization.characters,
+      maxLength: 1,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: inputBackgroundColor,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
+          borderSide: BorderSide(color: colorBorderInput, width: 1),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
+          borderSide: BorderSide(color: colorBorderInput, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
+          borderSide: BorderSide(color: colorBorderInput, width: 1),
+        ),
+        contentPadding: EdgeInsets.zero,
+        counterText: '',
       ),
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      alignment: Alignment.center,
-      child: TextField(
-        controller: controllers[index],
-        focusNode: focusNodes[index],
-        textAlign: TextAlign.center,
-        textAlignVertical: TextAlignVertical.center,
-        textCapitalization: capsLock == 'Fără' ? TextCapitalization.none : TextCapitalization.characters,
-        maxLength: 1,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: inputBackgroundColor,
-          border: OutlineInputBorder(
+      onChanged: (value) {
+        if (value.length == 1 && index < controllers.length - 1) {
+          FocusScope.of(context).requestFocus(focusNodes[index + 1]);
+        } else if (value.isEmpty && index > 0) {
+          FocusScope.of(context).requestFocus(focusNodes[index - 1]);
+        }
+        // Note: _onTextChanged() is called automatically via the listener
+      },
+      style: TextStyle(
+          fontSize: fontSize,
+          fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+          fontFamily: fontFamily,
+          fontVariations: fontVariationsFor(fontFamily, bold ? FontWeight.w700 : FontWeight.w400),
+          color: textColor
+      ),
+    );
+
+    // One box, with its own pulsing glow when the glow is asked for on the boxes.
+    Widget box(List<BoxShadow>? glow, Widget? child) => Container(
+          height: heightInput,
+          width: widthInput,
+          decoration: BoxDecoration(
+            color: inputBackgroundColor,
             borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
-            borderSide: BorderSide(color: colorBorderInput, width: 1),
+            boxShadow: glow,
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
-            borderSide: BorderSide(color: colorBorderInput, width: 1),
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          alignment: Alignment.center,
+          child: child,
+        );
+
+    if (!glowOnBoxes) return box(null, field);
+
+    return AnimatedBuilder(
+      animation: glowAnimation,
+      child: field,
+      builder: (context, child) => box(
+        [
+          BoxShadow(
+            color: glowColor.withValues(alpha: (0.6 + glowAnimation.value * 0.2)),
+            blurRadius: 10.0,
+            spreadRadius: 2.0 + (glowAnimation.value * 3.0),
+            offset: const Offset(0, 0),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(inputCornerRadius ?? 25),
-            borderSide: BorderSide(color: colorBorderInput, width: 1),
-          ),
-          contentPadding: EdgeInsets.zero,
-          counterText: '',
-        ),
-        onChanged: (value) {
-          if (value.length == 1 && index < controllers.length - 1) {
-            FocusScope.of(context).requestFocus(focusNodes[index + 1]);
-          } else if (value.isEmpty && index > 0) {
-            FocusScope.of(context).requestFocus(focusNodes[index - 1]);
-          }
-          // Note: _onTextChanged() is called automatically via the listener
-        },
-        style:  TextStyle(
-            fontSize: fontSize,
-            fontWeight: FontWeight.bold,
-            fontFamily: fontFamily,
-            color: textColor
-        ),
+        ],
+        child,
       ),
     );
   }
 
   Widget _buildFreeCell(double heightInput, double widthInput, double? inputCornerRadius,
       Color inputBackgroundColor, Color colorBorderInput, double fontSize, String? fontFamily, Color textColor, String capsLock,
-      {bool enableGlow = false, Color glowColor = Colors.black, double glowValue = 0.0}) {
+      {bool bold = true, bool enableGlow = false, Color glowColor = Colors.black, double glowValue = 0.0}) {
     return Container(
       height: heightInput,
       width: widthInput,
@@ -308,8 +401,9 @@ class CodeComponentWidgetState extends State<CodeComponentWidget> with SingleTic
         ),
         style:  TextStyle(
             fontSize: fontSize,
-            fontWeight: FontWeight.bold,
+            fontWeight: bold ? FontWeight.bold : FontWeight.normal,
             fontFamily: fontFamily,
+            fontVariations: fontVariationsFor(fontFamily, bold ? FontWeight.w700 : FontWeight.w400),
             color: textColor
         ),
         // Note: _onTextChanged() is called automatically via the listener for free mode too
