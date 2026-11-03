@@ -45,6 +45,7 @@ Firebase project id: `teamxperience-dadc6` (`firebase.json`, `lib/firebase_optio
 - [docs/screens.md](docs/screens.md) — screen-by-screen behaviour, validation and user-visible strings
 - [docs/platform-and-config.md](docs/platform-and-config.md) — Android/iOS config, dependencies, Firebase project, external services, tests
 - [docs/known-issues.md](docs/known-issues.md) — bugs/risks found by code reading (verify before fixing)
+- [docs/roadmap/mockups-roadmap.md](docs/roadmap/mockups-roadmap.md) — the mockup redesign: logic and UI roadmap, reference mockups, branch rules (step branches → `redesign/mockups`)
 
 Keep these in sync when adding routes, models, collections or providers.
 
@@ -117,7 +118,7 @@ Event lifecycle: players register for events (`registeredEventIds`), enter the e
 
 ### Theme
 
-Theme lives in `lib/ui/theme/`: `AppColors` (a `ThemeExtension` with light and dark tokens: page, panel, border, inset, text, muted, accent, tick, onTick (text on tick fills), navy, ...), `AppTheme.light/dark` (Material 3, Poppins, scaffold = page colour, canvas = panel colour), `AppRadius`, `AppSpacing`, and `context.colors` to read the tokens. `themeMode` comes from `ThemeController` (saved choice: Sistem / Luminos / Întunecat, default Luminos). Screens and shared widgets read colours from `context.colors`; there is no `MyColors` any more. Text styles come from `AppTextStyles` (also registered as the `TextTheme`), spacing from `AppSpacing` (`AppSpacing.page` = 16 side padding), and feedback colours from `AppColors.success/warning/danger` (+ `*Soft`). `test/ui/no_hardcoded_colors_test.dart` stops `lib/features` from gaining literal colours (allow-list in `test/ui/colour_allowlist.txt`). Fonts: `Poppins` (weights 300–800) and `Monospace` (SpaceMono) in `assets/fonts/`. Lottie loader at `assets/loader/loader.json`; images in `assets/images/`.
+Theme lives in `lib/ui/theme/`: `AppColors` (a `ThemeExtension` with light and dark tokens: page, panel, border, inset, text, muted, accent, tick, onTick (text on tick fills), navy, ...), `AppTheme.light/dark` (Material 3, Poppins, scaffold = page colour, canvas = panel colour), `AppRadius`, `AppSpacing`, and `context.colors` to read the tokens. `themeMode` comes from `ThemeController` (saved choice: Sistem / Luminos / Întunecat, default Luminos). Screens and shared widgets read colours from `context.colors`; there is no `MyColors` any more. Text styles come from `AppTextStyles` (also registered as the `TextTheme`), spacing from `AppSpacing` (`AppSpacing.page` = 16 side padding), and feedback colours from `AppColors.success/warning/danger` (+ `*Soft`). `test/ui/no_hardcoded_colors_test.dart` stops `lib/features` from gaining literal colours (allow-list in `test/ui/colour_allowlist.txt`). Inside an event's own screens colours come from `context.eventPalette` (`EventPalette`, set with `EventThemeScope`; falls back to the app colours). Fonts: `Poppins` (weights 300–800) and `Monospace` (SpaceMono) in `assets/fonts/`; icons for the redesign from `flutter_tabler_icons`. `flutter run -t lib/dev/gallery_main.dart` opens a Firebase-free gallery of the redesign components to compare with `docs/roadmap/mockups/`. Lottie loader at `assets/loader/loader.json`; images in `assets/images/`.
 
 ## Gotchas
 
