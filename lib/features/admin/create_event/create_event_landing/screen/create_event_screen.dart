@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
+import 'package:teamxperience/enums/difficulty.dart';
 import 'package:teamxperience/enums/screen_animation.dart';
+import 'package:teamxperience/utils/event_formats.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/optional_slider.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:intl/intl.dart';
@@ -57,6 +59,23 @@ class _CreateEventPageState extends State<CreateEventPage> {
     controller.locationController.dispose();
     controller.descriptionController.dispose();
     controller.startCodeController.dispose();
+    for (final c in [
+      controller.areaController,
+      controller.finishPointController,
+      controller.routeKmController,
+      controller.durationController,
+      controller.teamSizeMinController,
+      controller.teamSizeMaxController,
+      controller.maxTeamsController,
+      controller.startPinController,
+      controller.meetingNoteController,
+      controller.arriveBeforeController,
+      controller.whatToBringController,
+      controller.storyController,
+      controller.organiserController,
+    ]) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -125,6 +144,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                 : null,
                   ),
                   const SizedBox(height: 20),
+                  AppTextField(
+                    controller: controller.areaController,
+                    label: 'Zonă',
+                    hint: 'Ex. Orașul de Sus',
+                  ),
+                  const SizedBox(height: 20),
 
                   AppTextField(
                     controller: controller.punctDeStartController,
@@ -135,6 +160,33 @@ class _CreateEventPageState extends State<CreateEventPage> {
                             (v ?? '').trim().isEmpty
                                 ? 'Introdu Punctul de start'
                                 : null,
+                  ),
+                  const SizedBox(height: 20),
+                  AppTextField(
+                    controller: controller.finishPointController,
+                    label: 'Punct de final',
+                    hint: 'Unde se termină traseul',
+                  ),
+                  const SizedBox(height: 20),
+                  AppTextField(
+                    controller: controller.startPinController,
+                    label: 'Coordonate start',
+                    hint: '45.7971, 24.1520',
+                    helper: 'Copiază din Google Maps, ex. 45.7971, 24.1520',
+                    validator: (v) => CreateEventController.startPinProblem(v ?? ''),
+                  ),
+                  const SizedBox(height: 20),
+                  AppTextField(
+                    controller: controller.meetingNoteController,
+                    label: 'Unde vă strângeți',
+                    hint: 'Ex. Piața Mare, lângă fântână',
+                  ),
+                  const SizedBox(height: 20),
+                  AppTextField(
+                    controller: controller.arriveBeforeController,
+                    label: 'Veniți cu câte minute înainte',
+                    hint: '15',
+                    keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: 20),
 
@@ -150,6 +202,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
                             (v ?? '').trim().isEmpty
                                 ? 'Introdu descriere eveniment'
                                 : null,
+                  ),
+                  const SizedBox(height: 20),
+                  AppTextField(
+                    controller: controller.storyController,
+                    label: 'Povestea',
+                    hint: 'Textul lung de pe pagina evenimentului',
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
                   ),
                   const SizedBox(height: 20),
 
@@ -347,42 +407,74 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   ],
                   const SizedBox(height: 20),
 
-                  // Lungime traseu
                   AppTextField(
-                    controller: controller.lungimeController,
-                    label: 'Lungime traseu',
-                    hint: 'Lungimea traseului',
-                    validator:
-                        (v) =>
-                            (v ?? '').trim().isEmpty
-                                ? 'Introdu lungime traseu'
-                                : null,
+                    controller: controller.routeKmController,
+                    label: 'Lungime traseu (km)',
+                    hint: 'Ex. 4,5',
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    validator: (v) => double.tryParse((v ?? '').trim().replaceAll(',', '.')) == null ? 'Introdu lungimea în km' : null,
                   ),
                   const SizedBox(height: 20),
-
-                  // Durata
                   AppTextField(
-                    controller: controller.durataController,
-                    label: 'Durata',
-                    hint: 'Durata evenimentului',
-                    validator:
-                        (v) =>
-                            (v ?? '').trim().isEmpty ? 'Introdu durata' : null,
+                    controller: controller.durationController,
+                    label: 'Durata (minute)',
+                    hint: 'Ex. 120',
+                    keyboardType: TextInputType.number,
+                    validator: (v) => int.tryParse((v ?? '').trim()) == null ? 'Introdu durata în minute' : null,
                   ),
                   const SizedBox(height: 20),
-
-                  // Dificultate
-                  AppTextField(
-                    controller: controller.dificultateController,
+                  AppDropdown<Difficulty>(
                     label: 'Dificultate',
-                    hint: 'Dificultatea evenimentului',
-                    validator:
-                        (v) =>
-                            (v ?? '').trim().isEmpty
-                                ? 'Introdu dificultate'
-                                : null,
+                    items: [
+                      for (final d in Difficulty.values) AppDropdownItem<Difficulty>(value: d, label: difficultyLabel(d)),
+                    ],
+                    value: controller.difficulty,
+                    validator: (v) => v == null ? 'Alege dificultatea' : null,
+                    onChanged: (value) => setState(() => controller.difficulty = value),
                   ),
-
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AppTextField(
+                          controller: controller.teamSizeMinController,
+                          label: 'Membri pe echipă, minim',
+                          hint: '2',
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: AppTextField(
+                          controller: controller.teamSizeMaxController,
+                          label: 'maxim',
+                          hint: '6',
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  AppTextField(
+                    controller: controller.maxTeamsController,
+                    label: 'Număr maxim de echipe',
+                    hint: 'Gol = fără limită',
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 20),
+                  AppTextField(
+                    controller: controller.whatToBringController,
+                    label: 'Ce să aducă',
+                    hint: 'Câte unul pe rând',
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                  const SizedBox(height: 20),
+                  AppTextField(
+                    controller: controller.organiserController,
+                    label: 'Organizator',
+                    hint: 'Gol = TeamXperience',
+                  ),
                   const SizedBox(height: 20),
                   AppButton(
                     label:

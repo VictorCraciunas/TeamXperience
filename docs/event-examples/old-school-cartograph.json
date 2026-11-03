@@ -3,14 +3,28 @@
   "description": "O vânătoare de comori ca pe vremuri: hartă, ghicitori, scrisori cifrate și drumuri pe jos prin centrul vechi al Sibiului. Un cartograf bătrân a ascuns o comoară și a lăsat doar câteva indicii pe hârtie veche.",
   "location": "Sibiu, Centrul Istoric",
   "punctDeStart": "Piața Mare, lângă Turnul Sfatului",
+  "startLatitude": 45.7971,
+  "startLongitude": 24.152,
+  "finishPoint": "Turnul Sfatului",
+  "area": "Orașul de Sus",
+  "routeLengthKm": 1.2,
+  "durationMinutes": 120,
+  "difficulty": "easy",
+  "teamSizeMin": 2,
+  "teamSizeMax": 6,
+  "meetingPointNote": "Piața Mare, lângă Turnul Sfatului",
+  "arriveMinutesBefore": 15,
+  "whatToBring": [
+    "Telefon încărcat",
+    "încălțări comode"
+  ],
+  "story": "Un cartograf a lăsat o hartă neterminată ascunsă în zidurile orașului. Echipa care o completează prima moștenește secretul lui.",
+  "organiserName": "TeamXperience",
   "type": "PUBLIC",
   "startCode": "CARTOGRAF",
   "dateEvent": "2026-11-28T15:00",
   "dateStartEnrollment": "2026-11-03T09:00",
   "dateDeadlineEnrollment": "2026-11-27T23:59",
-  "lungimeTraseu": "1,2 km",
-  "durata": "2 ore",
-  "dificultate": "Ușoară",
   "landingImageUrl": null,
   "taskBackgroundImageUrl": null,
   "screenAnimation": "fade",
@@ -18,6 +32,9 @@
   "animationDelay": 150,
   "missions": [
     {
+      "title": "Fața cu cifre",
+      "teaser": "Arată ora fără să vorbească.",
+      "isTeaserPublic": true,
       "puzzles": [
         {
           "type": "code",
@@ -251,6 +268,9 @@
       ]
     },
     {
+      "title": "Râuri fără apă",
+      "teaser": "Orașe fără case, drumuri fără pași.",
+      "isTeaserPublic": true,
       "puzzles": [
         {
           "type": "code",
@@ -432,6 +452,9 @@
       ]
     },
     {
+      "title": "Cifrul cartografului",
+      "teaser": "Numele comorii, scris cu un cifru vechi.",
+      "isTeaserPublic": false,
       "puzzles": [
         {
           "type": "code",

@@ -61,9 +61,8 @@ void main() {
             ..descriptionController.text = 'Un joc'
             ..punctDeStartController.text = 'Piața Mare'
             ..startCodeController.text = 'XTREME'
-            ..lungimeController.text = '4 km'
-            ..durataController.text = '2 ore'
-            ..dificultateController.text = 'Medie'
+            ..routeKmController.text = '4'
+            ..durationController.text = '120'
             ..selectedType = EventType.PRIVAT
             ..dateEvent = _day
             ..dateStartEnrollement = _opens

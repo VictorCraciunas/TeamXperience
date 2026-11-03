@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:teamxperience/enums/animation_type.dart';
 import 'package:teamxperience/enums/component-type.dart';
+import 'package:teamxperience/enums/difficulty.dart';
 import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/enums/loop_effect.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
@@ -11,6 +12,7 @@ import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/utils/event_fonts.dart';
+import 'package:teamxperience/utils/event_formats.dart';
 
 /// What came out of reading an event from JSON text: the event, or the list of
 /// everything that was wrong with the text (never both).
@@ -73,6 +75,21 @@ Event _readEvent(Map<String, dynamic> map, List<String> errors) {
     dateEvent: reader.date('dateEvent'),
     dateStartEnrollment: reader.date('dateStartEnrollment'),
     dateDeadlineEnrollment: reader.date('dateDeadlineEnrollment'),
+    area: reader.text('area'),
+    finishPoint: reader.text('finishPoint'),
+    routeLengthKm: reader.decimal('routeLengthKm', min: 0.1, max: 100),
+    durationMinutes: reader.whole('durationMinutes', min: 10, max: 600),
+    difficulty: reader.option('difficulty', Difficulty.values),
+    teamSizeMin: reader.whole('teamSizeMin', min: 1, max: 20) ?? 2,
+    teamSizeMax: reader.whole('teamSizeMax', min: 1, max: 20) ?? 6,
+    maxTeams: reader.whole('maxTeams', min: 1, max: 500),
+    startLatitude: reader.decimal('startLatitude', min: -90, max: 90),
+    startLongitude: reader.decimal('startLongitude', min: -180, max: 180),
+    meetingPointNote: reader.text('meetingPointNote'),
+    arriveMinutesBefore: reader.whole('arriveMinutesBefore', min: 0, max: 120) ?? 15,
+    whatToBring: reader.texts('whatToBring'),
+    story: reader.text('story'),
+    organiserName: reader.text('organiserName'),
   );
 
   final missions = reader.list('missions');
@@ -82,12 +99,25 @@ Event _readEvent(Map<String, dynamic> map, List<String> errors) {
     event.addMission(_readMission(mission, i, where, errors));
   }
   event.nrMissions = event.missions.length;
+
+  // Cards and home still read the text fields, so the numbers win there too.
+  final km = event.routeLengthKm;
+  final minutes = event.durationMinutes;
+  final level = event.difficulty;
+  if (km != null) event.lungimeTraseu = formatKm(km);
+  if (minutes != null) event.durata = formatDuration(minutes);
+  if (level != null) event.dificultate = difficultyLabel(level);
   return event;
 }
 
 Mission _readMission(Map<String, dynamic> map, int index, String where, List<String> errors) {
   final reader = _Reader(map, where, errors);
-  final mission = Mission(id: index.toString());
+  final mission = Mission(
+    id: index.toString(),
+    title: reader.text('title'),
+    teaser: reader.text('teaser'),
+    isTeaserPublic: reader.flag('isTeaserPublic') ?? false,
+  );
 
   final puzzles = reader.list('puzzles');
   for (var i = 0; i < puzzles.length; i++) {
@@ -296,6 +326,16 @@ class _Reader {
     }
     _fail(key, 'nu poate fi „$value”. Valori posibile: ${values.map((e) => e.name).join(', ')}.');
     return null;
+  }
+
+  /// A list of texts; anything else in it is a mistake.
+  List<String> texts(String key) {
+    final items = list(key);
+    if (items.any((item) => item is! String)) {
+      _fail(key, 'trebuie să fie o listă de texte ["...", "..."].');
+      return const [];
+    }
+    return [for (final item in items) (item as String).trim()].where((t) => t.isNotEmpty).toList();
   }
 
   List<dynamic> list(String key) {

@@ -104,6 +104,7 @@ class _AddMissionsPageState extends State<AddMissionsPage> {
                 padding: const EdgeInsets.only(bottom: 10),
                 child: MissionCard(
                   index: i,
+                  title: missions[i].title,
                   puzzleCount: missions[i].puzzles.length,
                   status: _controller.statusText(i),
                   done: _controller.isDone(i),

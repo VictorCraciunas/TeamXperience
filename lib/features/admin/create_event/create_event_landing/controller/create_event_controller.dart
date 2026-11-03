@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/routes.dart';
+import 'package:teamxperience/enums/difficulty.dart';
 import 'package:teamxperience/enums/screen_animation.dart';
+import 'package:teamxperience/features/admin/create_event/logic/coordinates.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/service/event_service/event_completeness.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/ui/components/feedback/snackbars.dart';
 import 'package:teamxperience/utils/calendar_helper.dart';
+import 'package:teamxperience/utils/event_formats.dart';
 import 'package:teamxperience/utils/image_helper.dart';
 
 import '../../../../../enums/event_type.dart';
@@ -27,9 +30,33 @@ class CreateEventController {
   final dateDeadlineRegistrationController = TextEditingController();
   final dateStartRegistrationController = TextEditingController();
 
-  final lungimeController = TextEditingController();
-  final durataController = TextEditingController();
-  final dificultateController = TextEditingController();
+  // The fields of the event page.
+  final areaController = TextEditingController();
+  final finishPointController = TextEditingController();
+
+  /// Kilometres; a comma works as a decimal point.
+  final routeKmController = TextEditingController();
+
+  /// Minutes.
+  final durationController = TextEditingController();
+  final teamSizeMinController = TextEditingController(text: '2');
+  final teamSizeMaxController = TextEditingController(text: '6');
+
+  /// Empty means no limit.
+  final maxTeamsController = TextEditingController();
+
+  /// "45.7971, 24.1520", as Google Maps copies it.
+  final startPinController = TextEditingController();
+  final meetingNoteController = TextEditingController();
+  final arriveBeforeController = TextEditingController(text: '15');
+
+  /// One item per line.
+  final whatToBringController = TextEditingController();
+  final storyController = TextEditingController();
+
+  /// Empty means TeamXperience.
+  final organiserController = TextEditingController();
+  Difficulty? difficulty;
 
   File? landingImageFile;
   File? taskBackgroundImageFile;
@@ -71,9 +98,7 @@ class CreateEventController {
       deadlineEnrollment = event.dateDeadlineEnrollment;
       dateStartEnrollement = event.dateStartEnrollment;
       punctDeStartController.text = event.punctDeStart ?? "";
-      lungimeController.text = event.lungimeTraseu ?? "";
-      durataController.text = event.durata ?? "";
-      dificultateController.text = event.dificultate ?? "";
+      _loadPageFields(event);
       if (dateEvent != null) {
         dateEventController.text = _format(dateEvent!);
       }
@@ -93,6 +118,39 @@ class CreateEventController {
     }
   }
 
+  void _loadPageFields(Event event) {
+    final km = event.effectiveRouteKm;
+    final minutes = event.effectiveDurationMinutes;
+    final max = event.maxTeams;
+    final lat = event.startLatitude;
+    final lng = event.startLongitude;
+    areaController.text = event.area ?? '';
+    finishPointController.text = event.finishPoint ?? '';
+    routeKmController.text = km == null ? '' : formatKm(km).replaceAll(' km', '');
+    durationController.text = minutes == null ? '' : '$minutes';
+    difficulty = event.effectiveDifficulty;
+    teamSizeMinController.text = '${event.teamSizeMin}';
+    teamSizeMaxController.text = '${event.teamSizeMax}';
+    maxTeamsController.text = max == null ? '' : '$max';
+    startPinController.text = lat == null || lng == null ? '' : formatCoordinates(lat, lng);
+    meetingNoteController.text = event.meetingPointNote ?? '';
+    arriveBeforeController.text = '${event.arriveMinutesBefore}';
+    whatToBringController.text = event.whatToBring.join('\n');
+    storyController.text = event.story ?? '';
+    organiserController.text = event.organiserName ?? '';
+  }
+
+  /// The message for a start pin that cannot be read, or null.
+  static String? startPinProblem(String text) =>
+      text.trim().isEmpty || parseCoordinates(text) != null ? null : 'Coordonate greșite';
+
+  static String? _textOrNull(TextEditingController c) {
+    final text = c.text.trim();
+    return text.isEmpty ? null : text;
+  }
+
+  static int? _whole(TextEditingController c) => int.tryParse(c.text.trim());
+
   static String _format(DateTime date) =>
       DateFormat('yyyy-MM-dd HH:mm').format(date);
 
@@ -105,9 +163,6 @@ class CreateEventController {
       ..description = descriptionController.text.trim()
       ..startCode = startCodeController.text.trim()
       ..punctDeStart = punctDeStartController.text.trim()
-      ..lungimeTraseu = lungimeController.text.trim()
-      ..durata = durataController.text.trim()
-      ..dificultate = dificultateController.text.trim()
       ..type = selectedType
       ..screenAnimation = screenAnimation
       ..animationDuration = animationDuration
@@ -117,6 +172,38 @@ class CreateEventController {
       ..dateStartEnrollment = dateStartEnrollement
       ..landingImageUrl = landingImageFile?.path
       ..taskBackgroundImageUrl = taskBackgroundImageFile?.path;
+    _fillPageFields(event);
+  }
+
+  void _fillPageFields(Event event) {
+    final km = double.tryParse(routeKmController.text.trim().replaceAll(',', '.'));
+    final minutes = _whole(durationController);
+    final level = difficulty;
+    final pin = parseCoordinates(startPinController.text);
+    event
+      ..area = _textOrNull(areaController)
+      ..finishPoint = _textOrNull(finishPointController)
+      ..routeLengthKm = km
+      ..durationMinutes = minutes
+      ..difficulty = level
+      ..teamSizeMin = _whole(teamSizeMinController) ?? 2
+      ..teamSizeMax = _whole(teamSizeMaxController) ?? 6
+      ..maxTeams = _whole(maxTeamsController)
+      ..startLatitude = pin?.lat
+      ..startLongitude = pin?.lng
+      ..meetingPointNote = _textOrNull(meetingNoteController)
+      ..arriveMinutesBefore = _whole(arriveBeforeController) ?? 15
+      ..whatToBring = [
+        for (final line in whatToBringController.text.split('\n'))
+          if (line.trim().isNotEmpty) line.trim(),
+      ]
+      ..story = _textOrNull(storyController)
+      ..organiserName = _textOrNull(organiserController)
+      // Cards and older screens still read the text fields. An empty number
+      // keeps the old text, so text the form could not read is not lost.
+      ..lungimeTraseu = km == null ? (event.lungimeTraseu ?? '') : formatKm(km)
+      ..durata = minutes == null ? (event.durata ?? '') : formatDuration(minutes)
+      ..dificultate = level == null ? (event.dificultate ?? '') : difficultyLabel(level);
   }
 
   /// A new event from the form (it gets an id when saved). If the form was

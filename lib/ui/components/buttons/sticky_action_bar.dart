@@ -17,7 +17,7 @@ class StickyActionBar extends StatelessWidget {
     this.leadingIcon,
     this.tone = BarTone.neutral,
     this.highlighted = false,
-    required this.actionLabel,
+    this.actionLabel,
     this.actionIcon,
     this.prominent = true,
     this.onAction,
@@ -34,7 +34,8 @@ class StickyActionBar extends StatelessWidget {
 
   /// A teal top border, for a bar that asks for action now.
   final bool highlighted;
-  final String actionLabel;
+  /// Null shows the status alone, with no button or link.
+  final String? actionLabel;
   final IconData? actionIcon;
 
   /// A navy button when true, an accent text link when false.
@@ -45,6 +46,7 @@ class StickyActionBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final icon = leadingIcon;
+    final label = actionLabel;
     final iconColor = switch (tone) {
       BarTone.success => colors.success,
       BarTone.accent => colors.accent,
@@ -71,12 +73,14 @@ class StickyActionBar extends StatelessWidget {
                   const SizedBox(width: 8),
                 ],
                 Expanded(child: StickyBarTexts(title: title, detail: detail, inline: inlineDetail)),
-                const SizedBox(width: 10),
-                Flexible(
-                  child: prominent
-                      ? StickyBarButton(label: actionLabel, icon: actionIcon, onTap: onAction)
-                      : StickyBarLink(label: actionLabel, onTap: onAction),
-                ),
+                if (label != null) ...[
+                  const SizedBox(width: 10),
+                  Flexible(
+                    child: prominent
+                        ? StickyBarButton(label: label, icon: actionIcon, onTap: onAction)
+                        : StickyBarLink(label: label, onTap: onAction),
+                  ),
+                ],
               ],
             ),
           ),

@@ -30,9 +30,24 @@ Event
   dateEvent: DateText                    (needed to publish)
   dateStartEnrollment: DateText          (needed to publish)
   dateDeadlineEnrollment: DateText       (needed to publish)
-  lungimeTraseu: String                  (needed to publish)
-  durata: String                         (needed to publish)
-  dificultate: String                    (needed to publish)
+  finishPoint: String                    (needed to publish)
+  startLatitude: Number                  (needed to publish)
+  startLongitude: Number                 (needed to publish)
+  routeLengthKm: Number                  (needed to publish, or lungimeTraseu)
+  durationMinutes: Whole number          (needed to publish, or durata)
+  difficulty: "easy" | "medium" | "hard" (needed to publish, or dificultate)
+  area?: String
+  teamSizeMin?: Whole number             (default 2)
+  teamSizeMax?: Whole number             (default 6)
+  maxTeams?: Whole number
+  meetingPointNote?: String
+  arriveMinutesBefore?: Whole number     (default 15)
+  whatToBring?: List<String>
+  story?: String
+  organiserName?: String
+  lungimeTraseu?: String                 (older events; write routeLengthKm instead)
+  durata?: String                        (older events; write durationMinutes instead)
+  dificultate?: String                   (older events; write difficulty instead)
   landingImageUrl?: String | null
   taskBackgroundImageUrl?: String | null
   screenAnimation?: "fade" | "none" | "slideFromLeft" | "slideFromRight" | "slideFromBottom" | "slideFromTop" | "zoom" | "bounce"
@@ -41,6 +56,9 @@ Event
   missions: List<Mission>                (at least 1 to publish)
 
 Mission
+  title: String                          (needed to publish)
+  teaser?: String
+  isTeaserPublic?: true | false          (default false)
   puzzles: List<Puzzle>                  (at least 1 to publish)
 
 Puzzle
@@ -122,11 +140,17 @@ A one-mission event with a code puzzle. (A fuller one is in `docs/event-import-s
   "dateEvent": "2027-05-15T18:00",
   "dateStartEnrollment": "2027-05-01T09:00",
   "dateDeadlineEnrollment": "2027-05-14T23:59",
-  "lungimeTraseu": "3 km",
-  "durata": "2 ore",
-  "dificultate": "Medie",
+  "finishPoint": "Turnul Sfatului",
+  "startLatitude": 45.7971,
+  "startLongitude": 24.1520,
+  "routeLengthKm": 3,
+  "durationMinutes": 120,
+  "difficulty": "medium",
   "missions": [
     {
+      "title": "Prima casă",
+      "teaser": "Un an scris deasupra unei uși.",
+      "isTeaserPublic": true,
       "puzzles": [
         {
           "type": "code",
@@ -159,9 +183,20 @@ A one-mission event with a code puzzle. (A fuller one is in `docs/event-import-s
 | `dateEvent` | Date text `YYYY-MM-DDTHH:MM`, local time, for example `"2027-05-15T18:00"`. The game ends 3 hours after this unless the organiser stops it earlier. |
 | `dateStartEnrollment` | Date text. When registration opens. Must be **before** `dateDeadlineEnrollment`. |
 | `dateDeadlineEnrollment` | Date text. When registration closes. Must be **before** `dateEvent`. |
-| `lungimeTraseu` | Free text, for example `"3 km"`, `"500 m"`. |
-| `durata` | Free text, for example `"2 ore"`, `"90 de minute"`. |
-| `dificultate` | Free text shown as written. Suggested: `"Ușoară"`, `"Medie"`, `"Grea"`. |
+| `area` | Free text, the part of town under the city on the event page, for example `"Orașul de Sus"`. |
+| `finishPoint` | Free text, where the route ends, for example `"Turnul Sfatului"`. Shown at the end of the route strip. |
+| `startLatitude`, `startLongitude` | Numbers, the start pin (latitude −90 to 90, longitude −180 to 180). "Hartă" on the event page opens it in Google Maps. Copy them from Google Maps: right-click the place, click the numbers. |
+| `routeLengthKm` | Number from 0.1 to 100, the route in km, for example `4.5`. Shown as "4,5 km". |
+| `durationMinutes` | Whole number from 10 to 600, for example `120`. Shown as "2 h", `90` as "1 h 30". |
+| `difficulty` | `"easy"`, `"medium"` or `"hard"`, shown as one, two or three dots with "Ușoară", "Medie", "Grea". |
+| `teamSizeMin`, `teamSizeMax` | Whole numbers from 1 to 20, how many people a team can have. Default 2 and 6, shown as "Echipe de 2–6". |
+| `maxTeams` | Whole number from 1 to 500, how many teams can register. Leave it out for no limit. |
+| `meetingPointNote` | Free text, exactly where teams meet, for example `"Piața Mare, lângă fântână"`. Shown as "Start:" in the logistics. When missing, `punctDeStart` is shown. |
+| `arriveMinutesBefore` | Whole number from 0 to 120, default 15: "fii acolo la 9:45" for a 10:00 start. |
+| `whatToBring` | A list of short texts, for example `["Telefon încărcat", "încălțări comode"]`. |
+| `story` | Free text, the story on the event page ("Povestea"). Longer than three lines it folds, with "Citește tot". When missing, `description` is shown. |
+| `organiserName` | Free text. Leave it out for TeamXperience. |
+| `lungimeTraseu`, `durata`, `dificultate` | Text from older events, still read when the number fields are missing. Write `routeLengthKm`, `durationMinutes` and `difficulty` instead. |
 | `landingImageUrl` | A link starting with `https://`, or `null`. The event's cover picture. Files cannot be put in the JSON. |
 | `taskBackgroundImageUrl` | A link starting with `https://`, or `null`. Background behind every puzzle. Pictures are not kept inside the app: host the picture somewhere and paste its link. A dark picture needs light text (the hacker examples use light green). A sample dark picture is in `docs/event-examples/images/hacker_background.jpg`. |
 | `screenAnimation` | How the components of a puzzle come in when it opens. The components come one after another, from top to bottom: `"fade"` (default) fades each in; `"slideFromLeft"`, `"slideFromRight"`, `"slideFromBottom"`, `"slideFromTop"` slide each in from that side while fading in; `"zoom"` grows each from small to full size; `"bounce"` brings each up from below, a little past its place, and settles it back. `"none"`: no animation, everything is there at once. A text with `"typewriter"`, and the glow of a button, still work with `"none"`. Pick one kind for the whole event and keep it calm: `"fade"` or `"slideFromBottom"` suit most games, `"bounce"` a playful one, `"slideFromLeft"` a terminal or hacker one. |
@@ -175,6 +210,9 @@ Keys you may see in an exported event but must **not** write: `eventId`, `status
 
 | Field | What it can hold |
 |---|---|
+| `title` | Free text, the name of the mission, for example `"Scara Pasajului"`. Needed to publish. |
+| `teaser` | Free text, one short line for the event page, for example `"Numără treptele. Nu toate sunt la vedere."`. |
+| `isTeaserPublic` | `true` shows the title and teaser on the event page before the game; `false` (default) counts the mission as secret ("Încă 4 misiuni secrete"). Show one or two, keep the rest secret. |
 | `puzzles` | A list. The puzzles are played in the order written. A mission is finished when its last puzzle is solved. |
 
 ### Puzzle
@@ -332,6 +370,8 @@ The puzzle screen shows the picture in `taskBackgroundImageUrl` behind the compo
 - [ ] One JSON object, valid JSON, no comments, no trailing commas.
 - [ ] Dates look like `2027-05-15T18:00` and are in this order: enrolment opens, enrolment closes, event.
 - [ ] `type` of the event is `"PUBLIC"` or `"PRIVAT"`.
+- [ ] The event has `finishPoint`, `startLatitude`, `startLongitude`, `routeLengthKm`, `durationMinutes` and `difficulty` (`easy`, `medium` or `hard`).
+- [ ] Every mission has a `title`; one or two have `isTeaserPublic: true` and a `teaser`.
 - [ ] Every puzzle `type` is one of `code`, `imageToUpload`, `geolocation` (avoid `redirect` and `ar`).
 - [ ] Every `code` puzzle has `code`, a `code` component with a matching `codeLength`, and a `button` component.
 - [ ] Every `geolocation` puzzle has both `latitude` and `longitude`.

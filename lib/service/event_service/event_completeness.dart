@@ -50,11 +50,13 @@ class MissionProblem {
 }
 
 List<MissionProblem> missionProblems(Mission mission) {
+  final problems = <MissionProblem>[
+    if (_blank(mission.title)) const MissionProblem('Nu are titlu'),
+  ];
   if (mission.puzzles.isEmpty) {
-    return const [MissionProblem('Nu are puzzle-uri')];
+    return [...problems, const MissionProblem('Nu are puzzle-uri')];
   }
 
-  final problems = <MissionProblem>[];
   for (var i = 0; i < mission.puzzles.length; i++) {
     for (final issue in puzzleIssues(mission.puzzles[i])) {
       problems.add(MissionProblem('Puzzle ${i + 1}: ${issue.label}', puzzleIndex: i));
@@ -80,6 +82,8 @@ enum EventIssue {
   noRoute('Lipsește lungimea traseului'),
   noDuration('Lipsește durata'),
   noDifficulty('Lipsește dificultatea'),
+  noStartPin('Lipsește locul de start pe hartă'),
+  noFinishPoint('Lipsește punctul de final'),
   noMissions('Evenimentul nu are misiuni');
 
   const EventIssue(this.label);
@@ -115,9 +119,11 @@ List<EventIssue> eventIssues(Event event) {
 
   if (event.type == null) issues.add(EventIssue.noType);
   if (_blank(event.startCode)) issues.add(EventIssue.noStartCode);
-  if (_blank(event.lungimeTraseu)) issues.add(EventIssue.noRoute);
-  if (_blank(event.durata)) issues.add(EventIssue.noDuration);
-  if (_blank(event.dificultate)) issues.add(EventIssue.noDifficulty);
+  if (event.effectiveRouteKm == null) issues.add(EventIssue.noRoute);
+  if (event.effectiveDurationMinutes == null) issues.add(EventIssue.noDuration);
+  if (event.effectiveDifficulty == null) issues.add(EventIssue.noDifficulty);
+  if (!event.hasStartPin) issues.add(EventIssue.noStartPin);
+  if (_blank(event.finishPoint)) issues.add(EventIssue.noFinishPoint);
   if (event.missions.isEmpty) issues.add(EventIssue.noMissions);
 
   return issues;

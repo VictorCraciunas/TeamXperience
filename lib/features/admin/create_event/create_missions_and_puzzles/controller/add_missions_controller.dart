@@ -41,9 +41,8 @@ class AddMissionsController {
   void _copyMissionsWithoutAnswers() {
     event.missions = [
       for (final mission in event.missions)
-        Mission(
-          id: mission.id,
-          puzzles: [
+        mission.withId(mission.id)
+          ..puzzles = [
             for (final puzzle in mission.puzzles)
               Puzzle.fromMap(puzzle.toJson())
                 ..code = null
@@ -51,9 +50,21 @@ class AddMissionsController {
                 ..longitude = null
                 ..indiciu = null,
           ],
-        ),
     ];
     event.nrMissions = event.missions.length;
+  }
+
+  /// Sets the title, the event-page line and whether the page shows the
+  /// mission. Text is trimmed and blank is stored as nothing; fields not given
+  /// stay as they are.
+  void setMissionText(int index, {String? title, String? teaser, bool? isTeaserPublic}) {
+    if (index < 0 || index >= event.missions.length) return;
+    final mission = event.missions[index];
+    String? clean(String text) => text.trim().isEmpty ? null : text.trim();
+    if (title != null) mission.title = clean(title);
+    if (teaser != null) mission.teaser = clean(teaser);
+    if (isTeaserPublic != null) mission.isTeaserPublic = isTeaserPublic;
+    onStateChanged?.call();
   }
 
   void addNewMission() {
@@ -68,7 +79,7 @@ class AddMissionsController {
 
     final left = [...event.missions]..removeAt(index);
     event.missions = [
-      for (var i = 0; i < left.length; i++) Mission(id: i.toString(), puzzles: left[i].puzzles),
+      for (var i = 0; i < left.length; i++) left[i].withId(i.toString()),
     ];
     event.nrMissions = event.missions.length;
     onStateChanged?.call();
@@ -83,7 +94,7 @@ class AddMissionsController {
     final moved = [...event.missions];
     moved.insert(to, moved.removeAt(from));
     event.missions = [
-      for (var i = 0; i < moved.length; i++) Mission(id: i.toString(), puzzles: moved[i].puzzles),
+      for (var i = 0; i < moved.length; i++) moved[i].withId(i.toString()),
     ];
     onStateChanged?.call();
   }
