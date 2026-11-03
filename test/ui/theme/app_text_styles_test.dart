@@ -32,6 +32,8 @@ Future<Map<String, TextStyle>> _styles(WidgetTester tester, ThemeData theme) asy
 }
 
 void main() {
+  _mockupStyles();
+
   testWidgets('styles have the sizes and weights of the approved screens', (tester) async {
     final s = await _styles(tester, AppTheme.light);
     expect(s['sectionTitle']!.fontSize, 15);
@@ -65,5 +67,48 @@ void main() {
     final theme = AppTheme.light;
     expect(theme.textTheme.titleMedium!.fontSize, 15);
     expect(theme.textTheme.bodyMedium!.fontSize, 13);
+  });
+}
+
+void _mockupStyles() {
+  testWidgets('the mockup styles have the mockup sizes', (tester) async {
+    late Map<String, TextStyle> s;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light,
+        home: Builder(
+          builder: (context) {
+            s = {
+              'heroTitle': AppTextStyles.heroTitle(context),
+              'trailHeading': AppTextStyles.trailHeading(context),
+              'cardTitle': AppTextStyles.cardTitle(context),
+              'pageBody': AppTextStyles.pageBody(context),
+              'smallMuted': AppTextStyles.smallMuted(context),
+              'factValue': AppTextStyles.factValue(context),
+              'display': AppTextStyles.display(context),
+            };
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+
+    const expected = {
+      'heroTitle': (19.0, FontWeight.w500, 1.2),
+      'trailHeading': (14.0, FontWeight.w500, null),
+      'cardTitle': (12.0, FontWeight.w500, null),
+      'pageBody': (12.0, FontWeight.w400, 1.45),
+      'smallMuted': (11.0, FontWeight.w400, 1.45),
+      'factValue': (18.0, FontWeight.w500, 1.0),
+      'display': (34.0, FontWeight.w500, 1.0),
+    };
+    for (final e in expected.entries) {
+      final style = s[e.key];
+      expect(style?.fontSize, e.value.$1, reason: e.key);
+      expect(style?.fontWeight, e.value.$2, reason: e.key);
+      expect(style?.height, e.value.$3, reason: e.key);
+    }
+    expect(s['smallMuted']?.color, AppColors.light.muted);
+    expect(s['cardTitle']?.color, AppColors.light.text);
   });
 }
