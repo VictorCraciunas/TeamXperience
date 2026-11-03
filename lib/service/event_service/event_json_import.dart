@@ -12,6 +12,7 @@ import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/utils/event_fonts.dart';
+import 'package:teamxperience/utils/event_formats.dart';
 
 /// What came out of reading an event from JSON text: the event, or the list of
 /// everything that was wrong with the text (never both).
@@ -98,6 +99,14 @@ Event _readEvent(Map<String, dynamic> map, List<String> errors) {
     event.addMission(_readMission(mission, i, where, errors));
   }
   event.nrMissions = event.missions.length;
+
+  // Cards and home still read the text fields, so the numbers win there too.
+  final km = event.routeLengthKm;
+  final minutes = event.durationMinutes;
+  final level = event.difficulty;
+  if (km != null) event.lungimeTraseu = formatKm(km);
+  if (minutes != null) event.durata = formatDuration(minutes);
+  if (level != null) event.dificultate = difficultyLabel(level);
   return event;
 }
 

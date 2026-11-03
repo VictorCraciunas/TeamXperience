@@ -67,6 +67,23 @@ void main() {
       expect((e.story, e.organiserName), ('Un cartograf a lăsat o hartă.', 'TeamXperience'));
     });
 
+    test('the numbers also become the text that cards and home read', () {
+      final e = _import(_event(extra: {
+        'routeLengthKm': 3.2,
+        'durationMinutes': 90,
+        'difficulty': 'hard',
+        'lungimeTraseu': '1,5 km',
+        'durata': '2 ore',
+        'dificultate': 'Medie',
+      })).event!;
+      expect((e.lungimeTraseu, e.durata, e.dificultate), ('3,2 km', '1 h 30', 'Grea'));
+    });
+
+    test('without the numbers the old text stays as written', () {
+      final e = _import(_event(extra: {'lungimeTraseu': '1,5 km', 'durata': '2 ore', 'dificultate': 'Medie'})).event!;
+      expect((e.lungimeTraseu, e.durata, e.dificultate), ('1,5 km', '2 ore', 'Medie'));
+    });
+
     test('missing page fields keep the defaults', () {
       final e = _import(_event()).event!;
       expect((e.teamSizeMin, e.teamSizeMax, e.arriveMinutesBefore), (2, 6, 15));
