@@ -1,13 +1,9 @@
-import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 import 'package:teamxperience/backend/repo/teamRepo.dart';
 import 'package:teamxperience/backend/repo/user_repo.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/model/user.dart';
-
-import '../../state_management/user_provider.dart';
 
 class TeamService {
   TeamRepo teamRepo = TeamRepo();
@@ -22,7 +18,6 @@ class TeamService {
     int numberOfMembers,
     AppUser user,
     Event event,
-    BuildContext context,
   ) async {
     List<String> users = [user.uid];
     Team team = Team(
@@ -36,8 +31,6 @@ class TeamService {
     );
     await teamRepo.addTeam(team, event.eventId);
     await userRepo.addEventToUser(user.uid, event.eventId);
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    userProvider.addRegisteredEvent(event.eventId);
 
     return team;
   }
