@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>02-home</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>:root{--surface-1:#F4F6FA;--font-mono:"Space Mono",monospace;--font-voice:Georgia,"Times New Roman",serif}body{margin:0;padding:24px;background:#F4F6FA;font-family:Poppins,sans-serif}</style>
+</head><body>
+<!-- Reference mockup for docs/roadmap/mockups-roadmap.md. The app must match this. -->
+<style>
+.ph{width:316px;flex:0 0 316px;background:#E7ECF3;border:6px solid #0C092A;border-radius:34px;overflow:hidden;font-size:12px;color:#0C092A;line-height:1.45;display:flex;flex-direction:column}
+.card{background:#fff;border:1px solid #CFD8E4;border-radius:14px;padding:10px 12px}
+.mut{color:#47546A}
+.h{font-size:14px;font-weight:500;margin:0}
+.hd{display:flex;align-items:center;gap:6px;margin:16px 14px 8px}
+.hd:before{content:"";width:10px;height:10px;border-radius:50%;border:3px solid #222F62;background:#fff}
+.lk{margin-left:auto;color:#167A7E;font-weight:500;font-size:11px}
+.nav{margin-top:auto;background:#fff;border-top:1px solid #CFD8E4;display:flex;align-items:flex-end;justify-content:space-around;padding:6px 4px 10px}
+.ni{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:#47546A;width:54px}
+.ni i{font-size:20px}
+.on{color:#167A7E;font-weight:500}
+.on i{background:#DDF3F3;border-radius:99px;padding:2px 14px}
+</style>
+<h2 class="sr-only">Two home screen mockups with a bottom menu: one before an event with countdown and team preparation along a route line, one during a live event with route progress, timer and leaderboard position.</h2>
+<div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;padding:1rem 0;background:var(--surface-1);border-radius:12px">
+
+<div class="ph">
+  <div style="background:#fff;border-bottom:1px solid #CFD8E4;padding:12px 14px;display:flex;align-items:center;gap:8px">
+    <i class="ti ti-route" style="font-size:20px;color:#167A7E"></i><span style="font-size:15px;font-weight:500">TeamXperience</span>
+    <span style="margin-left:auto;width:32px;height:32px;border-radius:50%;background:#E3F2F3;display:flex;align-items:center;justify-content:center;position:relative"><i class="ti ti-bell" style="font-size:17px"></i><span style="position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;background:#E5484D"></span></span>
+  </div>
+
+  <div style="padding:12px 14px 0">
+    <div style="font-size:16px;font-weight:500">Salut, Victor</div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <div class="card" style="flex:1;padding:6px 8px"><div style="font-weight:500;font-size:14px">3</div><div class="mut" style="font-size:11px">jocuri</div></div>
+      <div class="card" style="flex:1;padding:6px 8px"><div style="font-weight:500;font-size:14px">12,4 km</div><div class="mut" style="font-size:11px">pe jos</div></div>
+      <div class="card" style="flex:1.3;padding:6px 8px"><div style="font-weight:500;font-size:14px;color:#167A7E">Explorator</div><div style="height:4px;background:#E1E7EF;border-radius:99px;margin-top:4px"><div style="width:60%;height:4px;background:#2AA5A9;border-radius:99px"></div></div></div>
+    </div>
+  </div>
+
+  <div style="margin:12px 14px 0;background:#222F62;border-radius:22px;color:#fff;overflow:hidden">
+    <div style="padding:12px 14px 10px">
+      <span style="background:#53C4C7;color:#0C092A;border-radius:99px;padding:2px 9px;font-size:11px;font-weight:500">Următorul tău joc</span>
+      <div style="font-size:16px;font-weight:500;margin-top:8px">Moștenirea Cartografului</div>
+      <div style="font-size:11px;opacity:.8">Sâm 14 nov · 10:00 · Piața Mare</div>
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <div style="flex:1;background:rgba(255,255,255,.1);border-radius:10px;text-align:center;padding:5px 0"><div style="font-size:17px;font-weight:500">3</div><div style="font-size:11px;opacity:.8">zile</div></div>
+        <div style="flex:1;background:rgba(255,255,255,.1);border-radius:10px;text-align:center;padding:5px 0"><div style="font-size:17px;font-weight:500">14</div><div style="font-size:11px;opacity:.8">ore</div></div>
+        <div style="flex:1;background:rgba(255,255,255,.1);border-radius:10px;text-align:center;padding:5px 0"><div style="font-size:17px;font-weight:500">22</div><div style="font-size:11px;opacity:.8">min</div></div>
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,.06);padding:10px 14px">
+      <div style="font-size:11px;opacity:.8;margin-bottom:6px">Pregătirea echipei Vulpile</div>
+      <div style="display:flex;align-items:center;font-size:11px">
+        <span style="width:18px;height:18px;border-radius:50%;background:#53C4C7;color:#0C092A;display:flex;align-items:center;justify-content:center"><i class="ti ti-check" style="font-size:12px"></i></span>
+        <span style="flex:1;border-top:2px solid #53C4C7"></span>
+        <span style="width:18px;height:18px;border-radius:50%;background:#53C4C7;color:#0C092A;display:flex;align-items:center;justify-content:center"><i class="ti ti-check" style="font-size:12px"></i></span>
+        <span style="flex:1;border-top:2px dashed rgba(255,255,255,.4)"></span>
+        <span style="width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.5);box-sizing:border-box"></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;opacity:.85;margin-top:3px"><span>Înscriși</span><span>Echipă completă</span><span>Cod de start</span></div>
+    </div>
+  </div>
+
+  <div class="hd"><p class="h">Evenimente noi</p><span class="lk">Vezi toate</span></div>
+  <div style="display:flex;gap:8px;padding:0 14px;overflow:hidden">
+    <div style="flex:0 0 150px" class="card" ><div style="height:70px;border-radius:10px;background:#167A7E;margin:-4px -6px 6px;position:relative"><span style="position:absolute;left:6px;bottom:6px;background:#fff;border-radius:99px;padding:1px 7px;font-size:11px">21 nov</span></div><div style="font-weight:500">Protocolul Cerber</div><div class="mut" style="font-size:11px">3,2 km · 1 h 30</div></div>
+    <div style="flex:0 0 150px" class="card"><div style="height:70px;border-radius:10px;background:#2A3A80;margin:-4px -6px 6px"></div><div style="font-weight:500">Noaptea muzeelor</div><div class="mut" style="font-size:11px">2,8 km · 2 h</div></div>
+  </div>
+
+  <div class="hd"><p class="h">Amintiri</p><span class="lk">Toate</span></div>
+  <div class="card" style="margin:0 14px 12px;display:flex;gap:10px;align-items:center;padding:8px">
+    <div style="display:flex"><span style="width:38px;height:38px;border-radius:8px;background:#47546A;border:2px solid #fff"></span><span style="width:38px;height:38px;border-radius:8px;background:#167A7E;border:2px solid #fff;margin-left:-14px"></span></div>
+    <div style="flex:1"><div style="font-weight:500">Comoara Bastionului</div><div class="mut" style="font-size:11px">Locul 2 din 9 · 18 poze</div></div><i class="ti ti-chevron-right mut" style="font-size:16px"></i>
+  </div>
+
+  <div class="nav">
+    <span class="ni on"><i class="ti ti-home"></i>Acasă</span>
+    <span class="ni"><i class="ti ti-map-2"></i>Evenimente</span>
+    <span class="ni" style="color:#222F62;font-weight:500"><span style="width:50px;height:50px;border-radius:50%;background:#222F62;color:#fff;display:flex;align-items:center;justify-content:center;margin-top:-26px;border:4px solid #E7ECF3"><i class="ti ti-key" style="font-size:22px"></i></span>Joacă</span>
+    <span class="ni"><i class="ti ti-users-group"></i>Echipe</span>
+    <span class="ni"><i class="ti ti-user"></i>Profil</span>
+  </div>
+</div>
+
+<div class="ph">
+  <div style="background:#fff;border-bottom:1px solid #CFD8E4;padding:12px 14px;display:flex;align-items:center;gap:8px">
+    <i class="ti ti-route" style="font-size:20px;color:#167A7E"></i><span style="font-size:15px;font-weight:500">TeamXperience</span>
+    <span style="margin-left:auto;width:32px;height:32px;border-radius:50%;background:#E3F2F3;display:flex;align-items:center;justify-content:center"><i class="ti ti-bell" style="font-size:17px"></i></span>
+  </div>
+
+  <div style="margin:12px 14px 0;background:#0C092A;border-radius:22px;color:#fff;padding:12px 14px">
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="background:#E5484D;border-radius:99px;padding:2px 9px;font-size:11px;font-weight:500">LIVE</span>
+      <span style="margin-left:auto;font-size:15px;font-weight:500;font-family:var(--font-mono)">1:17:42</span><span style="font-size:11px;opacity:.7">rămase</span>
+    </div>
+    <div style="font-size:16px;font-weight:500;margin-top:8px">Moștenirea Cartografului</div>
+    <div style="font-size:11px;opacity:.8">Echipa Vulpile · misiunea 4 din 6</div>
+    <div style="display:flex;align-items:center;margin:14px 2px 4px">
+      <span style="width:14px;height:14px;border-radius:50%;background:#53C4C7"></span><span style="flex:1;border-top:2px solid #53C4C7"></span>
+      <span style="width:14px;height:14px;border-radius:50%;background:#53C4C7"></span><span style="flex:1;border-top:2px solid #53C4C7"></span>
+      <span style="width:14px;height:14px;border-radius:50%;background:#53C4C7"></span><span style="flex:1;border-top:2px solid #53C4C7"></span>
+      <span style="width:22px;height:22px;border-radius:50%;background:#F2A93B;color:#0C092A;display:flex;align-items:center;justify-content:center;font-weight:500;font-size:11px">4</span><span style="flex:1;border-top:2px dashed rgba(255,255,255,.35)"></span>
+      <span style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.4);box-sizing:border-box"></span><span style="flex:1;border-top:2px dashed rgba(255,255,255,.35)"></span>
+      <i class="ti ti-flag" style="font-size:16px;opacity:.6"></i>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <span style="flex:1;background:#53C4C7;color:#0C092A;border-radius:12px;padding:10px;text-align:center;font-weight:500">Continuă jocul</span>
+      <span style="width:42px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center"><i class="ti ti-message-circle" style="font-size:18px"></i></span>
+    </div>
+  </div>
+
+  <div class="hd"><p class="h">Clasament live</p><span class="lk">Tot</span></div>
+  <div class="card" style="margin:0 14px;padding:0">
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #E1E7EF"><span style="width:18px;font-weight:500">1</span><span style="flex:1">Bufnițele</span><span class="mut">5/6</span></div>
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #E1E7EF;background:#DDF3F3"><span style="width:18px;font-weight:500">2</span><span style="flex:1;font-weight:500">Vulpile · voi</span><span style="color:#167A7E;font-weight:500">4/6</span></div>
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 12px"><span style="width:18px;font-weight:500">3</span><span style="flex:1">Lupii de Cetate</span><span class="mut">4/6</span></div>
+  </div>
+
+  <div class="hd"><p class="h">Echipa ta</p></div>
+  <div class="card" style="margin:0 14px 12px;display:flex;align-items:center;gap:8px">
+    <div style="display:flex">
+      <span style="width:28px;height:28px;border-radius:50%;background:#222F62;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;border:2px solid #fff">VC</span>
+      <span style="width:28px;height:28px;border-radius:50%;background:#167A7E;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;border:2px solid #fff;margin-left:-8px">AM</span>
+      <span style="width:28px;height:28px;border-radius:50%;background:#47546A;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;border:2px solid #fff;margin-left:-8px">IR</span>
+    </div>
+    <div style="flex:1"><div style="font-weight:500">3 jucători activi</div><div class="mut" style="font-size:11px">Ultima misiune rezolvată acum 6 min</div></div>
+  </div>
+
+  <div class="nav">
+    <span class="ni on"><i class="ti ti-home"></i>Acasă</span>
+    <span class="ni"><i class="ti ti-map-2"></i>Evenimente</span>
+    <span class="ni" style="color:#E5484D;font-weight:500"><span style="width:50px;height:50px;border-radius:50%;background:#E5484D;color:#fff;display:flex;align-items:center;justify-content:center;margin-top:-26px;border:4px solid #E7ECF3"><i class="ti ti-player-play" style="font-size:22px"></i></span>În joc</span>
+    <span class="ni"><i class="ti ti-users-group"></i>Echipe</span>
+    <span class="ni"><i class="ti ti-user"></i>Profil</span>
+  </div>
+</div>
+</div>
+</body></html>
