@@ -22,19 +22,29 @@ int enterMinutesLeft(Event e, DateTime now) {
   return left <= 0 ? 0 : (left / 60).ceil();
 }
 
-DateTime _day(DateTime d) => DateTime(d.year, d.month, d.day);
+/// The calendar day of [d], in UTC so a clock change does not shorten it.
+DateTime _day(DateTime d) => DateTime.utc(d.year, d.month, d.day);
 
 bool enrolmentNotOpenYet(Event e, DateTime now) {
   final opens = e.dateStartEnrollment;
   return opens != null && now.isBefore(opens);
 }
 
-/// Closed once the deadline day is over, or once the event has started.
-bool enrolmentClosed(Event e, DateTime now) {
+/// When sign-up really ends: the deadline's own time, or the end of its day
+/// when it is set to midnight (a deadline given as a date only).
+DateTime? _closesAt(Event e) {
   final deadline = e.dateDeadlineEnrollment;
+  if (deadline == null) return null;
+  final midnight = deadline.hour == 0 && deadline.minute == 0 && deadline.second == 0;
+  return midnight ? DateTime(deadline.year, deadline.month, deadline.day, 23, 59, 59) : deadline;
+}
+
+/// Closed once the deadline has passed, or once the event has started.
+bool enrolmentClosed(Event e, DateTime now) {
   final start = e.dateEvent;
   if (start != null && !now.isBefore(start)) return true;
-  return deadline != null && _day(now).isAfter(_day(deadline));
+  final closes = _closesAt(e);
+  return closes != null && now.isAfter(closes);
 }
 
 /// Calendar days until the deadline (0 on its day), or null without one.

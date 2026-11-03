@@ -91,4 +91,18 @@ void main() {
     expect(bar(open, team: null).action, SignupAction.register);
     expect(bar(DateTime(2026, 11, 14, 10, 18), team: null).title, 'Înscrierile s-au închis');
   });
+
+  test('the deadline closes at its exact time', () {
+    final e = _event()..dateDeadlineEnrollment = DateTime(2026, 11, 12, 18);
+    expect(bar(DateTime(2026, 11, 12, 17, 59), e: e).title, 'Ultima zi');
+    expect(bar(DateTime(2026, 11, 12, 18, 1), e: e).title, 'Înscrierile s-au închis');
+  });
+
+  test('days left stay right across the clock change', () {
+    final e = _event()
+      ..dateEvent = DateTime(2027, 4, 3, 10)
+      ..dateStartEnrollment = DateTime(2027, 3, 1)
+      ..dateDeadlineEnrollment = DateTime(2027, 3, 30, 23, 59);
+    expect(bar(DateTime(2027, 3, 28, 12), e: e).title, 'Mai sunt 2 zile');
+  });
 }

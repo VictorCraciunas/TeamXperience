@@ -46,4 +46,10 @@ void main() {
   test('an event without enrolment dates is open until it starts', () {
     expect(at(DateTime(2026, 11, 13), e: _event(noEnrolment: true))?.$1, HeroBadgeKind.open);
   });
+
+  test('the badge closes at the exact deadline time', () {
+    final e = _event()..dateDeadlineEnrollment = DateTime(2026, 11, 12, 18);
+    expect(at(DateTime(2026, 11, 12, 17), e: e), (HeroBadgeKind.open, 'Înscrieri deschise · ultima zi'));
+    expect(at(DateTime(2026, 11, 12, 19), e: e), (HeroBadgeKind.closed, 'Înscrieri închise'));
+  });
 }
