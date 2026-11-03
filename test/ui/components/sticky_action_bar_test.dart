@@ -134,4 +134,16 @@ void main() {
     final textLeft = tester.getTopLeft(find.text('Vulpile')).dx;
     expect(textLeft - iconRight, 8);
   });
+
+  testWidgets('a bar without an action shows only its status', (tester) async {
+    await pumpUi(
+      tester,
+      const StickyActionBar(title: 'Înscrierile se deschid pe 1 nov, așa că mai ai puțin de așteptat'),
+      width: 320,
+      textScale: 1.3,
+    );
+    expect(find.textContaining('Înscrierile se deschid'), findsOneWidget);
+    expect(find.byType(InkWell), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
 }
