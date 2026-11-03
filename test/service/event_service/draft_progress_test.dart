@@ -15,6 +15,9 @@ Event _complete() => Event(
       description: 'Un joc',
       location: 'Sibiu',
       punctDeStart: 'Piața Mare',
+      finishPoint: 'Turnul Sfatului',
+      startLatitude: 45.79,
+      startLongitude: 24.15,
       dateEvent: DateTime(2026, 10, 25, 14),
       dateStartEnrollment: DateTime(2026, 10, 1),
       dateDeadlineEnrollment: DateTime(2026, 10, 24),
@@ -25,7 +28,7 @@ Event _complete() => Event(
       dificultate: 'Medie',
       status: EventStatus.draft,
       missions: [
-        Mission(id: '0', puzzles: [
+        Mission(id: '0', title: 'Ceasul', puzzles: [
           Puzzle(
             id: 'p',
             type: PuzzleType.code,

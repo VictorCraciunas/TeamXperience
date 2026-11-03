@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/enums/component-type.dart';
+import 'package:teamxperience/enums/difficulty.dart';
 import 'package:teamxperience/enums/event_status.dart';
 import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
@@ -26,7 +27,7 @@ Puzzle _geoPuzzle({double? lat = 45.79, double? lng = 24.15}) => Puzzle(
       components: [_text()],
     );
 
-Mission _mission(List<Puzzle> puzzles) => Mission(id: '0', puzzles: puzzles);
+Mission _mission(List<Puzzle> puzzles) => Mission(id: '0', title: 'Ceasul', puzzles: puzzles);
 
 final _start = DateTime(2026, 10, 1);
 final _deadline = DateTime(2026, 10, 24);
@@ -38,6 +39,9 @@ Event _event({List<Mission>? missions}) => Event(
       description: 'Un joc',
       location: 'Sibiu',
       punctDeStart: 'Piața Mare',
+      finishPoint: 'Turnul Sfatului',
+      startLatitude: 45.79,
+      startLongitude: 24.15,
       dateEvent: _day,
       dateStartEnrollment: _start,
       dateDeadlineEnrollment: _deadline,
@@ -103,6 +107,35 @@ void main() {
       final mission = _mission([_codePuzzle(), _geoPuzzle()]);
       expect(missionProblems(mission), isEmpty);
       expect(isMissionComplete(mission), isTrue);
+    });
+  });
+
+  group('event page fields', () {
+    test('an event with no start pin says so', () {
+      expect(eventIssues(_event()..startLatitude = null), contains(EventIssue.noStartPin));
+    });
+
+    test('an event with no finish point says so', () {
+      expect(eventIssues(_event()..finishPoint = ' '), contains(EventIssue.noFinishPoint));
+    });
+
+    test('route, duration and difficulty may come from the new fields or the old text', () {
+      final numbers = _event()
+        ..lungimeTraseu = ''
+        ..durata = ''
+        ..dificultate = ''
+        ..routeLengthKm = 4
+        ..durationMinutes = 90
+        ..difficulty = Difficulty.easy;
+      expect(eventIssues(numbers), isEmpty);
+      final unreadable = _event()..lungimeTraseu = 'lung';
+      expect(eventIssues(unreadable), [EventIssue.noRoute]);
+    });
+
+    test('a mission without a title says so first', () {
+      final untitled = Mission(id: '0', puzzles: [_codePuzzle()]);
+      expect(missionProblems(untitled).map((p) => p.text), ['Nu are titlu']);
+      expect(missionProblems(Mission(id: '0')).map((p) => p.text), ['Nu are titlu', 'Nu are puzzle-uri']);
     });
   });
 

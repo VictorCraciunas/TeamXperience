@@ -37,6 +37,61 @@ Map<String, dynamic> _event({
 EventImportResult _import(Object? json) => importEventFromJson(jsonEncode(json));
 
 void main() {
+  group('event page fields', () {
+    test('every new event field is read', () {
+      final result = _import(_event(extra: {
+        'area': 'Orașul de Sus',
+        'finishPoint': 'Turnul Sfatului',
+        'routeLengthKm': 4.5,
+        'durationMinutes': 120,
+        'difficulty': 'medium',
+        'teamSizeMin': 2,
+        'teamSizeMax': 6,
+        'maxTeams': 14,
+        'startLatitude': 45.7971,
+        'startLongitude': 24.152,
+        'meetingPointNote': 'Piața Mare, lângă fântână',
+        'arriveMinutesBefore': 15,
+        'whatToBring': ['Telefon încărcat', 'încălțări comode'],
+        'story': 'Un cartograf a lăsat o hartă.',
+        'organiserName': 'TeamXperience',
+      }));
+      expect(result.errors, isEmpty);
+      final e = result.event!;
+      expect((e.area, e.finishPoint, e.routeLengthKm, e.durationMinutes, e.difficulty?.name),
+          ('Orașul de Sus', 'Turnul Sfatului', 4.5, 120, 'medium'));
+      expect((e.teamSizeMin, e.teamSizeMax, e.maxTeams, e.arriveMinutesBefore), (2, 6, 14, 15));
+      expect((e.startLatitude, e.startLongitude), (45.7971, 24.152));
+      expect(e.meetingPointNote, 'Piața Mare, lângă fântână');
+      expect(e.whatToBring, ['Telefon încărcat', 'încălțări comode']);
+      expect((e.story, e.organiserName), ('Un cartograf a lăsat o hartă.', 'TeamXperience'));
+    });
+
+    test('missing page fields keep the defaults', () {
+      final e = _import(_event()).event!;
+      expect((e.teamSizeMin, e.teamSizeMax, e.arriveMinutesBefore), (2, 6, 15));
+      expect(e.whatToBring, isEmpty);
+    });
+
+    test('a difficulty that does not exist names the field', () {
+      final result = _import(_event(extra: {'difficulty': 'medie'}));
+      expect(result.errors.join(), contains('difficulty'));
+    });
+
+    test('team sizes and limits out of range are explained', () {
+      final result = _import(_event(extra: {'teamSizeMax': 40, 'maxTeams': 0, 'arriveMinutesBefore': 500}));
+      expect(result.errors.join(' | '), allOf(contains('teamSizeMax'), contains('maxTeams'), contains('arriveMinutesBefore')));
+    });
+
+    test('mission title, teaser and the public flag are read', () {
+      final result = _import(_event(missions: [
+        {'title': 'Scara Pasajului', 'teaser': 'Numără treptele.', 'isTeaserPublic': true, 'puzzles': []},
+      ]));
+      final m = result.event!.missions.single;
+      expect((m.title, m.teaser, m.isTeaserPublic), ('Scara Pasajului', 'Numără treptele.', true));
+    });
+  });
+
   group('a good event', () {
     test('is read into an event', () {
       final result = _import(_event(extra: {'location': 'Sibiu', 'startCode': 'GO'}));

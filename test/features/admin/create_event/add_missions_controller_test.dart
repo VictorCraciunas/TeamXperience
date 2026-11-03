@@ -104,7 +104,7 @@ void main() {
 
   group('status of a mission', () {
     test('a mission without puzzles says so', () {
-      final c = AddMissionsController(_event([Mission(id: '0')]), 'create');
+      final c = AddMissionsController(_event([Mission(id: '0', title: 'A')]), 'create');
       expect(c.isDone(0), isFalse);
       expect(c.statusText(0), 'Nu are puzzle-uri');
     });
