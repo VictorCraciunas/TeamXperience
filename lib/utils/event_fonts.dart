@@ -74,6 +74,15 @@ const eventFonts = <EventFont>[
     maxWeight: 900,
     licence: 'PlayfairDisplay-OFL.txt',
   ),
+  // The serif of event letters and stories (AppFonts.voice), metric-compatible with Georgia.
+  EventFont(
+    'Gelasio',
+    ['assets/fonts/Gelasio-Variable.ttf'],
+    variable: true,
+    minWeight: 400,
+    maxWeight: 700,
+    licence: 'Gelasio-OFL.txt',
+  ),
 ];
 
 /// The names of the fonts, as written in an event.

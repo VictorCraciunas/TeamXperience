@@ -11,7 +11,7 @@ void main() {
       expect(eventFonts.take(2).map((f) => f.family), ['Poppins', 'Monospace']);
     });
 
-    test('has the ten fonts of the gallery', () {
+    test('has the ten fonts of the gallery and the voice font', () {
       expect(eventFonts.map((f) => f.family), [
         'Poppins',
         'Monospace',
@@ -23,6 +23,7 @@ void main() {
         'Caveat',
         'Bebas Neue',
         'Playfair Display',
+        'Gelasio',
       ]);
     });
 
@@ -42,9 +43,9 @@ void main() {
   });
 
   group('weight of a variable font', () {
-    test('four fonts are variable, the others are not', () {
+    test('five fonts are variable, the others are not', () {
       final variable = eventFonts.where((f) => f.variable).map((f) => f.family).toSet();
-      expect(variable, {'Orbitron', 'Cinzel', 'Caveat', 'Playfair Display'});
+      expect(variable, {'Orbitron', 'Cinzel', 'Caveat', 'Playfair Display', 'Gelasio'});
     });
 
     test('a variable font gets its weight as a variation', () {
@@ -68,6 +69,7 @@ void main() {
     test('a weight above what the font has is lowered to the heaviest it has', () {
       expect(fontVariationsFor('Caveat', FontWeight.w900)!.single.value, 700);
       expect(fontVariationsFor('Cinzel', FontWeight.w900)!.single.value, 900);
+      expect(fontVariationsFor('Gelasio', FontWeight.w900)!.single.value, 700);
     });
 
     test('a font with one weight, or none of ours, gets no variation', () {
