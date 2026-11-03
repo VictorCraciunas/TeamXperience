@@ -41,9 +41,8 @@ class AddMissionsController {
   void _copyMissionsWithoutAnswers() {
     event.missions = [
       for (final mission in event.missions)
-        Mission(
-          id: mission.id,
-          puzzles: [
+        mission.withId(mission.id)
+          ..puzzles = [
             for (final puzzle in mission.puzzles)
               Puzzle.fromMap(puzzle.toJson())
                 ..code = null
@@ -51,7 +50,6 @@ class AddMissionsController {
                 ..longitude = null
                 ..indiciu = null,
           ],
-        ),
     ];
     event.nrMissions = event.missions.length;
   }
@@ -68,7 +66,7 @@ class AddMissionsController {
 
     final left = [...event.missions]..removeAt(index);
     event.missions = [
-      for (var i = 0; i < left.length; i++) Mission(id: i.toString(), puzzles: left[i].puzzles),
+      for (var i = 0; i < left.length; i++) left[i].withId(i.toString()),
     ];
     event.nrMissions = event.missions.length;
     onStateChanged?.call();
@@ -83,7 +81,7 @@ class AddMissionsController {
     final moved = [...event.missions];
     moved.insert(to, moved.removeAt(from));
     event.missions = [
-      for (var i = 0; i < moved.length; i++) Mission(id: i.toString(), puzzles: moved[i].puzzles),
+      for (var i = 0; i < moved.length; i++) moved[i].withId(i.toString()),
     ];
     onStateChanged?.call();
   }
