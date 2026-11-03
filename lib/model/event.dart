@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../enums/difficulty.dart';
 import '../enums/event_status.dart';
 import '../enums/screen_animation.dart';
 import '../enums/event_type.dart';
@@ -47,6 +48,40 @@ class Event {
   int? animationDuration;
   int? animationDelay;
 
+  /// The part of town under the city ("Orașul de Sus").
+  String? area;
+
+  /// Where the route ends ("Turnul Sfatului").
+  String? finishPoint;
+
+  /// The route as numbers; old events keep them as text in [lungimeTraseu],
+  /// [durata] and [dificultate], read through the `effective*` getters.
+  double? routeLengthKm;
+  int? durationMinutes;
+  Difficulty? difficulty;
+
+  int teamSizeMin;
+  int teamSizeMax;
+
+  /// How many teams can register; null means no limit.
+  int? maxTeams;
+
+  double? startLatitude;
+  double? startLongitude;
+
+  /// Where exactly teams meet ("Piața Mare, lângă fântână").
+  String? meetingPointNote;
+
+  /// How many minutes before the start teams should be there.
+  int arriveMinutesBefore;
+  List<String> whatToBring;
+
+  /// The long story of the event page; [description] stays the short text of cards.
+  String? story;
+
+  /// Who runs the event; blank means TeamXperience.
+  String? organiserName;
+
   bool get isDraft => status == EventStatus.draft;
 
   static const Duration maxDuration = Duration(hours: 3);
@@ -61,6 +96,56 @@ class Event {
   }
 
   bool get isOver => isStopped || hasExpired;
+
+  /// The route length, from [routeLengthKm] or the first number in [lungimeTraseu].
+  double? get effectiveRouteKm {
+    final km = routeLengthKm;
+    if (km != null) return km;
+    final match = RegExp(r'\d+(?:[.,]\d+)?').firstMatch(lungimeTraseu ?? '');
+    if (match == null) return null;
+    return double.tryParse(match.group(0)!.replaceAll(',', '.'));
+  }
+
+  /// The duration in minutes, from [durationMinutes] or [durata] ("2 h",
+  /// "2 ore", "1h30", "1 oră 30 min", "90 min").
+  int? get effectiveDurationMinutes {
+    final minutes = durationMinutes;
+    if (minutes != null) return minutes;
+    final text = (durata ?? '').toLowerCase();
+    final hours = RegExp(r'(\d+)\s*(?:h|ore|oră|ora)').firstMatch(text);
+    if (hours != null) {
+      final rest = RegExp(r'(\d+)').allMatches(text.substring(hours.end)).firstOrNull;
+      return int.parse(hours.group(1)!) * 60 + (rest == null ? 0 : int.parse(rest.group(1)!));
+    }
+    final onlyMinutes = RegExp(r'^\s*(\d+)\s*min').firstMatch(text);
+    return onlyMinutes == null ? null : int.parse(onlyMinutes.group(1)!);
+  }
+
+  /// The difficulty, from [difficulty] or the words in [dificultate].
+  Difficulty? get effectiveDifficulty {
+    final value = difficulty;
+    if (value != null) return value;
+    final text = _plain(dificultate ?? '');
+    if (text.contains('usor') || text.contains('usoar')) return Difficulty.easy;
+    if (text.contains('medi')) return Difficulty.medium;
+    if (text.contains('grea') || text.contains('dific')) return Difficulty.hard;
+    return null;
+  }
+
+  /// The event page story, or the short description when there is none.
+  String get storyText {
+    final text = story;
+    return text != null && text.trim().isNotEmpty ? text : (description ?? '');
+  }
+
+  bool get hasStartPin => startLatitude != null && startLongitude != null;
+
+  static String _plain(String text) => text
+      .toLowerCase()
+      .replaceAll(RegExp('[ăâ]'), 'a')
+      .replaceAll('î', 'i')
+      .replaceAll(RegExp('[șş]'), 's')
+      .replaceAll(RegExp('[țţ]'), 't');
 
   Event({
     required this.eventId,
@@ -88,7 +173,23 @@ class Event {
     this.screenAnimation = ScreenAnimation.fade,
     this.animationDuration,
     this.animationDelay,
-  }) : missions = missions ?? [];
+    this.area,
+    this.finishPoint,
+    this.routeLengthKm,
+    this.durationMinutes,
+    this.difficulty,
+    this.teamSizeMin = 2,
+    this.teamSizeMax = 6,
+    this.maxTeams,
+    this.startLatitude,
+    this.startLongitude,
+    this.meetingPointNote,
+    this.arriveMinutesBefore = 15,
+    List<String>? whatToBring,
+    this.story,
+    this.organiserName,
+  })  : missions = missions ?? [],
+        whatToBring = whatToBring ?? [];
 
   Mission addMission(Mission mission) {
     missions.add(mission);
@@ -130,6 +231,21 @@ class Event {
       screenAnimation: ScreenAnimation.fromName(map['screenAnimation'] as String?),
       animationDuration: (map['animationDuration'] as num?)?.toInt(),
       animationDelay: (map['animationDelay'] as num?)?.toInt(),
+      area: map['area'] as String?,
+      finishPoint: map['finishPoint'] as String?,
+      routeLengthKm: (map['routeLengthKm'] as num?)?.toDouble(),
+      durationMinutes: (map['durationMinutes'] as num?)?.toInt(),
+      difficulty: Difficulty.fromName(map['difficulty'] as String?),
+      teamSizeMin: (map['teamSizeMin'] as num?)?.toInt() ?? 2,
+      teamSizeMax: (map['teamSizeMax'] as num?)?.toInt() ?? 6,
+      maxTeams: (map['maxTeams'] as num?)?.toInt(),
+      startLatitude: (map['startLatitude'] as num?)?.toDouble(),
+      startLongitude: (map['startLongitude'] as num?)?.toDouble(),
+      meetingPointNote: map['meetingPointNote'] as String?,
+      arriveMinutesBefore: (map['arriveMinutesBefore'] as num?)?.toInt() ?? 15,
+      whatToBring: [for (final item in map['whatToBring'] as List<dynamic>? ?? []) item.toString()],
+      story: map['story'] as String?,
+      organiserName: map['organiserName'] as String?,
     );
   }
 
@@ -160,6 +276,21 @@ class Event {
       'screenAnimation': screenAnimation.name,
       'animationDuration': animationDuration,
       'animationDelay': animationDelay,
+      'area': area,
+      'finishPoint': finishPoint,
+      'routeLengthKm': routeLengthKm,
+      'durationMinutes': durationMinutes,
+      'difficulty': difficulty?.name,
+      'teamSizeMin': teamSizeMin,
+      'teamSizeMax': teamSizeMax,
+      'maxTeams': maxTeams,
+      'startLatitude': startLatitude,
+      'startLongitude': startLongitude,
+      'meetingPointNote': meetingPointNote,
+      'arriveMinutesBefore': arriveMinutesBefore,
+      'whatToBring': whatToBring,
+      'story': story,
+      'organiserName': organiserName,
     };
   }
 
