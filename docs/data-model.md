@@ -69,7 +69,7 @@ Upload helpers (`service/event_service/upload_images.dart`, `service/news_servic
 ## Event lifecycle (end to end)
 
 1. Admin creates event: `create_event_screen` (form) → `add_missions_screen` (missions/puzzles/components) → `EventList.createEvent` → `EventService.createEvent` (upload images, `set` doc).
-2. Registration window `dateStartEnrollment`…`dateDeadlineEnrollment`; player registers a team (`register_team`, 3 steps) → `TeamService.addTeam` (creates team doc with `userIds=[uid]`, adds eventId to `users/{uid}.registeredEventIds`, updates `UserProvider`).
+2. Registration window `dateStartEnrollment`…`dateDeadlineEnrollment`; player registers a team (`register_team`, one screen) → `TeamService.registerTeam` (the `registerTeam` callable creates the team doc with `userIds=[uid]` and an invite code, and adds the eventId to `users/{uid}.registeredEventIds`; the app then updates `UserProvider`).
 3. At/after `dateEvent` (up to 1h after, per `UserEventsProvider.nextEventWithinHour`) the player enters `startCode` (`enter_code`) → `TeamService.startTeam` (`hasStarted=true`) → `Routes.eventGame`.
 4. Game: missions list (`event_game_screen`) → `puzzle_game_screen` per mission. Progress writes: `puzzleNumber` per puzzle, `missionProgress`+1 and `puzzleNumber=0` when mission finishes. `LocationService` streams position into the team doc (distanceFilter 10 m).
 5. End: all missions done, admin `stopEvent` (`isStopped=true`), or 3h timer → `EventGameController._triggerEventEnded` → `finishTeam` (`hasFinished=true`).

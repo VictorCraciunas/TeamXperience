@@ -33,11 +33,13 @@ Moved from `lib/widgets/` (and `utils/snackbars.dart`) in UI redesign phase 1: `
 | `StickyActionBar` (+ `BarTone`) | Bar pinned to the bottom with a status and one action: a navy button (`prominent`) or an accent link; `inlineDetail` puts "· 4 membri" after the title, `highlighted` gives a teal top border |
 | `AvatarStack` (+ `DashedBorder`) | Overlapping 30 px initials circles for a team (colours cycle navy, amber, accent, tick; 2 px ring, overlap 8), with dashed empty places up to `total`; `highlightNext` marks the joining player's place with a plus, `onDark` fits it on a navy card (navy ring, overlap 6). `DashedBorder` is the dashed outline (rounded rectangle or circle) it and `InviteCodeCard` use |
 | `CodeBoxesInput` | A code typed into 38 × 46 boxes (e.g. 6 with a dash after 3): one hidden text field drives them, so typing, backspace and the keyboard work normally; upper-cases, keeps letters and digits only, `onCompleted` when full, `error` turns every border red; a long press pastes the clipboard through the same cleaning |
-| `SizePicker` | Row of round 40 px number buttons from `min` to `max` (team size); the chosen one is navy |
+| `SizePicker` | Equal boxes (gap 5, 12 radius, 1 px border) from `min` to `max` (team size), the chosen one navy; more than 8 values wrap into rows of 8 |
 | `InviteCodeCard` | Navy card for a team's invite code: caption, the code in a dashed box (mono 26), a teal WhatsApp button and a faint-white copy button, and an optional `footer` (the avatar row) |
 | `FieldStatusLine` (+ `FieldStatus` neutral / checking / ok / problem) | The 11 px line under a field: a hint, a spinner while checking, a green check ("Numele e liber") or a red alert |
 | `showAppDialog`, `AsyncState`, `MySnackBars` | Confirm dialog (destructive uses `danger`), loading/error/empty/content switcher, semantic snackbars |
 | `MyAppBar` | App bar with title, optional icon, `showDropdown` + `event` → shows `MenuWidget` |
+| `ScreenBar` | Bar of a short task screen (mockup 04 `.bar`): leading icon (× or ←), title, optional subtitle, panel fill with a 1 px line under it; keeps clear of the status bar |
+| `NavyButton` | Mockup `.btn`: full-width navy button, 12 radius, 11 padding, medium 12 px label; greyed out with `onPressed` null, spinner with `isLoading` |
 | `MenuWidget` (`menu.dart`) | Admin event actions overlay (edit / duplicate / start) |
 | `EventCard`, `EventsCarousel`, `EventsList` | Event presentation (admin variant shows `nrTeams`/`nrPerson`) |
 | `RegisteredEventCard/Carousel/List` | Player's registered events |
@@ -45,7 +47,6 @@ Moved from `lib/widgets/` (and `utils/snackbars.dart`) in UI redesign phase 1: `
 | `EventImage` | Event image with overlay info (cached network image) |
 | `MissionStateWidget` | Mission tile: `MissionState` → locked / unlocked / done look |
 | `CustomIconDashBoard` | Icon button with active-filter indicator |
-| `StepRegisterWidget` | Step indicator in team registration |
 | `SliderWidget`, `ColorPickerDialog`, `TermsText` | Misc (slider for component sizing, flutter_colorpicker dialog, terms link text) |
 
 Conventions in feature code: `Scaffold` per screen, `MyAppBar`, `AppSpacing.page`, feedback through `MySnackBars`, images through `cached_network_image` for URLs / `Image.file` for local paths (check with `startsWith('http')`).

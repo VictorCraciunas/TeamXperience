@@ -18,7 +18,5 @@ lib/features/news_category_manipulation/screen/news_catergory_manipulation_scree
 lib/features/news_dashboard/screen/stiri_dashboard_screen.dart 1
 lib/features/news_details/fullscreen_image_viewer.dart 6
 lib/features/news_details/news_screen.dart 9
-lib/features/register_team/screen/register_team_screen.dart 3
-lib/features/register_team/widgets/step3.dart 3
 lib/features/sign-up/screen/register.dart 2
 lib/features/team_chats/screen/team_chats_screen.dart 3

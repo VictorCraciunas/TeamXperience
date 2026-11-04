@@ -4,7 +4,7 @@ Verify before fixing; none of these were reproduced. Roughly ordered by impact.
 
 ## Data integrity / logic
 1. **Duplicating (blueprint) an event mutates the original in memory.** `CreateEventController.createEvent` sets `event.missions = originalEvent!.missions` (same `Mission` objects that live in `EventList`), then `MissionController._clearPuzzleDataForDuplication` nulls `type/code/lat/lng/indiciu` on those shared puzzles. Until `EventList.refresh()`, the original event in the app shows cleared puzzles; saving the original afterwards would write the cleared data.
-2. **Team registration overwrites an existing team with the same name** (`TeamRepo.addTeam` = `set` on doc id = team name; no `isTeamNameTaken` check in `RegisterTeamController`). Also two events can have teams with the same name only because docs are per-event.
+2. ~~Team registration overwrites an existing team with the same name~~ — fixed: registration goes through the `registerTeam` callable, which refuses a name that is already taken in the event (the screen also checks as you type). Teams are still keyed by name, so two events can only share a name because docs are per-event.
 3. **Renaming a team** (`TeamRepo.updateTeamDetails`) deletes the old doc and creates a new one: the `messages` sub-collection is orphaned and `TeamControllerDetails.saveChanges` rebuilds the `Team` without `hasFinished`, `numberOfMembers`, `photoApprovals`.
 4. **Deleting an event** (`MenuWidget` → `EventList.deleteEvent`) deletes only the event doc; teams, messages, Storage images, and users' `registeredEventIds` stay behind (Firestore doesn't cascade).
 5. **Enrollment window not enforced** (`dateStartEnrollment`/`dateDeadlineEnrollment` are only stored).

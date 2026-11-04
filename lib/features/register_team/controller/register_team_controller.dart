@@ -1,101 +1,186 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:teamxperience/constants/routes.dart';
+import 'package:teamxperience/features/register_team/logic/team_name_check.dart';
 import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/service/share_service.dart';
+import 'package:teamxperience/service/team_service/register_result.dart';
+import 'package:teamxperience/service/team_service/team_errors.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
-import 'package:teamxperience/ui/components/feedback/snackbars.dart'; // Add this import
+import 'package:teamxperience/state_management/user_provider.dart';
+import 'package:teamxperience/ui/components/feedback/field_status_line.dart';
+import 'package:teamxperience/ui/components/feedback/snackbars.dart';
+import 'package:teamxperience/utils/event_formats.dart';
+import 'package:teamxperience/utils/invite_code.dart';
+import 'package:teamxperience/utils/team_names.dart';
 
-import '../../../constants/routes.dart';
-import '../../../model/user.dart';
-import '../../../state_management/user_provider.dart';
+/// Registers the player's team for [event] on one screen. Once the team is
+/// made, [result] holds the invite code and the same screen shows it.
+class RegisterTeamController extends ChangeNotifier {
+  RegisterTeamController({
+    required this.context,
+    required this.event,
+    TeamService? teamService,
+    ShareService? shareService,
+  }) : _teams = teamService ?? TeamService(),
+       _share = shareService ?? ShareService() {
+    size = _startSize(event);
+    nameCheck = TeamNameCheck(
+      isFree: (name) => _teams.isTeamNameFree(event.eventId, name),
+    );
+    nameCheck.state.addListener(notifyListeners);
+  }
 
-class RegisterTeamController {
-  late BuildContext context;
-  late Event event;
+  final BuildContext context;
+  final Event event;
+  final TeamService _teams;
+  final ShareService _share;
 
-  RegisterTeamController(this.context, this.event);
+  final nameController = TextEditingController();
+  final phoneController = TextEditingController();
+  late final TeamNameCheck nameCheck;
 
-  TeamService teamService = TeamService();
-  bool secondStep = false;
-  bool thirdStep = false;
+  late int size;
+  bool rulesAccepted = false;
+  bool photoConsent = false;
+  bool sending = false;
 
-  bool checkBox1 = false;
-  bool checkBox2 = false;
-  bool checkBox3 = false;
+  /// Set once the team is registered.
+  RegisterResult? result;
+  bool _disposed = false;
 
-  final numeEchipaController = TextEditingController();
-  final componentaEchipeiController = TextEditingController();
-  final numarPersoaneController = TextEditingController();
-  final numeCapitanController = TextEditingController();
-  final numarDeTelefonController = TextEditingController();
-  final emailCapitanController = TextEditingController();
-  final GlobalKey<FormState> step1FormKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> step2FormKey = GlobalKey<FormState>();
+  bool get registered => result != null;
 
-  void navigateToTeamDetails() {
-    AppUser? user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    Navigator.pushReplacementNamed(
+  FieldStatus get nameStatus => nameCheck.state.value.$1;
+  String get nameStatusText => nameCheck.state.value.$2;
+
+  /// The invite code as shown, "VLP-482".
+  String get displayInviteCode => displayCode(result?.inviteCode ?? '');
+
+  /// The captain's initials, for the first place in the team.
+  String get captainInitials {
+    final user = context.read<UserProvider>().currentUser;
+    return user == null ? '' : initialsOf('${user.firstName} ${user.lastName}');
+  }
+
+  /// The most players usually come in fours; an event with smaller teams
+  /// starts at its own maximum.
+  static int _startSize(Event event) {
+    final size = event.teamSizeMax < 4 ? event.teamSizeMax : 4;
+    return size < event.teamSizeMin ? event.teamSizeMin : size;
+  }
+
+  /// The first reason the button is disabled, or null when it can be used.
+  String? get blocker {
+    if (nameController.text.trim().isEmpty) return 'Scrie numele echipei';
+    if (nameStatus != FieldStatus.ok) {
+      return nameStatusText.isEmpty ? 'Numele nu e bun' : nameStatusText;
+    }
+    if (phoneController.text.trim().isEmpty) {
+      return 'Scrie telefonul căpitanului';
+    }
+    if (!rulesAccepted) return 'Acceptă regulamentul';
+    return null;
+  }
+
+  bool get canSubmit => blocker == null && !sending && !registered;
+
+  void onNameChanged(String name) {
+    nameCheck.onChanged(name);
+    notifyListeners();
+  }
+
+  void onPhoneChanged(String _) => notifyListeners();
+
+  void setSize(int value) {
+    size = value;
+    notifyListeners();
+  }
+
+  void setRulesAccepted(bool value) {
+    rulesAccepted = value;
+    notifyListeners();
+  }
+
+  void setPhotoConsent(bool value) {
+    photoConsent = value;
+    notifyListeners();
+  }
+
+  Future<void> submit() async {
+    if (!canSubmit) return;
+    final userProvider = context.read<UserProvider>();
+    sending = true;
+    notifyListeners();
+
+    try {
+      final made = await _teams.registerTeam(
+        eventId: event.eventId,
+        name: cleanTeamName(nameController.text),
+        size: size,
+        phone: phoneController.text.trim(),
+        rulesAccepted: rulesAccepted,
+        photoConsent: photoConsent,
+      );
+      userProvider.addRegisteredEvent(event.eventId);
+      result = made;
+    } catch (e) {
+      final error = TeamError.fromException(e);
+      if (error == TeamError.nameTaken) nameCheck.markTaken();
+      if (context.mounted) {
+        MySnackBars.errorSnackBar(
+          context,
+          title: 'Nu am putut înscrie echipa',
+          message: teamErrorText(error, teamName: TeamError.teamNameFrom(e)),
+        );
+      }
+    }
+
+    sending = false;
+    if (!_disposed) notifyListeners();
+  }
+
+  void shareInvite() {
+    final made = result;
+    if (made == null) return;
+    _share.shareInvite(
       context,
-      Routes.registerTeamDetails,
-      arguments: {
-        'event': event,
-        'user': user,
-      },
+      code: displayInviteCode,
+      teamName: made.teamName,
+      eventName: event.name ?? '',
     );
   }
 
-  bool validateCurrentStep() {
-    if (!secondStep && !thirdStep) {
-      // Step 1
-      return step1FormKey.currentState?.validate() ?? false;
-    } else if (secondStep && !thirdStep) {
-      // Step 2
-      return step2FormKey.currentState?.validate() ?? false;
-    } else {
-      // Step 3 - validate checkboxes
-      return validateStep3();
+  Future<void> copyInvite() async {
+    await Clipboard.setData(ClipboardData(text: displayInviteCode));
+    if (context.mounted) {
+      MySnackBars.successSnackBar(context, title: 'Cod copiat');
     }
   }
 
-  bool validateStep3() {
-    if (!checkBox1 || !checkBox2 || !checkBox3) {
-      MySnackBars.errorSnackBar(
-        context,
-        title: 'Eroare',
-        message: 'Toate acordurile sunt obligatorii',
-      );
-      return false;
+  /// The cross in the bar and the back button. Once the team is made the
+  /// event page underneath is out of date, so it is opened afresh.
+  void close() {
+    final navigator = Navigator.of(context);
+    if (!registered) {
+      navigator.maybePop();
+      return;
     }
-    return true;
+    navigator.popUntil((route) => route.isFirst);
+    navigator.pushNamed(
+      Routes.eventDetails,
+      arguments: {'event': event, 'isAdmin': false},
+    );
   }
 
-  void buttonOnTap() async{
-    if (validateCurrentStep()) {
-      if (!secondStep) {
-        // Moving from step 1 to step 2
-        secondStep = true;
-      } else if (!thirdStep) {
-        // Moving from step 2 to step 3
-        thirdStep = true;
-      } else {
-        // Final step - submit form
-        final userProvider = context.read<UserProvider>();
-        final user = userProvider.currentUser;
-        if (user == null) return;
-        await teamService.addTeam(
-          numeEchipaController.text,
-          componentaEchipeiController.text,
-          numeCapitanController.text,
-          numarDeTelefonController.text,
-          emailCapitanController.text,
-          int.tryParse(numarPersoaneController.text) ?? 0,
-          user,
-          event,
-        );
-        userProvider.addRegisteredEvent(event.eventId);
-        if (!context.mounted) return;
-        MySnackBars.successSnackBar(context, title: "Succes", message: "Ai inregistrat echipa cu succes");
-        navigateToTeamDetails();
-      }
-    }
+  @override
+  void dispose() {
+    _disposed = true;
+    nameCheck.state.removeListener(notifyListeners);
+    nameCheck.dispose();
+    nameController.dispose();
+    phoneController.dispose();
+    super.dispose();
   }
 }

@@ -264,9 +264,41 @@ void main() {
       expect(tester.widget<Text>(find.text('5')).style?.color, AppColors.light.text);
     });
 
-    testWidgets('buttons are 40 across', (tester) async {
+    testWidgets('the boxes share the width equally with 5 between them', (tester) async {
       await pumpUi(tester, picker((_) {}));
-      expect(tester.getSize(find.byKey(const ValueKey('size-picker-2'))), const Size(40, 40));
+      final first = tester.getRect(find.byKey(const ValueKey('size-picker-2')));
+      final second = tester.getRect(find.byKey(const ValueKey('size-picker-3')));
+      final last = tester.getRect(find.byKey(const ValueKey('size-picker-6')));
+      expect(first.width, closeTo((360 - 4 * 5) / 5, .01));
+      expect(second.width, first.width);
+      expect(second.left - first.right, 5);
+      expect(last.right, closeTo(360, .01));
+    });
+
+    testWidgets('a box is a 12 radius rectangle, 1 px border plus 7 of padding tall', (tester) async {
+      await pumpUi(tester, picker((_) {}));
+      final box = find.byKey(const ValueKey('size-picker-2'));
+      final decoration = tester.widget<DecoratedBox>(box).decoration as BoxDecoration;
+      expect(decoration.borderRadius, BorderRadius.circular(12));
+      expect((decoration.border as Border).top.width, 1);
+      expect(tester.getSize(box).height, closeTo(2 * 8 + 12 * 1.45, .5));
+    });
+
+    testWidgets('the chosen box has a navy border and a medium-weight number', (tester) async {
+      await pumpUi(tester, picker((_) {}));
+      final decoration =
+          tester.widget<DecoratedBox>(find.byKey(const ValueKey('size-picker-4'))).decoration as BoxDecoration;
+      expect((decoration.border as Border).top.color, AppColors.light.navy);
+      expect(tester.widget<Text>(find.text('4')).style?.fontWeight, FontWeight.w500);
+    });
+
+    testWidgets('a long range wraps into rows of equal boxes', (tester) async {
+      await pumpUi(tester, SizePicker(min: 2, max: 20, value: 4, onChanged: (_) {}));
+      expect(tester.takeException(), isNull);
+      final first = tester.getRect(find.byKey(const ValueKey('size-picker-2')));
+      final ninth = tester.getRect(find.byKey(const ValueKey('size-picker-10')));
+      expect(ninth.top, greaterThan(first.top));
+      expect(ninth.width, first.width);
     });
   });
 
