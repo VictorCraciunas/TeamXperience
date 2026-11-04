@@ -22,6 +22,7 @@ import 'package:teamxperience/ui/ui.dart';
 import 'event_page_preview_launcher.dart';
 import 'gallery_section.dart';
 import 'parchment_swatches.dart';
+import 'team_previews_launcher.dart';
 
 /// Every redesign component with the copy of mockup 01, to hold next to
 /// docs/roadmap/mockups/01-event-details.html.
@@ -42,6 +43,7 @@ class ComponentGallery extends StatelessWidget {
         padding: const EdgeInsets.only(top: AppSpacing.lg),
         children: [
           const GallerySection(title: 'Ecrane', child: EventPagePreviewLauncher()),
+          const GallerySection(title: 'Ecrane: echipe', child: TeamPreviewsLauncher()),
           GallerySection(
             title: 'Route strip',
             child: RouteStrip(

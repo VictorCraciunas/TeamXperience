@@ -5,7 +5,7 @@
 - Firebase project `teamxperience-dadc6` (`.firebaserc`, `firebase.json`, `lib/firebase_options.dart`; Android appId `1:37662081989:android:e4d1102c63c4bbbf3081ac`, iOS appId `…:ios:092d26caf00c46e33081ac`). `google-services.json` and `GoogleService-Info.plist` are committed.
 
 ## Dependencies (pubspec) by purpose
-- Firebase: `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage`, `firebase_messaging`; `google_sign_in`.
+- Firebase: `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage`, `firebase_messaging`, `cloud_functions` (the team callables, through `lib/backend/functions/team_functions.dart`); `google_sign_in`.
 - State: `provider`. Notifications: `flutter_local_notifications`. HTTP: `http`.
 - Maps/location: `flutter_map`, `latlong2`, `geolocator`.
 - UI: `lottie`, `flutter_svg`, `cached_network_image`, `flutter_cache_manager`, `flutter_colorpicker`, `cupertino_icons`.
@@ -25,6 +25,7 @@
 ## Firebase / backend config
 - `firebase.json`: FlutterFire platform config + one functions codebase (`functions/`, predeploy `npm run build`).
 - No Firestore rules/indexes, no Storage rules, no hosting in repo. The `query` in `TeamRepo.getUserTeamForEvent` (`array-contains`) and `UserRepo.findByEmail` rely on default single-field indexes only.
+- Functions tests run with `npm --prefix functions run test:unit` today (it compiles, then runs `lib/test/*.test.js` with `node --test`). An emulator-backed `npm test` comes with the rules task.
 - Cloud Functions runtime Node 20; deps `firebase-admin ^11.11.1`, `firebase-functions ^4.3.1`, TS `^4.9`. A root `package-lock.json` also exists (unused).
 
 ## External services
