@@ -57,11 +57,15 @@ class _RecordingUser extends UserProvider {
 
 class _Routes extends NavigatorObserver {
   final names = <String>[];
+
+  /// The names of the routes that are open, bottom first.
+  final stack = <String>[];
   Object? lastArguments;
 
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     names.add('push ${route.settings.name}');
+    stack.add(route.settings.name ?? '');
     lastArguments = route.settings.arguments;
   }
 
@@ -71,11 +75,15 @@ class _Routes extends NavigatorObserver {
       'replace ${oldRoute?.settings.name} with ${newRoute?.settings.name}',
     );
     lastArguments = newRoute?.settings.arguments;
+    final at = stack.lastIndexOf(oldRoute?.settings.name ?? '');
+    if (at >= 0) stack[at] = newRoute?.settings.name ?? '';
   }
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) =>
-      names.add('pop ${route.settings.name}');
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    names.add('pop ${route.settings.name}');
+    stack.remove(route.settings.name ?? '');
+  }
 }
 
 class _Harness {
@@ -89,7 +97,8 @@ class _Harness {
   final observer = _Routes();
   late JoinTeamController controller;
 
-  Future<void> pump() async {
+  /// [below] are routes pushed under the join screen, bottom first.
+  Future<void> pump({List<String> below = const []}) async {
     await eventList.loadEvents(forceRefresh: true);
     await tester.pumpWidget(
       MultiProvider(
@@ -117,7 +126,11 @@ class _Harness {
         ),
       ),
     );
-    tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('join');
+    final navigator = tester.state<NavigatorState>(find.byType(Navigator));
+    for (final name in below) {
+      navigator.pushNamed(name);
+    }
+    navigator.pushNamed('join');
     await tester.pumpAndSettle();
   }
 
@@ -152,17 +165,32 @@ void main() {
     },
   );
 
-  testWidgets('with no events the Echipe screen opens in place of this one', (
-    tester,
-  ) async {
-    final h = _Harness(tester);
-    h.teams.eventIds = [];
-    await h.pump();
-    await h.joinWithCode();
+  testWidgets(
+    'with no events and no Echipe screen below, one Echipe screen is opened',
+    (tester) async {
+      final h = _Harness(tester);
+      h.teams.eventIds = [];
+      await h.pump();
+      await h.joinWithCode();
 
-    expect(h.user.added, isEmpty);
-    expect(h.observer.names.last, 'replace join with ${Routes.teams}');
-  });
+      expect(h.user.added, isEmpty);
+      expect(h.observer.stack, ['/', Routes.teams]);
+    },
+  );
+
+  testWidgets(
+    'with no events and an Echipe screen below, it goes back to that one',
+    (tester) async {
+      final h = _Harness(tester);
+      h.teams.eventIds = [];
+      await h.pump(below: [Routes.teams]);
+      expect(h.observer.stack, ['/', Routes.teams, 'join']);
+      await h.joinWithCode();
+
+      expect(h.observer.stack, ['/', Routes.teams]);
+      expect(h.observer.names.last, 'pop join');
+    },
+  );
 
   testWidgets(
     'leaving while joining still adds the events to the player and does not navigate',

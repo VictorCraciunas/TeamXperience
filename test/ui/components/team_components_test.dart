@@ -9,8 +9,10 @@ import 'package:teamxperience/ui/components/misc/avatar_stack.dart';
 import 'package:teamxperience/ui/components/misc/dashed_border.dart';
 import 'package:teamxperience/ui/components/team/invite_code_card.dart';
 import 'package:teamxperience/ui/theme/app_colors.dart';
+import 'package:teamxperience/ui/theme/app_theme.dart';
 
 import '../pump_ui.dart';
+import '../theme/contrast_test.dart' show contrast;
 
 Color? _fill(WidgetTester tester, Finder box) =>
     (tester.widget<DecoratedBox>(box).decoration as BoxDecoration).color;
@@ -110,22 +112,47 @@ void main() {
       expect(tester.widget<Text>(find.text('B')).style?.color, AppColors.light.onTick);
     });
 
-    testWidgets('on a dark card the fills cycle tickOnNavy, amber, panel, navActivePill with dark text', (tester) async {
-      await pumpUi(tester, stack(initials: ['A', 'B', 'C', 'D', 'E'], onDark: true));
+    for (final (themeName, theme, colors) in [
+      ('light', AppTheme.light, AppColors.light),
+      ('dark', AppTheme.dark, AppColors.dark),
+    ]) {
+      testWidgets('on a dark card the fills cycle tickOnNavy, amber, onNavy, pale teal and stay readable ($themeName)', (
+        tester,
+      ) async {
+        await pumpUi(
+          tester,
+          stack(initials: ['A', 'B', 'C', 'D', 'E'], onDark: true),
+          theme: theme,
+        );
+        Color? fillOf(String initial) {
+          final circle = find.ancestor(of: find.text(initial), matching: find.byType(Container));
+          return (tester.widget<Container>(circle.first).decoration as BoxDecoration).color;
+        }
+
+        final pale = Color.alphaBlend(colors.tickOnNavy.withValues(alpha: 0.2), colors.onNavy);
+        final expected = [colors.tickOnNavy, colors.soon, colors.onNavy, pale, colors.tickOnNavy];
+        for (final (i, initial) in ['A', 'B', 'C', 'D', 'E'].indexed) {
+          expect(fillOf(initial), expected[i]);
+          expect(tester.widget<Text>(find.text(initial)).style?.color, colors.onTick);
+          expect(contrast(colors.onTick, expected[i]), greaterThanOrEqualTo(4.5));
+        }
+      });
+    }
+
+    testWidgets('on a dark card in the light theme the fills are the mockup colours', (tester) async {
+      await pumpUi(tester, stack(initials: ['A', 'B', 'C', 'D'], onDark: true));
       Color? fillOf(String initial) {
         final circle = find.ancestor(of: find.text(initial), matching: find.byType(Container));
         return (tester.widget<Container>(circle.first).decoration as BoxDecoration).color;
       }
 
-      final colors = AppColors.light;
-      expect(fillOf('A'), colors.tickOnNavy);
-      expect(fillOf('B'), colors.soon);
-      expect(fillOf('C'), colors.panel);
-      expect(fillOf('D'), colors.navActivePill);
-      expect(fillOf('E'), colors.tickOnNavy);
-      for (final initial in ['A', 'B', 'C', 'D']) {
-        expect(tester.widget<Text>(find.text(initial)).style?.color, colors.onTick);
-      }
+      expect(fillOf('A'), const Color(0xFF53C4C7));
+      expect(fillOf('B'), const Color(0xFFF2A93B));
+      expect(fillOf('C'), const Color(0xFFFFFFFF));
+      final pale = fillOf('D');
+      expect(pale, isNotNull);
+      // The mockup's #DDF3F3, give or take a rounding step.
+      expect(pale?.toARGB32() ?? 0, closeTo(0xFFDDF3F3, 0x020202));
     });
 
     testWidgets('highlightNext marks the first empty place with a plus', (tester) async {

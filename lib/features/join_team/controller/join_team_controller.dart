@@ -54,7 +54,8 @@ class JoinTeamController extends ChangeNotifier {
   }
 
   /// The first event that is known opens in place of this screen. With none,
-  /// the Echipe screen does, where the new team is.
+  /// the player goes back to the Echipe screen they came from, where the new
+  /// team is; if there is none below, one is opened.
   void _finish(List<String> eventIds) {
     Event? first;
     for (final id in eventIds) {
@@ -63,7 +64,12 @@ class JoinTeamController extends ChangeNotifier {
 
     final event = first;
     if (event == null) {
-      _navigator.pushReplacementNamed(Routes.teams);
+      var foundTeams = false;
+      _navigator.popUntil((route) {
+        foundTeams = route.settings.name == Routes.teams;
+        return foundTeams || route.isFirst;
+      });
+      if (!foundTeams) _navigator.pushNamed(Routes.teams);
     } else {
       _navigator.pushReplacementNamed(
         Routes.eventDetails,
