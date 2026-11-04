@@ -69,7 +69,10 @@ class JoinFlow {
   int _latest = 0;
   bool _disposed = false;
 
+  /// Edits while the player is being put into the team change nothing: the
+  /// join is on its way and a second one must not start.
   void codeChanged(String code) {
+    if (_state.value is Joining) return;
     final call = ++_latest;
     _code = normaliseCode(code);
     if (_code.length < _codeLength) {
@@ -85,7 +88,12 @@ class JoinFlow {
   Future<void> _look(int call, String code) async {
     try {
       final found = await _preview(code);
-      if (call == _latest) _set(Found(found));
+      if (call != _latest) return;
+      _set(
+        found.alreadyMember
+            ? Problem(teamErrorText(TeamError.alreadyMember))
+            : Found(found),
+      );
     } catch (e) {
       if (call == _latest) _set(Problem(_textOf(e)));
     }

@@ -209,4 +209,63 @@ void main() {
     expect(f.problemText, 'Echipa e completă');
     expect(f.joined, isEmpty);
   });
+
+  test('editing the code while Joining is ignored', () async {
+    final f = _Fakes();
+    f.holdJoin = Completer<void>();
+    f.flow.codeChanged('VLP482');
+    await _settle();
+    final joining = f.flow.confirm();
+    expect(f.state, isA<Joining>());
+
+    f.flow.codeChanged('VLP48');
+    f.flow.codeChanged('ABC123');
+    expect(f.state, isA<Joining>());
+    expect(f.previewed, ['VLP482']);
+
+    f.holdJoin?.complete();
+    await joining;
+    expect(f.state, isA<Joined>());
+    expect(f.joined, ['VLP482']);
+  });
+
+  test(
+    'a preview that says already a member is a Problem, not Found',
+    () async {
+      final f = _Fakes();
+      f.result = const InvitePreview(
+        crewId: 'c1',
+        crewName: 'Vulpile',
+        captainName: 'Victor',
+        members: [],
+        alreadyMember: true,
+      );
+      f.flow.codeChanged('VLP482');
+      await _settle();
+      expect(f.problemText, 'Ești deja în echipă');
+    },
+  );
+
+  test(
+    'answers that arrive out of order: only the last complete code counts',
+    () async {
+      final first = Completer<InvitePreview>();
+      final second = Completer<InvitePreview>();
+      final answers = {'VLP482': first, 'ABC123': second};
+      final flow = JoinFlow(
+        preview: (code) => answers[code]!.future,
+        join: (code) async => ['e1'],
+      );
+
+      flow.codeChanged('VLP482');
+      flow.codeChanged('ABC123');
+      second.complete(_preview());
+      await _settle();
+      expect(flow.state.value, isA<Found>());
+
+      first.completeError(_failure('codeUnknown'));
+      await _settle();
+      expect(flow.state.value, isA<Found>());
+    },
+  );
 }

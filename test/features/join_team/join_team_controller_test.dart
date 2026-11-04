@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -17,6 +19,7 @@ import 'package:teamxperience/ui/theme/app_theme.dart';
 class _FakeTeams extends Fake implements TeamService {
   List<String> eventIds = ['e1'];
   Object? joinFailure;
+  Completer<void>? holdJoin;
 
   @override
   Future<InvitePreview> previewInvite(String code) async => const InvitePreview(
@@ -29,6 +32,7 @@ class _FakeTeams extends Fake implements TeamService {
 
   @override
   Future<List<String>> joinTeam(String code) async {
+    await holdJoin?.future;
     final error = joinFailure;
     if (error != null) throw error;
     return eventIds;
@@ -148,15 +152,41 @@ void main() {
     },
   );
 
-  testWidgets('with no events the screen closes', (tester) async {
+  testWidgets('with no events the Echipe screen opens in place of this one', (
+    tester,
+  ) async {
     final h = _Harness(tester);
     h.teams.eventIds = [];
     await h.pump();
     await h.joinWithCode();
 
     expect(h.user.added, isEmpty);
-    expect(h.observer.names.last, 'pop join');
+    expect(h.observer.names.last, 'replace join with ${Routes.teams}');
   });
+
+  testWidgets(
+    'leaving while joining still adds the events to the player and does not navigate',
+    (tester) async {
+      final h = _Harness(tester, events: [_event('e2')]);
+      h.teams.eventIds = ['e2'];
+      h.teams.holdJoin = Completer<void>();
+      await h.pump();
+
+      h.controller.codeChanged('VLP482');
+      await tester.pump();
+      final joining = h.controller.confirm();
+      await tester.pump();
+      final before = h.observer.names.length;
+
+      h.controller.dispose();
+      h.teams.holdJoin?.complete();
+      await joining;
+      await tester.pumpAndSettle();
+
+      expect(h.user.added, ['e2']);
+      expect(h.observer.names.length, before);
+    },
+  );
 
   testWidgets('a refused join stays on the screen with the error text', (
     tester,
