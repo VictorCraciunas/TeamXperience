@@ -12,8 +12,8 @@ import 'package:teamxperience/utils/invite_code.dart';
 
 class TeamService {
   TeamService({TeamFunctions? functions, CrewRepo? crews})
-      : _functions = functions ?? TeamFunctions(),
-        _crews = crews ?? CrewRepo();
+    : _functions = functions ?? TeamFunctions(),
+      _crews = crews ?? CrewRepo();
 
   TeamRepo teamRepo = TeamRepo();
   UserRepo userRepo = UserRepo();
@@ -135,8 +135,13 @@ class TeamService {
     return teamRepo.setPhotoApproval(eventId, teamName, key, status);
   }
 
-  Future<void> updateTeamDetails(String eventId, String oldTeamName, Team updatedTeam) async {
-    await teamRepo.updateTeamDetails(eventId, oldTeamName, updatedTeam);
+  /// Changes the captain's phone on the team, and nothing else.
+  Future<void> updateTeamPhone(
+    String eventId,
+    String teamName,
+    String phone,
+  ) async {
+    await teamRepo.updateTeamPhone(eventId, teamName, phone);
   }
 
   Future<void> updateTeamLocation(

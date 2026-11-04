@@ -4,7 +4,7 @@ import 'package:teamxperience/ui/components/feedback/field_status_line.dart';
 import 'package:teamxperience/ui/theme/app_radius.dart';
 import 'package:teamxperience/ui/theme/theme_context.dart';
 
-import 'register_input.dart';
+import 'package:teamxperience/ui/components/inputs/register_input.dart';
 
 /// The team name: a teal paw badge, the input (teal with a check once the
 /// name is free) and the status line under it, as in mockup 04.

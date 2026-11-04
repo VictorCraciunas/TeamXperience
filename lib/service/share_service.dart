@@ -28,6 +28,20 @@ class ShareService {
     );
   }
 
+  /// Shares the invite code of a crew, which is not tied to an event.
+  Future<void> shareCrewInvite(
+    BuildContext context, {
+    required String code,
+    required String crewName,
+  }) {
+    return shareText(
+      context,
+      subject: 'Intră în echipa $crewName',
+      text: 'Intră în echipa $crewName: '
+          'deschide TeamXperience → Echipe → Intră și scrie codul $code.',
+    );
+  }
+
   /// Builds the formatted message for team registration sharing
   String _buildTeamRegistrationMessage(Team team, Event event) {
     return '''Salut! Am înscris echipa "${team.name}" la evenimentul "${event.name ?? 'eveniment'}".

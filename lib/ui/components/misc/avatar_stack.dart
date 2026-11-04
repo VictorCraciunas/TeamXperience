@@ -6,8 +6,8 @@ import '../../theme/theme_context.dart';
 import 'dashed_border.dart';
 
 /// Overlapping initials circles for the members of a team, as in mockup 04:
-/// filled members cycle through navy, amber, accent and tick, and the places
-/// still open up to [total] are dashed empty circles.
+/// filled members cycle through navy, amber, accent and tick (on a navy card:
+/// light teal, amber, white and pale teal), and the places still open up to [total] are dashed empty circles.
 class AvatarStack extends StatelessWidget {
   const AvatarStack({
     super.key,
@@ -74,12 +74,12 @@ class AvatarStack extends StatelessWidget {
 
   List<({Color fill, Color text})> _cycle(AppColors colors) {
     if (onDark) {
-      // Navy circles would vanish into the navy ring.
+      // Navy circles would vanish into the navy ring. As in mockup 03.
       return [
         (fill: colors.tickOnNavy, text: colors.onTick),
         (fill: colors.soon, text: colors.onTick),
-        (fill: colors.tick, text: colors.onTick),
-        (fill: colors.accent, text: colors.onNavy),
+        (fill: colors.panel, text: colors.onTick),
+        (fill: colors.navActivePill, text: colors.onTick),
       ];
     }
     return [

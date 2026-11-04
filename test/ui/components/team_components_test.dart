@@ -110,6 +110,24 @@ void main() {
       expect(tester.widget<Text>(find.text('B')).style?.color, AppColors.light.onTick);
     });
 
+    testWidgets('on a dark card the fills cycle tickOnNavy, amber, panel, navActivePill with dark text', (tester) async {
+      await pumpUi(tester, stack(initials: ['A', 'B', 'C', 'D', 'E'], onDark: true));
+      Color? fillOf(String initial) {
+        final circle = find.ancestor(of: find.text(initial), matching: find.byType(Container));
+        return (tester.widget<Container>(circle.first).decoration as BoxDecoration).color;
+      }
+
+      final colors = AppColors.light;
+      expect(fillOf('A'), colors.tickOnNavy);
+      expect(fillOf('B'), colors.soon);
+      expect(fillOf('C'), colors.panel);
+      expect(fillOf('D'), colors.navActivePill);
+      expect(fillOf('E'), colors.tickOnNavy);
+      for (final initial in ['A', 'B', 'C', 'D']) {
+        expect(tester.widget<Text>(find.text(initial)).style?.color, colors.onTick);
+      }
+    });
+
     testWidgets('highlightNext marks the first empty place with a plus', (tester) async {
       await pumpUi(tester, stack(total: 4, highlightNext: true));
       expect(find.byIcon(TablerIcons.plus), findsOneWidget);

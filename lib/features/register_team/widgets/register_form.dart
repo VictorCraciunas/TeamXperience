@@ -7,7 +7,7 @@ import 'package:teamxperience/ui/theme/app_text_styles.dart';
 
 import 'consent_row.dart';
 import 'field_label.dart';
-import 'register_input.dart';
+import 'package:teamxperience/ui/components/inputs/register_input.dart';
 import 'team_name_field.dart';
 
 /// The form of mockup 04 (left phone), fed by values and callbacks: the team
