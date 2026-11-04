@@ -1,4 +1,6 @@
 import 'package:teamxperience/enums/photo_approval_status.dart';
+import 'package:teamxperience/model/team_member.dart';
+import 'package:teamxperience/utils/invite_code.dart' as invite_code;
 
 class Team {
   final String name;
@@ -15,6 +17,13 @@ class Team {
   double longitude;
   int numberOfMembers;
   Map<String, PhotoApprovalStatus> photoApprovals;
+  final String? crewId;
+  final String? captainUid;
+  final List<TeamMember> members;
+
+  /// Stored without the dash, upper-case: "VLP482".
+  final String? inviteCode;
+  final bool photoConsent;
 
   Team({
     required this.name,
@@ -31,8 +40,29 @@ class Team {
     this.longitude = 0,
     this.numberOfMembers = 0,
     Map<String, PhotoApprovalStatus>? photoApprovals,
+    this.crewId,
+    this.captainUid,
+    this.members = const [],
+    this.inviteCode,
+    this.photoConsent = false,
   })  : userIds = userIds ?? [],
         photoApprovals = photoApprovals ?? {};
+
+  /// "VLP-482", or null for a team without an invite code.
+  String? get displayCode {
+    final code = inviteCode;
+    return code == null ? null : invite_code.displayCode(code);
+  }
+
+  /// The members, or for old teams the names typed in `teamMembers`.
+  List<TeamMember> get memberList {
+    if (members.isNotEmpty) return members;
+    return teamMembers
+        .split(',')
+        .where((name) => name.trim().isNotEmpty)
+        .map(TeamMember.fromName)
+        .toList();
+  }
 
   static String approvalKeyPrefix(int missionIndex, int puzzleIndex) =>
       '${missionIndex}_${puzzleIndex}_';
@@ -75,6 +105,12 @@ class Team {
       if (status != null) approvals[k] = status;
     });
 
+    final rawMembers = map['members'] as List<dynamic>? ?? [];
+    final membersList = rawMembers
+        .whereType<Map>()
+        .map((m) => TeamMember.fromMap(Map<String, dynamic>.from(m)))
+        .toList();
+
     return Team(
       name: map['name'] as String? ?? '',
       teamMembers: map['teamMembers'] as String? ?? '',
@@ -86,10 +122,15 @@ class Team {
       userIds: userIdsList,
       hasStarted: map['hasStarted'] as bool? ?? false,
       hasFinished: map['hasFinished'] as bool? ?? false,
-      latitude: map['latitude'] as double,
-      longitude: map['longitude'] as double,
+      latitude: (map['latitude'] as num?)?.toDouble() ?? 0,
+      longitude: (map['longitude'] as num?)?.toDouble() ?? 0,
       numberOfMembers: map['numberOfMembers'] as int? ?? 0,
       photoApprovals: approvals,
+      crewId: map['crewId'] as String?,
+      captainUid: map['captainUid'] as String?,
+      members: membersList,
+      inviteCode: map['inviteCode'] as String?,
+      photoConsent: map['photoConsent'] as bool? ?? false,
     );
   }
 
@@ -109,6 +150,11 @@ class Team {
       'longitude': longitude,
       'numberOfMembers': numberOfMembers,
       'photoApprovals': photoApprovals.map((k, v) => MapEntry(k, v.name)),
+      if (crewId != null) 'crewId': crewId,
+      if (captainUid != null) 'captainUid': captainUid,
+      'members': members.map((m) => m.toJson()).toList(),
+      if (inviteCode != null) 'inviteCode': inviteCode,
+      'photoConsent': photoConsent,
     };
   }
 

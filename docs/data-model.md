@@ -27,7 +27,10 @@ All models live in `lib/model/`. Pattern: plain mutable classes, `fromMap`/`from
 - **`Mission`**: `id` (stringified index, `"0"`, `"1"`…) + `puzzles[]`. The admin UI relies on `int.parse(mission.id)` being the list index. Also `title`, `teaser` and `isTeaserPublic` (default false): public missions with a title are shown on the event page, the rest count as secret. Copies made when missions move or are deleted use `withId`, which keeps them.
 - **`Puzzle`**: `id` (string index), `type`, `components[]`, `code` (for `code`), `latitude/longitude` (for `geolocation`), `indiciu` (hint text). `toJson` omits null optional fields.
 - **`Component`**: one wide class for all component kinds. Common: `type, text, imageUrl, textColor, fontSize, fontWeight, fontFamily, textAlign, width, height`. Text: `animation, typewriterSpeed`. Button: `buttonLabel, buttonColor(+OnTap), buttonTextColor(+OnTap), borderColor, cornerRadius, enableGlow, glowColor, enableFlicker`. Code input: `codeLength, inputType ("Separated"|"Free"), capsLock ("CapsLock"|"Fără"), frameCornerRadius, inputCornerRadius, frameBackgroundColor, inputBackgroundColor, colorBorderInput, colorBorderContainer`. Colours are hex strings (`#RRGGBB` or `#AARRGGBB`), converted via `ColorConversion`.
-- **`Team`**: `name` (also the Firestore doc id!), `teamMembers` (free text), `captainName/Email`, `phoneNumber`, `missionProgress` (# completed missions), `puzzleNumber` (current puzzle index inside the current mission), `userIds[]`, `hasStarted`, `hasFinished`, `latitude/longitude` (live location), `numberOfMembers`, `photoApprovals` (`Map<String, PhotoApprovalStatus>`, key = `Team.approvalKey(missionIdx, puzzleIdx)` → `"{m}_{p}"`). `fromMap` casts `latitude`/`longitude` as `double` directly (will throw if stored as int/null).
+- **`Team`**: `name` (also the Firestore doc id!), `teamMembers` (free text), `captainName/Email`, `phoneNumber`, `missionProgress` (# completed missions), `puzzleNumber` (current puzzle index inside the current mission), `userIds[]`, `hasStarted`, `hasFinished`, `latitude/longitude` (live location), `numberOfMembers`, `photoApprovals` (`Map<String, PhotoApprovalStatus>`, key = `Team.approvalKey(missionIdx, puzzleIdx)` → `"{m}_{p}"`). `fromMap` reads `latitude`/`longitude` as numbers and falls back to 0 when missing.
+  - **Crew fields** (redesign step 3, all optional): `crewId`, `captainUid`, `members` (`List<TeamMember>`, default empty), `inviteCode` (stored without the dash, upper-case, e.g. `VLP482`; `displayCode` gives `VLP-482`), `photoConsent` (default false). `memberList` is `members`, or for old teams the comma-separated names in `teamMembers` (trimmed, empty pieces skipped, uid empty, initials = first letters of the first two words, upper-case). The functions also write `nameKey` and `rulesAcceptedAt` on the team doc; the app does not model them. `toJson` omits null `crewId`/`captainUid`/`inviteCode`.
+- **`TeamMember`** (`team_member.dart`): `uid`, `displayName`, `initials`. `TeamMember.fromName` builds one from a plain name (old teams).
+- **`Crew`** (`crew.dart`): `id` (doc id), `name`, `captainUid`, `memberUids[]`, `members` (`List<TeamMember>`), `inviteCode` (no dash). `displayCode` gives `VLP-482`; `captain` is the member whose `uid` is `captainUid`. Written by Cloud Functions only. Invite-code helpers (`normaliseCode`, `isWellFormedCode`, `displayCode`) are in `lib/utils/invite_code.dart`, twins of `functions/src/teams/codes.ts`.
 - **`AppUser`** (`user.dart`): `email, firstName, lastName, uid, role, registeredEventIds[], fcmToken`. Immutable; `UserProvider.addRegisteredEvent` rebuilds it.
 - **`Message`**: `sender (Role), text, timestamp, type, imageUrl?`.
 - **`Stire`** (news): `id, title, description, publicationDate, type (StireType), category (NewsCategory), buttonText, buttonLink, principalImage, secondaryImages[]`. `fromMap` accepts category as a map or a legacy plain string.
@@ -38,8 +41,10 @@ All models live in `lib/model/`. Pattern: plain mutable classes, `fromMap`/`from
 ```
 users/{uid}                                  AppUser
 events/{eventId}                             Event (missions→puzzles→components embedded)
-events/{eventId}/teams/{teamName}            Team
+events/{eventId}/teams/{teamName}            Team (+ crewId, captainUid, members, inviteCode, photoConsent; server-only nameKey, rulesAcceptedAt)
 events/{eventId}/teams/{teamName}/messages/{autoId}   Message  (ordered by timestamp asc)
+crews/{crewId}                               Crew (written by Cloud Functions)
+inviteCodes/{code}                           { crewId }  (code without dash, e.g. VLP482)
 stire/{id}                                   Stire
 categories/{id}                              NewsCategory
 ```
