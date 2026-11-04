@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 
 import '../../theme/app_radius.dart';
-import '../../theme/app_text_styles.dart';
 import '../../theme/theme_context.dart';
+import '../misc/dashed_border.dart';
 import 'invite_code_button.dart';
 
-/// The team's invite code, big and ready to share: a caption, the code, and a
-/// WhatsApp button next to a copy button. [code] is shown as given
-/// ("VLP-482").
+/// The team's invite code, big and ready to share, on a navy card as in
+/// mockup 04: a caption, the code in a dashed box, a WhatsApp button next to a
+/// copy button, and an optional [footer] (the members who have joined). [code]
+/// is shown as given ("VLP-482").
 class InviteCodeCard extends StatelessWidget {
   const InviteCodeCard({
     super.key,
@@ -18,6 +19,7 @@ class InviteCodeCard extends StatelessWidget {
     required this.onShare,
     required this.onCopy,
     this.caption,
+    this.footer,
   });
 
   final String code;
@@ -27,35 +29,45 @@ class InviteCodeCard extends StatelessWidget {
   final VoidCallback onCopy;
   final String? caption;
 
+  /// Shown centred under the buttons.
+  final Widget? footer;
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final text = caption;
+    final bottom = footer;
 
     return DecoratedBox(
+      key: const ValueKey('invite-code-card'),
       decoration: BoxDecoration(
-        color: colors.panel,
-        border: Border.all(color: colors.border),
+        color: colors.navy,
         borderRadius: BorderRadius.circular(AppRadius.hero),
       ),
       child: Padding(
-        // 14 of CSS padding plus the 1 px border.
-        padding: const EdgeInsets.all(15),
+        padding: const EdgeInsets.all(14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (text != null)
-              Text(text, textAlign: TextAlign.center, style: AppTextStyles.smallMuted(context)),
+              Text(
+                text,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: colors.onNavy.withValues(alpha: .8),
+                  height: 1.45,
+                ),
+              ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 6),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: colors.inset,
-                  border: Border.all(color: colors.insetBorder, width: 1.5),
-                  borderRadius: BorderRadius.circular(AppRadius.button),
-                ),
+              child: DashedBorder(
+                color: colors.onNavyMuted,
+                width: 1.5,
+                radius: 12,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 7.5),
+                  // 6 of CSS padding plus the 1.5 px border.
+                  padding: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 1.5),
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
@@ -64,23 +76,22 @@ class InviteCodeCard extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Monospace',
                         fontSize: 26,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w500,
                         letterSpacing: 4,
-                        color: colors.text,
+                        color: colors.onNavy,
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 4),
             Row(
               children: [
                 Expanded(
                   child: InviteCodeButton(
                     label: shareLabel,
                     icon: TablerIcons.brand_whatsapp,
-                    filled: true,
+                    highlighted: true,
                     onTap: onShare,
                   ),
                 ),
@@ -90,6 +101,8 @@ class InviteCodeCard extends StatelessWidget {
                 ),
               ],
             ),
+            if (bottom != null)
+              Padding(padding: const EdgeInsets.only(top: 10), child: Center(child: bottom)),
           ],
         ),
       ),

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/ui/components/feedback/field_status_line.dart';
 import 'package:teamxperience/ui/components/inputs/code_boxes_input.dart';
 import 'package:teamxperience/ui/components/inputs/size_picker.dart';
 import 'package:teamxperience/ui/components/misc/avatar_stack.dart';
+import 'package:teamxperience/ui/components/misc/dashed_border.dart';
 import 'package:teamxperience/ui/components/team/invite_code_card.dart';
 import 'package:teamxperience/ui/theme/app_colors.dart';
 
@@ -51,24 +53,85 @@ Widget _inviteCard({VoidCallback? onShare, VoidCallback? onCopy, String? caption
 
 void main() {
   group('AvatarStack', () {
-    testWidgets('shows the initials and the number of the others', (tester) async {
-      await pumpUi(tester, const AvatarStack(initials: ['VC', 'AM'], total: 4));
+    Widget stack({
+      List<String> initials = const ['VC', 'AM'],
+      int? total,
+      bool onDark = false,
+      bool highlightNext = false,
+    }) {
+      return Align(
+        alignment: Alignment.topLeft,
+        child: AvatarStack(
+          initials: initials,
+          total: total,
+          onDark: onDark,
+          highlightNext: highlightNext,
+        ),
+      );
+    }
+
+    testWidgets('shows the initials and the empty places up to the total', (tester) async {
+      await pumpUi(tester, stack(total: 4));
       expect(find.text('VC'), findsOneWidget);
       expect(find.text('AM'), findsOneWidget);
-      expect(find.text('+2'), findsOneWidget);
-    });
-
-    testWidgets('shows no "+N" when every member has a circle', (tester) async {
-      await pumpUi(tester, const AvatarStack(initials: ['VC', 'AM'], total: 2));
       expect(find.textContaining('+'), findsNothing);
+      expect(find.byType(DashedBorder), findsNWidgets(2));
     });
 
-    testWidgets('circles overlap by 8', (tester) async {
-      await pumpUi(
-        tester,
-        const Align(alignment: Alignment.topLeft, child: AvatarStack(initials: ['VC', 'AM'])),
+    testWidgets('has no empty places when every member has a circle', (tester) async {
+      await pumpUi(tester, stack(total: 2));
+      expect(find.byType(DashedBorder), findsNothing);
+    });
+
+    testWidgets('empty places are dashed 2 px circles in the border colour with no fill', (
+      tester,
+    ) async {
+      await pumpUi(tester, stack(total: 3));
+      final dashed = tester.widget<DashedBorder>(find.byType(DashedBorder));
+      expect(dashed.color, AppColors.light.border);
+      expect(dashed.width, 2);
+      expect(dashed.circle, isTrue);
+      expect(dashed.fill, isNull);
+    });
+
+    testWidgets('filled members cycle navy, amber, accent, tick', (tester) async {
+      await pumpUi(tester, stack(initials: ['A', 'B', 'C', 'D', 'E']));
+      Color? fillOf(String initial) {
+        final circle = find.ancestor(of: find.text(initial), matching: find.byType(Container));
+        return (tester.widget<Container>(circle.first).decoration as BoxDecoration).color;
+      }
+
+      expect(fillOf('A'), AppColors.light.navy);
+      expect(fillOf('B'), AppColors.light.soon);
+      expect(fillOf('C'), AppColors.light.accent);
+      expect(fillOf('D'), AppColors.light.tick);
+      expect(fillOf('E'), AppColors.light.navy);
+      expect(tester.widget<Text>(find.text('A')).style?.color, AppColors.light.onNavy);
+      expect(tester.widget<Text>(find.text('B')).style?.color, AppColors.light.onTick);
+    });
+
+    testWidgets('highlightNext marks the first empty place with a plus', (tester) async {
+      await pumpUi(tester, stack(total: 4, highlightNext: true));
+      expect(find.byIcon(TablerIcons.plus), findsOneWidget);
+      final dashed = tester.widget<DashedBorder>(find.byType(DashedBorder).first);
+      expect(dashed.color, AppColors.light.tick);
+      expect(dashed.fill, AppColors.light.panel);
+      expect(tester.widget<Icon>(find.byIcon(TablerIcons.plus)).color, AppColors.light.accent);
+    });
+
+    testWidgets('circles are 30 across and overlap by 8', (tester) async {
+      await pumpUi(tester, stack());
+      expect(tester.getSize(find.byType(AvatarStack)).width, 30 + 22);
+      expect(tester.getSize(find.byType(AvatarStack)).height, 30);
+    });
+
+    testWidgets('on a dark card the overlap is 6 and empty places use onNavyMuted', (tester) async {
+      await pumpUi(tester, stack(total: 3, onDark: true));
+      expect(tester.getSize(find.byType(AvatarStack)).width, 30 + 24 * 2);
+      expect(
+        tester.widget<DashedBorder>(find.byType(DashedBorder)).color,
+        AppColors.light.onNavyMuted,
       );
-      expect(tester.getSize(find.byType(AvatarStack)).width, 28 + 20);
     });
   });
 
@@ -104,6 +167,34 @@ void main() {
       await tester.pump();
       expect(latest, 'VLP4');
       expect(completed, isFalse);
+    });
+
+    testWidgets('a long press pastes the clipboard, cleaned, into the boxes', (tester) async {
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (
+        call,
+      ) async {
+        if (call.method == 'Clipboard.getData') return <String, dynamic>{'text': ' vlp-482 '};
+        return null;
+      });
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        ),
+      );
+      String? completed;
+      String? latest;
+      await pumpUi(
+        tester,
+        _codeBoxes(onChanged: (v) => latest = v, onCompleted: (v) => completed = v),
+      );
+      await tester.longPress(find.byType(CodeBoxesInput));
+      await tester.pump();
+      expect(latest, 'VLP482');
+      expect(completed, 'VLP482');
+      for (final c in ['V', 'L', 'P', '4', '8', '2']) {
+        expect(find.text(c), findsOneWidget);
+      }
     });
 
     testWidgets('extra characters are cut off', (tester) async {
@@ -199,14 +290,51 @@ void main() {
       expect(copied, 1);
     });
 
-    testWidgets('the code sits on the inset colour', (tester) async {
+    testWidgets('is a navy card with a dashed code box, as in mockup 04', (tester) async {
       await pumpUi(tester, _inviteCard());
-      final box =
-          find.ancestor(of: find.text('VLP-482'), matching: find.byType(DecoratedBox)).first;
-      expect(_fill(tester, box), AppColors.light.inset);
+      final card = find.byKey(const ValueKey('invite-code-card'));
+      final decoration = tester.widget<DecoratedBox>(card).decoration as BoxDecoration;
+      expect(decoration.color, AppColors.light.navy);
+      expect(decoration.borderRadius, BorderRadius.circular(22));
+      final dashed = tester.widget<DashedBorder>(find.byType(DashedBorder));
+      expect(dashed.color, AppColors.light.onNavyMuted);
+      expect(dashed.width, 1.5);
+      expect(dashed.radius, 12);
       final style = tester.widget<Text>(find.text('VLP-482')).style;
       expect(style?.fontSize, 26);
-      expect(style?.fontWeight, FontWeight.w700);
+      expect(style?.fontWeight, FontWeight.w500);
+      expect(style?.letterSpacing, 4);
+      expect(style?.color, AppColors.light.onNavy);
+    });
+
+    testWidgets('WhatsApp is teal with dark text, copy is a faint white', (tester) async {
+      await pumpUi(tester, _inviteCard());
+      Material button(String label) => tester.widget<Material>(
+        find.ancestor(of: find.text(label), matching: find.byType(Material)).first,
+      );
+      expect(button('WhatsApp').color, AppColors.light.tickOnNavy);
+      expect(tester.widget<Text>(find.text('WhatsApp')).style?.color, AppColors.light.onTick);
+      expect(button('Copiază').color, AppColors.light.onNavy.withValues(alpha: .12));
+      expect(tester.widget<Text>(find.text('Copiază')).style?.color, AppColors.light.onNavy);
+    });
+
+    testWidgets('shows a footer under the buttons', (tester) async {
+      await pumpUi(
+        tester,
+        InviteCodeCard(
+          code: 'VLP-482',
+          shareLabel: 'WhatsApp',
+          copyLabel: 'Copiază',
+          onShare: () {},
+          onCopy: () {},
+          footer: const Text('1 din 4 în echipă'),
+        ),
+      );
+      expect(find.text('1 din 4 în echipă'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.text('1 din 4 în echipă')).dy,
+        greaterThan(tester.getBottomLeft(find.text('Copiază')).dy),
+      );
     });
   });
 

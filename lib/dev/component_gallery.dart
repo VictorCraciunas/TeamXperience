@@ -189,9 +189,11 @@ class _TeamsGalleryState extends State<_TeamsGallery> {
           const SizedBox(height: AppSpacing.lg),
           Row(
             children: [
-              const AvatarStack(initials: ['VC', 'AM', 'IR'], total: 5),
+              const AvatarStack(initials: ['VC', 'AM'], total: 4, highlightNext: true),
               const SizedBox(width: 6),
-              Text('1 din 4 în echipă', style: AppTextStyles.smallMuted(context)),
+              Flexible(
+                child: Text('2 din 4 · tu ești al 3-lea', style: AppTextStyles.smallMuted(context)),
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -210,6 +212,22 @@ class _TeamsGalleryState extends State<_TeamsGallery> {
             copyLabel: 'Copiază',
             onShare: () {},
             onCopy: () {},
+            footer: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const AvatarStack(initials: ['VC'], total: 4, onDark: true),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    '1 din 4 în echipă',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: context.colors.onNavy.withValues(alpha: .8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

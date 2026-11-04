@@ -61,6 +61,24 @@ class _CodeBoxesInputState extends State<CodeBoxesInput> {
     if (value.length == widget.length) widget.onCompleted?.call(value);
   }
 
+  /// A long press pastes the clipboard: the same cleaning as typing.
+  Future<void> _paste() async {
+    final data = await Clipboard.getData(Clipboard.kTextPlain);
+    final pasted = _clean(data?.text ?? '');
+    if (!mounted || pasted.isEmpty) return;
+    _controller.value = TextEditingValue(
+      text: pasted,
+      selection: TextSelection.collapsed(offset: pasted.length),
+    );
+    _focus.requestFocus();
+    _changed(pasted);
+  }
+
+  String _clean(String raw) {
+    final cleaned = raw.replaceAll(RegExp('[^A-Za-z0-9]'), '').toUpperCase();
+    return cleaned.length > widget.length ? cleaned.substring(0, widget.length) : cleaned;
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -96,6 +114,7 @@ class _CodeBoxesInputState extends State<CodeBoxesInput> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: _focus.requestFocus,
+      onLongPress: _paste,
       child: Stack(
         alignment: Alignment.center,
         children: [
