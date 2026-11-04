@@ -13,6 +13,21 @@ class ShareService {
     } catch (_) {}
   }
 
+  /// Shares the invite code of a team through the share sheet.
+  Future<void> shareInvite(
+    BuildContext context, {
+    required String code,
+    required String teamName,
+    required String eventName,
+  }) {
+    return shareText(
+      context,
+      subject: 'Intră în echipa $teamName',
+      text: 'Intră în echipa $teamName la $eventName: '
+          'deschide TeamXperience → Echipe → Intră și scrie codul $code.',
+    );
+  }
+
   /// Builds the formatted message for team registration sharing
   String _buildTeamRegistrationMessage(Team team, Event event) {
     return '''Salut! Am înscris echipa "${team.name}" la evenimentul "${event.name ?? 'eveniment'}".
