@@ -99,12 +99,16 @@ class _CodeBoxesInputState extends State<CodeBoxesInput> {
         ),
       );
       if (widget.dashAfter == i + 1 && i + 1 < widget.length) {
+        // The 6 px gaps either side come from the row's own spacing.
+        boxes.add(const SizedBox(width: 6));
         boxes.add(
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: Text(
-              '-',
-              style: TextStyle(fontFamily: 'Monospace', fontSize: 20, color: colors.muted),
+          Text(
+            '-',
+            style: TextStyle(
+              fontFamily: 'Monospace',
+              fontSize: 20,
+              height: 1.45,
+              color: colors.text.withValues(alpha: 0.5),
             ),
           ),
         );

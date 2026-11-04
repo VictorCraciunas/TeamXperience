@@ -17,6 +17,7 @@ Every folder under `lib/features/` follows `controller/` + `screen/` (+ `widgets
 | `eventDetails` | `EventDetailsScreen` | `{'event': Event, 'isAdmin': bool}` |
 | `registerTeam` | `RegisterTeamScreen` | `Event` |
 | `registerTeamDetails` | `TeamDetailsScreen` | `{'event': Event, 'user': AppUser}` |
+| `joinTeam` | `JoinTeamScreen` | none |
 | `enterCodeScreen` | `EnterCode` | `Event` |
 | `eventGame` | `EventGameScreen` | `{'event': Event, 'team': Team?}` |
 | `puzzleGame` | `PuzzleGameScreen` | `{'mission','background' (ImageProvider),'event','team'}`; pops with updated `Team` (or `null` on error) |
@@ -50,6 +51,7 @@ Every folder under `lib/features/` follows `controller/` + `screen/` (+ `widgets
 - `events_dashboard/events_dashboard_user` — Instagram-style feed of `EventPostCard`s (`widgets/events_feed.dart`) with a Toate / Înscrise `SegmentedSwitch`, a search button and a period button that opens `showPeriodSheet` (`FeedSearchBar`) as the first, scrolling item of the feed (under the app bar; registered past events come last and dimmed); share uses `ShareService.shareText` with `eventShareText`; tapping opens event details, or team details when registered; `events_filter_service.dart` (`FilterService`) is shared with the admin dashboard.
 - `event_details` — event info; register/"already registered" (`already_registered_card`), admin variant shows management actions.
 - `register_team` — one screen: `RegisterForm` (+ `TeamNameField`, `RegisterInput`, `FieldLabel`, `ConsentRow`) and, after a successful registration, `InviteResultSection` under it (the invite code to send on). `RegisterTeamController` is a `ChangeNotifier` (state, `blocker`, `submit`, share/copy, `close`); `logic/team_name_check.dart` (`TeamNameCheck`) debounces the name check.
+- `join_team` — join a team by invite code (right phone of mockup 04). `JoinTeamBody` (pure, drawn from a `JoinState`) = `JoinIntro` + `CodeBoxesInput` + problem text + `InvitePreviewCard` + `JoinBottomBlock`. `logic/join_state.dart` holds the sealed `JoinState` (`Typing`, `Looking`, `Found`, `Problem`, `Joining`, `Joined`) and `JoinFlow` (preview / join functions injected, `confirm` ignored unless `Found`). `JoinTeamController` wires `JoinFlow` to `TeamService` and, on `Joined`, adds the events to `UserProvider` and opens the first known event's page (`eventDetails`) in place of the screen; with none it pops (to be changed to the Echipe screen once that route exists).
 - `team_details` — view/edit own team (`TeamControllerDetails`), share registration through `ShareService` (system share, WhatsApp `wa.me`, `mailto:`, `sms:`), delete team.
 - `enter_code` — compares typed code to `event.startCode`.
 - `event_game` — see lifecycle in `data-model.md`. `puzzle_game_screen` branches on `PuzzleType`: `geolocation` → `GeolocationPuzzleWidget` (flutter_map + OSRM walking route via `RouteService`, solved when within circle radius of target), `imageToUpload` → `ImageUploadPuzzleWidget` (see below), everything else → admin-designed components. Code puzzles: Continue/button compares input to `puzzle.code` case-insensitively; a wrong code does nothing (no error UI).

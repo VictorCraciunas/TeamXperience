@@ -216,20 +216,25 @@ void main() {
       expect(find.text('4'), findsOneWidget);
     });
 
-    testWidgets('the next box to fill has the tick border, the rest the plain one', (tester) async {
+    testWidgets('filled boxes and the next one have the tick border, the rest the plain one', (
+      tester,
+    ) async {
       await pumpUi(tester, _codeBoxes());
       await tester.tap(find.byType(CodeBoxesInput));
       await tester.enterText(find.byType(TextField), 'vl');
       await tester.pump();
-      expect(_borderColor(tester, find.byKey(const ValueKey('code-box-2'))), AppColors.light.tick);
-      expect(
-        _borderColor(tester, find.byKey(const ValueKey('code-box-1'))),
-        AppColors.light.border,
-      );
-      expect(
-        _borderColor(tester, find.byKey(const ValueKey('code-box-3'))),
-        AppColors.light.border,
-      );
+      for (final i in [0, 1, 2]) {
+        expect(
+          _borderColor(tester, find.byKey(ValueKey('code-box-$i'))),
+          AppColors.light.tick,
+        );
+      }
+      for (final i in [3, 4, 5]) {
+        expect(
+          _borderColor(tester, find.byKey(ValueKey('code-box-$i'))),
+          AppColors.light.border,
+        );
+      }
     });
 
     testWidgets('error draws every box border in the danger colour', (tester) async {
@@ -239,9 +244,25 @@ void main() {
       }
     });
 
-    testWidgets('boxes are 38 x 46', (tester) async {
+    testWidgets('boxes are 34 x 47 with a 1 px border and a radius of 12', (tester) async {
       await pumpUi(tester, _codeBoxes());
-      expect(tester.getSize(find.byKey(const ValueKey('code-box-0'))), const Size(38, 46));
+      final box = find.byKey(const ValueKey('code-box-0'));
+      expect(tester.getSize(box), const Size(34, 47));
+      final decoration =
+          tester.widget<DecoratedBox>(find.descendant(of: box, matching: find.byType(DecoratedBox)).first).decoration
+              as BoxDecoration;
+      expect((decoration.border as Border).top.width, 1);
+      expect(decoration.borderRadius, BorderRadius.circular(12));
+    });
+
+    testWidgets('boxes sit 6 px apart and the dash has 6 px either side', (tester) async {
+      await pumpUi(tester, _codeBoxes());
+      Rect rect(int i) => tester.getRect(find.byKey(ValueKey('code-box-$i')));
+      expect(rect(1).left - rect(0).right, 6);
+      final dash = tester.getRect(find.text('-'));
+      expect(dash.left - rect(2).right, 6);
+      expect(rect(3).left - dash.right, 6);
+      expect(dash.center.dy, closeTo(rect(2).center.dy, 0.5));
     });
   });
 

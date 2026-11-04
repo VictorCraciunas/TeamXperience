@@ -2,15 +2,40 @@ import 'package:teamxperience/enums/difficulty.dart';
 
 /// Texts of the event page and the event form, as the mockups write them.
 
-const _months = ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-const _days = ['Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă', 'Duminică'];
+const _months = [
+  'ian',
+  'feb',
+  'mar',
+  'apr',
+  'mai',
+  'iun',
+  'iul',
+  'aug',
+  'sep',
+  'oct',
+  'nov',
+  'dec',
+];
+const _shortDays = ['Lun', 'Mar', 'Mie', 'Joi', 'Vin', 'Sâm', 'Dum'];
+const _days = [
+  'Luni',
+  'Marți',
+  'Miercuri',
+  'Joi',
+  'Vineri',
+  'Sâmbătă',
+  'Duminică',
+];
 
 String _two(int n) => n.toString().padLeft(2, '0');
 
 /// "4,5 km", "4 km", "12,3 km".
 String formatKm(double km) {
   final rounded = (km * 10).round() / 10;
-  final text = rounded == rounded.roundToDouble() ? rounded.toInt().toString() : rounded.toStringAsFixed(1);
+  final text =
+      rounded == rounded.roundToDouble()
+          ? rounded.toInt().toString()
+          : rounded.toStringAsFixed(1);
   return '${text.replaceAll('.', ',')} km';
 }
 
@@ -22,10 +47,10 @@ String formatDuration(int minutes) {
 }
 
 String difficultyLabel(Difficulty d) => switch (d) {
-      Difficulty.easy => 'Ușoară',
-      Difficulty.medium => 'Medie',
-      Difficulty.hard => 'Grea',
-    };
+  Difficulty.easy => 'Ușoară',
+  Difficulty.medium => 'Medie',
+  Difficulty.hard => 'Grea',
+};
 
 /// How many of the three dots are filled.
 int difficultyLevel(Difficulty d) => d.index + 1;
@@ -36,8 +61,16 @@ String shortMonth(int month) => _months[month - 1];
 /// "14 nov".
 String dayAndMonth(DateTime d) => '${d.day} ${shortMonth(d.month)}';
 
+/// "Sâm" for a Saturday.
+String shortDay(DateTime d) => _shortDays[d.weekday - 1];
+
+/// "Sâm 14 nov, 10:00", for a team's event on the join screen.
+String shortDateTime(DateTime d) =>
+    '${shortDay(d)} ${dayAndMonth(d)}, ${_two(d.hour)}:${_two(d.minute)}';
+
 /// "nov · 10:00", under the day on the date tile.
-String monthAndTime(DateTime d) => '${shortMonth(d.month)} · ${_two(d.hour)}:${_two(d.minute)}';
+String monthAndTime(DateTime d) =>
+    '${shortMonth(d.month)} · ${_two(d.hour)}:${_two(d.minute)}';
 
 /// "Sâmbătă 14 nov · 10:00 · fii acolo la 9:45".
 String eventDayLine(DateTime start, int arriveMinutesBefore) {
@@ -48,10 +81,14 @@ String eventDayLine(DateTime start, int arriveMinutesBefore) {
 
 /// "TX" for "TeamXperience" (two capitals of one word), "AP" for "Ana Pop".
 String initialsOf(String name) {
-  final words = name.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
+  final words =
+      name.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
   if (words.isEmpty) return '';
   if (words.length > 1) return (words[0][0] + words[1][0]).toUpperCase();
-  final capitals = RegExp('[A-ZĂÂÎȘȚ]').allMatches(words[0]).map((m) => m.group(0) ?? '').toList();
+  final capitals =
+      RegExp(
+        '[A-ZĂÂÎȘȚ]',
+      ).allMatches(words[0]).map((m) => m.group(0) ?? '').toList();
   if (capitals.length >= 2) return capitals.take(2).join();
   return words[0][0].toUpperCase();
 }
@@ -63,4 +100,5 @@ String routeSummary(double? km, int missions) {
 }
 
 /// "Echipe de 2–6", or "Echipe de 4" when both ends are the same.
-String teamSizeLine(int min, int max) => min == max ? 'Echipe de $min' : 'Echipe de $min–$max';
+String teamSizeLine(int min, int max) =>
+    min == max ? 'Echipe de $min' : 'Echipe de $min–$max';

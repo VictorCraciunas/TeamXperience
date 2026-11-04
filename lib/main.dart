@@ -21,6 +21,7 @@ import 'package:teamxperience/features/news_category_manipulation/screen/news_ca
 import 'package:teamxperience/features/news_dashboard/screen/stiri_dashboard_screen.dart';
 import 'package:teamxperience/features/news_details/news_screen.dart';
 import 'package:teamxperience/features/notification/screen/notification_screen.dart';
+import 'package:teamxperience/features/join_team/screen/join_team_screen.dart';
 import 'package:teamxperience/features/register_team/screen/register_team_screen.dart';
 import 'package:teamxperience/features/sign-up/screen/register.dart';
 import 'package:teamxperience/features/splash/splash.dart';
@@ -160,6 +161,7 @@ class MyApp extends StatelessWidget {
                 Routes.eventDashboardUser: (_) => const FilterEventsUser(),
                 Routes.registerTeam: (_) => const RegisterTeamScreen(),
                 Routes.registerTeamDetails: (_) => const TeamDetailsScreen(),
+                Routes.joinTeam: (_) => const JoinTeamScreen(),
                 Routes.enterCodeScreen: (_) => const EnterCode(),
                 Routes.chatScreen: (_) => const ChatScreen(),
                 Routes.teamConversations: (_) => const TeamChatsScreen(),
