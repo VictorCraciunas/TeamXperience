@@ -44,7 +44,13 @@ class TeamNameCheck {
   }
 
   Future<void> _ask(int call, String cleaned) async {
-    final free = await _isFree(cleaned);
+    bool? free;
+    try {
+      free = await _isFree(cleaned);
+    } catch (_) {
+      // Any failure of the check is the same to the player as no answer.
+      free = null;
+    }
     if (_disposed || call != _latest) return;
     _state.value = switch (free) {
       true => (FieldStatus.ok, 'Numele e liber'),

@@ -186,4 +186,52 @@ void main() {
       c.dispose();
     });
   });
+
+  test('an isFree that throws is treated like no network answer', () {
+    fakeAsync((async) {
+      isFree = (_) async => throw StateError('callable missing');
+      final c = check();
+      c.onChanged('Vulpile');
+      async.elapse(_debounce);
+      async.flushMicrotasks();
+      expect(c.state.value, (
+        FieldStatus.neutral,
+        'Nu am putut verifica numele',
+      ));
+      c.dispose();
+    });
+  });
+
+  test('a throw from an earlier call is ignored after a later one', () {
+    fakeAsync((async) {
+      final answers = <String, Completer<bool?>>{};
+      isFree = (name) => (answers[name] = Completer<bool?>()).future;
+      final c = check();
+
+      c.onChanged('Vulpile');
+      async.elapse(_debounce);
+      c.onChanged('Vulpile2');
+      async.elapse(_debounce);
+
+      answers['Vulpile2']?.complete(true);
+      async.flushMicrotasks();
+      answers['Vulpile']?.completeError(StateError('late failure'));
+      async.flushMicrotasks();
+      expect(c.state.value, (FieldStatus.ok, 'Numele e liber'));
+      c.dispose();
+    });
+  });
+
+  test('a throw after dispose does not throw', () {
+    fakeAsync((async) {
+      final answer = Completer<bool?>();
+      isFree = (_) => answer.future;
+      final c = check();
+      c.onChanged('Vulpile');
+      async.elapse(_debounce);
+      c.dispose();
+      answer.completeError(StateError('late failure'));
+      async.flushMicrotasks();
+    });
+  });
 }
