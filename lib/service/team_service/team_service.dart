@@ -111,6 +111,9 @@ class TeamService {
     return teamRepo.getAllTeamsForEvent(eventId);
   }
 
+  /// How many teams are registered for [eventId].
+  Future<int> countTeams(String eventId) => teamRepo.countTeams(eventId);
+
   Future<void> deleteTeam(String eventId, Team team) async {
     for (final userId in team.userIds) {
       await userRepo.removeEventFromUser(userId, eventId);

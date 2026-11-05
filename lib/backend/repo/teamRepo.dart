@@ -16,6 +16,13 @@ class TeamRepo {
     }
   }
 
+  /// How many teams are registered for [eventId], counted on the server
+  /// without downloading them.
+  Future<int> countTeams(String eventId) async {
+    final snapshot = await _firestore.collection('events').doc(eventId).collection('teams').count().get();
+    return snapshot.count ?? 0;
+  }
+
   Future<List<Team>> getAllTeamsForEvent(String eventId) async {
     try {
       QuerySnapshot snapshot = await _firestore.collection('events').doc(eventId).collection('teams').get();
