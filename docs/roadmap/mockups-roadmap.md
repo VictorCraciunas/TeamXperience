@@ -437,6 +437,8 @@ live in the Firebase console) and the five callables (`checkTeamName`,
   combining-mark range, fold Ş/Ș in `nameKey`, keep compiled tests out of a
   deploy;
 - the emulators line in `docs/platform-and-config.md`;
+- from step 5: the rules must let a team member update `presence.{uid}` (their own uid) and `missionCompletedAt.*` on their own team doc; otherwise presence fails silently and the mission-progress update (same write) fails;
+- from step 5: write `missionCompletedAt.{i}` only when absent (a transaction or the step 7 function), so a second phone or a replay does not move the tie-break;
 - whether "Editează" on team details is for the captain only, decided with
   the rules.
 Deploying the functions and the rules stays Victor's call.
