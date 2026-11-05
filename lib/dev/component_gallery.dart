@@ -20,6 +20,7 @@ import 'package:teamxperience/ui/components/team/invite_code_card.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 import 'event_page_preview_launcher.dart';
+import 'events_gallery.dart';
 import 'gallery_section.dart';
 import 'parchment_swatches.dart';
 import 'team_previews_launcher.dart';
@@ -151,6 +152,7 @@ class ComponentGallery extends StatelessWidget {
             ),
           ),
           const GallerySection(title: 'Echipe', child: _TeamsGallery()),
+          const GallerySection(title: 'Evenimente', child: EventsGallery()),
           const GallerySection(
             title: 'Event palette: parchment',
             child: EventThemeScope(palette: EventPalette.parchment, child: ParchmentSwatches()),
