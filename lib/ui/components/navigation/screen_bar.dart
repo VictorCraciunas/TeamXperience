@@ -5,8 +5,10 @@ import '../../theme/theme_context.dart';
 
 /// The bar of a short task screen, as in mockup 04: a leading icon (a cross
 /// or an arrow), the [title] and an optional [subtitle] under it, on a panel
-/// with a 1 px line below. It keeps clear of the status bar.
-class ScreenBar extends StatelessWidget implements PreferredSizeWidget {
+/// with a 1 px line below. It keeps clear of the status bar. Put it at the
+/// top of the page body (not in `Scaffold.appBar`), so it is exactly as tall
+/// as its content at every text size.
+class ScreenBar extends StatelessWidget {
   const ScreenBar({
     super.key,
     required this.leadingIcon,
@@ -20,21 +22,7 @@ class ScreenBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final String? subtitle;
 
-  static const double _lineHeight = 1.45;
   static const double _maxTextScale = 1.15;
-
-  /// 12 px of padding above, 13 below (12 plus the border), the title line,
-  /// and the subtitle line when there is one. The lines are sized for the
-  /// largest text the bar allows, [_maxTextScale].
-  @override
-  Size get preferredSize {
-    final hasSubtitle = subtitle != null;
-    final text =
-        (12 * _lineHeight + (hasSubtitle ? 11 * _lineHeight : 0)) *
-        _maxTextScale;
-    final content = text > 18 ? text : 18.0;
-    return Size.fromHeight(12 + content + 13);
-  }
 
   @override
   Widget build(BuildContext context) {

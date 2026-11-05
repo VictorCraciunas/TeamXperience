@@ -72,7 +72,7 @@ Flow: `screen -> *Controller -> service -> repo -> Firestore`. Not every feature
 
 - No router package. Named routes live in `MaterialApp.routes` in `main.dart`, keyed by `Routes.*` in `lib/constants/routes.dart`. **Adding a screen = add const to `Routes` + entry in `main.dart`.**
 - Route arguments are passed via `Navigator.pushNamed(..., arguments:)` and read with `ModalRoute.of(context)!.settings.arguments`. Shapes vary per route: a bare `Event`, a `List<Event>`, or a `Map` like `{'event': ..., 'mode': ..., 'isBlueprint': ...}`. Check both the pusher (usually a controller) and the receiving screen when changing them.
-- Start: `Routes.redirect` -> `LandingPage(authUtil)` -> `AuthUtil.checkUserAndRedirect` loads `AppUser` by email via `UserRepo`, stores it in `UserProvider`, then `pushNamedAndRemoveUntil` to `Routes.adminHome` (ADMIN) or `Routes.home` (USER, which is now `UserShell`: a tab shell with Acasă, Evenimente, Știri and Profil built on `AppShell` + `ShellController` from `lib/ui/components/navigation/`; tabs are built on first visit and kept alive, back returns to Acasă), or `Routes.splash` if signed out. Auth is email/password + Google Sign-In (`backend/authentication/AuthenticationRepository.dart`).
+- Start: `Routes.redirect` -> `LandingPage(authUtil)` -> `AuthUtil.checkUserAndRedirect` loads `AppUser` by email via `UserRepo`, stores it in `UserProvider`, then `pushNamedAndRemoveUntil` to `Routes.adminHome` (ADMIN) or `Routes.home` (USER, which is now `UserShell`: the mockups' five-tab shell — Acasă, Evenimente, Joacă (raised in the middle, "În joc" in red while a game is on), Echipe, Profil — built on `AppShell` + `ShellController` from `lib/ui/components/navigation/`; tab numbers are named in `features/shell/logic/player_tabs.dart` (`PlayerTab`); tabs are built on first visit and kept alive, back returns to Acasă; Știri is a page reached from Acasă's "Vezi toate"), or `Routes.splash` if signed out. Auth is email/password + Google Sign-In (`backend/authentication/AuthenticationRepository.dart`).
 
 ### State management (provider)
 
@@ -106,7 +106,7 @@ Event lifecycle: players register for events (`registeredEventIds`), enter the e
 ### Features map (`lib/features/`)
 
 - **Auth:** `splash`, `loader_page`, `log-in`, `sign-up`, `forgot-password`
-- **Player:** `home`, `events_dashboard/events_dashboard_user`, `event_details`, `register_team`, `team_details`, `enter_code`, `event_game`, `calendar`, `map`, `news_dashboard`, `news_details`, `filter/*`
+- **Player:** `shell` (UserShell), `home`, `events_tab`, `play_tab`, `teams`, `profile`, `event_details`, `register_team`, `team_details`, `enter_code`, `event_game`, `calendar`, `map`, `news_dashboard`, `news_details`, `filter/*`
 - **Admin:** `admin/home`, `admin/create_event` (landing form + `create_missions_and_puzzles` builder with per-component `create_*` editors and controllers), `admin/create_news`, `events_dashboard/events_dashboard_admin`, `event_management` (live control: stop event, etc.), `event_see_registered_teams`, `team_chats` (list of team conversations), `chat`, `news_category_manipulation`, `notification` (send push)
 - Directories named `common_widgets`, `widgets/` hold per-feature sub-widgets; `event_game/widgets/image_upload/` is the split photo-puzzle upload flow driven by `ImageUploadPuzzleController`.
 

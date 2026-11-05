@@ -46,3 +46,32 @@ Event sampleEvent() => Event(
         Mission(id: '5', title: 'Harta completă', puzzles: [Puzzle(id: '0', type: PuzzleType.code)]),
       ],
     )..nrMissions = 6;
+
+/// The other events of mockup 03 ("Deschise pentru înscriere").
+List<Event> sampleOpenEvents() => [
+      Event(
+        eventId: 'cerber',
+        name: 'Protocolul Cerber',
+        location: 'Sibiu',
+        dateEvent: DateTime(2026, 11, 21, 10),
+        dateStartEnrollment: DateTime(2026, 11, 1),
+        dateDeadlineEnrollment: DateTime(2026, 11, 19),
+        routeLengthKm: 3.2,
+        durationMinutes: 90,
+        difficulty: Difficulty.hard,
+        maxTeams: 12,
+        startLatitude: 45.7983,
+        startLongitude: 24.1517,
+      ),
+      Event(
+        eventId: 'muzee',
+        name: 'Noaptea muzeelor',
+        location: 'Sibiu',
+        dateEvent: DateTime(2026, 12, 5, 19),
+        dateStartEnrollment: DateTime(2026, 11, 1),
+        dateDeadlineEnrollment: DateTime(2026, 12, 3),
+        routeLengthKm: 2.8,
+        durationMinutes: 120,
+        difficulty: Difficulty.easy,
+      ),
+    ];

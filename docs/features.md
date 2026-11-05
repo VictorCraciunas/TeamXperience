@@ -12,18 +12,18 @@ Every folder under `lib/features/` follows `controller/` + `screen/` (+ `widgets
 | `signup` | `RegisterScreen` (email sign-up form) | – |
 | `login` | `LogInScreen` | – |
 | `forgotPassword` | `ForgotPasswordScreen` | – |
-| `home` | `UserShell` (tabs: `Home`, `FilterEventsUser`, `StiriDashboard`, `ProfileScreen`) | – |
+| `home` | `UserShell` (tabs: `Home`, `EventsTabScreen`, `PlayTabScreen` (raised, "În joc" while live), `TeamsScreen`, `ProfileScreen`; Știri opens from Home's "Vezi toate") | – |
 | `adminHome` | `AdminShell` (tabs: `AdminHome`, `EventsDashboard`, `StiriDashboard`, `ProfileScreen`) | – |
 | `eventDetails` | `EventDetailsScreen` | `{'event': Event, 'isAdmin': bool}` |
 | `registerTeam` | `RegisterTeamScreen` | `Event` |
 | `registerTeamDetails` | `TeamDetailsScreen` | `{'event': Event, 'user': AppUser}` |
 | `joinTeam` | `JoinTeamScreen` | none |
-| `teams` | `TeamsScreen` (Echipe) | none; opened from the Profil tab ("Echipele mele") and in place of `joinTeam` after joining with no known event |
+| `teams` | `TeamsScreen` (Echipe) | none; the Echipe tab of `UserShell`, and opened in place of `joinTeam` after joining with no known event |
 | `enterCodeScreen` | `EnterCode` | `Event` |
 | `eventGame` | `EventGameScreen` | `{'event': Event, 'team': Team?}` |
 | `puzzleGame` | `PuzzleGameScreen` | `{'mission','background' (ImageProvider),'event','team'}`; pops with updated `Team` (or `null` on error) |
 | `eventDashboard` | admin `EventsDashboard` | `List<Event>` |
-| `eventDashboardUser` | `FilterEventsUser` (player dashboard) | `List<Event>` |
+| `eventDashboardUser` | `EventsTabScreen` (the Evenimente tab on its own page) | – |
 | `filter` | `FilterEventsScreen` | `bool isAdmin`; pops filter map `{eventType,startDate,endDate}` |
 | `calendar` | `DateRangeSelectionScreen` | – |
 | `createEvent` | `CreateEventPage` | `{'event': Event?, 'isBlueprint': bool}` |
@@ -49,7 +49,9 @@ Every folder under `lib/features/` follows `controller/` + `screen/` (+ `widgets
 ### Player
 - `home` — `Consumer3<EventList, NewsList, UserEventsProvider>` with only the hero card ticking each second (`HomeHeroTicker`; the panels rebuild when the kind of hero changes, via `HomeHero.signature`). `resolveHomeHero` (`logic/home_hero.dart`) picks the hero (Live, Starting soon, Upcoming, Recommended, none), `HomeHeroSection` renders it with the shared `EventHeroCard`, then panels: `PreparationPanel` (upcoming), `HowItWorksPanel` (recommended/none), `RegistrationsPanel`, `EventsPanel`, `NewsPanel`. `HomeController` (plain class) handles navigation, team lookup and sharing.
 - `events_dashboard/events_dashboard_admin` — admin Evenimente: scrolling header (tick-outlined "Creează eveniment", animated search, filter button) over `EventCard` sections (viitoare / trecute). The filter button opens `showFilterSheet` with period, event type and stare (viitoare / trecute), combined. The same header pattern is used on admin Știri (period, public or private, category).
-- `events_dashboard/events_dashboard_user` — Instagram-style feed of `EventPostCard`s (`widgets/events_feed.dart`) with a Toate / Înscrise `SegmentedSwitch`, a search button and a period button that opens `showPeriodSheet` (`FeedSearchBar`) as the first, scrolling item of the feed (under the app bar; registered past events come last and dimmed); share uses `ShareService.shareText` with `eventShareText`; tapping opens event details, or team details when registered; `events_filter_service.dart` (`FilterService`) is shared with the admin dashboard.
+- `play_tab` — the interim Joacă tab (until the start-code flow of mockup 05): from the same hero as Home (`home/logic/hero_from_providers.dart`), it offers "Continuă jocul", "Introdu codul" ({m} min să intri), the next game, or "Vezi evenimentele" (switches to Evenimente). `isLive` drives the shell's "În joc".
+- `shell` — `UserShell` and `logic/player_tabs.dart` (`playerNavItems`, `PlayerTab`).
+- `events_tab` — the player Evenimente tab of mockup 03: `TabHeader` with a search button and the Listă/Hartă `PillSwitch`, filter chips (Toate, Luna asta, Ușor/Mediu/Greu, Sub 2 h; `logic/event_filters.dart`), then "Înscrierile tale" (`RegisteredEventTile`, "{team} · peste N zile"), "Deschise pentru înscriere" and "În curând" (`OpenEventCard`, "Mai sunt N locuri" from `TeamService.countTeams` when `maxTeams` is set); sections come from `logic/event_sections.dart`. `EventsTabController` takes plain inputs (event and registration getters, a listenable) so it is testable without Firebase. Replaces the old `events_dashboard_user` feed.
 - `event_details` — event info; register/"already registered" (`already_registered_card`), admin variant shows management actions.
 - `register_team` — one screen: `RegisterForm` (+ `TeamNameField`, `RegisterInput` (now in `lib/ui/components/inputs/`, also used by `NewCrewSheet`), `FieldLabel`, `ConsentRow`) and, after a successful registration, `InviteResultSection` under it (the invite code to send on). `RegisterTeamController` is a `ChangeNotifier` (state, `blocker`, `submit`, share/copy, `close`); `logic/team_name_check.dart` (`TeamNameCheck`) debounces the name check.
 - `join_team` — join a team by invite code (right phone of mockup 04). `JoinTeamBody` (pure, drawn from a `JoinState`) = `JoinIntro` + `CodeBoxesInput` + problem text + `InvitePreviewCard` + `JoinBottomBlock`. `logic/join_state.dart` holds the sealed `JoinState` (`Typing`, `Looking`, `Found`, `Problem`, `Joining`, `Joined`) and `JoinFlow` (preview / join functions injected, `confirm` ignored unless `Found`). `JoinTeamController` wires `JoinFlow` to `TeamService` and, on `Joined`, adds the events to `UserProvider` and opens the first known event's page (`eventDetails`) in place of the screen; with none it goes back to the Echipe screen below it (`popUntil` the `Routes.teams` route, so only one stays open) and opens one only when there is none below. The events are added to `UserProvider` inside the join call itself, with the providers and navigator taken when the controller is made, so leaving the screen while joining does not lose the local update (it only skips the navigation). `JoinFlow` ignores `codeChanged` while `Joining`, and a preview with `alreadyMember` becomes a `Problem` ("Ești deja în echipă") instead of `Found`.

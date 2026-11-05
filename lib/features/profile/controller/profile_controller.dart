@@ -11,7 +11,6 @@ class ProfileController {
   final BuildContext context;
   final AuthenticationRepository _authRepo = AuthenticationRepository();
 
-  void openTeams() => Navigator.pushNamed(context, Routes.teams);
 
   void logout() {
     context.read<EventList>().clear();

@@ -24,7 +24,6 @@ class ProfileScreen extends StatelessWidget {
             name: name,
             email: user?.email ?? '',
             onLogout: () => ProfileController(context).logout(),
-            onTeams: () => ProfileController(context).openTeams(),
           ),
         ),
       ),

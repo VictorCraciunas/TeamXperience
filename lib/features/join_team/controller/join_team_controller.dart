@@ -64,12 +64,9 @@ class JoinTeamController extends ChangeNotifier {
 
     final event = first;
     if (event == null) {
-      var foundTeams = false;
-      _navigator.popUntil((route) {
-        foundTeams = route.settings.name == Routes.teams;
-        return foundTeams || route.isFirst;
-      });
-      if (!foundTeams) _navigator.pushNamed(Routes.teams);
+      // Joined a team with no event: back to where the player came from (the
+      // Echipe tab), whose list already shows the new team.
+      _navigator.pop();
     } else {
       _navigator.pushReplacementNamed(
         Routes.eventDetails,

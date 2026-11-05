@@ -17,7 +17,6 @@ class _MemoryStore implements ThemeModeStore {
 Future<ThemeController> _pump(
   WidgetTester tester, {
   VoidCallback? onLogout,
-  VoidCallback? onTeams,
 }) async {
   final controller = ThemeController(_MemoryStore());
   await tester.pumpWidget(
@@ -31,7 +30,6 @@ Future<ThemeController> _pump(
               name: 'Victor Crăciunaș',
               email: 'victor@example.com',
               onLogout: onLogout ?? () {},
-              onTeams: onTeams ?? () {},
             ),
           ),
         ),
@@ -76,12 +74,9 @@ void main() {
     expect(taps, 1);
   });
 
-  testWidgets('the "Echipele mele" row opens the teams', (tester) async {
-    var taps = 0;
-    await _pump(tester, onTeams: () => taps++);
-    expect(find.text('Echipele mele'), findsOneWidget);
-    await tester.tap(find.text('Echipele mele'));
-    expect(taps, 1);
+  testWidgets('teams are a tab now, so Profil does not list them', (tester) async {
+    await _pump(tester);
+    expect(find.text('Echipele mele'), findsNothing);
   });
 
   testWidgets('a single-word or empty name still gives sensible initials', (
@@ -98,7 +93,6 @@ void main() {
                 name: 'Ana',
                 email: 'a@b.ro',
                 onLogout: () {},
-                onTeams: () {},
               ),
             ),
           ),

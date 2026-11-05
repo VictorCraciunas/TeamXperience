@@ -4,6 +4,7 @@ import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/model/user.dart';
 import 'package:teamxperience/service/share_service.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
+import 'package:teamxperience/features/shell/logic/player_tabs.dart';
 import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 
 import '../../../constants/routes.dart';
@@ -30,10 +31,12 @@ class HomeController {
   }
 
   void navigateToEventDashboard() {
-    context.read<ShellController>().select(1);
+    context.read<ShellController>().select(PlayerTab.events);
   }
+
+  /// Știri is not a tab any more: "Vezi toate" opens it as a page.
   void navigateToNewsTab() {
-    context.read<ShellController>().select(2);
+    Navigator.pushNamed(context, Routes.newsDashboard, arguments: context.read<NewsList>().stireList);
   }
 
   void navigateToEnterCodeScreen(Event event) {
