@@ -137,7 +137,12 @@ class PuzzleGameController {
 
       try {
         await teamService.updatePuzzleNumber(event.eventId, team.name, 0);
-        await teamService.updateMissionProgress(event.eventId, team.name, team.missionProgress);
+        await teamService.updateMissionProgress(
+          event.eventId,
+          team.name,
+          team.missionProgress,
+          completedMission: team.missionProgress - 1,
+        );
         Navigator.pop(context, team);
       } catch (e) {
         print("Error updating mission progress: $e");

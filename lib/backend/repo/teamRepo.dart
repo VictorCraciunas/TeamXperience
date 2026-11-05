@@ -89,10 +89,20 @@ class TeamRepo {
   }
 
   // Updated: Use team name as document ID
-  Future<void> updateMissionProgress(String eventId, String teamName, int progress) async {
+  /// Marks [uid] as seen playing now (server time).
+  Future<void> markPresent(String eventId, String teamName, String uid) {
+    return _firestore.collection('events').doc(eventId).collection('teams').doc(teamName).update({
+      'presence.$uid': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// Sets the team's progress and, with [completedMission], stamps when that
+  /// mission was solved (server time) in the same write.
+  Future<void> updateMissionProgress(String eventId, String teamName, int progress, {int? completedMission}) async {
     try {
       await _firestore.collection('events').doc(eventId).collection('teams').doc(teamName).update({
         'missionProgress': progress,
+        if (completedMission != null) 'missionCompletedAt.$completedMission': FieldValue.serverTimestamp(),
       });
     } catch (e, stacktrace) {
       print('Error updating mission progress: $e');
