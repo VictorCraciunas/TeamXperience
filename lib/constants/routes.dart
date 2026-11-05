@@ -13,6 +13,7 @@ abstract class Routes {
   static const eventDetails = '/event_details';
   static const puzzleGame ='/puzzle_game';
   static const eventGame = '/event_game';
+  static const gameIntro = '/game_intro';
   static const eventDashboard = '/events_dashboard';
   static const filter = '/filter';
   static const createNews = '/create_news';

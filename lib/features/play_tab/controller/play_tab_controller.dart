@@ -1,3 +1,4 @@
+import 'package:teamxperience/features/game_intro/logic/game_door.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -39,8 +40,7 @@ class PlayTabController extends ChangeNotifier {
 
   void _changed() => notifyListeners();
 
-  void continueGame(Event event, Team team) =>
-      navigator.pushNamed(Routes.eventGame, arguments: {'event': event, 'team': team});
+  void continueGame(Event event, Team team) => GameDoor().open(navigator, event, team);
 
   void enterCode(Event event) => navigator.pushNamed(Routes.enterCodeScreen, arguments: event);
 

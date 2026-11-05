@@ -1,3 +1,4 @@
+import 'package:teamxperience/features/game_intro/logic/game_door.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/model/team.dart';
@@ -85,12 +86,9 @@ class HomeController {
 
   void navigateToRegisterTeam(Event event) => navigateToEventDetails(event);
 
+  /// The intro letter the first time on this phone, then the game.
   void openGame(Event event, Team team) {
-    Navigator.pushNamed(
-      context,
-      Routes.eventGame,
-      arguments: {'event': event, 'team': team},
-    );
+    GameDoor().open(Navigator.of(context), event, team);
   }
 
   void openChat(Event event, Team team) {

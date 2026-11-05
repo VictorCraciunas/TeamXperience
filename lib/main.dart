@@ -149,6 +149,8 @@ class MyApp extends StatelessWidget {
                 Routes.forgotPassword: (_) => const ForgotPasswordScreen(),
                 Routes.eventDetails: (_) => const EventDetailsScreen(),
                 Routes.eventGame: (_) => const EventGameScreen(),
+                // The intro letter screen arrives with the next change; until then the game.
+                Routes.gameIntro: (_) => const EventGameScreen(),
                 Routes.puzzleGame: (_) => const PuzzleGameScreen(),
                 Routes.eventDashboard: (_) => const EventsDashboard(),
                 Routes.filter: (_) => const FilterEventsScreen(),

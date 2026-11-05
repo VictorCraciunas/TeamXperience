@@ -1,3 +1,4 @@
+import 'package:teamxperience/features/game_intro/logic/game_door.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/routes.dart';
@@ -42,9 +43,11 @@ class _EnterCodeState extends State<EnterCode> {
     )..load();
   }
 
+  /// The intro letter the first time on this phone, then the game, in this
+  /// screen's place.
   Future<void> _enter(Event event, Team team) async {
     if (!mounted) return;
-    await Navigator.of(context).pushReplacementNamed(Routes.eventGame, arguments: {'event': event, 'team': team});
+    await GameDoor().open(Navigator.of(context), event, team, replace: true);
   }
 
   void _openChat(Event event, Team team) {
