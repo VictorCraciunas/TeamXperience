@@ -16,19 +16,23 @@ Repos (`lib/backend/`) are thin Firestore/Storage wrappers (throw generic `Excep
   - `user_repo` — `saveUser`, `findByEmail`, `addEventToUser/removeEventFromUser` (arrayUnion/Remove), `updateFCMToken`, `getRegisteredEventsFromUser` (legacy; reads fields `title`/`date` that Event docs don't have).
   - `messages_repo` — `sendMessage`, `getMessages` stream.
   - `stire_repo`, `news_category_repo` — `stire` / `categories` collections.
+- `functions/team_functions.dart` — `TeamFunctions`, a thin wrapper over `FirebaseFunctions.instance.httpsCallable(name)` (package `cloud_functions`): `checkTeamName`, `createCrew`, `registerTeam`, `previewInvite`, `joinTeam`. Each returns the decoded `Map<String, dynamic>`, no logic. Errors arrive as `FirebaseFunctionsException` with `details['reason']`.
+- `repo/crew_repo.dart` — `CrewRepo.streamUserCrews(uid)`: `crews` where `memberUids` array-contains `uid`, ordered by name (read-only; crews are written by functions).
 - `storage/storage_images.dart` — `ImageRepo.uploadImage` / `uploadStireImage` (see `data-model.md`).
 - `network/` — `NetworkAPI.sendNotification` (POST JSON to the deployed `sendNotification` function, **hardcoded Cloud Run URL**), `NotificationDTO` (`title, description, eventId?`), `NotificationDTOResponse` (`success, message`).
 
 ## service/
 - `event_service/event_service.dart` — CRUD wrappers; `createEvent` generates id if empty then uploads images; `updateEvent` uploads images then `set`s the whole doc (same repo call as create); `registeredEventsFromUser(allEvents, user)` maps ids → events.
 - `event_service/upload_images.dart`, `news_service/upload_news_images.dart` — local-path → Storage URL replacement.
-- `team_service/team_service.dart` — pass-through to `TeamRepo` plus: `addTeam` (also registers event on the user and updates `UserProvider` — needs a `BuildContext`), `deleteTeam` (removes the event from every member's `registeredEventIds` first).
+- `team_service/team_service.dart` — pass-through to `TeamRepo` plus: `deleteTeam` (removes the event from every member's `registeredEventIds` first), and the callable-backed methods: `registerTeam(...)` → `RegisterResult`, `isTeamNameFree(eventId, name)` (`bool?`, null on a network error), `previewInvite(code)` → `InvitePreview`, `joinTeam(code)` → event ids joined, `createCrew(name)` → `(crewId, inviteCode)`, `streamUserCrews(uid)`. Codes go through `normaliseCode` first. Constructor `TeamService({TeamFunctions? functions, CrewRepo? crews})` so tests can inject fakes.
+- `team_service/team_errors.dart` — `enum TeamError` (the 14 function `reason`s plus `network`, `unknown`), `TeamError.fromException(e)` (reason from `details`; `unavailable`/`deadline-exceeded` → `network`; else `unknown`), `TeamError.teamNameFrom(e)` (`details.teamName` of `alreadyInTeam`), and `teamErrorText(error, {teamName})` with the Romanian message for each.
+- `team_service/invite_preview.dart` — `InvitePreview` (`crewId, crewName, captainName, members, alreadyMember, event?`), `InviteEvent` (`eventId, name, dateEvent, teamName, size, count`), `slotLine` ("1 din 4 · tu ești al 2-lea", "primul" for the first) and `isFull`. `team_service/register_result.dart` — `RegisterResult` (`teamName, crewId, inviteCode, skippedUids`).
 - `news_service/news_service.dart` — `getAllStire`, `createStire` (id + upload + save), `updateStire`.
 - `message_service.dart` — builds `Message` from the user's role; `sendImageMessage` for photo puzzles.
 - `FCMService.dart` — static: `getFCMToken()` (asks permission), `initNotifications()` (iOS foreground presentation, Android channel `chat_notifications`, local-notification display for foreground messages). Local notifications initialised for Android only (no iOS init settings). There is **no** background/terminated handler or tap-handling.
 - `LocationService.dart` — singleton; permission check, `startLocationTracking(eventId, teamName)` writes lat/lng to the team doc (distanceFilter 10 m), `stopLocationTracking()`. Started/stopped by `EventGameController`.
 - `route_service.dart` — singleton; OSRM public demo (`router.project-osrm.org`, foot profile), throttled to one request / 5 s (returns `null` when throttled), `formatDistance`.
-- `share_service.dart` — builds the RO registration message; share sheet / WhatsApp / email / SMS.
+- `share_service.dart` — builds the RO registration message; share sheet / WhatsApp / email / SMS. `shareInvite(context, code:, teamName:, eventName:)` shares the invite text ("Intră în echipa … deschide TeamXperience → Echipe → Intră și scrie codul …").
 
 ## state_management/ (provider)
 Registered in `main.dart`:

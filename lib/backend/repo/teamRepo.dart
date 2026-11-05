@@ -6,11 +6,6 @@ import '../../model/team.dart';
 class TeamRepo {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> addTeam(Team team, String eventId) async {
-    var docRef = _firestore.collection('events').doc(eventId).collection('teams').doc(team.name);
-    await docRef.set(team.toJson());
-  }
-
   Future<void> deleteTeam(String eventId, String teamName) async {
     try {
       await _firestore.collection('events').doc(eventId).collection('teams').doc(teamName).delete();
@@ -190,20 +185,19 @@ class TeamRepo {
     }
   }
 
-  Future<void> updateTeamDetails(String eventId, String oldTeamName, Team updatedTeam) async {
+  /// Changes only the captain's phone; the rest of the team is not touched.
+  Future<void> updateTeamPhone(String eventId, String teamName, String phone) async {
     try {
-      if (oldTeamName == updatedTeam.name) {
-        // Name didn't change, just update the fields
-        await _firestore.collection('events').doc(eventId).collection('teams').doc(oldTeamName).update(updatedTeam.toJson());
-      } else {
-        // Name changed — delete old doc and create new one
-        await _firestore.collection('events').doc(eventId).collection('teams').doc(oldTeamName).delete();
-        await _firestore.collection('events').doc(eventId).collection('teams').doc(updatedTeam.name).set(updatedTeam.toJson());
-      }
+      await _firestore
+          .collection('events')
+          .doc(eventId)
+          .collection('teams')
+          .doc(teamName)
+          .update({'phoneNumber': phone});
     } catch (e, stacktrace) {
-      print('Error updating team details: $e');
+      print('Error updating team phone: $e');
       print('Stack trace: $stacktrace');
-      throw Exception('Failed to update team details for team: $oldTeamName');
+      throw Exception('Failed to update phone for team: $teamName');
     }
   }
 

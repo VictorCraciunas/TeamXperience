@@ -6,17 +6,23 @@ import 'package:teamxperience/ui/components/event/date_fact_tile.dart';
 import 'package:teamxperience/ui/components/event/difficulty_dots.dart';
 import 'package:teamxperience/ui/components/event/fact_row.dart';
 import 'package:teamxperience/ui/components/event/fact_tile.dart';
+import 'package:teamxperience/ui/components/feedback/field_status_line.dart';
+import 'package:teamxperience/ui/components/inputs/code_boxes_input.dart';
+import 'package:teamxperience/ui/components/inputs/size_picker.dart';
 import 'package:teamxperience/ui/components/misc/app_chip.dart';
 import 'package:teamxperience/ui/components/misc/app_chip_style.dart';
+import 'package:teamxperience/ui/components/misc/avatar_stack.dart';
 import 'package:teamxperience/ui/components/route/route_strip.dart';
 import 'package:teamxperience/ui/components/route/route_trail.dart';
 import 'package:teamxperience/ui/components/route/route_trail_section.dart';
 import 'package:teamxperience/ui/components/route/waypoint_dot.dart';
+import 'package:teamxperience/ui/components/team/invite_code_card.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 import 'event_page_preview_launcher.dart';
 import 'gallery_section.dart';
 import 'parchment_swatches.dart';
+import 'team_previews_launcher.dart';
 
 /// Every redesign component with the copy of mockup 01, to hold next to
 /// docs/roadmap/mockups/01-event-details.html.
@@ -37,6 +43,7 @@ class ComponentGallery extends StatelessWidget {
         padding: const EdgeInsets.only(top: AppSpacing.lg),
         children: [
           const GallerySection(title: 'Ecrane', child: EventPagePreviewLauncher()),
+          const GallerySection(title: 'Ecrane: echipe', child: TeamPreviewsLauncher()),
           GallerySection(
             title: 'Route strip',
             child: RouteStrip(
@@ -143,9 +150,86 @@ class ComponentGallery extends StatelessWidget {
               ],
             ),
           ),
+          const GallerySection(title: 'Echipe', child: _TeamsGallery()),
           const GallerySection(
             title: 'Event palette: parchment',
             child: EventThemeScope(palette: EventPalette.parchment, child: ParchmentSwatches()),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The team components with the copy of mockup 04. Stateful so the size
+/// picker and the code boxes can be tried.
+class _TeamsGallery extends StatefulWidget {
+  const _TeamsGallery();
+
+  @override
+  State<_TeamsGallery> createState() => _TeamsGalleryState();
+}
+
+class _TeamsGalleryState extends State<_TeamsGallery> {
+  int _size = 4;
+  bool _wrongCode = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const FieldStatusLine(text: 'Numele e liber', status: FieldStatus.ok),
+          const SizedBox(height: AppSpacing.sm),
+          const FieldStatusLine(text: 'Numele e deja luat', status: FieldStatus.problem),
+          const SizedBox(height: AppSpacing.sm),
+          const FieldStatusLine(text: 'Verific numele...', status: FieldStatus.checking),
+          const SizedBox(height: AppSpacing.lg),
+          SizePicker(min: 2, max: 6, value: _size, onChanged: (n) => setState(() => _size = n)),
+          const SizedBox(height: AppSpacing.lg),
+          Row(
+            children: [
+              const AvatarStack(initials: ['VC', 'AM'], total: 4, highlightNext: true),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text('2 din 4 · tu ești al 3-lea', style: AppTextStyles.smallMuted(context)),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          CodeBoxesInput(
+            length: 6,
+            dashAfter: 3,
+            error: _wrongCode,
+            onChanged: (_) => setState(() => _wrongCode = false),
+            onCompleted: (code) => setState(() => _wrongCode = code != 'VLP482'),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          InviteCodeCard(
+            code: 'VLP-482',
+            caption: 'Gata. Trimite codul coechipierilor',
+            shareLabel: 'WhatsApp',
+            copyLabel: 'Copiază',
+            onShare: () {},
+            onCopy: () {},
+            footer: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const AvatarStack(initials: ['VC'], total: 4, onDark: true),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    '1 din 4 în echipă',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: context.colors.onNavy.withValues(alpha: .8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/backend/repo/teamRepo.dart';
+import 'package:flutter/services.dart';
 import 'package:teamxperience/model/user.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
 import 'package:teamxperience/ui/components/feedback/snackbars.dart';
@@ -11,7 +11,7 @@ import '../../../service/share_service.dart';
 class TeamControllerDetails {
   late Event event;
   late AppUser? user;
-  TeamService teamService = TeamService();
+  final TeamService teamService;
   late List<Team> teams;
 
   ShareService shareService = ShareService();
@@ -20,81 +20,49 @@ class TeamControllerDetails {
   bool isEditing = false;
   bool isSaving = false;
 
-  // Text editing controllers for edit mode
-  late TextEditingController nameController;
-  late TextEditingController membersController;
-  late TextEditingController captainNameController;
-  late TextEditingController captainEmailController;
+  /// The only thing that can be edited here: the captain's phone. The name
+  /// and the members belong to the team's document, which is not renamed or
+  /// rewritten from the app.
   late TextEditingController phoneController;
 
-  TeamControllerDetails(this.user, this.event) {
-    nameController = TextEditingController();
-    membersController = TextEditingController();
-    captainNameController = TextEditingController();
-    captainEmailController = TextEditingController();
+  TeamControllerDetails(this.user, this.event, {TeamService? teamService})
+    : teamService = teamService ?? TeamService() {
     phoneController = TextEditingController();
     initializeTeam();
+  }
+
+  /// The invite code is for the captain to pass on.
+  bool get showsInviteCode {
+    final current = team;
+    final player = user;
+    if (current == null || player == null) return false;
+    return current.inviteCode != null && current.captainUid == player.uid;
   }
 
   void populateControllers() {
     final currentTeam = team;
     if (currentTeam == null) return;
-
-    nameController.text = currentTeam.name;
-    membersController.text = currentTeam.teamMembers;
-    captainNameController.text = currentTeam.captainName;
-    captainEmailController.text = currentTeam.captainEmail;
     phoneController.text = currentTeam.phoneNumber;
   }
 
   void disposeControllers() {
-    nameController.dispose();
-    membersController.dispose();
-    captainNameController.dispose();
-    captainEmailController.dispose();
     phoneController.dispose();
   }
 
-  Future<bool> saveChanges(BuildContext context) async {
+  /// Saves the phone. False when it could not be saved.
+  Future<bool> savePhone() async {
     final currentTeam = team;
     if (currentTeam == null) return false;
 
-    final oldTeamName = currentTeam.name;
-    final newName = nameController.text.trim();
-
-    // Check for duplicate name if the name changed
-    if (newName != oldTeamName) {
-      final isTaken = await teamService.teamRepo.isTeamNameTaken(event.eventId, newName);
-      if (isTaken) {
-        MySnackBars.warningSnackBar(
-          context,
-          title: 'Numele echipei este deja folosit',
-          message: 'Alege un alt nume pentru echipă.',
-        );
-        return false;
-      }
-    }
-
-    final updatedTeam = Team(
-      name: newName,
-      teamMembers: membersController.text.trim(),
-      captainName: captainNameController.text.trim(),
-      captainEmail: captainEmailController.text.trim(),
-      phoneNumber: phoneController.text.trim(),
-      missionProgress: currentTeam.missionProgress,
-      puzzleNumber: currentTeam.puzzleNumber,
-      userIds: currentTeam.userIds,
-      hasStarted: currentTeam.hasStarted,
-      latitude: currentTeam.latitude,
-      longitude: currentTeam.longitude,
-    );
-
     try {
-      await teamService.updateTeamDetails(event.eventId, oldTeamName, updatedTeam);
-      team = updatedTeam;
+      await teamService.updateTeamPhone(
+        event.eventId,
+        currentTeam.name,
+        phoneController.text.trim(),
+      );
+      team = await _getTeam() ?? currentTeam;
       return true;
     } catch (e) {
-      MySnackBars.errorSnackBar(context, title: 'Eroare la salvare', message: 'Nu s-au putut salva modificările.');
       return false;
     }
   }
@@ -108,45 +76,78 @@ class TeamControllerDetails {
   Future<Team?> _getTeam() async {
     final currentUser = user;
     if (currentUser != null) {
-      return await teamService.getUserTeamForEvent(event.eventId, currentUser.uid);
+      return await teamService.getUserTeamForEvent(
+        event.eventId,
+        currentUser.uid,
+      );
     }
     return null;
   }
 
+  /// Passes the invite code on through the share sheet.
+  void shareInvite(BuildContext context) {
+    final current = team;
+    final code = current?.displayCode;
+    if (current == null || code == null) return;
+    shareService.shareInvite(
+      context,
+      code: code,
+      teamName: current.name,
+      eventName: event.name ?? '',
+    );
+  }
 
+  Future<void> copyInvite(BuildContext context) async {
+    final code = team?.displayCode;
+    if (code == null) return;
+    await Clipboard.setData(ClipboardData(text: code));
+    if (context.mounted) {
+      MySnackBars.successSnackBar(context, title: 'Cod copiat');
+    }
+  }
 
   /// Shares team registration using general share sheet
   Future<void> shareTeamRegistration(BuildContext context) async {
     final currentTeam = team;
     if (currentTeam == null) {
       MySnackBars.warningSnackBar(
-          context,
-          title: 'Nu există echipă de partajat',
-          message: 'Echipa nu a fost găsită sau nu există.'
+        context,
+        title: 'Nu există echipă de partajat',
+        message: 'Echipa nu a fost găsită sau nu există.',
       );
       return;
     }
 
-    final success = await shareService.shareTeamRegistration(currentTeam, event, context);
+    final success = await shareService.shareTeamRegistration(
+      currentTeam,
+      event,
+      context,
+    );
     _handleShareResult(context, success, 'general');
   }
+
   Future<void> loadTeams() async {
     teams = await teamService.getTeams(event.eventId);
   }
-
 
   /// Handles the result of sharing operations
   void _handleShareResult(BuildContext context, bool success, String method) {
     if (success) {
       switch (method) {
         case 'general':
-          MySnackBars.successSnackBar(context, title: 'Mesaj partajat cu succes!');
+          MySnackBars.successSnackBar(
+            context,
+            title: 'Mesaj partajat cu succes!',
+          );
           break;
         case 'whatsapp':
           MySnackBars.successSnackBar(context, title: 'Partajat pe WhatsApp');
           break;
         case 'email':
-          MySnackBars.successSnackBar(context, title: 'Email deschis cu succes');
+          MySnackBars.successSnackBar(
+            context,
+            title: 'Email deschis cu succes',
+          );
           break;
         case 'sms':
           MySnackBars.successSnackBar(context, title: 'SMS deschis cu succes');
@@ -159,27 +160,26 @@ class TeamControllerDetails {
           break;
         case 'whatsapp':
           MySnackBars.errorSnackBar(
-              context,
-              title: 'WhatsApp indisponibil',
-              message: 'WhatsApp nu este disponibil pe acest dispozitiv'
+            context,
+            title: 'WhatsApp indisponibil',
+            message: 'WhatsApp nu este disponibil pe acest dispozitiv',
           );
           break;
         case 'email':
           MySnackBars.errorSnackBar(
-              context,
-              title: 'Email indisponibil',
-              message: 'Nu s-a putut deschide aplicația de email'
+            context,
+            title: 'Email indisponibil',
+            message: 'Nu s-a putut deschide aplicația de email',
           );
           break;
         case 'sms':
           MySnackBars.errorSnackBar(
-              context,
-              title: 'SMS indisponibil',
-              message: 'Nu s-a putut deschide aplicația de SMS'
+            context,
+            title: 'SMS indisponibil',
+            message: 'Nu s-a putut deschide aplicația de SMS',
           );
           break;
       }
     }
   }
-
 }

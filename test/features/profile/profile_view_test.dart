@@ -14,7 +14,11 @@ class _MemoryStore implements ThemeModeStore {
   Future<void> write(ThemeMode mode) async {}
 }
 
-Future<ThemeController> _pump(WidgetTester tester, {VoidCallback? onLogout}) async {
+Future<ThemeController> _pump(
+  WidgetTester tester, {
+  VoidCallback? onLogout,
+  VoidCallback? onTeams,
+}) async {
   final controller = ThemeController(_MemoryStore());
   await tester.pumpWidget(
     ChangeNotifierProvider<ThemeController>.value(
@@ -27,6 +31,7 @@ Future<ThemeController> _pump(WidgetTester tester, {VoidCallback? onLogout}) asy
               name: 'Victor Crăciunaș',
               email: 'victor@example.com',
               onLogout: onLogout ?? () {},
+              onTeams: onTeams ?? () {},
             ),
           ),
         ),
@@ -44,13 +49,17 @@ void main() {
     expect(find.text('VC'), findsOneWidget);
   });
 
-  testWidgets('shows the three theme options with the current one selected',
-      (tester) async {
+  testWidgets('shows the three theme options with the current one selected', (
+    tester,
+  ) async {
     await _pump(tester);
     expect(find.text('Sistem'), findsOneWidget);
     expect(find.text('Luminos'), findsOneWidget);
     expect(find.text('Întunecat'), findsOneWidget);
-    expect(find.byKey(const ValueKey('theme-option-selected-light')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('theme-option-selected-light')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('choosing a theme option updates the controller', (tester) async {
@@ -67,8 +76,17 @@ void main() {
     expect(taps, 1);
   });
 
-  testWidgets('a single-word or empty name still gives sensible initials',
-      (tester) async {
+  testWidgets('the "Echipele mele" row opens the teams', (tester) async {
+    var taps = 0;
+    await _pump(tester, onTeams: () => taps++);
+    expect(find.text('Echipele mele'), findsOneWidget);
+    await tester.tap(find.text('Echipele mele'));
+    expect(taps, 1);
+  });
+
+  testWidgets('a single-word or empty name still gives sensible initials', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ChangeNotifierProvider<ThemeController>.value(
         value: ThemeController(_MemoryStore()),
@@ -76,7 +94,12 @@ void main() {
           theme: AppTheme.light,
           home: Scaffold(
             body: SingleChildScrollView(
-              child: ProfileView(name: 'Ana', email: 'a@b.ro', onLogout: () {}),
+              child: ProfileView(
+                name: 'Ana',
+                email: 'a@b.ro',
+                onLogout: () {},
+                onTeams: () {},
+              ),
             ),
           ),
         ),

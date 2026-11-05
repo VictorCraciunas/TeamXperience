@@ -5,6 +5,8 @@ import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/model/user.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
+import 'package:teamxperience/ui/components/feedback/snackbars.dart';
+import 'package:teamxperience/ui/components/team/invite_code_card.dart';
 
 import '../../../model/event.dart';
 import '../../../utils/calendar_helper.dart';
@@ -13,6 +15,7 @@ import 'package:teamxperience/ui/components/event/event_image.dart';
 import '../../event_details/widgets/detail_widget.dart';
 import '../controller/team_details_controller.dart';
 import '../widgets/team_detail_widget.dart';
+import '../widgets/team_members_row.dart';
 
 class TeamDetailsScreen extends StatefulWidget {
   const TeamDetailsScreen({super.key});
@@ -62,9 +65,16 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
   Future<void> _saveChanges() async {
     setState(() => controller.isSaving = true);
 
-    final success = await controller.saveChanges(context);
+    final success = await controller.savePhone();
 
     if (mounted) {
+      if (!success) {
+        MySnackBars.errorSnackBar(
+          context,
+          title: 'Eroare la salvare',
+          message: 'Nu s-au putut salva modificările.',
+        );
+      }
       setState(() {
         controller.isSaving = false;
         if (success) {
@@ -167,32 +177,21 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    TeamDetailWidget(
-                      text1: "Nume echipă",
-                      text2: team.name,
-                      isEditing: controller.isEditing,
-                      editingController: controller.nameController,
-                    ),
+                    TeamDetailWidget(text1: "Nume echipă", text2: team.name),
                     const SizedBox(height: 15),
-                    TeamDetailWidget(
-                      text1: "Componență echipă",
-                      text2: team.teamMembers,
-                      isEditing: controller.isEditing,
-                      editingController: controller.membersController,
+                    TeamMembersRow(
+                      title: "Componență echipă",
+                      members: team.memberList,
                     ),
                     const SizedBox(height: 15),
                     TeamDetailWidget(
                       text1: "Nume căpitan",
                       text2: team.captainName,
-                      isEditing: controller.isEditing,
-                      editingController: controller.captainNameController,
                     ),
                     const SizedBox(height: 15),
                     TeamDetailWidget(
                       text1: "Email capitan",
                       text2: team.captainEmail,
-                      isEditing: controller.isEditing,
-                      editingController: controller.captainEmailController,
                     ),
                     const SizedBox(height: 15),
                     TeamDetailWidget(
@@ -202,6 +201,17 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                       editingController: controller.phoneController,
                     ),
 
+                    if (controller.showsInviteCode) ...[
+                      const SizedBox(height: 20),
+                      InviteCodeCard(
+                        code: team.displayCode ?? '',
+                        caption: 'Codul echipei',
+                        shareLabel: 'WhatsApp',
+                        copyLabel: 'Copiază',
+                        onShare: () => controller.shareInvite(context),
+                        onCopy: () => controller.copyInvite(context),
+                      ),
+                    ],
                     const SizedBox(height: 30),
                     if (controller.isEditing)
                       AppButton(
