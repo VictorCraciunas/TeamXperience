@@ -41,7 +41,7 @@ import 'backend/authentication/AuthenticationRepository.dart';
 import 'backend/repo/user_repo.dart';
 import 'features/admin/create_event/create_event_landing/screen/create_event_screen.dart';
 import 'features/events_dashboard/events_dashboard_admin/screen/events_dasboard_screen.dart';
-import 'features/events_dashboard/events_dashboard_user/screen/events_dashboard_screen.dart';
+import 'features/events_tab/screen/events_tab_screen.dart';
 import 'features/filter/filter_events/screen/filter_events_screen.dart';
 import 'features/loader_page/landing_page.dart';
 import 'features/log-in/screen/log_in_screen.dart';
@@ -159,7 +159,7 @@ class MyApp extends StatelessWidget {
                     (_) => const NewsCategoryManipulationScreen(),
                 Routes.filterStiri: (_) => const FilterStiriScreen(),
                 Routes.calendar: (_) => const DateRangeSelectionScreen(),
-                Routes.eventDashboardUser: (_) => const FilterEventsUser(),
+                Routes.eventDashboardUser: (_) => const Scaffold(body: EventsTabScreen()),
                 Routes.registerTeam: (_) => const RegisterTeamScreen(),
                 Routes.registerTeamDetails: (_) => const TeamDetailsScreen(),
                 Routes.joinTeam: (_) => const JoinTeamScreen(),

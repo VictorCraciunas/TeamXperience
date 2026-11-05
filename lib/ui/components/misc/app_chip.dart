@@ -11,12 +11,16 @@ class AppChip extends StatelessWidget {
     super.key,
     required this.label,
     this.icon,
+    this.lead,
     this.style = AppChipStyle.plain,
     this.onTap,
   });
 
   final String label;
   final IconData? icon;
+
+  /// A short text before the label in the icon colour ("●●" for a difficulty).
+  final String? lead;
   final AppChipStyle style;
   final VoidCallback? onTap;
 
@@ -29,6 +33,7 @@ class AppChip extends StatelessWidget {
       AppChipStyle.selected => (colors.navy, colors.navy, colors.onNavy, colors.onNavy),
     };
     final chipIcon = icon;
+    final leadText = lead;
 
     final chip = DecoratedBox(
       decoration: BoxDecoration(
@@ -44,6 +49,10 @@ class AppChip extends StatelessWidget {
           children: [
             if (chipIcon != null) ...[
               Icon(chipIcon, size: 13, color: iconColor),
+              const SizedBox(width: 4),
+            ],
+            if (leadText != null) ...[
+              Text(leadText, style: TextStyle(fontSize: 11, color: iconColor, height: 1.45)),
               const SizedBox(width: 4),
             ],
             Text(label, style: TextStyle(fontSize: 11, color: labelColor, height: 1.45)),

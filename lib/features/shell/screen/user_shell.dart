@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:teamxperience/features/events_dashboard/events_dashboard_user/screen/events_dashboard_screen.dart';
+import 'package:teamxperience/features/events_tab/screen/events_tab_screen.dart';
 import 'package:teamxperience/features/home/screen/home.dart';
 import 'package:teamxperience/features/news_dashboard/screen/stiri_dashboard_screen.dart';
 import 'package:teamxperience/features/profile/screen/profile_screen.dart';
@@ -40,7 +40,7 @@ class _UserShellState extends State<UserShell> {
           ),
           AppShellTab(
             item: const AppNavItem(icon: Icons.explore_outlined, label: 'Evenimente'),
-            builder: (_) => const FilterEventsUser(),
+            builder: (_) => const EventsTabScreen(),
           ),
           AppShellTab(
             item: const AppNavItem(icon: Icons.article_outlined, label: 'Știri'),

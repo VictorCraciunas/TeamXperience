@@ -56,4 +56,12 @@ void main() {
     await pumpUi(tester, const Align(alignment: Alignment.topLeft, child: AppChip(label: 'A')));
     expect(tester.getSize(find.byType(AppChip)).height, closeTo(23.95, 0.5));
   });
+
+  testWidgets('a lead text sits before the label in accent, or onNavy when selected', (tester) async {
+    await pumpUi(tester, const AppChip(label: 'Ușor', lead: '●'));
+    expect(tester.widget<Text>(find.text('●')).style?.color, AppColors.light.accent);
+    expect(tester.widget<Text>(find.text('Ușor')).style?.color, AppColors.light.text);
+    await pumpUi(tester, const AppChip(label: 'Ușor', lead: '●', style: AppChipStyle.selected));
+    expect(tester.widget<Text>(find.text('●')).style?.color, AppColors.light.onNavy);
+  });
 }
