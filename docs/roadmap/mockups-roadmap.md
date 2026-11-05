@@ -30,10 +30,14 @@ These were open questions; the mockups answer them, so they are now in scope:
 2. Rejecting a photo needs a reason ("Respinsă: „Nu se vede ceasul”").
 3. Registration asks only for the team name, size and captain's phone; name and email come from the account, and members join with an invite code.
 
-**Still open:** whether a team can move on while a photo waits for approval
-("Puteți merge spre misiunea următoare"). Victor is not sure yet; decide before
-step 6 (L6.4). Until then the photo puzzle keeps today's behaviour: Continue
-unlocks only after approval.
+**Decided by Victor (2026-11-05): a team waits for a photo's approval.** The
+photo puzzle keeps today's behaviour: Continue unlocks only after the organiser
+approves. Mockup 07's "Puteți merge spre misiunea următoare; o deblocăm când e
+aprobată" is replaced by a waiting message (step 6c words it).
+
+**Step 6 is split in three plans (Victor, 2026-11-05):** 6a start code and
+intro letter (05), 6b route trail and code puzzle (06), 6c location and photo
+puzzles (07). Each gets its own branch and merge.
 
 ## Branches
 
@@ -243,7 +247,7 @@ that:
    - Hotter/colder from the last 3 distance readings, giving "mai aproape".
    - "Intră în cerc" is enabled inside `radiusMeters`.
 4. **Photo puzzle:**
-   - Upload → chat message → approval set to pending (as today). **Open:** whether Continue unlocks at once (the mockup) or only after approval (today); see "Still open" above.
+   - Upload → chat message → approval set to pending (as today). Continue unlocks only after approval (decided; see above).
    - A team can finish only when every photo is approved. A rejected photo comes back as a task on the route ("Fă altă poză").
    - `setPhotoApproval` takes a reason; the admin dialog makes it required for rejections.
    - Approval with a `badgeId` awards the badge.
