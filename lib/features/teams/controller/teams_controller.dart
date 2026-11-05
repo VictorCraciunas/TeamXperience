@@ -21,14 +21,7 @@ class TeamsController extends ChangeNotifier {
     ShareService? shareService,
   }) : _teams = teamService ?? TeamService(),
        _share = shareService ?? ShareService() {
-    final uid = myUid;
-    if (uid.isEmpty) {
-      crews = const [];
-    } else {
-      _subscription = _teams
-          .streamUserCrews(uid)
-          .listen(_onCrews, onError: _onError);
-    }
+    _subscribe();
   }
 
   final BuildContext context;
@@ -44,6 +37,26 @@ class TeamsController extends ChangeNotifier {
   String get myUid => context.read<UserProvider>().currentUser?.uid ?? '';
 
   bool get loading => crews == null && error == null;
+
+  void _subscribe() {
+    final uid = myUid;
+    if (uid.isEmpty) {
+      crews = const [];
+    } else {
+      _subscription = _teams
+          .streamUserCrews(uid)
+          .listen(_onCrews, onError: _onError);
+    }
+  }
+
+  /// Follows the crews again after an error.
+  void retry() {
+    _subscription?.cancel();
+    crews = null;
+    error = null;
+    notifyListeners();
+    _subscribe();
+  }
 
   void _onCrews(List<Crew> value) {
     crews = value;

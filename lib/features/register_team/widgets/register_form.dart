@@ -13,7 +13,8 @@ import 'team_name_field.dart';
 /// The form of mockup 04 (left phone), fed by values and callbacks: the team
 /// name, the size, the captain's phone, two consents and the button. [onSubmit]
 /// null greys the button out. [locked] makes the form read-only and hides the
-/// button, for after the team is registered.
+/// button, for after the team is registered; while [sending] it is read-only
+/// too, with the button shown as busy.
 class RegisterForm extends StatelessWidget {
   const RegisterForm({
     super.key,
@@ -58,6 +59,8 @@ class RegisterForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final readOnly = locked || sending;
+
     return Padding(
       padding: const EdgeInsets.all(14),
       child: Column(
@@ -69,12 +72,12 @@ class RegisterForm extends StatelessWidget {
             onChanged: onNameChanged,
             status: nameStatus,
             statusText: nameStatusText,
-            readOnly: locked,
+            readOnly: readOnly,
           ),
           const SizedBox(height: _gap),
           const FieldLabel('Câți veți fi?'),
           IgnorePointer(
-            ignoring: locked,
+            ignoring: readOnly,
             child: SizePicker(
               min: sizeMin,
               max: sizeMax,
@@ -87,7 +90,7 @@ class RegisterForm extends StatelessWidget {
           RegisterInput(
             controller: phoneController,
             onChanged: onPhoneChanged,
-            readOnly: locked,
+            readOnly: readOnly,
             hint: '0722 123 456',
             keyboardType: TextInputType.phone,
             textInputAction: TextInputAction.done,
@@ -108,13 +111,13 @@ class RegisterForm extends StatelessWidget {
                 ConsentRow(
                   label: 'Accept regulamentul',
                   value: rulesAccepted,
-                  onChanged: locked ? null : onRulesChanged,
+                  onChanged: readOnly ? null : onRulesChanged,
                 ),
                 const SizedBox(height: 6),
                 ConsentRow(
                   label: 'Sunt de acord cu foto și video',
                   value: photoConsent,
-                  onChanged: locked ? null : onPhotoChanged,
+                  onChanged: readOnly ? null : onPhotoChanged,
                 ),
               ],
             ),

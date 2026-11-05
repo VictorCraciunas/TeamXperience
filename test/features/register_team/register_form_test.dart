@@ -213,4 +213,29 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('while sending, the fields and pickers ignore the user', (
+    tester,
+  ) async {
+    final name = TextEditingController();
+    int? picked;
+    var rules = 0;
+    var photo = 0;
+    await pumpUi(
+      tester,
+      _form(
+        name: name,
+        sending: true,
+        onSize: (n) => picked = n,
+        onRules: (_) => rules++,
+        onPhoto: (_) => photo++,
+      ),
+    );
+    await tester.enterText(find.byType(EditableText).first, 'Vulpile');
+    expect(name.text, isEmpty);
+    await tester.tap(find.text('5'));
+    await tester.tap(find.text('Accept regulamentul'));
+    await tester.tap(find.text('Sunt de acord cu foto și video'));
+    expect((picked, rules, photo), (null, 0, 0));
+  });
 }

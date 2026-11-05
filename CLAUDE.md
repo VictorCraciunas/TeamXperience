@@ -114,7 +114,7 @@ Event lifecycle: players register for events (`registeredEventIds`), enter the e
 
 - `service/FCMService.dart`: permission + token, foreground handler that shows a local notification on the `chat_notifications` Android channel. Token is saved on the user doc.
 - `functions/src/index.ts` (v2 functions): `sendNotification` (HTTP POST `{title, description, eventId?}` -> FCM to all users, or only those with `eventId` in `registeredEventIds`), `onChatMessage` (Firestore trigger on `events/{eventId}/teams/{teamName}/messages/{id}`: admin message -> notify team members via `userIds`; user message -> notify admins), `testEndpoint`.
-- Team Cloud Functions live in `functions/src/teams/`: the callables `checkTeamName`, `createCrew`, `registerTeam`, `previewInvite` and `joinTeam`, which the app calls through `TeamFunctions` in `lib/backend/functions/`. `firestore.rules` will be added at the repo root by a later task.
+- Team Cloud Functions live in `functions/src/teams/`: the callables `checkTeamName`, `createCrew`, `registerTeam`, `previewInvite` and `joinTeam`, which the app calls through `TeamFunctions` in `lib/backend/functions/`. They are NOT built yet: parked as "step 3b" together with `firestore.rules`, so until then registering or joining a team shows an error.
 - The app calls `sendNotification` via a **hardcoded Cloud Run URL** in `backend/network/NetworkAPI.dart`; update it if the function is redeployed to a different project/region.
 
 ### Theme

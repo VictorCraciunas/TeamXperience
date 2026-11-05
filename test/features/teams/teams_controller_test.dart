@@ -12,13 +12,15 @@ import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/ui/theme/app_theme.dart';
 
 class _FakeTeams extends Fake implements TeamService {
-  final crews = StreamController<List<Crew>>();
+  final crews = StreamController<List<Crew>>.broadcast();
   final made = <String>[];
   String? streamedFor;
+  int streams = 0;
 
   @override
   Stream<List<Crew>> streamUserCrews(String uid) {
     streamedFor = uid;
+    streams++;
     return crews.stream;
   }
 
@@ -107,6 +109,23 @@ void main() {
     teams.crews.addError('boom');
     await tester.pump();
     expect(controller.error, 'boom');
+    expect(controller.loading, isFalse);
+  });
+
+  testWidgets('retry clears the error and follows the crews again', (
+    tester,
+  ) async {
+    final teams = _FakeTeams();
+    final controller = await _pump(tester, teams, user: _user());
+    teams.crews.addError('boom');
+    await tester.pump();
+    controller.retry();
+    expect(controller.error, isNull);
+    expect(controller.loading, isTrue);
+    expect(teams.streams, 2);
+    teams.crews.add(const []);
+    await tester.pump();
+    expect(controller.crews, isEmpty);
     expect(controller.loading, isFalse);
   });
 

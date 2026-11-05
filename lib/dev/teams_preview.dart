@@ -68,6 +68,7 @@ class _TeamsPreviewState extends State<TeamsPreview> {
         onJoin: () => _say('intră cu un cod'),
         onShare: (_) => _say('WhatsApp'),
         onCopy: (_) => _say('copiază'),
+        onRetry: () => _say('încearcă din nou'),
       ),
     );
   }

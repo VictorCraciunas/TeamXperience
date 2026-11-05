@@ -24,7 +24,8 @@ class InviteEvent {
     return InviteEvent(
       eventId: map['eventId'] as String? ?? '',
       name: map['name'] as String? ?? '',
-      dateEvent: DateTime.tryParse(map['dateEvent'] as String? ?? '') ??
+      dateEvent:
+          DateTime.tryParse(map['dateEvent'] as String? ?? '')?.toLocal() ??
           DateTime.fromMillisecondsSinceEpoch(0),
       teamName: map['teamName'] as String? ?? '',
       size: (map['size'] as num?)?.toInt() ?? 0,
@@ -58,14 +59,16 @@ class InvitePreview {
       crewId: map['crewId'] as String? ?? '',
       crewName: map['crewName'] as String? ?? '',
       captainName: map['captainName'] as String? ?? '',
-      members: rawMembers
-          .whereType<Map>()
-          .map((m) => TeamMember.fromMap(Map<String, dynamic>.from(m)))
-          .toList(),
+      members:
+          rawMembers
+              .whereType<Map>()
+              .map((m) => TeamMember.fromMap(Map<String, dynamic>.from(m)))
+              .toList(),
       alreadyMember: map['alreadyMember'] as bool? ?? false,
-      event: rawEvent is Map
-          ? InviteEvent.fromMap(Map<String, dynamic>.from(rawEvent))
-          : null,
+      event:
+          rawEvent is Map
+              ? InviteEvent.fromMap(Map<String, dynamic>.from(rawEvent))
+              : null,
     );
   }
 

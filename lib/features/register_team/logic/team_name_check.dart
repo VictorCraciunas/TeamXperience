@@ -62,6 +62,7 @@ class TeamNameCheck {
   /// The server refused the name as taken although the check said it was
   /// free: somebody else registered it in between.
   void markTaken() {
+    if (_disposed) return;
     _latest++;
     _timer?.cancel();
     _state.value = (FieldStatus.problem, 'Numele e luat');

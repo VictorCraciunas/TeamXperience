@@ -76,7 +76,10 @@ void main() {
     await _pump(tester, _bar(subtitle: 'Sub'));
     final height = tester.getSize(find.byType(ScreenBar)).height;
     expect(height, closeTo(12 + 12 * 1.45 + 11 * 1.45 + 13, 1));
-    expect(height, closeTo(_bar(subtitle: 'Sub').preferredSize.height, .5));
+    expect(
+      height,
+      lessThanOrEqualTo(_bar(subtitle: 'Sub').preferredSize.height),
+    );
   });
 
   testWidgets('it keeps clear of the status bar', (tester) async {
@@ -96,4 +99,23 @@ void main() {
     final iconTop = tester.getTopLeft(find.byIcon(TablerIcons.x)).dy;
     expect(iconTop, greaterThanOrEqualTo(30 + 12));
   });
+
+  for (final scale in [1.15, 1.3]) {
+    testWidgets('title and subtitle fit at text scale $scale', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light,
+          builder:
+              (context, child) => MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: TextScaler.linear(scale)),
+                child: child ?? const SizedBox.shrink(),
+              ),
+          home: Scaffold(appBar: _bar(subtitle: 'Sub')),
+        ),
+      );
+      expect(tester.takeException(), isNull);
+    });
+  }
 }

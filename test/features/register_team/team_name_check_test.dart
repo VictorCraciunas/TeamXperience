@@ -234,4 +234,10 @@ void main() {
       async.flushMicrotasks();
     });
   });
+
+  test('markTaken after dispose does nothing', () {
+    final c = check();
+    c.dispose();
+    expect(c.markTaken, returnsNormally);
+  });
 }

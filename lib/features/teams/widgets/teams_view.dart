@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/features/teams/widgets/crew_card.dart';
 import 'package:teamxperience/features/teams/widgets/join_link.dart';
 import 'package:teamxperience/features/teams/widgets/teams_header.dart';
+import 'package:teamxperience/features/teams/widgets/teams_load_error.dart';
 import 'package:teamxperience/model/crew.dart';
 import 'package:teamxperience/ui/theme/app_text_styles.dart';
 import 'package:teamxperience/ui/theme/theme_context.dart';
@@ -18,6 +19,9 @@ class TeamsView extends StatelessWidget {
     required this.onJoin,
     required this.onShare,
     required this.onCopy,
+    required this.onRetry,
+    this.loading = false,
+    this.failed = false,
   });
 
   final List<Crew> crews;
@@ -26,6 +30,14 @@ class TeamsView extends StatelessWidget {
   final VoidCallback onJoin;
   final void Function(Crew) onShare;
   final void Function(Crew) onCopy;
+  final VoidCallback onRetry;
+
+  /// Waiting for the first answer: a spinner stands in for the crews.
+  final bool loading;
+
+  /// The crews could not be loaded: a message with a retry link stands in
+  /// for them. The header and the join card stay either way.
+  final bool failed;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +49,14 @@ class TeamsView extends StatelessWidget {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              if (crews.isEmpty)
+              if (loading)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 28),
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else if (failed)
+                TeamsLoadError(onRetry: onRetry)
+              else if (crews.isEmpty)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(14, 28, 14, 6),
                   child: Text(

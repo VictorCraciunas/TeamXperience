@@ -37,6 +37,9 @@ Widget _view({
   VoidCallback? onJoin,
   void Function(Crew)? onShare,
   void Function(Crew)? onCopy,
+  bool loading = false,
+  bool failed = false,
+  VoidCallback? onRetry,
 }) => SizedBox(
   height: 640,
   child: TeamsView(
@@ -46,6 +49,9 @@ Widget _view({
     onJoin: onJoin ?? () {},
     onShare: onShare ?? (_) {},
     onCopy: onCopy ?? (_) {},
+    loading: loading,
+    failed: failed,
+    onRetry: onRetry ?? () {},
   ),
 );
 
@@ -212,5 +218,40 @@ void main() {
     expect(tester.takeException(), isNull);
     await pumpUi(tester, _view(crews: const []), width: 320, textScale: 1.3);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('on error the header and the join card stay, with a retry', (
+    tester,
+  ) async {
+    var retries = 0;
+    var joins = 0;
+    await pumpUi(
+      tester,
+      _view(
+        crews: const [],
+        failed: true,
+        onRetry: () => retries++,
+        onJoin: () => joins++,
+      ),
+    );
+    expect(find.text('Echipe'), findsOneWidget);
+    expect(find.text('Echipă nouă'), findsOneWidget);
+    expect(find.text('Intră'), findsOneWidget);
+    expect(find.text('Nu am putut încărca echipele.'), findsOneWidget);
+    expect(find.text('Nu ești încă într-o echipă.'), findsNothing);
+    await tester.tap(find.text('Încearcă din nou'));
+    expect(retries, 1);
+    await tester.tap(find.text('Intră'));
+    expect(joins, 1);
+  });
+
+  testWidgets('while loading the header and the join card stay', (
+    tester,
+  ) async {
+    await pumpUi(tester, _view(crews: const [], loading: true));
+    expect(find.text('Echipe'), findsOneWidget);
+    expect(find.text('Intră'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.text('Nu ești încă într-o echipă.'), findsNothing);
   });
 }

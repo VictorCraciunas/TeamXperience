@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/features/teams/controller/teams_controller.dart';
 import 'package:teamxperience/features/teams/widgets/teams_view.dart';
-import 'package:teamxperience/ui/components/feedback/async_state.dart';
 import 'package:teamxperience/ui/theme/theme_context.dart';
 
 class TeamsScreen extends StatefulWidget {
@@ -36,19 +35,16 @@ class _TeamsScreenState extends State<TeamsScreen> {
       body: ListenableBuilder(
         listenable: controller,
         builder: (context, _) {
-          final crews = controller.crews;
-          return AsyncState(
-            isLoading: controller.loading,
-            error: controller.error,
-            isEmpty: false,
-            child: TeamsView(
-              crews: crews ?? const [],
-              myUid: controller.myUid,
-              onNewCrew: controller.openNewCrew,
-              onJoin: controller.openJoin,
-              onShare: controller.share,
-              onCopy: controller.copy,
-            ),
+          return TeamsView(
+            crews: controller.crews ?? const [],
+            myUid: controller.myUid,
+            loading: controller.loading,
+            failed: controller.error != null,
+            onRetry: controller.retry,
+            onNewCrew: controller.openNewCrew,
+            onJoin: controller.openJoin,
+            onShare: controller.share,
+            onCopy: controller.copy,
           );
         },
       ),
