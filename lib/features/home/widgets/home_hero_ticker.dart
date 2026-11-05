@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:teamxperience/features/home/logic/home_hero.dart';
 import 'package:teamxperience/features/home/widgets/home_hero_actions.dart';
 import 'package:teamxperience/features/home/widgets/home_hero_section.dart';
+import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/ui/components/misc/clock_builder.dart';
 
 /// The Home hero card, redrawn every second for its countdown. Only this card
@@ -15,7 +16,7 @@ class HomeHeroTicker extends StatelessWidget {
     required this.shown,
     required this.actions,
     required this.onLayoutChange,
-    this.recommendedTeamCount,
+    this.upcomingTeam,
     this.now,
   });
 
@@ -26,7 +27,7 @@ class HomeHeroTicker extends StatelessWidget {
   final HomeHero shown;
   final HomeHeroActions actions;
   final VoidCallback onLayoutChange;
-  final int? recommendedTeamCount;
+  final Team? upcomingTeam;
 
   /// Overrides the clock (for tests).
   final DateTime Function()? now;
@@ -46,7 +47,7 @@ class HomeHeroTicker extends StatelessWidget {
           hero: hero,
           now: time,
           actions: actions,
-          recommendedTeamCount: recommendedTeamCount,
+          upcomingTeam: upcomingTeam,
         );
       },
     );

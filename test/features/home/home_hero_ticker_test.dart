@@ -36,7 +36,7 @@ void main() {
         onLayoutChange: () {},
       ),
     );
-    expect(find.text('Următorul eveniment'), findsOneWidget);
+    expect(find.text('Următorul tău joc'), findsOneWidget);
     expect(find.byType(ClockBuilder), findsOneWidget);
   });
 

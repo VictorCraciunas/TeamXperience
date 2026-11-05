@@ -31,7 +31,6 @@ class _HomeState extends State<Home> {
   /// Extra data the hero needs, loaded once per hero event.
   String? _extrasFor;
   Team? _heroTeam;
-  int? _heroTeamCount;
 
   @override
   void initState() {
@@ -58,18 +57,11 @@ class _HomeState extends State<Home> {
     if (event == null || _extrasFor == event.eventId) return;
     _extrasFor = event.eventId;
     _heroTeam = null;
-    _heroTeamCount = null;
 
     if (hero is UpcomingHero) {
       controller.teamFor(event).then((team) {
         if (mounted && _extrasFor == event.eventId) {
           setState(() => _heroTeam = team);
-        }
-      });
-    } else if (hero is RecommendedHero) {
-      controller.teamCountFor(event).then((count) {
-        if (mounted && _extrasFor == event.eventId) {
-          setState(() => _heroTeamCount = count);
         }
       });
     }
@@ -156,7 +148,7 @@ class _HomeState extends State<Home> {
             resolve: resolve,
             shown: hero,
             actions: _actions(),
-            recommendedTeamCount: _heroTeamCount,
+            upcomingTeam: _heroTeam,
             onLayoutChange: () {
               if (mounted) setState(() {});
             },

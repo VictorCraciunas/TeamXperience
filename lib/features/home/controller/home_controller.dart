@@ -76,14 +76,6 @@ class HomeController {
     return teamService.getUserTeamForEvent(event.eventId, user.uid);
   }
 
-  Future<int?> teamCountFor(Event event) async {
-    try {
-      return (await teamService.getTeams(event.eventId)).length;
-    } catch (_) {
-      return null;
-    }
-  }
-
   void navigateToRegisterTeam(Event event) => navigateToEventDetails(event);
 
   void openGame(Event event, Team team) {
