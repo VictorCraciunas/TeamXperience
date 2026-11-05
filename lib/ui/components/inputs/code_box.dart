@@ -11,6 +11,7 @@ class CodeBox extends StatelessWidget {
     required this.character,
     required this.active,
     required this.error,
+    this.onDark = false,
   });
 
   final String character;
@@ -19,11 +20,18 @@ class CodeBox extends StatelessWidget {
   final bool active;
   final bool error;
 
+  /// Drawn on navy, as mockup 05's start code: a 38 x 48 box inside a 2 px
+  /// border (the mockup has no box-sizing reset), so 42 x 52.
+  final bool onDark;
+
   static const double width = 34;
   static const double height = 47;
+  static const double darkWidth = 42;
+  static const double darkHeight = 52;
 
   @override
   Widget build(BuildContext context) {
+    if (onDark) return _dark(context);
     final colors = context.colors;
     final filled = character.isNotEmpty;
     final outline =
@@ -49,6 +57,39 @@ class CodeBox extends StatelessWidget {
               fontSize: 20,
               height: 1.45,
               color: colors.text,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _dark(BuildContext context) {
+    final colors = context.colors;
+    final filled = character.isNotEmpty;
+    final outline = error
+        ? colors.dangerOnNavy
+        : (filled || active ? colors.tickOnNavy : colors.onNavy.withValues(alpha: .3));
+    return SizedBox(
+      width: darkWidth,
+      height: darkHeight,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colors.onNavy.withValues(alpha: .08),
+          border: Border.all(color: outline, width: 2),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Center(
+          child: Text(
+            character,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            style: TextStyle(
+              fontFamily: 'Monospace',
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+              height: 1.45,
+              color: colors.onNavy,
             ),
           ),
         ),

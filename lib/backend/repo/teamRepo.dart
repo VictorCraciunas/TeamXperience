@@ -178,10 +178,19 @@ class TeamRepo {
       throw Exception('Failed to fetch team for user: $userId in event: $eventId');
     }
   }
+  /// Marks the team started and, the first time only, stamps `startedAt`
+  /// with the server time: the first member to enter the code starts the
+  /// clock for everyone. `hasStarted` is a plain write, so with no signal it
+  /// is kept and sent later; the clock's transaction needs the server and
+  /// runs once that write has gone through.
   Future<void> startTeam(String eventId, String teamName) async {
     try {
-      await _firestore.collection('events').doc(eventId).collection('teams').doc(teamName).update({
-        'hasStarted': true,
+      final ref = _firestore.collection('events').doc(eventId).collection('teams').doc(teamName);
+      await ref.update({'hasStarted': true});
+      await _firestore.runTransaction((tx) async {
+        final snapshot = await tx.get(ref);
+        if (snapshot.data()?['startedAt'] != null) return;
+        tx.update(ref, {'startedAt': FieldValue.serverTimestamp()});
       });
     } catch (e, stacktrace) {
       print('Error starting team: $e');

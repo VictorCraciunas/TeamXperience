@@ -16,6 +16,7 @@ class AvatarStack extends StatelessWidget {
     this.size = 30,
     this.onDark = false,
     this.highlightNext = false,
+    this.gap,
   });
 
   final List<String> initials;
@@ -31,6 +32,10 @@ class AvatarStack extends StatelessWidget {
   /// Marks the first empty place with a plus: the player who is joining.
   final bool highlightNext;
 
+  /// Side by side with this space between, without rings, instead of
+  /// overlapping (mockup 05's "who is here").
+  final double? gap;
+
   static const double _ring = 2;
 
   @override
@@ -40,8 +45,9 @@ class AvatarStack extends StatelessWidget {
     final count = places > initials.length ? places : initials.length;
     if (count == 0) return const SizedBox.shrink();
 
-    final step = size - (onDark ? 6 : 8);
-    final ring = onDark ? colors.navy : colors.panel;
+    final space = gap;
+    final step = space != null ? size + space : size - (onDark ? 6 : 8);
+    final Color? ring = space != null ? null : (onDark ? colors.navy : colors.panel);
     final cycle = _cycle(colors);
 
     return SizedBox(
@@ -109,24 +115,27 @@ class _Circle extends StatelessWidget {
   });
 
   final double size;
-  final Color ring;
+
+  /// Null: no ring (side-by-side circles).
+  final Color? ring;
   final Color fill;
   final Color textColor;
   final String label;
 
   @override
   Widget build(BuildContext context) {
+    final edge = ring;
     return Container(
       width: size,
       height: size,
       alignment: Alignment.center,
-      padding: const EdgeInsets.all(AvatarStack._ring),
+      padding: EdgeInsets.all(edge == null ? 0 : AvatarStack._ring),
       // The ring is drawn inside the box, so the circle is [size] across,
       // ring included.
       decoration: BoxDecoration(
         color: fill,
         shape: BoxShape.circle,
-        border: Border.all(color: ring, width: AvatarStack._ring),
+        border: edge == null ? null : Border.all(color: edge, width: AvatarStack._ring),
       ),
       child: FittedBox(
         fit: BoxFit.scaleDown,

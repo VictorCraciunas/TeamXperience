@@ -2,9 +2,6 @@ import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 
-/// How long after the start a registered team may still enter the start code.
-const Duration enterCodeWindow = Event.enterWindow;
-
 sealed class HomeHero {
   const HomeHero();
 
@@ -106,8 +103,8 @@ HomeHero? _startingSoon(DateTime now, Event? event, Team? team) {
   if (start == null || _isOver(event, now)) return null;
   if (team != null && team.hasStarted) return null;
   final sinceStart = now.difference(start);
-  if (sinceStart.isNegative || sinceStart > enterCodeWindow) return null;
-  final minutesLeft = (enterCodeWindow - sinceStart).inMinutes;
+  if (sinceStart.isNegative || sinceStart > event.enterWindow) return null;
+  final minutesLeft = (event.enterWindow - sinceStart).inMinutes;
   return StartingSoonHero(event, minutesLeft < 0 ? 0 : minutesLeft);
 }
 
@@ -143,7 +140,7 @@ HomeHero? _recommended(DateTime now, List<Event> allEvents, Set<String> register
   return chosen == null ? null : RecommendedHero(chosen);
 }
 
-/// The registered event that started within [enterCodeWindow] and is not over,
+/// The registered event that started within its [Event.enterWindow] and is not over,
 /// oldest first, so the player can still enter its start code.
 Event? recentlyStartedEvent(List<Event> registered, DateTime now) {
   Event? chosen;
@@ -151,7 +148,7 @@ Event? recentlyStartedEvent(List<Event> registered, DateTime now) {
     final start = event.dateEvent;
     if (start == null || _isOver(event, now)) continue;
     final since = now.difference(start);
-    if (since.isNegative || since > enterCodeWindow) continue;
+    if (since.isNegative || since > event.enterWindow) continue;
     final current = chosen?.dateEvent;
     if (current == null || start.isBefore(current)) chosen = event;
   }

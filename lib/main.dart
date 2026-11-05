@@ -1,3 +1,4 @@
+import 'package:teamxperience/features/game_intro/screen/game_intro_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -149,6 +150,7 @@ class MyApp extends StatelessWidget {
                 Routes.forgotPassword: (_) => const ForgotPasswordScreen(),
                 Routes.eventDetails: (_) => const EventDetailsScreen(),
                 Routes.eventGame: (_) => const EventGameScreen(),
+                Routes.gameIntro: (_) => const GameIntroScreen(),
                 Routes.puzzleGame: (_) => const PuzzleGameScreen(),
                 Routes.eventDashboard: (_) => const EventsDashboard(),
                 Routes.filter: (_) => const FilterEventsScreen(),

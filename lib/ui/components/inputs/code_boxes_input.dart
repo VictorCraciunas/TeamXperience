@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../utils/fold_letters.dart';
 import '../../theme/theme_context.dart';
 import 'code_box.dart';
 
@@ -17,6 +18,7 @@ class CodeBoxesInput extends StatefulWidget {
     this.onCompleted,
     this.error = false,
     this.keyboardType = TextInputType.text,
+    this.onDark = false,
   });
 
   final int length;
@@ -31,6 +33,9 @@ class CodeBoxesInput extends StatefulWidget {
   /// Draws every box with the danger colour.
   final bool error;
   final TextInputType keyboardType;
+
+  /// Navy boxes, as mockup 05's start code.
+  final bool onDark;
 
   @override
   State<CodeBoxesInput> createState() => _CodeBoxesInputState();
@@ -75,7 +80,7 @@ class _CodeBoxesInputState extends State<CodeBoxesInput> {
   }
 
   String _clean(String raw) {
-    final cleaned = raw.replaceAll(RegExp('[^A-Za-z0-9]'), '').toUpperCase();
+    final cleaned = foldLetters(raw).replaceAll(RegExp('[^A-Za-z0-9]'), '').toUpperCase();
     return cleaned.length > widget.length ? cleaned.substring(0, widget.length) : cleaned;
   }
 
@@ -95,6 +100,7 @@ class _CodeBoxesInputState extends State<CodeBoxesInput> {
             character: i < text.length ? text[i] : '',
             active: _focus.hasFocus && i == activeIndex,
             error: widget.error,
+            onDark: widget.onDark,
           ),
         ),
       );
@@ -108,7 +114,7 @@ class _CodeBoxesInputState extends State<CodeBoxesInput> {
               fontFamily: 'Monospace',
               fontSize: 20,
               height: 1.45,
-              color: colors.text.withValues(alpha: 0.5),
+              color: (widget.onDark ? colors.onNavy : colors.text).withValues(alpha: 0.5),
             ),
           ),
         );
@@ -146,6 +152,10 @@ class _CodeBoxesInputState extends State<CodeBoxesInput> {
                   isCollapsed: true,
                 ),
                 inputFormatters: [
+                  // Romanian letters become their plain letters before the filter.
+                  TextInputFormatter.withFunction(
+                    (oldValue, newValue) => newValue.copyWith(text: foldLetters(newValue.text)),
+                  ),
                   FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9]')),
                   TextInputFormatter.withFunction(
                     (oldValue, newValue) => newValue.copyWith(text: newValue.text.toUpperCase()),

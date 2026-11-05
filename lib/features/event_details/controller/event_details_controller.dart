@@ -1,3 +1,4 @@
+import 'package:teamxperience/features/game_intro/logic/game_door.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/features/event_details/logic/event_page_content.dart';
@@ -82,7 +83,7 @@ class EventDetailsController extends ChangeNotifier {
       case SignupAction.enterCode:
         Navigator.pushNamed(context, Routes.enterCodeScreen, arguments: event);
       case SignupAction.continueGame:
-        if (team != null) Navigator.pushNamed(context, Routes.eventGame, arguments: {'event': event, 'team': team});
+        if (team != null) GameDoor().open(Navigator.of(context), event, team);
       case SignupAction.none:
         break;
     }

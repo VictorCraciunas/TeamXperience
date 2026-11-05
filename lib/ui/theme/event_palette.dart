@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../enums/event_look.dart';
 import 'app_colors.dart';
 
 /// Font families shared by the event screens.
@@ -91,3 +92,9 @@ class EventPalette {
   int get hashCode => Object.hash(
       background, surface, border, ink, muted, faint, accent, secondaryAccent, danger, routeDash, voiceFont);
 }
+
+/// The palette for an event's [look]: parchment, or the app's own colours.
+EventPalette paletteFor(EventLook look, AppColors colors) => switch (look) {
+      EventLook.parchment => EventPalette.parchment,
+      EventLook.app => EventPalette.fromApp(colors),
+    };

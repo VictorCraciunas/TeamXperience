@@ -57,4 +57,19 @@ void main() {
   test('normaliseCode drops every space and lower-cases', () {
     expect(normaliseCode(' Ha r\tTI '), 'harti');
   });
+
+  test("the window is the event's own: 31 min after the start is closed for a 30-minute event", () {
+    final short = Event(eventId: 'e1', startCode: 'HARTI', dateEvent: start, enterWindowMinutes: 30);
+    final late = DateTime(2026, 11, 14, 10, 31);
+    expect(check('HARTI', e: short, now: late), StartCodeResult.closed);
+    expect(check('HARTI', now: late), StartCodeResult.ok);
+  });
+
+  test('diacritics and punctuation do not matter: ȘARPE-1 is typed as SARPE1', () {
+    expect(normaliseCode('ȘARPE-1'), 'sarpe1');
+    expect(normaliseCode('Comoară Ţ'), 'comoarat');
+    final odd = Event(eventId: 'e1', startCode: 'ȘARPE-1', dateEvent: start);
+    expect(check('SARPE1', e: odd), StartCodeResult.ok);
+    expect(check('șarpe 1', e: odd), StartCodeResult.ok);
+  });
 }
