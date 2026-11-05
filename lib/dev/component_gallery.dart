@@ -23,6 +23,7 @@ import 'event_page_preview_launcher.dart';
 import 'events_gallery.dart';
 import 'gallery_section.dart';
 import 'parchment_swatches.dart';
+import 'shell_previews_launcher.dart';
 import 'team_previews_launcher.dart';
 
 /// Every redesign component with the copy of mockup 01, to hold next to
@@ -45,6 +46,7 @@ class ComponentGallery extends StatelessWidget {
         children: [
           const GallerySection(title: 'Ecrane', child: EventPagePreviewLauncher()),
           const GallerySection(title: 'Ecrane: echipe', child: TeamPreviewsLauncher()),
+          const GallerySection(title: 'Ecrane: navigare', child: ShellPreviewsLauncher()),
           GallerySection(
             title: 'Route strip',
             child: RouteStrip(
