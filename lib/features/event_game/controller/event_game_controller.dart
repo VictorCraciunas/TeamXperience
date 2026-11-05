@@ -31,6 +31,13 @@ class EventGameController extends ChangeNotifier {
     _watchEventDeadline();
   }
 
+  /// Marks [uid] as seen playing now, for the live Home's "jucători activi".
+  Future<void> markPresent(String uid) async {
+    final t = team;
+    if (t == null) return;
+    await _teamService.markPresent(event.eventId, t.name, uid);
+  }
+
 
   void _startLocationTracking() async {
     final t = team;
