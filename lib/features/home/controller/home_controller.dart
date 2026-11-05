@@ -4,6 +4,7 @@ import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/model/user.dart';
 import 'package:teamxperience/service/share_service.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
+import 'package:teamxperience/features/home/logic/news_seen.dart';
 import 'package:teamxperience/features/shell/logic/player_tabs.dart';
 import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 
@@ -34,7 +35,13 @@ class HomeController {
     context.read<ShellController>().select(PlayerTab.events);
   }
 
-  /// Știri is not a tab any more: "Vezi toate" opens it as a page.
+  /// The bell: remembers the visit (for the bell's dot), then opens Știri.
+  Future<void> openNews(NewsSeenStore store, DateTime now) async {
+    navigateToNewsTab();
+    await store.markSeen(now);
+  }
+
+  /// Știri is not a tab: it opens as a page.
   void navigateToNewsTab() {
     Navigator.pushNamed(context, Routes.newsDashboard, arguments: context.read<NewsList>().stireList);
   }
