@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/events_tab/controller/events_tab_controller.dart';
+import 'package:teamxperience/features/events_tab/widgets/events_map.dart';
 import 'package:teamxperience/features/events_tab/widgets/events_tab_view.dart';
 import 'package:teamxperience/features/feed/logic/post_text.dart';
 import 'package:teamxperience/model/event.dart';
@@ -71,7 +72,11 @@ class _EventsTabScreenState extends State<EventsTabScreen> {
         onOpen: _open,
         onShare: _share,
         onRefresh: () => context.read<EventList>().loadEvents(forceRefresh: true),
-        map: const SizedBox.shrink(),
+        map: EventsMap(
+          events: [...controller.sections.registered, ...controller.sections.open, ...controller.sections.soon],
+          registeredIds: controller.registeredIds,
+          onOpen: _open,
+        ),
       ),
     );
   }
