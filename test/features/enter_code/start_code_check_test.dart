@@ -64,4 +64,12 @@ void main() {
     expect(check('HARTI', e: short, now: late), StartCodeResult.closed);
     expect(check('HARTI', now: late), StartCodeResult.ok);
   });
+
+  test('diacritics and punctuation do not matter: ȘARPE-1 is typed as SARPE1', () {
+    expect(normaliseCode('ȘARPE-1'), 'sarpe1');
+    expect(normaliseCode('Comoară Ţ'), 'comoarat');
+    final odd = Event(eventId: 'e1', startCode: 'ȘARPE-1', dateEvent: start);
+    expect(check('SARPE1', e: odd), StartCodeResult.ok);
+    expect(check('șarpe 1', e: odd), StartCodeResult.ok);
+  });
 }

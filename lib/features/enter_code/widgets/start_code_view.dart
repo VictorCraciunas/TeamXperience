@@ -78,18 +78,30 @@ class StartCodeView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Spacer(),
-                  Flexible(
-                    flex: 8,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(color: colors.soon, borderRadius: BorderRadius.circular(99)),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 2),
-                        child: Text(
-                          enterPill(event, now),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, height: 1.45, color: colors.onTick),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: colors.soon,
+                          borderRadius: BorderRadius.circular(99),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 9,
+                            vertical: 2,
+                          ),
+                          child: Text(
+                            enterPill(event, now),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              height: 1.45,
+                              color: colors.onTick,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -109,19 +121,32 @@ class StartCodeView extends StatelessWidget {
                           Text(
                             event.name ?? '',
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 11, height: 1.45, color: onNavy.withValues(alpha: .75)),
+                            style: TextStyle(
+                              fontSize: 11,
+                              height: 1.45,
+                              color: onNavy.withValues(alpha: .75),
+                            ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Introdu codul de start',
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, height: 1.45, color: onNavy),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              height: 1.45,
+                              color: onNavy,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             codeHint(event),
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 12, height: 1.45, color: onNavy.withValues(alpha: .75)),
+                            style: TextStyle(
+                              fontSize: 12,
+                              height: 1.45,
+                              color: onNavy.withValues(alpha: .75),
+                            ),
                           ),
                         ],
                       ),
@@ -150,7 +175,11 @@ class StartCodeView extends StatelessWidget {
                       Text(
                         'Nu contează literele mari sau mici.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 11, height: 1.45, color: onNavy.withValues(alpha: .7)),
+                        style: TextStyle(
+                          fontSize: 11,
+                          height: 1.45,
+                          color: onNavy.withValues(alpha: .7),
+                        ),
                       ),
                     ],
                     if (current != null)
@@ -158,8 +187,14 @@ class StartCodeView extends StatelessWidget {
                         padding: const EdgeInsets.fromLTRB(14, 22, 14, 0),
                         child: TeamHereCard(
                           teamName: current.name,
-                          hereInitials: [for (final m in activeMembers(current, now)) m.initials],
-                          size: current.numberOfMembers > 0 ? current.numberOfMembers : current.memberList.length,
+                          hereInitials: [
+                            for (final m in activeMembers(current, now))
+                              m.initials,
+                          ],
+                          size:
+                              current.numberOfMembers > 0
+                                  ? current.numberOfMembers
+                                  : current.memberList.length,
                         ),
                       ),
                     const SizedBox(height: 14),
@@ -173,7 +208,11 @@ class StartCodeView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  StartButton(label: started ? 'Intră în joc' : 'Pornește jocul', busy: busy, onTap: onSubmit),
+                  StartButton(
+                    label: started ? 'Intră în joc' : 'Pornește jocul',
+                    busy: busy,
+                    onTap: onSubmit,
+                  ),
                   if (chat != null) ...[
                     const SizedBox(height: 4),
                     StartChatLink(onTap: chat),

@@ -58,5 +58,7 @@ void main() {
     expect(codeLength(event(code: 'har ta 7')), 6);
     expect(codeLength(event(code: null)), 5);
     expect(codeLength(event(code: '  ')), 5);
+    expect(codeLength(event(code: 'HARTA-1')), 6);
+    expect(codeLength(event(code: 'ȘARPE')), 5);
   });
 }

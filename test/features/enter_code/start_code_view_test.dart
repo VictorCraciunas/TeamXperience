@@ -132,6 +132,13 @@ void main() {
     expect(find.text('Nu ai codul? Scrie-i organizatorului'), findsNothing);
   });
 
+  testWidgets('the pill sits against the right edge, 14 px in, even with a short label', (tester) async {
+    await _pump(tester, now: DateTime(2026, 11, 14, 9, 30));
+    expect(find.text('Începe la 10:00'), findsOneWidget);
+    final pill = find.ancestor(of: find.text('Începe la 10:00'), matching: find.byType(DecoratedBox)).first;
+    expect(tester.getTopRight(pill).dx, 390 - 14);
+  });
+
   testWidgets('after the window the pill says the entry is closed', (tester) async {
     await _pump(tester, now: _now.add(const Duration(minutes: 43)));
     expect(find.text('Intrarea s-a închis'), findsOneWidget);

@@ -57,11 +57,14 @@ class StartCodeController extends ChangeNotifier {
     } catch (e) {
       debugPrint('Start code: team lookup failed: $e');
     }
+    // The screen may have closed while the team was being looked up.
+    if (_disposed) return;
     _team = found;
     notifyListeners();
     if (found == null) return;
     _subscription = _watchTeam(found.name).listen(
       (team) {
+        if (_disposed) return;
         final startedNow = team.hasStarted && !started;
         _team = team;
         if (startedNow) {

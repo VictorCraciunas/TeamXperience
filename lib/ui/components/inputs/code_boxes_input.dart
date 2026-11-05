@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../utils/fold_letters.dart';
 import '../../theme/theme_context.dart';
 import 'code_box.dart';
 
@@ -79,7 +80,7 @@ class _CodeBoxesInputState extends State<CodeBoxesInput> {
   }
 
   String _clean(String raw) {
-    final cleaned = raw.replaceAll(RegExp('[^A-Za-z0-9]'), '').toUpperCase();
+    final cleaned = foldLetters(raw).replaceAll(RegExp('[^A-Za-z0-9]'), '').toUpperCase();
     return cleaned.length > widget.length ? cleaned.substring(0, widget.length) : cleaned;
   }
 
@@ -151,6 +152,10 @@ class _CodeBoxesInputState extends State<CodeBoxesInput> {
                   isCollapsed: true,
                 ),
                 inputFormatters: [
+                  // Romanian letters become their plain letters before the filter.
+                  TextInputFormatter.withFunction(
+                    (oldValue, newValue) => newValue.copyWith(text: foldLetters(newValue.text)),
+                  ),
                   FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9]')),
                   TextInputFormatter.withFunction(
                     (oldValue, newValue) => newValue.copyWith(text: newValue.text.toUpperCase()),

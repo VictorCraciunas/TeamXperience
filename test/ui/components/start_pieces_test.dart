@@ -52,6 +52,15 @@ void main() {
     });
   });
 
+  testWidgets('a Romanian letter typed into the boxes becomes its plain letter', (tester) async {
+    String? typed;
+    await pumpUi(tester, _onNavy(CodeBoxesInput(length: 5, onChanged: (v) => typed = v, onDark: true)));
+    await tester.enterText(find.byType(TextField), 'șarpe');
+    await tester.pump();
+    expect(typed, 'SARPE');
+    expect(find.text('S'), findsOneWidget);
+  });
+
   testWidgets('AvatarStack with a gap: side by side, no ring, empty places dashed', (tester) async {
     await pumpUi(
       tester,

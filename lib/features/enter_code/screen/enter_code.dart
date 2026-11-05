@@ -91,6 +91,8 @@ class _EnterCodeState extends State<EnterCode> {
           );
           // Always wrapped, so the boxes keep their typing when the team arrives.
           return KeepsPresence(
+            // Marks the player here the moment the team is known.
+            ready: team != null && uid != null,
             markPresent: () async {
               final current = controller.team;
               if (current == null || uid == null) return;

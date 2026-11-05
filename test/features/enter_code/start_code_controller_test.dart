@@ -138,4 +138,25 @@ void main() {
     c.setCode('HARTA');
     await c.submit();
   });
+
+  test('closing the screen before the team is found: no notify, no stream', () async {
+    final lookup = Completer<Team?>();
+    final c = StartCodeController(
+      event: event,
+      findTeam: () => lookup.future,
+      watchTeam: (name) {
+        log.add('watch:$name');
+        return stream.stream;
+      },
+      startTeam: (_) async {},
+      onEnter: (_, _) async {},
+      clock: () => during,
+    );
+    final loading = c.load();
+    c.dispose();
+    lookup.complete(_team());
+    await loading;
+    expect(log, isEmpty);
+    expect(stream.hasListener, isFalse);
+  });
 }
