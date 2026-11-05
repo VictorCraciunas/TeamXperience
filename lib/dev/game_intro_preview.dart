@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/event_look.dart';
 import 'package:teamxperience/features/game_intro/widgets/game_intro_view.dart';
 import 'package:teamxperience/ui/components/misc/segmented_switch.dart';
-import 'package:teamxperience/ui/theme/event_palette.dart';
-import 'package:teamxperience/ui/theme/event_theme_scope.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 import 'sample_event.dart';

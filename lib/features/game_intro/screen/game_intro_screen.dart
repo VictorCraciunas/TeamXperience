@@ -3,8 +3,6 @@ import 'package:teamxperience/features/game_intro/controller/game_intro_controll
 import 'package:teamxperience/features/game_intro/widgets/game_intro_view.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
-import 'package:teamxperience/ui/theme/event_palette.dart';
-import 'package:teamxperience/ui/theme/event_theme_scope.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 /// The intro letter before the first mission (mockup 05), in the event's
