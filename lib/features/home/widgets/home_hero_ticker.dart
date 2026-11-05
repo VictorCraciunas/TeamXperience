@@ -17,6 +17,7 @@ class HomeHeroTicker extends StatelessWidget {
     required this.actions,
     required this.onLayoutChange,
     this.upcomingTeam,
+    this.liveTeam,
     this.now,
   });
 
@@ -28,6 +29,7 @@ class HomeHeroTicker extends StatelessWidget {
   final HomeHeroActions actions;
   final VoidCallback onLayoutChange;
   final Team? upcomingTeam;
+  final Team? Function(String teamName)? liveTeam;
 
   /// Overrides the clock (for tests).
   final DateTime Function()? now;
@@ -48,6 +50,7 @@ class HomeHeroTicker extends StatelessWidget {
           now: time,
           actions: actions,
           upcomingTeam: upcomingTeam,
+          liveTeam: liveTeam,
         );
       },
     );

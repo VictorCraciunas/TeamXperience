@@ -5,6 +5,7 @@ import 'package:teamxperience/features/home/controller/home_controller.dart';
 import 'package:teamxperience/features/home/controller/home_live_controller.dart';
 import 'package:teamxperience/features/home/logic/hero_from_providers.dart';
 import 'package:teamxperience/features/home/logic/home_hero.dart';
+import 'package:teamxperience/features/home/logic/live_watch.dart';
 import 'package:teamxperience/features/home/logic/news_seen.dart';
 import 'package:teamxperience/features/home/widgets/greeting_stats.dart';
 import 'package:teamxperience/features/home/widgets/home_header.dart';
@@ -14,6 +15,7 @@ import 'package:teamxperience/features/home/widgets/leaderboard_sheet.dart';
 import 'package:teamxperience/features/home/widgets/live_leaderboard_section.dart';
 import 'package:teamxperience/features/home/widgets/new_events_row.dart';
 import 'package:teamxperience/features/home/widgets/team_now_card.dart';
+import 'package:teamxperience/features/shell/logic/player_tabs.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
@@ -22,6 +24,7 @@ import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
 import 'package:teamxperience/ui/components/misc/clock_builder.dart';
 import 'package:teamxperience/ui/components/misc/fade_in_section.dart';
+import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 /// The player's Acasă tab, as mockup 02: before a game the greeting, the next
@@ -48,7 +51,7 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     controller = HomeController(context);
-    _live = HomeLiveController(teams: controller.teamService.getStreamTeams);
+    _live = HomeLiveController(teams: controller.teamService.getStreamTeams)..addListener(_onLiveTeams);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.loadInitialData();
       context.read<UserEventsProvider>().loadActiveEvent();
@@ -60,7 +63,9 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
-    _live.dispose();
+    _live
+      ..removeListener(_onLiveTeams)
+      ..dispose();
     super.dispose();
   }
 
@@ -74,13 +79,32 @@ class _HomeState extends State<Home> {
     });
   }
 
-  /// Follows the live game's teams; after the frame, so the controller never
-  /// notifies while this page is building.
-  void _watchLive(HomeHero hero) {
-    final event = hero is LiveHero ? hero.event : null;
+  /// Follows the live game's teams while Home is on screen; after the frame,
+  /// so the controller never notifies while this page is building.
+  void _watchLive(HomeHero hero, {required bool visible}) {
+    final event = liveEventToWatch(hero, visible: visible);
+    _liveTeamName = hero is LiveHero ? hero.team.name : null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _live.watch(event);
     });
+  }
+
+  /// The live team's name, and whether its finish was already reported.
+  String? _liveTeamName;
+  bool _finishReported = false;
+
+  /// When the stream says the team has finished, refresh the active game so
+  /// Home leaves the live layout at once.
+  void _onLiveTeams() {
+    final name = _liveTeamName;
+    if (name == null) return;
+    final finished = _live.own(name)?.hasFinished ?? false;
+    if (finished && !_finishReported) {
+      _finishReported = true;
+      context.read<UserEventsProvider>().loadActiveEvent();
+    } else if (!finished) {
+      _finishReported = false;
+    }
   }
 
   Future<void> _openNews() async {
@@ -103,6 +127,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<UserProvider>().currentUser;
+    // On screen: Acasă is the current tab and no page is pushed over the shell.
+    final visible =
+        context.watch<ShellController>().index == PlayerTab.home && (ModalRoute.of(context)?.isCurrent ?? true);
     return Scaffold(
       backgroundColor: context.colors.page,
       body: Consumer3<EventList, NewsList, UserEventsProvider>(
@@ -122,6 +149,7 @@ class _HomeState extends State<Home> {
                           child: _content(
                             eventList,
                             userEvents,
+                            visible,
                             GreetingStats(
                               firstName: user?.firstName ?? '',
                               games: user?.stats.games ?? 0,
@@ -141,12 +169,12 @@ class _HomeState extends State<Home> {
 
   /// Built once per data change. Only the hero card ticks each second (see
   /// [HomeHeroTicker]); the live sections refresh every 30 s for "acum 6 min".
-  Widget _content(EventList eventList, UserEventsProvider userEvents, Widget greeting) {
+  Widget _content(EventList eventList, UserEventsProvider userEvents, bool visible, Widget greeting) {
     final now = DateTime.now();
     HomeHero resolve(DateTime at) => heroFromProviders(userEvents: userEvents, eventList: eventList, now: at);
     final hero = resolve(now);
     _loadExtras(hero);
-    _watchLive(hero);
+    _watchLive(hero, visible: visible);
 
     // Sections fade in one after the other from the top, once. The keys keep
     // each section's animation state while the page is rebuilt.
@@ -172,6 +200,7 @@ class _HomeState extends State<Home> {
                 shown: hero,
                 actions: _actions(),
                 upcomingTeam: _heroTeam,
+                liveTeam: _live.own,
                 onLayoutChange: () {
                   if (mounted) setState(() {});
                 },

@@ -127,6 +127,32 @@ void main() {
       expect(calls.log, ['continue:Vulpile', 'chat']);
     });
 
+    testWidgets('a fresher streamed team wins over the stale one: its mission, and Continue opens it', (tester) async {
+      Team? opened;
+      final stale = _team(progress: 3, started: true);
+      final fresh = _team(progress: 4, started: true);
+      await pumpUi(
+        tester,
+        HomeHeroSection(
+          hero: LiveHero(event, stale),
+          now: live,
+          actions: HomeHeroActions(
+            onContinue: (_, t) => opened = t,
+            onChat: (_, _) {},
+            onEnterCode: (_) {},
+            onDetails: (_) {},
+            onShare: (_) {},
+            onRegister: (_) {},
+          ),
+          liveTeam: (name) => name == 'Vulpile' ? fresh : null,
+        ),
+      );
+      expect(find.text('Echipa Vulpile · misiunea 5 din 6'), findsOneWidget);
+      expect(find.text('5'), findsOneWidget);
+      await tester.tap(find.text('Continuă jocul'));
+      expect(opened?.missionProgress, 4);
+    });
+
     testWidgets('an event without missions: just the team and the flag', (tester) async {
       final none = sampleEvent()..nrMissions = 0;
       await _pump(tester, LiveHero(none, _team(started: true)), now: live);

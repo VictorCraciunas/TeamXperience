@@ -30,7 +30,7 @@ class TeamNowCard extends StatelessWidget {
             child: Row(
               children: [
                 if (active.isNotEmpty) ...[
-                  AvatarStack(initials: [for (final m in active) m.initials], size: 28),
+                  AvatarStack(initials: [for (final m in active) m.initials], size: 32),
                   const SizedBox(width: 8),
                 ],
                 Expanded(

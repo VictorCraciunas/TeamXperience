@@ -31,7 +31,7 @@ class SectionHeader extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(14, top, 14, 8),
       child: Row(
         children: [
-          const WaypointDot(key: ValueKey('hd-dot'), size: 10),
+          const WaypointDot(key: ValueKey('hd-dot')),
           const SizedBox(width: 6),
           Expanded(
             child: Text(

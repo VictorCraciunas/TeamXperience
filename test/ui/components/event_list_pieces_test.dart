@@ -38,11 +38,12 @@ void main() {
       expect(tester.widget<Text>(find.text('4')).style?.color, AppColors.light.muted);
     });
 
-    // The mockups' `.hd:before`: a 10 px circle, 3 px navy ring, white fill, 6 px gap.
-    testWidgets('starts with a 10 px navy ring 6 px before the title', (tester) async {
+    // The mockups' `.hd:before`: a 10 px white circle with a 3 px navy border outside it
+    // (no box-sizing reset), so 16 across, then a 6 px gap.
+    testWidgets('starts with a 16 px navy ring (10 px fill) 6 px before the title', (tester) async {
       await pumpUi(tester, const SectionHeader(title: 'Deschise pentru înscriere'));
       final dot = find.byKey(const ValueKey('hd-dot'));
-      expect(tester.getSize(dot), const Size(10, 10));
+      expect(tester.getSize(dot), const Size(16, 16));
       final d = tester.widget<Container>(find.descendant(of: dot, matching: find.byType(Container)).first).decoration as BoxDecoration;
       expect(d.color, AppColors.light.panel);
       expect((d.border as Border).top.color, AppColors.light.navy);

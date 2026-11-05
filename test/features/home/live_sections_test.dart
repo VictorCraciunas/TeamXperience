@@ -116,7 +116,10 @@ void main() {
       expect(find.text('Echipa ta'), findsOneWidget);
       expect(find.text('2 jucători activi'), findsOneWidget);
       expect(find.text('Ultima misiune rezolvată acum 6 min'), findsOneWidget);
-      expect(tester.widget<AvatarStack>(find.byType(AvatarStack)).initials, ['VC', 'AM']);
+      final stack = tester.widget<AvatarStack>(find.byType(AvatarStack));
+      expect(stack.initials, ['VC', 'AM']);
+      // 28 px circles with a 2 px border outside (the mockup has no box-sizing reset).
+      expect(stack.size, 32);
     });
 
     testWidgets('nobody here: no avatars', (tester) async {

@@ -15,6 +15,7 @@ class HomeLiveController extends ChangeNotifier {
   String? _eventId;
   int _missionCount = 0;
   List<RankedTeam> _ranked = const [];
+  String? _board;
 
   /// The teams in leaderboard order; empty before data or after an error.
   List<RankedTeam> get ranked => _ranked;
@@ -29,21 +30,41 @@ class HomeLiveController extends ChangeNotifier {
     _eventId = id;
     _missionCount = event?.nrMissions ?? 0;
     _ranked = const [];
+    _board = null;
     if (id == null) {
       notifyListeners();
       return;
     }
     _subscription = _teams(id).listen(
       (teams) {
-        _ranked = rankTeams(teams, missionCount: _missionCount);
+        // Team docs change on every location fix; only what Home shows
+        // (the order, progress, mission times, presence) is worth a rebuild.
+        final ranked = rankTeams(teams, missionCount: _missionCount);
+        final board = _boardOf(ranked);
+        if (board == _board) return;
+        _board = board;
+        _ranked = ranked;
         notifyListeners();
       },
       onError: (Object _) {
         _ranked = const [];
+        _board = null;
         notifyListeners();
       },
     );
   }
+
+  static String _boardOf(List<RankedTeam> ranked) => [
+        for (final r in ranked)
+          [
+            r.team.name,
+            r.team.missionProgress,
+            r.team.hasFinished,
+            r.mission,
+            for (final e in r.team.missionCompletedAt.entries) '${e.key}@${e.value.millisecondsSinceEpoch}',
+            for (final e in r.team.presence.entries) '${e.key}@${e.value.millisecondsSinceEpoch}',
+          ].join('|'),
+      ].join(';');
 
   /// The player's own team as the stream last sent it.
   Team? own(String teamName) => _ranked.where((r) => r.team.name == teamName).firstOrNull?.team;

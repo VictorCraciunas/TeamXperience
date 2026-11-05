@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/features/home/logic/home_hero.dart';
 import 'package:teamxperience/features/home/widgets/home_hero_actions.dart';
+import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 
 import 'live_game_card.dart';
@@ -16,6 +17,7 @@ class HomeHeroSection extends StatelessWidget {
     required this.now,
     required this.actions,
     this.upcomingTeam,
+    this.liveTeam,
   });
 
   final HomeHero hero;
@@ -26,17 +28,15 @@ class HomeHeroSection extends StatelessWidget {
   /// on the next-game card.
   final Team? upcomingTeam;
 
+  /// The team as the live stream last sent it, by name; it wins over the
+  /// hero's own copy, which is fetched once.
+  final Team? Function(String teamName)? liveTeam;
+
   @override
   Widget build(BuildContext context) {
     final current = hero;
     return switch (current) {
-      LiveHero(:final event, :final team) => LiveGameCard(
-          event: event,
-          team: team,
-          now: now,
-          onContinue: () => actions.onContinue(event, team),
-          onChat: () => actions.onChat(event, team),
-        ),
+      LiveHero(:final event, :final team) => _live(event, liveTeam?.call(team.name) ?? team),
       StartingSoonHero(:final event, :final minutesLeftToEnter) => StartingSoonCard(
           event: event,
           minutesLeft: minutesLeftToEnter,
@@ -56,4 +56,12 @@ class HomeHeroSection extends StatelessWidget {
       NoHero() => const SizedBox.shrink(),
     };
   }
+
+  Widget _live(Event event, Team team) => LiveGameCard(
+        event: event,
+        team: team,
+        now: now,
+        onContinue: () => actions.onContinue(event, team),
+        onChat: () => actions.onChat(event, team),
+      );
 }

@@ -84,4 +84,32 @@ void main() {
     await pumpEventQueue();
     expect(calls, greaterThan(0));
   });
+
+  test('a change that does not move the board (a new location) tells nobody', () async {
+    controller.watch(_event('e1'));
+    streams['e1']?.add([_team('Lupii', 3), _team('Bufnițele', 4)]);
+    await pumpEventQueue();
+    var calls = 0;
+    controller.addListener(() => calls++);
+    streams['e1']?.add([_team('Lupii', 3)..latitude = 45.8, _team('Bufnițele', 4)..longitude = 24.2]);
+    await pumpEventQueue();
+    expect(calls, 0);
+    streams['e1']?.add([_team('Lupii', 5), _team('Bufnițele', 4)]);
+    await pumpEventQueue();
+    expect(calls, 1);
+    expect(controller.ranked.first.team.name, 'Lupii');
+  });
+
+  test('a new presence time does tell its listeners', () async {
+    controller.watch(_event('e1'));
+    streams['e1']?.add([_team('Lupii', 3)]);
+    await pumpEventQueue();
+    var calls = 0;
+    controller.addListener(() => calls++);
+    final seen = Team.fromMap({'name': 'Lupii', 'missionProgress': 3, 'hasStarted': true})
+      ..presence['u1'] = DateTime(2026, 11, 14, 11);
+    streams['e1']?.add([seen]);
+    await pumpEventQueue();
+    expect(calls, 1);
+  });
 }
