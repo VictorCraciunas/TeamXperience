@@ -57,4 +57,11 @@ void main() {
   test('normaliseCode drops every space and lower-cases', () {
     expect(normaliseCode(' Ha r\tTI '), 'harti');
   });
+
+  test("the window is the event's own: 31 min after the start is closed for a 30-minute event", () {
+    final short = Event(eventId: 'e1', startCode: 'HARTI', dateEvent: start, enterWindowMinutes: 30);
+    final late = DateTime(2026, 11, 14, 10, 31);
+    expect(check('HARTI', e: short, now: late), StartCodeResult.closed);
+    expect(check('HARTI', now: late), StartCodeResult.ok);
+  });
 }

@@ -178,10 +178,18 @@ class TeamRepo {
       throw Exception('Failed to fetch team for user: $userId in event: $eventId');
     }
   }
+  /// Marks the team started and, the first time only, stamps `startedAt`
+  /// with the server time: the first member to enter the code starts the
+  /// clock for everyone.
   Future<void> startTeam(String eventId, String teamName) async {
     try {
-      await _firestore.collection('events').doc(eventId).collection('teams').doc(teamName).update({
-        'hasStarted': true,
+      final ref = _firestore.collection('events').doc(eventId).collection('teams').doc(teamName);
+      await _firestore.runTransaction((tx) async {
+        final snapshot = await tx.get(ref);
+        tx.update(ref, {
+          'hasStarted': true,
+          if (snapshot.data()?['startedAt'] == null) 'startedAt': FieldValue.serverTimestamp(),
+        });
       });
     } catch (e, stacktrace) {
       print('Error starting team: $e');

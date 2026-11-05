@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../enums/difficulty.dart';
 import '../enums/event_status.dart';
 import '../enums/screen_animation.dart';
+import '../enums/event_look.dart';
 import '../enums/event_type.dart';
 import 'event_defaults.dart';
 import 'mission.dart';
@@ -82,12 +83,26 @@ class Event {
   /// Who runs the event; blank means TeamXperience.
   String? organiserName;
 
+  /// The letter teams read before the first mission, and who signs it
+  /// ("Cartograful").
+  String? introLetter;
+  String? introSignature;
+
+  /// How many hints a team may open in each mission.
+  int hintsPerMission;
+
+  /// How long after the start teams can still type the start code.
+  int enterWindowMinutes;
+
+  /// The look of the event's own screens.
+  EventLook look;
+
   bool get isDraft => status == EventStatus.draft;
 
   static const Duration maxDuration = Duration(hours: 3);
 
   /// How long after the start teams can still type the start code.
-  static const Duration enterWindow = Duration(minutes: 60);
+  Duration get enterWindow => Duration(minutes: enterWindowMinutes);
 
   bool get hasExpired {
     final start = dateEvent;
@@ -194,6 +209,11 @@ class Event {
     List<String>? whatToBring,
     this.story,
     this.organiserName,
+    this.introLetter,
+    this.introSignature,
+    this.hintsPerMission = 1,
+    this.enterWindowMinutes = 60,
+    this.look = EventLook.app,
   })  : missions = missions ?? [],
         whatToBring = whatToBring ?? [];
 
@@ -252,6 +272,11 @@ class Event {
       whatToBring: [for (final item in map['whatToBring'] as List<dynamic>? ?? []) item.toString()],
       story: map['story'] as String?,
       organiserName: map['organiserName'] as String?,
+      introLetter: map['introLetter'] as String?,
+      introSignature: map['introSignature'] as String?,
+      hintsPerMission: (map['hintsPerMission'] as num?)?.toInt() ?? 1,
+      enterWindowMinutes: (map['enterWindowMinutes'] as num?)?.toInt() ?? 60,
+      look: EventLook.fromName(map['look'] as String?),
     );
   }
 
@@ -297,6 +322,11 @@ class Event {
       'whatToBring': whatToBring,
       'story': story,
       'organiserName': organiserName,
+      'introLetter': introLetter,
+      'introSignature': introSignature,
+      'hintsPerMission': hintsPerMission,
+      'enterWindowMinutes': enterWindowMinutes,
+      'look': look.name,
     };
   }
 

@@ -113,6 +113,17 @@ void main() {
       expect((hero as StartingSoonHero).minutesLeftToEnter, 50);
     });
 
+    test('a 30-minute window: 20 minutes left 10 minutes after the start', () {
+      final event = _event('e', start: _now.subtract(const Duration(minutes: 10)))..enterWindowMinutes = 30;
+      final hero = _resolve(startedRecently: event, startedRecentlyTeam: _team());
+      expect((hero as StartingSoonHero).minutesLeftToEnter, 20);
+    });
+
+    test('a 30-minute window is closed 31 minutes after the start', () {
+      final event = _event('e', start: _now.subtract(const Duration(minutes: 31)))..enterWindowMinutes = 30;
+      expect(recentlyStartedEvent([event], _now), isNull);
+    });
+
     test('works when the team is not known yet', () {
       final event = _event('e', start: _now.subtract(const Duration(minutes: 10)));
       expect(_resolve(startedRecently: event), isA<StartingSoonHero>());

@@ -30,6 +30,10 @@ class Team {
   /// screen every minute. Never written by [toJson].
   final Map<String, DateTime> presence;
 
+  /// When the first member entered the start code (server time); the game's
+  /// clock. Set once by `TeamRepo.startTeam`; never written by [toJson].
+  final DateTime? startedAt;
+
   /// When each mission was solved (mission index → time). Never written by
   /// [toJson]: the puzzle controller sets one entry at a time.
   final Map<int, DateTime> missionCompletedAt;
@@ -56,6 +60,7 @@ class Team {
     this.photoConsent = false,
     Map<String, DateTime>? presence,
     Map<int, DateTime>? missionCompletedAt,
+    this.startedAt,
   })  : userIds = userIds ?? [],
         photoApprovals = photoApprovals ?? {},
         presence = presence ?? {},
@@ -187,6 +192,7 @@ class Team {
       photoConsent: map['photoConsent'] as bool? ?? false,
       presence: _presence(map['presence']),
       missionCompletedAt: _missionTimes(map['missionCompletedAt']),
+      startedAt: _time(map['startedAt']),
     );
   }
 

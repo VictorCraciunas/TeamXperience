@@ -8,17 +8,17 @@ bool isOverAt(Event e, DateTime now) {
   return e.isStopped || (start != null && now.isAfter(start.add(Event.maxDuration)));
 }
 
-/// From the start to [Event.enterWindow] after it, the last minute included.
+/// From the start to the event's [Event.enterWindow] after it, the last minute included.
 bool inEnterWindow(Event e, DateTime now) {
   final start = e.dateEvent;
-  return start != null && !now.isBefore(start) && !now.isAfter(start.add(Event.enterWindow));
+  return start != null && !now.isBefore(start) && !now.isAfter(start.add(e.enterWindow));
 }
 
 /// Whole minutes left to type the start code, rounded up.
 int enterMinutesLeft(Event e, DateTime now) {
   final start = e.dateEvent;
   if (start == null) return 0;
-  final left = start.add(Event.enterWindow).difference(now).inSeconds;
+  final left = start.add(e.enterWindow).difference(now).inSeconds;
   return left <= 0 ? 0 : (left / 60).ceil();
 }
 
