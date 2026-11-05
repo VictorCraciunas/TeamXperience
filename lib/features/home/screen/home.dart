@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/features/home/controller/home_controller.dart';
+import 'package:teamxperience/features/home/logic/hero_from_providers.dart';
 import 'package:teamxperience/features/home/logic/home_hero.dart';
 import 'package:teamxperience/features/home/logic/preparation_steps.dart';
 import 'package:teamxperience/features/home/widgets/events_panel.dart';
@@ -128,18 +129,9 @@ class _HomeState extends State<Home> {
     UserEventsProvider userEvents,
   ) {
     final now = DateTime.now();
-    final registered = userEvents.registeredEvents;
     final upcomingRegistered = userEvents.upcomingRegisteredEvents;
-    HomeHero resolve(DateTime at) => resolveHomeHero(
-      now: at,
-      activeEvent: userEvents.activeEvent,
-      activeTeam: userEvents.activeTeam,
-      startedRecently: userEvents.recentlyStartedEvent,
-      startedRecentlyTeam: null,
-      registeredUpcoming: upcomingRegistered,
-      allEvents: eventList.events,
-      registeredIds: registered.map((e) => e.eventId).toSet(),
-    );
+    HomeHero resolve(DateTime at) =>
+        heroFromProviders(userEvents: userEvents, eventList: eventList, now: at);
     final hero = resolve(now);
     _loadExtras(hero);
 
