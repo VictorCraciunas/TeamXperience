@@ -32,22 +32,28 @@ class _JoinTeamScreenState extends State<JoinTeamScreen> {
     if (controller == null) return const Scaffold();
 
     return Scaffold(
-      appBar: ScreenBar(
-        leadingIcon: TablerIcons.arrow_left,
-        onLeading: controller.back,
-        title: 'Intră într-o echipă',
-      ),
-      body: SafeArea(
-        top: false,
-        child: ListenableBuilder(
-          listenable: controller,
-          builder:
-              (context, _) => JoinTeamBody(
-                state: controller.state,
-                onCodeChanged: controller.codeChanged,
-                onJoin: controller.confirm,
+      body: Column(
+        children: [
+          ScreenBar(
+            leadingIcon: TablerIcons.arrow_left,
+            onLeading: controller.back,
+            title: 'Intră într-o echipă',
+          ),
+          Expanded(
+            child: SafeArea(
+              top: false,
+              child: ListenableBuilder(
+                listenable: controller,
+                builder:
+                    (context, _) => JoinTeamBody(
+                      state: controller.state,
+                      onCodeChanged: controller.codeChanged,
+                      onJoin: controller.confirm,
+                    ),
               ),
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }

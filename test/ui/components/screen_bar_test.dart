@@ -5,9 +5,21 @@ import 'package:teamxperience/ui/components/navigation/screen_bar.dart';
 import 'package:teamxperience/ui/theme/app_colors.dart';
 import 'package:teamxperience/ui/theme/app_theme.dart';
 
+/// Screens put the bar at the top of their body, so it is exactly as tall as
+/// its content at every text size.
 Future<void> _pump(WidgetTester tester, ScreenBar bar) {
   return tester.pumpWidget(
-    MaterialApp(theme: AppTheme.light, home: Scaffold(appBar: bar)),
+    MaterialApp(
+      theme: AppTheme.light,
+      home: Scaffold(
+        body: Column(
+          children: [
+            bar,
+            const Expanded(child: SizedBox(key: ValueKey('body'))),
+          ],
+        ),
+      ),
+    ),
   );
 }
 
@@ -76,10 +88,6 @@ void main() {
     await _pump(tester, _bar(subtitle: 'Sub'));
     final height = tester.getSize(find.byType(ScreenBar)).height;
     expect(height, closeTo(12 + 12 * 1.45 + 11 * 1.45 + 13, 1));
-    expect(
-      height,
-      lessThanOrEqualTo(_bar(subtitle: 'Sub').preferredSize.height),
-    );
   });
 
   testWidgets('it keeps clear of the status bar', (tester) async {
@@ -93,7 +101,7 @@ void main() {
               ).copyWith(padding: const EdgeInsets.only(top: 30)),
               child: child ?? const SizedBox.shrink(),
             ),
-        home: Scaffold(appBar: _bar(subtitle: 'Sub')),
+        home: Scaffold(body: Column(children: [_bar(subtitle: 'Sub')])),
       ),
     );
     final iconTop = tester.getTopLeft(find.byIcon(TablerIcons.x)).dy;
@@ -112,9 +120,27 @@ void main() {
                 ).copyWith(textScaler: TextScaler.linear(scale)),
                 child: child ?? const SizedBox.shrink(),
               ),
-          home: Scaffold(appBar: _bar(subtitle: 'Sub')),
+          home: Scaffold(body: Column(children: [_bar(subtitle: 'Sub')])),
         ),
       );
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  test('is not an app bar, so it cannot be given a slot it does not fill', () {
+    expect(_bar(), isNot(isA<PreferredSizeWidget>()));
+  });
+
+  for (final scale in [1.0, 1.15, 1.3]) {
+    testWidgets('no gap between the bar and the page at text scale $scale', (
+      tester,
+    ) async {
+      tester.platformDispatcher.textScaleFactorTestValue = scale;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await _pump(tester, _bar(subtitle: 'Moștenirea Cartografului · 14 nov'));
+      final barBottom = tester.getBottomLeft(find.byType(ScreenBar)).dy;
+      final bodyTop = tester.getTopLeft(find.byKey(const ValueKey('body'))).dy;
+      expect(bodyTop, barBottom);
       expect(tester.takeException(), isNull);
     });
   }

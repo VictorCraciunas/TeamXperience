@@ -43,59 +43,65 @@ class _RegisterTeamPreviewState extends State<RegisterTeamPreview> {
     final registered = _state == 1;
 
     return Scaffold(
-      appBar: ScreenBar(
-        leadingIcon: TablerIcons.x,
-        onLeading: () => Navigator.maybePop(context),
-        title: 'Înscrie echipa',
-        subtitle: 'Moștenirea Cartografului · 14 noiembrie',
-      ),
-      body: SafeArea(
-        top: false,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.page,
-                  AppSpacing.sm,
-                  AppSpacing.page,
-                  0,
-                ),
-                child: SegmentedSwitch(
-                  labels: const ['Formular', 'După înscriere'],
-                  selectedIndex: _state,
-                  onSelected: (i) => setState(() => _state = i),
-                ),
-              ),
-              RegisterForm(
-                nameController: _name,
-                phoneController: _phone,
-                onNameChanged: (_) {},
-                onPhoneChanged: (_) {},
-                nameStatus: FieldStatus.ok,
-                nameStatusText: 'Numele e liber',
-                sizeMin: 2,
-                sizeMax: 6,
-                size: _size,
-                onSizeChanged: (n) => setState(() => _size = n),
-                rulesAccepted: _rules,
-                onRulesChanged: (v) => setState(() => _rules = v),
-                photoConsent: _photo,
-                onPhotoChanged: (v) => setState(() => _photo = v),
-                onSubmit: () => _say('înscrie echipa'),
-                locked: registered,
-              ),
-              if (registered)
-                InviteResultSection(
-                  code: 'VLP-482',
-                  size: _size,
-                  captainInitials: 'VC',
-                  onShare: () => _say('WhatsApp'),
-                  onCopy: () => _say('copiază'),
-                ),
-            ],
+      body: Column(
+        children: [
+          ScreenBar(
+            leadingIcon: TablerIcons.x,
+            onLeading: () => Navigator.maybePop(context),
+            title: 'Înscrie echipa',
+            subtitle: 'Moștenirea Cartografului · 14 noiembrie',
           ),
-        ),
+          Expanded(
+            child: SafeArea(
+              top: false,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.page,
+                        AppSpacing.sm,
+                        AppSpacing.page,
+                        0,
+                      ),
+                      child: SegmentedSwitch(
+                        labels: const ['Formular', 'După înscriere'],
+                        selectedIndex: _state,
+                        onSelected: (i) => setState(() => _state = i),
+                      ),
+                    ),
+                    RegisterForm(
+                      nameController: _name,
+                      phoneController: _phone,
+                      onNameChanged: (_) {},
+                      onPhoneChanged: (_) {},
+                      nameStatus: FieldStatus.ok,
+                      nameStatusText: 'Numele e liber',
+                      sizeMin: 2,
+                      sizeMax: 6,
+                      size: _size,
+                      onSizeChanged: (n) => setState(() => _size = n),
+                      rulesAccepted: _rules,
+                      onRulesChanged: (v) => setState(() => _rules = v),
+                      photoConsent: _photo,
+                      onPhotoChanged: (v) => setState(() => _photo = v),
+                      onSubmit: () => _say('înscrie echipa'),
+                      locked: registered,
+                    ),
+                    if (registered)
+                      InviteResultSection(
+                        code: 'VLP-482',
+                        size: _size,
+                        captainInitials: 'VC',
+                        onShare: () => _say('WhatsApp'),
+                        onCopy: () => _say('copiază'),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

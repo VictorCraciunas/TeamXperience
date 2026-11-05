@@ -56,37 +56,43 @@ class _JoinTeamPreviewState extends State<JoinTeamPreview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ScreenBar(
-        leadingIcon: TablerIcons.arrow_left,
-        onLeading: () => Navigator.maybePop(context),
-        title: 'Intră într-o echipă',
-      ),
-      body: SafeArea(
-        top: false,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.page,
-                AppSpacing.sm,
-                AppSpacing.page,
-                0,
-              ),
-              child: SegmentedSwitch(
-                labels: const ['Găsit', 'Scrie', 'Problemă'],
-                selectedIndex: _state,
-                onSelected: (i) => setState(() => _state = i),
+      body: Column(
+        children: [
+          ScreenBar(
+            leadingIcon: TablerIcons.arrow_left,
+            onLeading: () => Navigator.maybePop(context),
+            title: 'Intră într-o echipă',
+          ),
+          Expanded(
+            child: SafeArea(
+              top: false,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.page,
+                      AppSpacing.sm,
+                      AppSpacing.page,
+                      0,
+                    ),
+                    child: SegmentedSwitch(
+                      labels: const ['Găsit', 'Scrie', 'Problemă'],
+                      selectedIndex: _state,
+                      onSelected: (i) => setState(() => _state = i),
+                    ),
+                  ),
+                  Expanded(
+                    child: JoinTeamBody(
+                      state: _joinState,
+                      onCodeChanged: (_) {},
+                      onJoin: () => _say('intră în echipă'),
+                    ),
+                  ),
+                ],
               ),
             ),
-            Expanded(
-              child: JoinTeamBody(
-                state: _joinState,
-                onCodeChanged: (_) {},
-                onJoin: () => _say('intră în echipă'),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
