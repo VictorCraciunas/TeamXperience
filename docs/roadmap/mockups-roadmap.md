@@ -410,7 +410,8 @@ line is roughly one plan, branch and merge.
 |---|---|---|---|
 | 1 | L0 | U0, U1 (route, chips, facts, sticky bar) | Nothing visible yet; the parts exist |
 | 2 | L1.1–L1.3, L9 (event + mission fields) | U3.1 | New event page, with data you can enter |
-| 3 | L1.4–L1.6, L2 | U3.2, U3.4 (team card, code) | Register a team, invite friends, they join |
+| 3 | L1.4, L1.5 (crews), L2 app side | U3.2, U3.4 (team card, code) | The register, join and Echipe screens (they show an error until 3b is deployed) |
+| 3b | L1.6 rules, L2 Cloud Functions | — | Registering and joining work for real |
 | 4 | L3 | U2, U3.3 | Five-tab shell and the new Evenimente tab |
 | 5 | L4 | U3.5 | New Home before and during an event |
 | 6 | L5, L6 | U3.6–U3.8 | The whole game in the event theme |
@@ -420,3 +421,22 @@ line is roughly one plan, branch and merge.
 
 Each step gets its own spec check and a plan in `docs/superpowers/plans/` before
 code, and merges into `redesign/mockups` (see "Branches"; no push).
+
+**Step 3b (parked by Victor on 2026-11-05, to do later).** Tasks 1 and 3 of
+`docs/superpowers/plans/2026-11-04-redesign-step-3-teams-and-invites.md`:
+`firestore.rules` with the emulator tests (start by comparing with the rules
+live in the Firebase console) and the five callables (`checkTeamName`,
+`createCrew`, `registerTeam`, `previewInvite`, `joinTeam`). Carry into it:
+- registering an existing crew for a new event (the register screen never
+  passes `crewId` today, so every registration makes a new crew);
+- `joinTeam` returning the event ids for a player who is already a member (a
+  join that timed out but committed), and `previewInvite` sending the team's
+  members rather than the crew's;
+- a signed-out call answers `unauthenticated` with `reason: 'notSignedIn'`;
+- from Task 2: quote the test glob, add `@types/node`, escape the
+  combining-mark range, fold Ş/Ș in `nameKey`, keep compiled tests out of a
+  deploy;
+- the emulators line in `docs/platform-and-config.md`;
+- whether "Editează" on team details is for the captain only, decided with
+  the rules.
+Deploying the functions and the rules stays Victor's call.
