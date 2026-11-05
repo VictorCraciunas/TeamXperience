@@ -159,7 +159,8 @@ class _HomeState extends State<Home> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        section('greeting', greeting),
+        // During a game the live card follows the header directly (mockup 02).
+        if (hero is! LiveHero) section('greeting', greeting),
         if (hero is! NoHero) ...[
           const SizedBox(height: 12),
           section(

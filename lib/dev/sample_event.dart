@@ -3,6 +3,8 @@ import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/puzzle.dart';
+import 'package:teamxperience/model/team.dart';
+import 'package:teamxperience/model/team_member.dart';
 
 /// The event of mockup 01, for the gallery and the tests.
 Event sampleEvent() => Event(
@@ -75,3 +77,51 @@ List<Event> sampleOpenEvents() => [
         difficulty: Difficulty.easy,
       ),
     ];
+
+/// The players of mockup 02's team Vulpile.
+const sampleMembers = [
+  TeamMember(uid: 'vc', displayName: 'Victor Crăciunaș', initials: 'VC'),
+  TeamMember(uid: 'am', displayName: 'Ana Moldovan', initials: 'AM'),
+  TeamMember(uid: 'ir', displayName: 'Ioana Rus', initials: 'IR'),
+  TeamMember(uid: 'dp', displayName: 'Dan Popa', initials: 'DP'),
+];
+
+/// Mockup 02's team before the game: four of four, registered.
+Team sampleTeam() => Team(
+      name: 'Vulpile',
+      teamMembers: '',
+      captainName: 'Victor',
+      phoneNumber: '',
+      captainEmail: '',
+      numberOfMembers: 4,
+      members: sampleMembers,
+    );
+
+/// Mockup 02's live board at [now]: Bufnițele on mission 5, Vulpile (three
+/// players here, a mission solved 6 min ago) and Lupii de Cetate on 4.
+List<Team> sampleLiveTeams(DateTime now) {
+  Team team(String name, int progress, DateTime last, {List<TeamMember> members = const [], Map<String, DateTime>? presence}) => Team(
+        name: name,
+        teamMembers: '',
+        captainName: '',
+        phoneNumber: '',
+        captainEmail: '',
+        numberOfMembers: 4,
+        missionProgress: progress,
+        hasStarted: true,
+        members: members,
+        presence: presence,
+        missionCompletedAt: {progress - 1: last},
+      );
+  return [
+    team('Bufnițele', 4, now.subtract(const Duration(minutes: 3))),
+    team(
+      'Vulpile',
+      3,
+      now.subtract(const Duration(minutes: 6)),
+      members: sampleMembers,
+      presence: {for (final m in sampleMembers.take(3)) m.uid: now.subtract(const Duration(seconds: 40))},
+    ),
+    team('Lupii de Cetate', 3, now.subtract(const Duration(minutes: 2))),
+  ];
+}
