@@ -16,6 +16,21 @@ const _months = [
   'nov',
   'dec',
 ];
+const _longMonths = [
+  'ianuarie',
+  'februarie',
+  'martie',
+  'aprilie',
+  'mai',
+  'iunie',
+  'iulie',
+  'august',
+  'septembrie',
+  'octombrie',
+  'noiembrie',
+  'decembrie',
+];
+
 const _shortDays = ['Lun', 'Mar', 'Mie', 'Joi', 'Vin', 'Sâm', 'Dum'];
 const _days = [
   'Luni',
@@ -102,3 +117,6 @@ String routeSummary(double? km, int missions) {
 /// "Echipe de 2–6", or "Echipe de 4" when both ends are the same.
 String teamSizeLine(int min, int max) =>
     min == max ? 'Echipe de $min' : 'Echipe de $min–$max';
+
+/// "noiembrie" for 11.
+String longMonth(int month) => _longMonths[month - 1];
