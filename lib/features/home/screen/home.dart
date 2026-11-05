@@ -3,13 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:teamxperience/features/home/controller/home_controller.dart';
 import 'package:teamxperience/features/home/logic/hero_from_providers.dart';
 import 'package:teamxperience/features/home/logic/home_hero.dart';
-import 'package:teamxperience/features/home/logic/preparation_steps.dart';
 import 'package:teamxperience/features/home/widgets/events_panel.dart';
 import 'package:teamxperience/features/home/widgets/home_hero_actions.dart';
 import 'package:teamxperience/features/home/widgets/home_hero_ticker.dart';
 import 'package:teamxperience/features/home/widgets/how_it_works_panel.dart';
 import 'package:teamxperience/features/home/widgets/news_panel.dart';
-import 'package:teamxperience/features/home/widgets/preparation_panel.dart';
 import 'package:teamxperience/features/home/widgets/registrations_panel.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
@@ -165,15 +163,6 @@ class _HomeState extends State<Home> {
           ),
         ),
         if (hero is! NoHero) const SizedBox(height: 14),
-        if (hero is UpcomingHero && heroEvent != null) ...[
-          section(
-            'preparation',
-            PreparationPanel(
-              steps: preparationSteps(heroEvent, _heroTeam, now),
-            ),
-          ),
-          const SizedBox(height: 14),
-        ],
         if (hero is RecommendedHero || hero is NoHero) ...[
           section('how-it-works', const HowItWorksPanel()),
           const SizedBox(height: 14),

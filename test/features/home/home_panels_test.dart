@@ -1,9 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:teamxperience/features/home/logic/preparation_steps.dart';
 import 'package:teamxperience/features/home/widgets/events_panel.dart';
 import 'package:teamxperience/features/home/widgets/how_it_works_panel.dart';
-import 'package:teamxperience/features/home/widgets/preparation_panel.dart';
 import 'package:teamxperience/features/home/widgets/registrations_panel.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/event/poster_card.dart';
@@ -24,23 +21,6 @@ void main() {
     expect(find.text('Înscrie'), findsOneWidget);
     expect(find.text('Primești'), findsOneWidget);
     expect(find.text('Rezolvă'), findsOneWidget);
-  });
-
-  testWidgets('preparation shows each step and how many are done', (tester) async {
-    await pumpUi(
-      tester,
-      const PreparationPanel(
-        steps: [
-          PreparationStep(title: 'Înscriere confirmată', subtitle: 'Vulturii · 4 membri', done: true),
-          PreparationStep(title: 'Detalii echipă complete', subtitle: 'Căpitan', done: true),
-          PreparationStep(title: 'Codul de start', subtitle: 'În ziua evenimentului', done: false),
-        ],
-      ),
-    );
-    expect(find.text('Pregătirea echipei'), findsOneWidget);
-    expect(find.text('2 din 3'), findsOneWidget);
-    expect(find.byIcon(Icons.check), findsNWidgets(2));
-    expect(find.byIcon(Icons.lock_outline), findsOneWidget);
   });
 
   group('registrations', () {
