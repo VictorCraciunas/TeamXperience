@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import '../../theme/theme_context.dart';
 import 'app_nav_item.dart';
 
-/// The round tab in the middle of the bar: a 50 px circle pulled 26 px up out
-/// of the bar (as the mockup's margin-top: -26px), navy, or red while live.
+/// The round tab in the middle of the bar: a 50 px circle pulled 26 px up
+/// (the mockup's margin-top: -26px), navy, or red while live.
 class RaisedNavButton extends StatelessWidget {
   const RaisedNavButton({super.key, required this.item, required this.onTap});
 
   final AppNavItem item;
   final VoidCallback onTap;
 
-  static const double _size = 50;
+  /// The circle's width and height.
+  static const double size = 50;
   static const double _pull = 26;
 
   @override
@@ -30,21 +31,21 @@ class RaisedNavButton extends StatelessWidget {
           children: [
             // As tall as a plain tab's icon line (29), so the circle's middle
             // stays inside the bar where taps land.
-            const SizedBox(height: 20 * 1.45 - (_size - _pull)),
+            const SizedBox(height: 20 * 1.45 - (size - _pull)),
             // Takes 24 px in the bar; the circle overflows 26 px above it.
             SizedBox(
-              height: _size - _pull,
+              height: size - _pull,
               width: 54,
               child: OverflowBox(
                 alignment: Alignment.bottomCenter,
-                minWidth: _size,
-                maxWidth: _size,
-                minHeight: _size,
-                maxHeight: _size,
+                minWidth: size,
+                maxWidth: size,
+                minHeight: size,
+                maxHeight: size,
                 child: Container(
                   key: const ValueKey('nav-raised-circle'),
-                  width: _size,
-                  height: _size,
+                  width: size,
+                  height: size,
                   decoration: BoxDecoration(
                     color: fill,
                     shape: BoxShape.circle,

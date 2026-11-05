@@ -5,6 +5,7 @@ import 'package:teamxperience/ui/components/event/open_event_card.dart';
 import 'package:teamxperience/ui/components/event/registered_event_tile.dart';
 import 'package:teamxperience/ui/components/misc/pill_switch.dart';
 import 'package:teamxperience/ui/components/misc/section_header.dart';
+import 'package:teamxperience/ui/components/route/dashed_line.dart';
 import 'package:teamxperience/ui/theme/app_colors.dart';
 import 'package:teamxperience/ui/theme/app_theme.dart';
 
@@ -35,6 +36,19 @@ void main() {
       final t = tester.widget<Text>(find.text('Deschise pentru înscriere')).style;
       expect((t?.fontSize, t?.fontWeight), (14, FontWeight.w500));
       expect(tester.widget<Text>(find.text('4')).style?.color, AppColors.light.muted);
+    });
+
+    // The mockups' `.hd:before`: a 10 px circle, 3 px navy ring, white fill, 6 px gap.
+    testWidgets('starts with a 10 px navy ring 6 px before the title', (tester) async {
+      await pumpUi(tester, const SectionHeader(title: 'Deschise pentru înscriere'));
+      final dot = find.byKey(const ValueKey('hd-dot'));
+      expect(tester.getSize(dot), const Size(10, 10));
+      final d = tester.widget<Container>(find.descendant(of: dot, matching: find.byType(Container)).first).decoration as BoxDecoration;
+      expect(d.color, AppColors.light.panel);
+      expect((d.border as Border).top.color, AppColors.light.navy);
+      expect((d.border as Border).top.width, 3);
+      expect(tester.getTopLeft(dot).dx, 14);
+      expect(tester.getTopLeft(find.text('Deschise pentru înscriere')).dx - tester.getTopRight(dot).dx, 6);
     });
 
     testWidgets('a link calls back', (tester) async {
@@ -92,6 +106,17 @@ void main() {
       expect(shares, 1);
       await tester.tap(find.text('Protocolul Cerber'));
       expect(taps, 1);
+    });
+
+    // The mockup's route row: date, a dashed line taking the rest, the facts at the right.
+    testWidgets('the facts sit at the right edge and the dashed line fills the gap', (tester) async {
+      await pumpUi(tester, _card());
+      final right = tester.getTopRight(find.byKey(const ValueKey('card-strip'))).dx - 12;
+      final facts = find.text('3,2 km · 1 h 30');
+      expect(tester.getTopRight(facts).dx, closeTo(right, 0.5));
+      final line = find.byType(DashedLine);
+      expect(tester.getTopLeft(facts).dx - tester.getTopRight(line).dx, closeTo(6, 0.5));
+      expect(tester.getTopLeft(line).dx - tester.getTopRight(find.text('Sâm 21 nov')).dx, closeTo(6, 0.5));
     });
 
     testWidgets('no badge without one', (tester) async {

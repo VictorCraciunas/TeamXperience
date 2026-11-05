@@ -52,14 +52,18 @@ class _EventsMapState extends State<EventsMap> {
     }
 
     final selected = _selected;
-    final single = points.length == 1;
+    // Pins that all share one spot give a zero-size box, which a camera fit
+    // would zoom into forever, so they are centred like a single pin.
+    final single = bounds.southWest == bounds.northEast;
     return Stack(
       children: [
         FlutterMap(
           options: MapOptions(
             initialCenter: points.first.$2,
             initialZoom: 15,
-            initialCameraFit: single ? null : CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(40)),
+            initialCameraFit: single
+                ? null
+                : CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(40), maxZoom: 16),
             onTap: (_, _) => setState(() => _selected = null),
           ),
           children: [

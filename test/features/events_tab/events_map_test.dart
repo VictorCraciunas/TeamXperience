@@ -49,4 +49,17 @@ void main() {
     await tester.pump();
     expect(find.text('Înscriși'), findsOneWidget);
   });
+
+  testWidgets('two events on the same start pin still open a map', (tester) async {
+    final a = sampleEvent();
+    final b = Event(
+      eventId: 'twin',
+      name: 'Geamăn',
+      startLatitude: a.startLatitude,
+      startLongitude: a.startLongitude,
+    );
+    await _pump(tester, [a, b]);
+    expect(tester.takeException(), isNull);
+    expect(find.byType(EventMapPin), findsNWidgets(2));
+  });
 }

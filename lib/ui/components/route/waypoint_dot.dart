@@ -5,20 +5,21 @@ import '../../theme/theme_context.dart';
 /// A stop on the route, or its finish.
 enum WaypointKind { stop, finish }
 
-/// The 16 px dot that marks a stop on a route line: a navy ring for a stop,
-/// a filled teal dot for the finish.
+/// The dot that marks a stop on a route line: a navy ring for a stop, a
+/// filled teal dot for the finish. 16 px on a route; 10 px before a heading.
 class WaypointDot extends StatelessWidget {
-  const WaypointDot({super.key, this.kind = WaypointKind.stop});
+  const WaypointDot({super.key, this.kind = WaypointKind.stop, this.size = 16});
 
   final WaypointKind kind;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final finish = kind == WaypointKind.finish;
     return Container(
-      width: 16,
-      height: 16,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: finish ? colors.tick : colors.panel,

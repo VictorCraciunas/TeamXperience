@@ -106,7 +106,7 @@ Event lifecycle: players register for events (`registeredEventIds`), enter the e
 ### Features map (`lib/features/`)
 
 - **Auth:** `splash`, `loader_page`, `log-in`, `sign-up`, `forgot-password`
-- **Player:** `home`, `events_dashboard/events_dashboard_user`, `event_details`, `register_team`, `team_details`, `enter_code`, `event_game`, `calendar`, `map`, `news_dashboard`, `news_details`, `filter/*`
+- **Player:** `shell` (UserShell), `home`, `events_tab`, `play_tab`, `teams`, `profile`, `event_details`, `register_team`, `team_details`, `enter_code`, `event_game`, `calendar`, `map`, `news_dashboard`, `news_details`, `filter/*`
 - **Admin:** `admin/home`, `admin/create_event` (landing form + `create_missions_and_puzzles` builder with per-component `create_*` editors and controllers), `admin/create_news`, `events_dashboard/events_dashboard_admin`, `event_management` (live control: stop event, etc.), `event_see_registered_teams`, `team_chats` (list of team conversations), `chat`, `news_category_manipulation`, `notification` (send push)
 - Directories named `common_widgets`, `widgets/` hold per-feature sub-widgets; `event_game/widgets/image_upload/` is the split photo-puzzle upload flow driven by `ImageUploadPuzzleController`.
 

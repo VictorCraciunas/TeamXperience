@@ -80,7 +80,7 @@ class OpenEventCard extends StatelessWidget {
                         width: 28,
                         height: 28,
                         decoration: BoxDecoration(color: colors.heroButton, shape: BoxShape.circle),
-                        child: Icon(TablerIcons.share, size: 15, color: colors.text),
+                        child: Icon(TablerIcons.share, size: 14, color: colors.text),
                       ),
                     ),
                   ),
@@ -94,20 +94,30 @@ class OpenEventCard extends StatelessWidget {
                 children: [
                   Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppTextStyles.cardTitle(context)),
                   const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(TablerIcons.map_pin, size: 13, color: colors.accent),
-                      const SizedBox(width: 6),
-                      // The texts take what they need, shortened if they must; the
-                      // dashed line takes the rest.
-                      Flexible(flex: 2, child: Text(date, style: small, maxLines: 1, overflow: TextOverflow.ellipsis)),
-                      const SizedBox(width: 6),
-                      const Expanded(child: DashedLine()),
-                      if (facts.isNotEmpty) ...[
-                        const SizedBox(width: 6),
-                        Flexible(flex: 2, child: Text(facts, style: small, maxLines: 1, overflow: TextOverflow.ellipsis)),
-                      ],
-                    ],
+                  // The texts take what they need, capped so a narrow phone
+                  // shortens them instead of overflowing; the dashed line takes
+                  // the rest, so the facts sit at the right edge. (A Flexible
+                  // would leave its unused share blank.)
+                  LayoutBuilder(
+                    builder: (context, box) {
+                      Widget capped(String text, double share) => ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: box.maxWidth * share),
+                            child: Text(text, style: small, maxLines: 1, overflow: TextOverflow.ellipsis),
+                          );
+                      return Row(
+                        children: [
+                          Icon(TablerIcons.map_pin, size: 13, color: colors.accent),
+                          const SizedBox(width: 6),
+                          capped(date, 0.45),
+                          const SizedBox(width: 6),
+                          const Expanded(child: DashedLine()),
+                          if (facts.isNotEmpty) ...[
+                            const SizedBox(width: 6),
+                            capped(facts, 0.4),
+                          ],
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),

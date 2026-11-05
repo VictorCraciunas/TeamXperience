@@ -18,7 +18,7 @@ Every folder under `lib/features/` follows `controller/` + `screen/` (+ `widgets
 | `registerTeam` | `RegisterTeamScreen` | `Event` |
 | `registerTeamDetails` | `TeamDetailsScreen` | `{'event': Event, 'user': AppUser}` |
 | `joinTeam` | `JoinTeamScreen` | none |
-| `teams` | `TeamsScreen` (Echipe) | none; opened from the Profil tab ("Echipele mele") and in place of `joinTeam` after joining with no known event |
+| `teams` | `TeamsScreen` (Echipe) | none; the Echipe tab of `UserShell`, and opened in place of `joinTeam` after joining with no known event |
 | `enterCodeScreen` | `EnterCode` | `Event` |
 | `eventGame` | `EventGameScreen` | `{'event': Event, 'team': Team?}` |
 | `puzzleGame` | `PuzzleGameScreen` | `{'mission','background' (ImageProvider),'event','team'}`; pops with updated `Team` (or `null` on error) |

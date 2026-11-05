@@ -33,7 +33,15 @@ class NavButton extends StatelessWidget {
           key: active ? ValueKey('nav-active-$index') : null,
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
+            Container(
+              key: active ? const ValueKey('nav-pill') : null,
+              // The mockup's `.on i`: the icon padded 2 px / 14 px in a pill.
+              padding: active ? const EdgeInsets.symmetric(horizontal: 14, vertical: 2) : null,
+              decoration: active
+                  ? BoxDecoration(color: colors.navActivePill, borderRadius: BorderRadius.circular(99))
+                  : null,
+              child: SizedBox(
+              width: 20,
               height: 20 * 1.45,
               child: Stack(
                 clipBehavior: Clip.none,
@@ -56,6 +64,7 @@ class NavButton extends StatelessWidget {
                       ),
                     ),
                 ],
+              ),
               ),
             ),
             const SizedBox(height: 2),
