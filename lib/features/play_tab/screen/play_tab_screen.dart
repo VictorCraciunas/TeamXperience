@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/features/play_tab/controller/play_tab_controller.dart';
 import 'package:teamxperience/features/play_tab/widgets/play_tab_view.dart';
+import 'package:teamxperience/features/shell/logic/player_tabs.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
 import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
@@ -10,9 +11,6 @@ import 'package:teamxperience/ui/components/navigation/tab_header.dart';
 /// The Joacă tab of the player shell.
 class PlayTabScreen extends StatefulWidget {
   const PlayTabScreen({super.key});
-
-  /// The Evenimente tab's index in the player shell.
-  static const eventsTab = 1;
 
   @override
   State<PlayTabScreen> createState() => _PlayTabScreenState();
@@ -28,7 +26,7 @@ class _PlayTabScreenState extends State<PlayTabScreen> {
       userEvents: context.read<UserEventsProvider>(),
       eventList: context.read<EventList>(),
       navigator: Navigator.of(context),
-      onBrowse: () => context.read<ShellController>().select(PlayTabScreen.eventsTab),
+      onBrowse: () => context.read<ShellController>().select(PlayerTab.events),
     );
   }
 

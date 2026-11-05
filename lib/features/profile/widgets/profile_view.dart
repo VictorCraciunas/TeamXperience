@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/features/profile/widgets/profile_teams_row.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
 import 'package:teamxperience/ui/components/layout/section_card.dart';
 import 'package:teamxperience/ui/components/misc/theme_mode_options.dart';
@@ -11,13 +10,11 @@ class ProfileView extends StatelessWidget {
     required this.name,
     required this.email,
     required this.onLogout,
-    required this.onTeams,
   });
 
   final String name;
   final String email;
   final VoidCallback onLogout;
-  final VoidCallback onTeams;
 
   String get _initials {
     final words = name.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty);
@@ -77,8 +74,6 @@ class ProfileView extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 12),
-          SectionCard(title: 'Echipe', child: ProfileTeamsRow(onTap: onTeams)),
           const SizedBox(height: 12),
           const SectionCard(title: 'Aspect', child: ThemeModeOptions()),
           const SizedBox(height: 16),

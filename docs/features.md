@@ -12,7 +12,7 @@ Every folder under `lib/features/` follows `controller/` + `screen/` (+ `widgets
 | `signup` | `RegisterScreen` (email sign-up form) | – |
 | `login` | `LogInScreen` | – |
 | `forgotPassword` | `ForgotPasswordScreen` | – |
-| `home` | `UserShell` (tabs: `Home`, `FilterEventsUser`, `StiriDashboard`, `ProfileScreen`) | – |
+| `home` | `UserShell` (tabs: `Home`, `EventsTabScreen`, `PlayTabScreen` (raised, "În joc" while live), `TeamsScreen`, `ProfileScreen`; Știri opens from Home's "Vezi toate") | – |
 | `adminHome` | `AdminShell` (tabs: `AdminHome`, `EventsDashboard`, `StiriDashboard`, `ProfileScreen`) | – |
 | `eventDetails` | `EventDetailsScreen` | `{'event': Event, 'isAdmin': bool}` |
 | `registerTeam` | `RegisterTeamScreen` | `Event` |
@@ -49,6 +49,8 @@ Every folder under `lib/features/` follows `controller/` + `screen/` (+ `widgets
 ### Player
 - `home` — `Consumer3<EventList, NewsList, UserEventsProvider>` with only the hero card ticking each second (`HomeHeroTicker`; the panels rebuild when the kind of hero changes, via `HomeHero.signature`). `resolveHomeHero` (`logic/home_hero.dart`) picks the hero (Live, Starting soon, Upcoming, Recommended, none), `HomeHeroSection` renders it with the shared `EventHeroCard`, then panels: `PreparationPanel` (upcoming), `HowItWorksPanel` (recommended/none), `RegistrationsPanel`, `EventsPanel`, `NewsPanel`. `HomeController` (plain class) handles navigation, team lookup and sharing.
 - `events_dashboard/events_dashboard_admin` — admin Evenimente: scrolling header (tick-outlined "Creează eveniment", animated search, filter button) over `EventCard` sections (viitoare / trecute). The filter button opens `showFilterSheet` with period, event type and stare (viitoare / trecute), combined. The same header pattern is used on admin Știri (period, public or private, category).
+- `play_tab` — the interim Joacă tab (until the start-code flow of mockup 05): from the same hero as Home (`home/logic/hero_from_providers.dart`), it offers "Continuă jocul", "Introdu codul" ({m} min să intri), the next game, or "Vezi evenimentele" (switches to Evenimente). `isLive` drives the shell's "În joc".
+- `shell` — `UserShell` and `logic/player_tabs.dart` (`playerNavItems`, `PlayerTab`).
 - `events_tab` — the player Evenimente tab of mockup 03: `TabHeader` with a search button and the Listă/Hartă `PillSwitch`, filter chips (Toate, Luna asta, Ușor/Mediu/Greu, Sub 2 h; `logic/event_filters.dart`), then "Înscrierile tale" (`RegisteredEventTile`, "{team} · peste N zile"), "Deschise pentru înscriere" and "În curând" (`OpenEventCard`, "Mai sunt N locuri" from `TeamService.countTeams` when `maxTeams` is set); sections come from `logic/event_sections.dart`. `EventsTabController` takes plain inputs (event and registration getters, a listenable) so it is testable without Firebase. Replaces the old `events_dashboard_user` feed.
 - `event_details` — event info; register/"already registered" (`already_registered_card`), admin variant shows management actions.
 - `register_team` — one screen: `RegisterForm` (+ `TeamNameField`, `RegisterInput` (now in `lib/ui/components/inputs/`, also used by `NewCrewSheet`), `FieldLabel`, `ConsentRow`) and, after a successful registration, `InviteResultSection` under it (the invite code to send on). `RegisterTeamController` is a `ChangeNotifier` (state, `blocker`, `submit`, share/copy, `close`); `logic/team_name_check.dart` (`TeamNameCheck`) debounces the name check.

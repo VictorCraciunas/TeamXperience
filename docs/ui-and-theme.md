@@ -25,6 +25,10 @@ Moved from `lib/widgets/` (and `utils/snackbars.dart`) in UI redesign phase 1: `
 | `showFilterSheet` (`FilterGroup`, `FilterOption`, `FilterSheetResult`) | Admin filter bottom sheet: a period (presets, or "Dată personalizată" with the calendar sheet) plus any number of option groups, each with "Toate", applied together. A group can have an `onAdd` (a "+" chip after its options, to create one on the spot) and an `onOptionLongPress` (long press an option to delete it) |
 | `showTextInputDialog` | Asks for one line of text (trimmed); stays open while empty |
 | `TickOutlineButton` | Wide pill button with the tick ring (panel fill, icon and label), used for "Creează ..." in feed headers |
+| `AppBottomNav` + `AppNavItem` (`raised`, `live`), `NavButton`, `RaisedNavButton` | The mockups' bottom bar (`.nav`): up to five tabs on the bottom, accent w500 when active, no pill; a raised item is a 50 px navy circle (red when `live`) pulled 26 px up, which rises 14 px above the bar |
+| `TabHeader` | The top of a tab: 17 px title on a panel with a 1 px line, optional trailing widget and a row under it (Evenimente, Joacă, Echipe) |
+| `SectionHeader`, `PillSwitch` | The mockups' `.hd` heading (count or link at the right) and the Listă/Hartă switch |
+| `RegisteredEventTile`, `OpenEventCard` | "Înscrierile tale" tile (navy date block, green badge) and the open-event card (92 px strip, amber badge, share, route row) |
 | `SectionTitle` | Heading with a tick bar above a group of items |
 | `AppChip` (+ `AppChipStyle` plain / outlined / selected) | Small pill with an optional icon: puzzle kinds, filters, the map link |
 | `RouteStrip` | The route at a glance: start pin, dashed line with the length on it, finish flag, optional map chip, start and end names |

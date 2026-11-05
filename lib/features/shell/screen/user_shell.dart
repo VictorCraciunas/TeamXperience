@@ -1,14 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/features/events_tab/screen/events_tab_screen.dart';
+import 'package:teamxperience/features/home/logic/hero_from_providers.dart';
 import 'package:teamxperience/features/home/screen/home.dart';
-import 'package:teamxperience/features/news_dashboard/screen/stiri_dashboard_screen.dart';
+import 'package:teamxperience/features/play_tab/logic/play_tab_state.dart';
+import 'package:teamxperience/features/play_tab/screen/play_tab_screen.dart';
 import 'package:teamxperience/features/profile/screen/profile_screen.dart';
-import 'package:teamxperience/ui/components/navigation/app_nav_item.dart';
+import 'package:teamxperience/features/shell/logic/player_tabs.dart';
+import 'package:teamxperience/features/teams/screen/teams_screen.dart';
+import 'package:teamxperience/state_management/events_state_management.dart';
+import 'package:teamxperience/state_management/user_registered_events.dart';
 import 'package:teamxperience/ui/components/navigation/app_shell.dart';
 import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 
-/// The player's tab shell: Acasă, Evenimente, Știri and Profil.
+/// The player's tab shell of the mockups: Acasă, Evenimente, Joacă (raised,
+/// "În joc" while a game is on), Echipe and Profil.
 class UserShell extends StatefulWidget {
   const UserShell({super.key});
 
@@ -17,40 +25,51 @@ class UserShell extends StatefulWidget {
 }
 
 class _UserShellState extends State<UserShell> {
-  static const _tabCount = 4;
+  final ShellController _controller = ShellController(5);
 
-  final ShellController _controller = ShellController(_tabCount);
+  /// The game's end is time-based, so the live flag is re-read every 30 s.
+  late final Timer _tick = Timer.periodic(const Duration(seconds: 30), (_) {
+    if (mounted) setState(() {});
+  });
+
+  @override
+  void initState() {
+    super.initState();
+    _tick;
+  }
 
   @override
   void dispose() {
+    _tick.cancel();
     _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final live = isLive(
+      playTabState(
+        heroFromProviders(
+          userEvents: context.watch<UserEventsProvider>(),
+          eventList: context.watch<EventList>(),
+          now: DateTime.now(),
+        ),
+      ),
+    );
+    final items = playerNavItems(live: live);
+    final screens = <WidgetBuilder>[
+      (_) => const Home(),
+      (_) => const EventsTabScreen(),
+      (_) => const PlayTabScreen(),
+      (_) => const TeamsScreen(),
+      (_) => const ProfileScreen(),
+    ];
+
     return ChangeNotifierProvider<ShellController>.value(
       value: _controller,
       child: AppShell(
         controller: _controller,
-        tabs: [
-          AppShellTab(
-            item: const AppNavItem(icon: Icons.home_outlined, label: 'Acasă'),
-            builder: (_) => const Home(),
-          ),
-          AppShellTab(
-            item: const AppNavItem(icon: Icons.explore_outlined, label: 'Evenimente'),
-            builder: (_) => const EventsTabScreen(),
-          ),
-          AppShellTab(
-            item: const AppNavItem(icon: Icons.article_outlined, label: 'Știri'),
-            builder: (_) => const StiriDashboard(),
-          ),
-          AppShellTab(
-            item: const AppNavItem(icon: Icons.person_outline, label: 'Profil'),
-            builder: (_) => const ProfileScreen(),
-          ),
-        ],
+        tabs: [for (var i = 0; i < items.length; i++) AppShellTab(item: items[i], builder: screens[i])],
       ),
     );
   }

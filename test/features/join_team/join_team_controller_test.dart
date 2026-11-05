@@ -166,7 +166,7 @@ void main() {
   );
 
   testWidgets(
-    'with no events and no Echipe screen below, one Echipe screen is opened',
+    'with no events it goes back to where it came from (the Echipe tab)',
     (tester) async {
       final h = _Harness(tester);
       h.teams.eventIds = [];
@@ -174,7 +174,7 @@ void main() {
       await h.joinWithCode();
 
       expect(h.user.added, isEmpty);
-      expect(h.observer.stack, ['/', Routes.teams]);
+      expect(h.observer.stack, ['/']);
     },
   );
 
