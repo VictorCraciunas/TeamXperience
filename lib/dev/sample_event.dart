@@ -1,4 +1,5 @@
 import 'package:teamxperience/enums/difficulty.dart';
+import 'package:teamxperience/enums/event_look.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
@@ -27,6 +28,12 @@ Event sampleEvent() => Event(
       startLongitude: 24.1520,
       meetingPointNote: 'Piața Mare, lângă fântână',
       whatToBring: ['Telefon încărcat', 'încălțări comode'],
+      startCode: 'HARTA',
+      introLetter: 'Dragi exploratori, harta mea a rămas neterminată. Am ascuns bucățile ei în șase '
+          'locuri pe care doar un ochi atent le găsește. Prima vă așteaptă unde treptele nu se termină niciodată.',
+      introSignature: 'Cartograful',
+      hintsPerMission: 1,
+      look: EventLook.parchment,
       missions: [
         Mission(
           id: '0',

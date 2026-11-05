@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/dev/events_tab_preview.dart';
+import 'package:teamxperience/dev/game_intro_preview.dart';
+import 'package:teamxperience/dev/start_code_preview.dart';
 import 'package:teamxperience/dev/home_preview.dart';
 import 'package:teamxperience/dev/play_tab_preview.dart';
 import 'package:teamxperience/dev/shell_previews_launcher.dart';
@@ -46,6 +48,32 @@ void main() {
       expect(find.text('În joc'), findsWidgets);
     });
 
+    testWidgets('the start-code preview renders its states in $name', (tester) async {
+      await _pump(tester, const StartCodePreview(), theme);
+      expect(find.text('Introdu codul de start'), findsOneWidget);
+      expect(find.text('3 din 4 sunt aici'), findsOneWidget);
+      for (final (state, text) in [
+        ('Greșit', 'Codul nu e corect. Verifică literele.'),
+        ('Pornit', 'Intră în joc'),
+        ('Fără echipă', 'Pornește jocul'),
+      ]) {
+        await tester.tap(find.text(state));
+        await tester.pump();
+        expect(find.text(text), findsOneWidget, reason: state);
+        expect(tester.takeException(), isNull);
+      }
+    });
+
+    testWidgets('the intro preview renders both looks in $name', (tester) async {
+      await _pump(tester, const GameIntroPreview(), theme);
+      expect(find.text('Sibiu, 14 noiembrie'), findsOneWidget);
+      expect(find.text('— Cartograful'), findsOneWidget);
+      await tester.tap(find.text('Aplicație'));
+      await tester.pump();
+      expect(find.text('Spre prima misiune'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('the Joacă preview renders its four states in $name', (tester) async {
       await _pump(tester, const PlayTabPreview(), theme);
       expect(find.text('Continuă jocul'), findsOneWidget);
@@ -65,6 +93,16 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(HomePreview), findsOneWidget);
     Navigator.of(tester.element(find.byType(HomePreview))).pop();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Cod de start'));
+    await tester.pumpAndSettle();
+    expect(find.byType(StartCodePreview), findsOneWidget);
+    Navigator.of(tester.element(find.byType(StartCodePreview))).pop();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Scrisoarea'));
+    await tester.pumpAndSettle();
+    expect(find.byType(GameIntroPreview), findsOneWidget);
+    Navigator.of(tester.element(find.byType(GameIntroPreview))).pop();
     await tester.pumpAndSettle();
     await tester.tap(find.text('Joacă'));
     await tester.pumpAndSettle();
