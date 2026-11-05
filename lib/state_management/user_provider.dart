@@ -29,24 +29,10 @@ class UserProvider extends ChangeNotifier {
   }
 
   void addRegisteredEvent(String eventId) {
-    if (_currentUser != null) {
-      final updatedEventIds = List<String>.from(_currentUser!.registeredEventIds);
-      if (!updatedEventIds.contains(eventId)) {
-        updatedEventIds.add(eventId);
-
-        _currentUser = AppUser(
-            email: _currentUser!.email,
-            firstName: _currentUser!.firstName,
-            lastName: _currentUser!.lastName,
-            uid: _currentUser!.uid,
-            role: _currentUser!.role,
-            registeredEventIds: updatedEventIds,
-            fcmToken: _currentUser!.fcmToken
-        );
-
-        notifyListeners();
-      }
-    }
+    final user = _currentUser;
+    if (user == null || user.registeredEventIds.contains(eventId)) return;
+    _currentUser = user.copyWith(registeredEventIds: [...user.registeredEventIds, eventId]);
+    notifyListeners();
   }
 
 }

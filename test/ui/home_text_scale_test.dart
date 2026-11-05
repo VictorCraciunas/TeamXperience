@@ -5,11 +5,6 @@ import 'package:teamxperience/features/admin/home/logic/admin_hero.dart';
 import 'package:teamxperience/features/admin/home/widgets/admin_quick_actions_panel.dart';
 import 'package:teamxperience/features/admin/home/widgets/admin_stats_panel.dart';
 import 'package:teamxperience/features/admin/home/widgets/admin_upcoming_panel.dart';
-import 'package:teamxperience/features/home/logic/preparation_steps.dart';
-import 'package:teamxperience/features/home/widgets/events_panel.dart';
-import 'package:teamxperience/features/home/widgets/how_it_works_panel.dart';
-import 'package:teamxperience/features/home/widgets/preparation_panel.dart';
-import 'package:teamxperience/features/home/widgets/registrations_panel.dart';
 import 'package:teamxperience/model/event.dart';
 
 import 'pump_ui.dart';
@@ -23,15 +18,6 @@ final _event = Event(
 
 void main() {
   final panels = <String, Widget>{
-    'how it works': const HowItWorksPanel(),
-    'preparation': const PreparationPanel(
-      steps: [
-        PreparationStep(title: 'Înscriere confirmată', subtitle: 'Vulturii de la Sibiu · 4 membri', done: true),
-        PreparationStep(title: 'Codul de start', subtitle: 'Îl primești în ziua evenimentului', done: false),
-      ],
-    ),
-    'registrations': RegistrationsPanel(events: [_event], onTap: (_) {}, onSeeAll: () {}),
-    'events': EventsPanel(events: [_event], onTap: (_) {}, onSeeAll: () {}),
     'admin stats (live)': AdminStatsPanel(
       hero: AdminLiveHero(_event),
       stats: const AdminEventStats(teams: 128, persons: 512, finished: 64),

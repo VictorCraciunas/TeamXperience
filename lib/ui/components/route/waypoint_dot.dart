@@ -6,7 +6,8 @@ import '../../theme/theme_context.dart';
 enum WaypointKind { stop, finish }
 
 /// The dot that marks a stop on a route line: a navy ring for a stop, a
-/// filled teal dot for the finish. 16 px on a route; 10 px before a heading.
+/// filled teal dot for the finish. 16 px across (a 10 px fill in a 3 px ring),
+/// on a route and before a heading.
 class WaypointDot extends StatelessWidget {
   const WaypointDot({super.key, this.kind = WaypointKind.stop, this.size = 16});
 

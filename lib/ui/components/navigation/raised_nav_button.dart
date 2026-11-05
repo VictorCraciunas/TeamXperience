@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../../theme/theme_context.dart';
 import 'app_nav_item.dart';
 
-/// The round tab in the middle of the bar: a 50 px circle pulled 26 px up
+/// The round tab in the middle of the bar: a 50 px circle in a 4 px page ring
+/// (58 across), pulled 26 px up
 /// (the mockup's margin-top: -26px), navy, or red while live.
 class RaisedNavButton extends StatelessWidget {
   const RaisedNavButton({super.key, required this.item, required this.onTap});
@@ -11,8 +12,9 @@ class RaisedNavButton extends StatelessWidget {
   final AppNavItem item;
   final VoidCallback onTap;
 
-  /// The circle's width and height.
-  static const double size = 50;
+  /// The circle's width and height: the mockup's 50 px box plus its 4 px
+  /// border on each side (the mockup has no box-sizing reset).
+  static const double size = 58;
   static const double _pull = 26;
 
   @override
@@ -29,10 +31,7 @@ class RaisedNavButton extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // As tall as a plain tab's icon line (29), so the circle's middle
-            // stays inside the bar where taps land.
-            const SizedBox(height: 20 * 1.45 - (size - _pull)),
-            // Takes 24 px in the bar; the circle overflows 26 px above it.
+            // Takes 32 px in the bar; the circle overflows 26 px above it.
             SizedBox(
               height: size - _pull,
               width: 54,

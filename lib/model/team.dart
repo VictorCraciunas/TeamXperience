@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
 import 'package:teamxperience/model/team_member.dart';
 import 'package:teamxperience/utils/invite_code.dart' as invite_code;
@@ -25,6 +26,14 @@ class Team {
   final String? inviteCode;
   final bool photoConsent;
 
+  /// When each member was last seen playing (uid → time), written by the game
+  /// screen every minute. Never written by [toJson].
+  final Map<String, DateTime> presence;
+
+  /// When each mission was solved (mission index → time). Never written by
+  /// [toJson]: the puzzle controller sets one entry at a time.
+  final Map<int, DateTime> missionCompletedAt;
+
   Team({
     required this.name,
     required this.teamMembers,
@@ -45,8 +54,53 @@ class Team {
     this.members = const [],
     this.inviteCode,
     this.photoConsent = false,
+    Map<String, DateTime>? presence,
+    Map<int, DateTime>? missionCompletedAt,
   })  : userIds = userIds ?? [],
-        photoApprovals = photoApprovals ?? {};
+        photoApprovals = photoApprovals ?? {},
+        presence = presence ?? {},
+        missionCompletedAt = missionCompletedAt ?? {};
+
+  /// The time the latest mission was solved, or null before the first.
+  DateTime? get lastMissionAt {
+    DateTime? latest;
+    for (final at in missionCompletedAt.values) {
+      final current = latest;
+      if (current == null || at.isAfter(current)) latest = at;
+    }
+    return latest;
+  }
+
+  /// A Timestamp (or DateTime) as a DateTime; null for a pending server
+  /// timestamp or anything else.
+  static DateTime? _time(Object? value) => switch (value) {
+        Timestamp() => value.toDate(),
+        DateTime() => value,
+        _ => null,
+      };
+
+  static Map<String, DateTime> _presence(Object? raw) {
+    final result = <String, DateTime>{};
+    if (raw is Map) {
+      raw.forEach((key, value) {
+        final at = _time(value);
+        if (at != null) result[key.toString()] = at;
+      });
+    }
+    return result;
+  }
+
+  static Map<int, DateTime> _missionTimes(Object? raw) {
+    final result = <int, DateTime>{};
+    if (raw is Map) {
+      raw.forEach((key, value) {
+        final index = int.tryParse(key.toString());
+        final at = _time(value);
+        if (index != null && at != null) result[index] = at;
+      });
+    }
+    return result;
+  }
 
   /// "VLP-482", or null for a team without an invite code.
   String? get displayCode {
@@ -131,6 +185,8 @@ class Team {
       members: membersList,
       inviteCode: map['inviteCode'] as String?,
       photoConsent: map['photoConsent'] as bool? ?? false,
+      presence: _presence(map['presence']),
+      missionCompletedAt: _missionTimes(map['missionCompletedAt']),
     );
   }
 

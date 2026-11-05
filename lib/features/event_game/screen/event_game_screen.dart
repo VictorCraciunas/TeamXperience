@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,6 +12,7 @@ import '../../../constants/routes.dart';
 import '../../../model/event.dart';
 import '../controller/event_game_controller.dart';
 import '../widgets/game_back_button.dart';
+import '../widgets/keeps_presence.dart';
 import '../widgets/refreshes_active_game.dart';
 
 class EventGameScreen extends StatefulWidget {
@@ -91,9 +93,13 @@ class _EventGameScreenState extends State<EventGameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final uid = context.read<UserProvider>().currentUser?.uid;
+    final screen = _screen(context);
     return RefreshesActiveGame(
       refresh: context.read<UserEventsProvider>().loadActiveEvent,
-      child: _screen(context),
+      child: uid == null || controller.team == null
+          ? screen
+          : KeepsPresence(markPresent: () => controller.markPresent(uid), child: screen),
     );
   }
 

@@ -29,6 +29,7 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.onNavyFaint,
     required this.tickOnNavy,
     required this.heroButton,
+    required this.liveCard,
   });
 
   final Color page;
@@ -73,6 +74,9 @@ class AppColors extends ThemeExtension<AppColors> {
   /// Round buttons over a hero image (back, share).
   final Color heroButton;
 
+  /// The live game card on Home (mockup 02's #0C092A).
+  final Color liveCard;
+
   static const AppColors light = AppColors(
     page: Color(0xFFE7ECF3),
     panel: Color(0xFFFFFFFF),
@@ -100,6 +104,7 @@ class AppColors extends ThemeExtension<AppColors> {
     onNavyFaint: Color(0x1AFFFFFF),
     tickOnNavy: Color(0xFF53C4C7),
     heroButton: Color(0xE6FFFFFF),
+    liveCard: Color(0xFF0C092A),
   );
 
   static const AppColors dark = AppColors(
@@ -129,6 +134,7 @@ class AppColors extends ThemeExtension<AppColors> {
     onNavyFaint: Color(0x1AF2F4F8),
     tickOnNavy: Color(0xFF53C4C7),
     heroButton: Color(0xE6171B22),
+    liveCard: Color(0xFF1B1446),
   );
 
   LinearGradient get ctaGradient => const LinearGradient(
@@ -165,6 +171,7 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? onNavyFaint,
     Color? tickOnNavy,
     Color? heroButton,
+    Color? liveCard,
   }) {
     return AppColors(
       page: page ?? this.page,
@@ -193,6 +200,7 @@ class AppColors extends ThemeExtension<AppColors> {
       onNavyFaint: onNavyFaint ?? this.onNavyFaint,
       tickOnNavy: tickOnNavy ?? this.tickOnNavy,
       heroButton: heroButton ?? this.heroButton,
+      liveCard: liveCard ?? this.liveCard,
     );
   }
 
@@ -228,6 +236,7 @@ class AppColors extends ThemeExtension<AppColors> {
       onNavyFaint: mix(onNavyFaint, other.onNavyFaint),
       tickOnNavy: mix(tickOnNavy, other.tickOnNavy),
       heroButton: mix(heroButton, other.heroButton),
+      liveCard: mix(liveCard, other.liveCard),
     );
   }
 }

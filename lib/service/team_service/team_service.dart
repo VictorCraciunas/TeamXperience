@@ -86,9 +86,15 @@ class TeamService {
   Future<void> updateMissionProgress(
     String eventId,
     String teamName,
-    int progress,
-  ) async {
-    return teamRepo.updateMissionProgress(eventId, teamName, progress);
+    int progress, {
+    int? completedMission,
+  }) async {
+    return teamRepo.updateMissionProgress(eventId, teamName, progress, completedMission: completedMission);
+  }
+
+  /// Marks the player as seen playing now; the live Home counts who is here.
+  Future<void> markPresent(String eventId, String teamName, String uid) {
+    return teamRepo.markPresent(eventId, teamName, uid);
   }
 
   Future<void> updatePuzzleNumber(

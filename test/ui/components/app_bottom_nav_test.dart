@@ -107,21 +107,23 @@ void main() {
       }
     });
 
-    // As the mockup's CSS lays it out: bar top border 1 + padding 6; plain items are
-    // a 20 px icon on a 1.45 line (29) + 2 + an 11 px label (15.95), and the active
-    // one's icon sits in a pill padded 2 px top and bottom (33); the raised item is
-    // the 50 px circle pulled up 26 px (so it takes 24) + 2 + the label. Items sit on
-    // the bottom, so the circle rises 1 + 6 + (33 - 24) - 26 = 10 px above the bar.
-    testWidgets('the raised item is a 50 px navy circle with a 4 px page ring, 10 px above the bar', (tester) async {
+    // As the mockup's CSS lays it out (no box-sizing reset, so the circle's
+    // 4 px border sits outside its 50 px box: 58 across): bar top border 1 +
+    // padding 6; plain items are a 20 px icon on a 1.45 line (29) + 2 + an 11 px
+    // label (15.95), the active one's icon in a pill padded 2 px top and bottom
+    // (33); the raised item is the 58 px circle pulled up 26 px (so it takes 32)
+    // + 2 + the label. Items sit on the bottom, so the circle rises
+    // 1 + 6 + (33 - 32) - 26 = -18, i.e. 18 px above the bar.
+    testWidgets('the raised item is a 50 px navy circle in a 4 px page ring (58 across), 18 px above the bar', (tester) async {
       await pumpFive(tester);
       final finder = find.byKey(const ValueKey('nav-raised-circle'));
-      expect(tester.getSize(finder), const Size(50, 50));
+      expect(tester.getSize(finder), const Size(58, 58));
       final d = circle(tester);
       expect(d.color, AppColors.light.navy);
       expect((d.border as Border).top.color, AppColors.light.page);
       expect((d.border as Border).top.width, 4);
       final barTop = tester.getTopLeft(find.byType(AppBottomNav)).dy;
-      expect(barTop - tester.getTopLeft(finder).dy, closeTo(10, 0.5));
+      expect(barTop - tester.getTopLeft(finder).dy, closeTo(18, 0.5));
       expect(tester.widget<Text>(find.text('Joacă')).style?.color, AppColors.light.navy);
     });
 

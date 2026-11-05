@@ -22,8 +22,9 @@ class AppBottomNav extends StatelessWidget {
   final List<AppNavItem> items;
 
   /// How far the raised circle sticks out above the bar, as the mockup's CSS
-  /// lays it out: 1 + 6 + (33 - 24) - 26.
-  static const double raisedRise = 10;
+  /// lays it out: the 58 px circle takes 32 in its column, the active pill
+  /// column is 33, so 26 - 1 - (1 + 6) = 18.
+  static const double raisedRise = 18;
 
   static const double _side = 4;
 
