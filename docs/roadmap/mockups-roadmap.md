@@ -39,6 +39,10 @@ aprobată" is replaced by a waiting message (step 6c words it).
 intro letter (05), 6b route trail and code puzzle (06), 6c location and photo
 puzzles (07). Each gets its own branch and merge.
 
+**Step 6c (2026-11-06):** location and photo puzzles as mockup 07, the
+organiser's required rejection reason, `radiusMeters`, and progress that never
+goes back. Badges, finishing and the distance walked moved to step 7.
+
 **Decided by Victor (2026-11-06): solved missions stay closed.** On the route
 trail a solved mission is only a tick; players cannot reopen it to re-read its
 puzzle. The look of every game screen comes from the event's own puzzles; the
@@ -449,6 +453,7 @@ live in the Firebase console) and the five callables (`checkTeamName`,
 - from step 5: the rules must let a team member update `presence.{uid}` (their own uid) and `missionCompletedAt.*` on their own team doc; otherwise presence fails silently and the mission-progress update (same write) fails;
 - from step 5: write `missionCompletedAt.{i}` only when absent (a transaction or the step 7 function), so a second phone or a replay does not move the tie-break;
 - from step 6b: the rules must let a team member increment `attempts.{key}`, set `lockedUntil.{key}` (with `attempts.{key}` back to 0) and set `hintsUsed.{key}` on their own team doc;
+- from step 6c: a team member may write `photoApprovals.{key}` only as `{status: 'pending', url, at}`; only an organiser may set `approved` / `denied` (with `reason`);
 - whether "Editează" on team details is for the captain only, decided with
   the rules.
 Deploying the functions and the rules stays Victor's call.
