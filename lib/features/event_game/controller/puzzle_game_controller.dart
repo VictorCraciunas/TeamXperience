@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:teamxperience/features/event_game/logic/answer_check.dart';
+import 'package:teamxperience/features/event_game/logic/puzzle_rules.dart';
+import 'package:teamxperience/features/event_game/logic/puzzle_rules_keeper.dart';
 import 'package:teamxperience/features/event_game/logic/spaced_components.dart';
 import 'package:teamxperience/utils/component_conversion/answer_feedback.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
@@ -34,10 +38,32 @@ class PuzzleGameController {
   late Event event;
   late Team team;
 
+  /// The team's attempts, locks and hints, kept in step with teammates'
+  /// phones while the puzzle is open.
+  late final PuzzleRulesKeeper rules;
+
+  /// The organiser's line after a wrong answer; cleared on the next input.
+  final ValueNotifier<String?> wrongMessage = ValueNotifier(null);
+
+  /// Called when the last attempt of a puzzle was used (the screen opens the
+  /// hint).
+  VoidCallback? onOutOfAttempts;
+
+  StreamSubscription<Team>? _teamWatch;
+
   /// Whether this mission was already completed before entering
   bool get isMissionCompleted => missionIndex < team.missionProgress;
 
   PuzzleGameController(this.mission, this.background, this.event, this.team, this.missionIndex) {
+    rules = PuzzleRulesKeeper(
+      team: team,
+      addWrongAttempt: (key) => teamService.addWrongAttempt(event.eventId, team.name, key),
+      lockPuzzle: (key, until) => teamService.lockPuzzle(event.eventId, team.name, key, until),
+      markHintUsed: (key) => teamService.markHintUsed(event.eventId, team.name, key),
+    );
+    _teamWatch = teamService
+        .getStreamTeam(event.eventId, team.name)
+        .listen(rules.absorb, onError: (Object _) {});
     loadPuzzles();
     // Resume from saved puzzle progress (only for the current unlocked mission)
     if (!isMissionCompleted && team.puzzleNumber > 0 && team.puzzleNumber < mission.puzzles.length) {
@@ -82,7 +108,20 @@ class PuzzleGameController {
 
   void handleCodeInput(String value) {
     userInput = value;
+    wrongMessage.value = null;
   }
+
+  /// The key of the puzzle on screen in the team's counters.
+  String get currentKey => Team.puzzleKey(missionIndex, selectedPuzzle);
+
+  /// Whether the puzzle on screen has a hint the team may open.
+  bool get canUseHint {
+    final puzzle = getCurrentPuzzle();
+    return puzzle != null && !isMissionCompleted && hintAvailable(event, puzzle, team, missionIndex, selectedPuzzle);
+  }
+
+  /// Opens the hint of the puzzle on screen (counted once per puzzle).
+  Future<void> useHint() => rules.useHint(currentKey);
 
   void buttonPressed(Puzzle puzzle) {
     if (isMissionCompleted) {
@@ -91,6 +130,9 @@ class PuzzleGameController {
     }
 
     if (puzzle.type == PuzzleType.code) {
+      final key = Team.puzzleKey(missionIndex, mission.puzzles.indexOf(puzzle));
+      // A locked puzzle takes no answer, right or wrong, until the lock ends.
+      if (rules.isLocked(key)) return;
       if (isCorrectAnswer(userInput, puzzle.code)) {
         final pause = pauseAfterCorrectAnswer(puzzle);
         if (pause == Duration.zero) {
@@ -104,7 +146,11 @@ class PuzzleGameController {
           });
         }
       } else {
+        final result = rules.wrong(puzzle, key);
+        if (result == WrongResult.locked) return;
         answerFeedback.wrong();
+        wrongMessage.value = wrongLine(puzzle);
+        if (result == WrongResult.outOfAttempts) onOutOfAttempts?.call();
       }
     } else {
       navigate();
@@ -116,6 +162,7 @@ class PuzzleGameController {
     if (hasNextPuzzle()) {
       selectedPuzzleNotifier.value++;
       userInput = "";
+      wrongMessage.value = null;
 
       if (!isMissionCompleted) {
         team.puzzleNumber = selectedPuzzleNotifier.value;
@@ -191,6 +238,9 @@ class PuzzleGameController {
 
   void dispose() {
     _disposed = true;
+    _teamWatch?.cancel();
+    rules.dispose();
+    wrongMessage.dispose();
     answerFeedback.dispose();
     selectedPuzzleNotifier.dispose();
   }
