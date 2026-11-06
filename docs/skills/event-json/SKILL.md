@@ -49,6 +49,8 @@ Event
   introSignature?: String
   hintsPerMission?: Whole number         (default 1)
   enterWindowMinutes?: Whole number      (default 60)
+  finishTitle?: String
+  finishMessage?: String
   lungimeTraseu?: String                 (older events; write routeLengthKm instead)
   durata?: String                        (older events; write durationMinutes instead)
   dificultate?: String                   (older events; write difficulty instead)
@@ -208,6 +210,7 @@ A one-mission event with a code puzzle. (A fuller one is in `docs/event-import-s
 | `introLetter` | Free text: the letter teams read before the first mission, in the event's serif. Optional. |
 | `introSignature` | Who signs the letter, for example `"Cartograful"` (shown as "— Cartograful"). |
 | `hintsPerMission` | Whole number from 0 to 5, default 1: how many puzzle hints a team may open in each mission. `0` hides "Indiciu". |
+| `finishTitle`, `finishMessage` | Free text: what the finish screen says once a team solves the last mission, for example `"Harta e completă"` and `"Ați moștenit secretul cartografului."`. Optional; without them the app says "Ați terminat traseul!" and how many missions the team solved. |
 | `enterWindowMinutes` | Whole number from 10 to 180, default 60: how long after the start teams can still type the start code. |
 | `lungimeTraseu`, `durata`, `dificultate` | Text from older events, still read when the number fields are missing. Write `routeLengthKm`, `durationMinutes` and `difficulty` instead. |
 | `landingImageUrl` | A link starting with `https://`, or `null`. The event's cover picture. Files cannot be put in the JSON. |

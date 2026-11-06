@@ -690,6 +690,8 @@ void main() {
             'introSignature': 'Cartograful',
             'hintsPerMission': 2,
             'enterWindowMinutes': 30,
+            'finishTitle': 'Harta e completă',
+            'finishMessage': 'Vulpile au moștenit secretul.',
           },
           missions: [
             {
@@ -719,6 +721,8 @@ void main() {
       expect(event?.introSignature, 'Cartograful');
       expect(event?.hintsPerMission, 2);
       expect(event?.enterWindowMinutes, 30);
+      expect(event?.finishTitle, 'Harta e completă');
+      expect(event?.finishMessage, 'Vulpile au moștenit secretul.');
       final mission = event?.missions.single;
       expect((mission?.latitude, mission?.longitude), (45.7983, 24.1522));
       final puzzle = mission?.puzzles.single;

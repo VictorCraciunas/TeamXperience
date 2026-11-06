@@ -460,6 +460,7 @@ live in the Firebase console) and the five callables (`checkTeamName`,
 - from step 5: the rules must let a team member update `presence.{uid}` (their own uid) and `missionCompletedAt.*` on their own team doc; otherwise presence fails silently and the mission-progress update (same write) fails;
 - from step 5: write `missionCompletedAt.{i}` only when absent (a transaction or the step 7 function), so a second phone or a replay does not move the tie-break;
 - from step 6b: the rules must let a team member increment `attempts.{key}`, set `lockedUntil.{key}` (with `attempts.{key}` back to 0) and set `hintsUsed.{key}` on their own team doc;
+- from step 7a: a team member may increment only `walked.{their uid}`, set `finishedAt` only once (server time) and write only `events/{id}/feedback/{their uid}`; 7c reads `finishedAt`, `walked` and the feedback;
 - from step 6c: a team member may write `photoApprovals.{key}` only as `{status: 'pending', url, at}`; only an organiser may set `approved` / `denied` (with `reason`);
 - whether "Editează" on team details is for the captain only, decided with
   the rules.

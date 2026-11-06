@@ -143,7 +143,7 @@ class EventGameController extends ChangeNotifier {
 
     final t = team;
     if (t != null && !t.hasFinished) {
-      _teamService.finishTeam(event.eventId, t.name);
+      _teamService.finishTeam(event.eventId, t.name, completed: false);
       t.hasFinished = true;
     }
     notifyListeners();

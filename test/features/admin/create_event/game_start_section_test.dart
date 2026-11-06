@@ -22,6 +22,18 @@ void main() {
       expect(c.enterWindowController.text, '30');
     });
 
+    test('the end texts load and save; empty is none', () {
+      final c = CreateEventController(Event(eventId: 'e1', finishTitle: 'Harta e completă', finishMessage: 'Bravo.'));
+      expect(c.finishTitleController.text, 'Harta e completă');
+      expect(c.finishMessageController.text, 'Bravo.');
+      c
+        ..finishTitleController.text = '  Gata  '
+        ..finishMessageController.text = ' ';
+      final e = c.buildNewEvent();
+      expect(e.finishTitle, 'Gata');
+      expect(e.finishMessage, isNull);
+    });
+
     test('writes them back, trimmed', () {
       final c = CreateEventController(null)
         ..introLetterController.text = '  Dragi exploratori…  '
@@ -69,9 +81,14 @@ void main() {
           signature: c.introSignatureController,
           hintsPerMission: c.hintsPerMissionController,
           enterWindow: c.enterWindowController,
+          finishTitle: c.finishTitleController,
+          finishMessage: c.finishMessageController,
         ),
       ),
     );
+    expect(find.text('Sfârșitul jocului'), findsOneWidget);
+    expect(find.text('Titlul de final'), findsOneWidget);
+    expect(find.text('Mesajul de final'), findsOneWidget);
     expect(find.text('Începutul jocului'), findsOneWidget);
     expect(find.text('Scrisoarea de început'), findsOneWidget);
     expect(find.text('Semnătura'), findsOneWidget);
