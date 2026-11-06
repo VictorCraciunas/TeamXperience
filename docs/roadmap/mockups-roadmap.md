@@ -39,6 +39,11 @@ aprobată" is replaced by a waiting message (step 6c words it).
 intro letter (05), 6b route trail and code puzzle (06), 6c location and photo
 puzzles (07). Each gets its own branch and merge.
 
+**Decided by Victor (2026-11-06): solved missions stay closed.** On the route
+trail a solved mission is only a tick; players cannot reopen it to re-read its
+puzzle. The look of every game screen comes from the event's own puzzles; the
+organiser sets nothing extra (no style section, no presets).
+
 ## Branches
 
 All redesign work lives on `redesign/mockups`. Each step in "Order and size"
