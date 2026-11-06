@@ -68,7 +68,7 @@ void main() {
       await _pump(tester, const GameIntroPreview(), theme);
       expect(find.text('Sibiu, 14 noiembrie'), findsOneWidget);
       expect(find.text('— Cartograful'), findsOneWidget);
-      await tester.tap(find.text('Aplicație'));
+      await tester.tap(find.text('Fără culori'));
       await tester.pump();
       expect(find.text('Spre prima misiune'), findsOneWidget);
       expect(tester.takeException(), isNull);
