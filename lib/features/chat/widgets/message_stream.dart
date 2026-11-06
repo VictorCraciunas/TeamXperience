@@ -147,7 +147,7 @@ class MessagesStream extends StatelessWidget {
                   onApprove:
                       canApprove ? () => controller.approvePhoto(team, m.approvalKey!) : null,
                   onDeny:
-                      canApprove ? () => controller.denyPhoto(team, m.approvalKey!) : null,
+                      canApprove ? () => controller.denyPhoto(team, m.approvalKey!, '') : null,
                 ));
               } else {
                 widgets.add(MessageBubble(

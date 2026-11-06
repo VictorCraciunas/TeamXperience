@@ -12,6 +12,7 @@ class PuzzleRulesController {
     hintController.text = puzzle.indiciu ?? '';
     maxAttemptsController.text = puzzle.maxAttempts?.toString() ?? '';
     wrongAnswerController.text = puzzle.wrongAnswerMessage ?? '';
+    radiusController.text = puzzle.radiusMeters == Puzzle.defaultRadius ? '' : '${puzzle.radiusMeters}';
   }
 
   final Puzzle puzzle;
@@ -26,6 +27,9 @@ class PuzzleRulesController {
 
   /// Empty means the default line.
   final wrongAnswerController = TextEditingController();
+
+  /// Metres; empty means 20.
+  final radiusController = TextEditingController();
 
   String? _text(TextEditingController controller) {
     final value = controller.text.trim();
@@ -59,6 +63,17 @@ class PuzzleRulesController {
     return _maxAttempts == null ? 'Un număr întreg între 1 și 20' : null;
   }
 
+  int? get _radius {
+    final value = int.tryParse(radiusController.text.trim());
+    return value != null && value >= 10 && value <= 200 ? value : null;
+  }
+
+  /// A circle size that is not a whole number from 10 to 200.
+  String? get radiusError {
+    if (_text(radiusController) == null) return null;
+    return _radius == null ? 'Un număr întreg între 10 și 200' : null;
+  }
+
   String? get latitudeError => _coordinateError(latitudeController, 90, 'Latitudinea');
   String? get longitudeError => _coordinateError(longitudeController, 180, 'Longitudinea');
 
@@ -81,8 +96,10 @@ class PuzzleRulesController {
       ..longitude = null
       ..indiciu = null
       ..maxAttempts = null
-      ..wrongAnswerMessage = null;
+      ..wrongAnswerMessage = null
+      ..radiusMeters = Puzzle.defaultRadius;
     answerController.clear();
+    radiusController.clear();
     maxAttemptsController.clear();
     wrongAnswerController.clear();
     latitudeController.clear();
@@ -99,6 +116,7 @@ class PuzzleRulesController {
     puzzle.maxAttempts = type == PuzzleType.code ? _maxAttempts : null;
     puzzle.wrongAnswerMessage = type == PuzzleType.code ? _text(wrongAnswerController) : null;
 
+    puzzle.radiusMeters = type == PuzzleType.geolocation ? (_radius ?? Puzzle.defaultRadius) : Puzzle.defaultRadius;
     if (type == PuzzleType.geolocation) {
       puzzle.latitude = latitudeError == null ? _number(latitudeController) : null;
       puzzle.longitude = longitudeError == null ? _number(longitudeController) : null;
@@ -112,5 +130,6 @@ class PuzzleRulesController {
     hintController.dispose();
     maxAttemptsController.dispose();
     wrongAnswerController.dispose();
+    radiusController.dispose();
   }
 }

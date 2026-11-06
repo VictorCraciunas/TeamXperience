@@ -734,6 +734,27 @@ void main() {
       expect(event?.missions.single.puzzles.single.maxAttempts, isNull);
     });
 
+    test('a location puzzle\'s circle size is read, and a tiny one refused', () {
+      Map<String, dynamic> withRadius(int radius) => _event(missions: [
+            {
+              'title': 'Unde dorm clopotele',
+              'puzzles': [
+                {
+                  'type': 'geolocation',
+                  'latitude': 45.79,
+                  'longitude': 24.15,
+                  'radiusMeters': radius,
+                  'components': [
+                    {'type': 'text', 'text': 'Mergeți la clopote.'},
+                  ],
+                },
+              ],
+            },
+          ]);
+      expect(_import(withRadius(35)).event?.missions.single.puzzles.single.radiusMeters, 35);
+      expect(_import(withRadius(5)).errors.join(), contains('Misiunea 1, puzzle 1: „radiusMeters”'));
+    });
+
     test('out of range is refused, with where it is', () {
       final json = withRules();
       json['hintsPerMission'] = 9;

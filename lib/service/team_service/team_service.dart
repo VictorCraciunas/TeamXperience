@@ -149,13 +149,18 @@ class TeamService {
     return teamRepo.getStreamTeam(eventId, teamName);
   }
 
+  /// Sets one photo try's status, with the organiser's [reason] for a
+  /// rejection and the picture's [url] when it is sent; the time is the
+  /// server's.
   Future<void> setPhotoApproval(
     String eventId,
     String teamName,
     String key,
-    PhotoApprovalStatus status,
-  ) async {
-    return teamRepo.setPhotoApproval(eventId, teamName, key, status);
+    PhotoApprovalStatus status, {
+    String? reason,
+    String? url,
+  }) async {
+    return teamRepo.setPhotoApproval(eventId, teamName, key, status, reason: reason, url: url);
   }
 
   /// Changes the captain's phone on the team, and nothing else.

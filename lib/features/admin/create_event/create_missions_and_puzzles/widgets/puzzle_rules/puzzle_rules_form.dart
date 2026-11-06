@@ -119,6 +119,15 @@ class _PuzzleRulesFormState extends State<PuzzleRulesForm> {
             onChanged: (_) => _changed(),
           ),
           gap,
+          AppTextField(
+            controller: _controller.radiusController,
+            label: 'Raza cercului (m)',
+            hint: 'Gol = 20',
+            keyboardType: TextInputType.number,
+            validator: (_) => _controller.radiusError,
+            onChanged: (_) => _changed(),
+          ),
+          gap,
         ],
         if (type == PuzzleType.imageToUpload) ...[
           Text(

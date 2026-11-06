@@ -53,15 +53,24 @@ class TeamRepo {
     String eventId,
     String teamName,
     String key,
-    PhotoApprovalStatus status,
-  ) async {
+    PhotoApprovalStatus status, {
+    String? reason,
+    String? url,
+  }) async {
     try {
       await _firestore
           .collection('events')
           .doc(eventId)
           .collection('teams')
           .doc(teamName)
-          .update({'photoApprovals.$key': status.name});
+          .update({
+            'photoApprovals.$key': {
+              'status': status.name,
+              if (reason != null) 'reason': reason,
+              if (url != null) 'url': url,
+              'at': FieldValue.serverTimestamp(),
+            },
+          });
     } catch (e, stacktrace) {
       print('Error updating photo approval: $e');
       print('Stack trace: $stacktrace');

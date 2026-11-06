@@ -145,6 +145,7 @@ Puzzle _readPuzzle(Map<String, dynamic> map, int index, String where, List<Strin
     indiciu: reader.text('indiciu'),
     maxAttempts: reader.whole('maxAttempts', min: 1, max: 20),
     wrongAnswerMessage: reader.text('wrongAnswerMessage'),
+    radiusMeters: reader.whole('radiusMeters', min: 10, max: 200) ?? Puzzle.defaultRadius,
   );
 
   final components = reader.list('components');

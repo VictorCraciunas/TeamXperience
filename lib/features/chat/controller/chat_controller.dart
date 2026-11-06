@@ -41,12 +41,15 @@ class ChatController{
     );
   }
 
-  Future<void> denyPhoto(Team currentTeam, String approvalKey) async {
+  /// Rejects a photo with the [reason] the team will read.
+  Future<void> denyPhoto(Team currentTeam, String approvalKey, String reason) async {
+    final text = reason.trim();
     await teamService.setPhotoApproval(
       eventId,
       team.name,
       approvalKey,
       PhotoApprovalStatus.denied,
+      reason: text.isEmpty ? null : text,
     );
   }
 }

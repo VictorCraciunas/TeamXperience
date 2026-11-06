@@ -16,6 +16,11 @@ class Puzzle {
   /// What players read after a wrong answer; null = "Nu e corect. Mai încearcă."
   String? wrongAnswerMessage;
 
+  /// How close a location puzzle's team must get, in metres (10 to 200).
+  int radiusMeters;
+
+  static const int defaultRadius = 20;
+
   Puzzle({
     required this.id,
     List<Component>? components,
@@ -26,6 +31,7 @@ class Puzzle {
     this.indiciu,
     this.maxAttempts,
     this.wrongAnswerMessage,
+    this.radiusMeters = defaultRadius,
   }) : components = components ?? [];
 
   int get componentsCount => components.length;
@@ -41,6 +47,7 @@ class Puzzle {
     indiciu: indiciu,
     maxAttempts: maxAttempts,
     wrongAnswerMessage: wrongAnswerMessage,
+    radiusMeters: radiusMeters,
   );
 
   Component addComponent(Component component) {
@@ -64,6 +71,12 @@ class Puzzle {
     return value.toInt();
   }
 
+  /// A whole number of at least 10 metres; anything else is the default.
+  static int _radius(Object? value) {
+    if (value is! num || value != value.roundToDouble() || value < 10) return defaultRadius;
+    return value.toInt();
+  }
+
   factory Puzzle.fromMap(Map<String, dynamic> data) {
     final rawList = data['components'] as List<dynamic>? ?? [];
     final comps = rawList.map((e) => Component.fromMap(e as Map<String, dynamic>)).toList();
@@ -79,6 +92,7 @@ class Puzzle {
       indiciu: data['indiciu'] as String?,
       maxAttempts: _limit(data['maxAttempts']),
       wrongAnswerMessage: data['wrongAnswerMessage'] as String?,
+      radiusMeters: _radius(data['radiusMeters']),
     );
     return puzzle;
   }
@@ -94,6 +108,7 @@ class Puzzle {
       if (indiciu != null) 'indiciu': indiciu,
       if (maxAttempts != null) 'maxAttempts': maxAttempts,
       if (wrongAnswerMessage != null) 'wrongAnswerMessage': wrongAnswerMessage,
+      if (radiusMeters != defaultRadius) 'radiusMeters': radiusMeters,
 
     };
   }

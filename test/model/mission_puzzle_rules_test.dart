@@ -47,6 +47,16 @@ void main() {
     expect(json.containsKey('wrongAnswerMessage'), isFalse);
   });
 
+  test('a location puzzle keeps its circle size; 20 m by default and for anything odd', () {
+    final puzzle = Puzzle(id: '0', type: PuzzleType.geolocation, radiusMeters: 35);
+    expect(Puzzle.fromMap(puzzle.toJson()).radiusMeters, 35);
+    expect(puzzle.withId('1').radiusMeters, 35);
+    expect(Puzzle(id: '0').radiusMeters, 20);
+    expect(Puzzle(id: '0').toJson().containsKey('radiusMeters'), isFalse);
+    expect(Puzzle.fromMap({'id': '0', 'radiusMeters': 0}).radiusMeters, 20);
+    expect(Puzzle.fromMap({'id': '0', 'radiusMeters': 'mare'}).radiusMeters, 20);
+  });
+
   test('a limit below one reads as no limit', () {
     expect(Puzzle.fromMap({'id': '0', 'maxAttempts': 0}).maxAttempts, isNull);
     expect(Puzzle.fromMap({'id': '0', 'maxAttempts': -2}).maxAttempts, isNull);

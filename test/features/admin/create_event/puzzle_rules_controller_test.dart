@@ -130,6 +130,40 @@ void main() {
     });
   });
 
+  group('the circle size', () {
+    test('loads and writes for a location puzzle', () {
+      final puzzle = Puzzle(id: '0', type: PuzzleType.geolocation, radiusMeters: 35);
+      final c = _controller(puzzle);
+      expect(c.radiusController.text, '35');
+      c
+        ..radiusController.text = ' 50 '
+        ..apply();
+      expect(puzzle.radiusMeters, 50);
+    });
+
+    test('20 m shows as empty, and empty or out of range saves 20', () {
+      final puzzle = Puzzle(id: '0', type: PuzzleType.geolocation);
+      final c = _controller(puzzle);
+      expect(c.radiusController.text, '');
+      for (final text in ['', '500', 'mare']) {
+        c.radiusController.text = text;
+        c.apply();
+        expect(puzzle.radiusMeters, 20, reason: text);
+      }
+      c.radiusController.text = '500';
+      expect(c.radiusError, isNotNull);
+      c.radiusController.text = '';
+      expect(c.radiusError, isNull);
+    });
+
+    test('changing the type resets it', () {
+      final puzzle = Puzzle(id: '0', type: PuzzleType.geolocation, radiusMeters: 35);
+      final c = _controller(puzzle)..changeType(PuzzleType.code);
+      expect(puzzle.radiusMeters, 20);
+      expect(c.radiusController.text, '');
+    });
+  });
+
   group('coordinate checks', () {
     test('nothing typed is not an error yet', () {
       final c = _controller(Puzzle(id: '0', type: PuzzleType.geolocation));

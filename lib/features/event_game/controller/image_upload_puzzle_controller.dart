@@ -85,6 +85,7 @@ class ImageUploadPuzzleController extends ChangeNotifier {
       teamName,
       key,
       PhotoApprovalStatus.pending,
+      url: url,
     );
   }
 }
