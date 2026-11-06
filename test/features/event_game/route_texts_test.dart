@@ -4,10 +4,33 @@ import 'package:teamxperience/features/event_game/logic/route_texts.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/puzzle.dart';
+import 'package:teamxperience/model/team.dart';
 
 void main() {
   test('the place line', () {
     expect(placeLine('Vulpile', 2, 12), 'Vulpile · locul 2 din 12');
+  });
+
+  group('placeOf', () {
+    Team team(String name, int progress) => Team(
+          name: name,
+          teamMembers: '',
+          captainName: '',
+          phoneNumber: '',
+          captainEmail: '',
+          missionProgress: progress,
+        );
+
+    test("the team's place among every team", () {
+      final teams = [team('Bufnițele', 4), team('Vulpile', 3), team('Lupii', 1)];
+      expect(placeOf(teams, 'Vulpile', 6), (place: 2, teams: 3));
+      expect(placeOf(teams, 'Bufnițele', 6), (place: 1, teams: 3));
+    });
+
+    test('null when the team is not among them', () {
+      expect(placeOf([team('Lupii', 1)], 'Vulpile', 6), isNull);
+      expect(placeOf([], 'Vulpile', 6), isNull);
+    });
   });
 
   group('playedClock', () {

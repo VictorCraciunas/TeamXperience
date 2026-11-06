@@ -1,20 +1,23 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:teamxperience/features/event_game/logic/route_texts.dart';
+import 'package:teamxperience/features/event_game/logic/style_hints.dart';
+import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
 import 'package:teamxperience/ui/ui.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:teamxperience/model/team.dart';
-import 'package:teamxperience/ui/components/event/mission_state_widget.dart';
 
 import '../../../constants/routes.dart';
 import '../../../model/event.dart';
 import '../controller/event_game_controller.dart';
-import '../widgets/game_back_button.dart';
 import '../widgets/keeps_presence.dart';
 import '../widgets/refreshes_active_game.dart';
+import '../widgets/route_header.dart';
+import '../widgets/route_trail_view.dart';
 
+/// The mission route in the event's own colours (mockup 06): the header
+/// with the team's place and the two clocks, then the winding trail. The
+/// route takes `{'event': Event, 'team': Team?}`.
 class EventGameScreen extends StatefulWidget {
   const EventGameScreen({super.key});
 
@@ -103,165 +106,74 @@ class _EventGameScreenState extends State<EventGameScreen> {
     );
   }
 
+  /// Opens the mission the team is on; the place line pauses meanwhile.
+  Future<void> _openCurrentMission() async {
+    final index = controller.currentMission;
+    if (index >= controller.event.missions.length) return;
+    controller.watchRanking(false);
+    final updated = await Navigator.pushNamed(
+      context,
+      Routes.puzzleGame,
+      arguments: {
+        'mission': controller.event.missions[index],
+        'background': controller.background,
+        'event': controller.event,
+        'team': controller.team,
+        'missionIndex': index,
+      },
+    );
+    if (!mounted) return;
+    controller.watchRanking(true);
+    if (updated is Team) controller.takeTeam(updated);
+  }
+
+  void _openChat() {
+    Navigator.pushNamed(
+      context,
+      Routes.chatScreen,
+      arguments: {'eventId': controller.event.eventId, 'team': controller.team},
+    );
+  }
+
   Widget _screen(BuildContext context) {
-    return Scaffold(
-      backgroundColor: context.colors.panel,
-      body: SingleChildScrollView(
-        child: Column(
+    final palette = eventPaletteOf(controller.event, context.colors);
+    final image = palette.backgroundImage;
+    return EventThemeScope(
+      palette: palette,
+      child: Scaffold(
+        backgroundColor: palette.background,
+        body: Stack(
           children: [
-            SizedBox(
-              width: double.infinity,
-              child: Column(
-                children: [
-                  if (controller.event.landingImageUrl != null)
-                    Stack(
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: controller.event.landingImageUrl!,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: 268,
-                        ),
-                        const Align(
-                          alignment: Alignment.topLeft,
-                          child: GameBackButton(),
-                        ),
-                      ],
-                    )
-                  else ...const [
-                    Align(alignment: Alignment.topLeft, child: GameBackButton()),
-                    SizedBox(height: 30),
-                  ],
-                  Transform.translate(
-                    offset: const Offset(0, -30),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: context.colors.panel,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(30),
-                        ),
-                      ),
-                      child: SafeArea(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.page,
-                          ),
-                          child: Column(
-                            children: [
-                              ...List.generate(controller.event.nrMissions, (
-                                index,
-                              ) {
-                                return Column(
-                                  children: [
-                                    MissionStateWidget(
-                                      missionState: controller.getMissionState(
-                                        index,
-                                      ),
-                                      onTap: () async {
-                                        final updatedTeam =
-                                            await Navigator.pushNamed(
-                                                  context,
-                                                  Routes.puzzleGame,
-                                                  arguments: {
-                                                    'mission':
-                                                        controller
-                                                            .event
-                                                            .missions[index],
-                                                    'background':
-                                                        controller.background,
-                                                    'event': controller.event,
-                                                    'team': controller.team,
-                                                    'missionIndex': index,
-                                                  },
-                                                )
-                                                as Team?;
-
-                                        // If team was updated, refresh the mission states
-                                        if (updatedTeam != null) {
-                                          setState(() {
-                                            controller.team = updatedTeam;
-                                            controller.initMissionState();
-                                          });
-                                        }
-                                      }, // You'll need to implement this
-                                      nr: index + 1,
-                                    ),
-                                    if (index <
-                                        controller.event.nrMissions -
-                                            1) // Don't add spacing after last item
-                                      SizedBox(height: 10),
-                                  ],
-                                );
-                              }),
-                              SizedBox(height: 50),
-
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(20),
-                                      ),
-                                      color: context.colors.accent,
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 5.0,
-                                        horizontal: 15,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Ai nevoie de ajutor ?",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 13,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 15),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        Routes.chatScreen,
-                                        arguments: {
-                                          'eventId': controller.event.eventId,
-                                          'team': controller.team,
-                                        },
-                                      );
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(20),
-                                        ),
-                                        color: context.colors.accent,
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8),
-                                        child: SvgPicture.asset(
-                                          'assets/images/messages.svg',
-                                          width: 34,
-                                          // Reasonable size for the icon
-                                          height: 34,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
+            if (image != null) ...[
+              Positioned.fill(
+                child: Image(image: image, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox()),
+              ),
+              Positioned.fill(child: ColoredBox(color: palette.background.withValues(alpha: .85))),
+            ],
+            SafeArea(
+              child: ListenableBuilder(
+                listenable: controller,
+                builder: (context, _) => Column(
+                  children: [
+                    ValueListenableBuilder<DateTime>(
+                      valueListenable: controller.now,
+                      builder: (context, now, _) => RouteHeader(
+                        eventName: controller.event.name ?? '',
+                        placeLine: controller.placeText,
+                        played: playedClock(controller.team?.startedAt, controller.event.dateEvent, now),
+                        left: leftClock(controller.event, now),
+                        onClose: () => Navigator.maybePop(context),
+                        onChat: _openChat,
                       ),
                     ),
-                  ),
-                ],
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6),
+                        child: RouteTrailView(stops: controller.stops, onContinue: _openCurrentMission),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

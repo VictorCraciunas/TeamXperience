@@ -3,11 +3,22 @@ import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/features/home/logic/live_texts.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
+import 'package:teamxperience/model/team.dart';
+import 'package:teamxperience/service/leaderboard.dart';
 
 typedef GeoPoint = ({double lat, double lng});
 
 /// "Vulpile · locul 2 din 12".
 String placeLine(String team, int place, int teams) => '$team · locul $place din $teams';
+
+/// The team called [name]'s place among [teams] (ranked as on Home), with
+/// how many teams there are; null when it is not among them.
+({int place, int teams})? placeOf(List<Team> teams, String name, int missionCount) {
+  for (final ranked in rankTeams(teams, missionCount: missionCount)) {
+    if (ranked.team.name == name) return (place: ranked.place, teams: teams.length);
+  }
+  return null;
+}
 
 /// How long the team has been playing: from its own start, else the event's
 /// start; "0:42:18", never negative.
