@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:teamxperience/features/event_game/logic/route_texts.dart';
+import 'package:teamxperience/features/event_game/logic/style_hints.dart';
+import 'package:teamxperience/features/event_game/logic/trail_layout.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/service/event_service/event_service.dart';
@@ -11,7 +14,8 @@ import '../../../service/LocationService.dart';
 
 class EventGameController extends ChangeNotifier {
   late Event event;
-  late ImageProvider background;
+  /// The organiser's picture behind the puzzles, or null.
+  ImageProvider? background;
   late BuildContext context;
   late Team? team;
   List<MissionState> missionDone = [];
@@ -20,6 +24,15 @@ class EventGameController extends ChangeNotifier {
   final TeamService _teamService = TeamService();
 
   StreamSubscription<Event>? _eventSubscription;
+  StreamSubscription<Team>? _teamWatch;
+  StreamSubscription<List<Team>>? _rankingWatch;
+  Timer? _tick;
+
+  /// The current time, ticking every second for the header's clocks.
+  final ValueNotifier<DateTime> now = ValueNotifier(DateTime.now());
+
+  /// The team's place among every team; null until the first ranking.
+  ({int place, int teams})? place;
   Timer? _deadlineTimer;
   bool _eventEnded = false;
   bool get eventEnded => _eventEnded;
@@ -29,6 +42,61 @@ class EventGameController extends ChangeNotifier {
     initMissionState();
     _startLocationTracking();
     _watchEventDeadline();
+    _watchTeam();
+    watchRanking(true);
+    _tick = Timer.periodic(const Duration(seconds: 1), (_) => now.value = DateTime.now());
+  }
+
+  /// Follows the team doc: progress from teammates' phones and the position
+  /// `LocationService` writes.
+  void _watchTeam() {
+    final t = team;
+    if (t == null) return;
+    _teamWatch = _teamService.getStreamTeam(event.eventId, t.name).listen(takeTeam, onError: (Object _) {});
+  }
+
+  /// A fresher copy of the team (from the stream or back from a puzzle).
+  void takeTeam(Team fresh) {
+    if (_disposed) return;
+    team = fresh;
+    initMissionState();
+    notifyListeners();
+  }
+
+  /// Streams every team for the place line, only while the route is on top
+  /// (paused while a puzzle is open).
+  void watchRanking(bool on) {
+    _rankingWatch?.cancel();
+    _rankingWatch = null;
+    final t = team;
+    if (!on || t == null) return;
+    _rankingWatch = _teamService.getStreamTeams(event.eventId).listen((teams) {
+      if (_disposed) return;
+      place = placeOf(teams, t.name, event.missions.length);
+      notifyListeners();
+    }, onError: (Object _) {});
+  }
+
+  /// "Vulpile · locul 2 din 12", or null before the ranking.
+  String? get placeText {
+    final p = place;
+    final t = team;
+    if (p == null || t == null) return null;
+    return placeLine(t.name, p.place, p.teams);
+  }
+
+  /// The mission the team is on, by index.
+  int get currentMission => team?.missionProgress ?? 0;
+
+  /// The trail's stops, with the distance from the team's last position to
+  /// the current mission.
+  List<TrailStop> get stops {
+    final t = team;
+    final missions = event.missions;
+    final index = currentMission;
+    final target = index < missions.length ? missionPoint(missions[index]) : null;
+    final from = t == null ? null : (lat: t.latitude, lng: t.longitude);
+    return trailStops(event, index, distanceLine(from, target));
   }
 
   /// Marks [uid] as seen playing now, for the live Home's "jucători activi".
@@ -100,34 +168,25 @@ class EventGameController extends ChangeNotifier {
     }
   }
 
-  void _initializeBackground() async {
-    if (event.taskBackgroundImageUrl != null &&
-        event.taskBackgroundImageUrl!.isNotEmpty) {
-      if (_isUrl(event.taskBackgroundImageUrl!)) {
-        background = NetworkImage(event.taskBackgroundImageUrl!);
-      } else {
-        // Assuming it's a local file path
-        background = AssetImage(event.taskBackgroundImageUrl!);
-        // Or use FileImage if it's a file system path:
-        // background = FileImage(File(event.taskBackgroundImageUrl!));
-      }
-    } else {
-      // Fallback to a default background
-      background = const AssetImage('assets/images/default_background.png');
-    }
-    precacheImage(background, context);
-  }
-
-  bool _isUrl(String path) {
-    return path.startsWith('http://') || path.startsWith('https://');
+  void _initializeBackground() {
+    final image = gameBackgroundOf(event);
+    background = image;
+    if (image != null) precacheImage(image, context);
   }
 
   MissionState getMissionState(int index) {
     return missionDone[index];
   }
 
+  bool _disposed = false;
+
   @override
   void dispose() {
+    _disposed = true;
+    _tick?.cancel();
+    _teamWatch?.cancel();
+    _rankingWatch?.cancel();
+    now.dispose();
     _deadlineTimer?.cancel();
     _eventSubscription?.cancel();
     print("location tracking ended");

@@ -10,6 +10,8 @@ class PuzzleRulesController {
     latitudeController.text = puzzle.latitude?.toString() ?? '';
     longitudeController.text = puzzle.longitude?.toString() ?? '';
     hintController.text = puzzle.indiciu ?? '';
+    maxAttemptsController.text = puzzle.maxAttempts?.toString() ?? '';
+    wrongAnswerController.text = puzzle.wrongAnswerMessage ?? '';
   }
 
   final Puzzle puzzle;
@@ -18,6 +20,12 @@ class PuzzleRulesController {
   final latitudeController = TextEditingController();
   final longitudeController = TextEditingController();
   final hintController = TextEditingController();
+
+  /// Empty means no limit.
+  final maxAttemptsController = TextEditingController();
+
+  /// Empty means the default line.
+  final wrongAnswerController = TextEditingController();
 
   String? _text(TextEditingController controller) {
     final value = controller.text.trim();
@@ -40,6 +48,17 @@ class PuzzleRulesController {
     return null;
   }
 
+  int? get _maxAttempts {
+    final value = int.tryParse(maxAttemptsController.text.trim());
+    return value != null && value >= 1 && value <= 20 ? value : null;
+  }
+
+  /// A limit that is not a whole number from 1 to 20.
+  String? get maxAttemptsError {
+    if (_text(maxAttemptsController) == null) return null;
+    return _maxAttempts == null ? 'Un număr întreg între 1 și 20' : null;
+  }
+
   String? get latitudeError => _coordinateError(latitudeController, 90, 'Latitudinea');
   String? get longitudeError => _coordinateError(longitudeController, 180, 'Longitudinea');
 
@@ -60,8 +79,12 @@ class PuzzleRulesController {
       ..code = null
       ..latitude = null
       ..longitude = null
-      ..indiciu = null;
+      ..indiciu = null
+      ..maxAttempts = null
+      ..wrongAnswerMessage = null;
     answerController.clear();
+    maxAttemptsController.clear();
+    wrongAnswerController.clear();
     latitudeController.clear();
     longitudeController.clear();
     hintController.clear();
@@ -73,6 +96,8 @@ class PuzzleRulesController {
 
     puzzle.code = type == PuzzleType.code ? _text(answerController) : null;
     puzzle.indiciu = _text(hintController);
+    puzzle.maxAttempts = type == PuzzleType.code ? _maxAttempts : null;
+    puzzle.wrongAnswerMessage = type == PuzzleType.code ? _text(wrongAnswerController) : null;
 
     if (type == PuzzleType.geolocation) {
       puzzle.latitude = latitudeError == null ? _number(latitudeController) : null;
@@ -85,5 +110,7 @@ class PuzzleRulesController {
     latitudeController.dispose();
     longitudeController.dispose();
     hintController.dispose();
+    maxAttemptsController.dispose();
+    wrongAnswerController.dispose();
   }
 }

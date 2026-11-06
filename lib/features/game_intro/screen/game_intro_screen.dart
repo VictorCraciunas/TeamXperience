@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/features/event_game/logic/style_hints.dart';
 import 'package:teamxperience/features/game_intro/controller/game_intro_controller.dart';
 import 'package:teamxperience/features/game_intro/widgets/game_intro_view.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/ui/ui.dart';
 
-/// The intro letter before the first mission (mockup 05), in the event's
-/// look. The route takes `{'event': Event, 'team': Team}`.
+/// The intro letter before the first mission (mockup 05), in the colours of
+/// the event's own puzzles. The route takes `{'event': Event, 'team': Team}`.
 class GameIntroScreen extends StatefulWidget {
   const GameIntroScreen({super.key});
 
@@ -32,7 +33,7 @@ class _GameIntroScreenState extends State<GameIntroScreen> {
   Widget build(BuildContext context) {
     final controller = _controller;
     if (controller == null) return Scaffold(backgroundColor: context.colors.page);
-    final palette = paletteFor(controller.event.look, context.colors);
+    final palette = eventPaletteOf(controller.event, context.colors);
     return EventThemeScope(
       palette: palette,
       child: Scaffold(

@@ -443,6 +443,7 @@ live in the Firebase console) and the five callables (`checkTeamName`,
 - the emulators line in `docs/platform-and-config.md`;
 - from step 5: the rules must let a team member update `presence.{uid}` (their own uid) and `missionCompletedAt.*` on their own team doc; otherwise presence fails silently and the mission-progress update (same write) fails;
 - from step 5: write `missionCompletedAt.{i}` only when absent (a transaction or the step 7 function), so a second phone or a replay does not move the tie-break;
+- from step 6b: the rules must let a team member increment `attempts.{key}`, set `lockedUntil.{key}` (with `attempts.{key}` back to 0) and set `hintsUsed.{key}` on their own team doc;
 - whether "Editează" on team details is for the captain only, decided with
   the rules.
 Deploying the functions and the rules stays Victor's call.

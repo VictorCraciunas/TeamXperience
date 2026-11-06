@@ -67,6 +67,15 @@ class AddMissionsController {
     onStateChanged?.call();
   }
 
+  /// Sets where a mission is, or clears it with null.
+  void setMissionPlace(int index, ({double lat, double lng})? place) {
+    if (index < 0 || index >= event.missions.length) return;
+    event.missions[index]
+      ..latitude = place?.lat
+      ..longitude = place?.lng;
+    onStateChanged?.call();
+  }
+
   void addNewMission() {
     event.addMission(Mission(id: event.missions.length.toString()));
     event.nrMissions = event.missions.length;

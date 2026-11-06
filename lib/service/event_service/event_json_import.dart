@@ -90,6 +90,10 @@ Event _readEvent(Map<String, dynamic> map, List<String> errors) {
     whatToBring: reader.texts('whatToBring'),
     story: reader.text('story'),
     organiserName: reader.text('organiserName'),
+    introLetter: reader.text('introLetter'),
+    introSignature: reader.text('introSignature'),
+    hintsPerMission: reader.whole('hintsPerMission', min: 0, max: 5) ?? 1,
+    enterWindowMinutes: reader.whole('enterWindowMinutes', min: 10, max: 180) ?? 60,
   );
 
   final missions = reader.list('missions');
@@ -117,6 +121,8 @@ Mission _readMission(Map<String, dynamic> map, int index, String where, List<Str
     title: reader.text('title'),
     teaser: reader.text('teaser'),
     isTeaserPublic: reader.flag('isTeaserPublic') ?? false,
+    latitude: reader.decimal('latitude', min: -90, max: 90),
+    longitude: reader.decimal('longitude', min: -180, max: 180),
   );
 
   final puzzles = reader.list('puzzles');
@@ -137,6 +143,8 @@ Puzzle _readPuzzle(Map<String, dynamic> map, int index, String where, List<Strin
     latitude: reader.decimal('latitude'),
     longitude: reader.decimal('longitude'),
     indiciu: reader.text('indiciu'),
+    maxAttempts: reader.whole('maxAttempts', min: 1, max: 20),
+    wrongAnswerMessage: reader.text('wrongAnswerMessage'),
   );
 
   final components = reader.list('components');

@@ -1,13 +1,31 @@
+import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/difficulty.dart';
-import 'package:teamxperience/enums/event_look.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
+import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/model/event_defaults.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/model/team_member.dart';
 
-/// The event of mockup 01, for the gallery and the tests.
+/// A code puzzle built in the mockups' parchment colours, the way an
+/// organiser would: the game frame takes its look from pieces like these.
+List<Component> parchmentCodePieces(String question) => [
+      Component(type: ComponentType.text, text: question, textColor: '#3B2A1A', fontFamily: 'Gelasio', fontSize: 16),
+      Component(
+        type: ComponentType.code,
+        codeLength: 4,
+        inputType: 'Separated',
+        inputBackgroundColor: '#FBF4E4',
+        colorBorderInput: '#8A3B12',
+        glowColor: '#B8862B',
+      ),
+      Component(type: ComponentType.button, buttonLabel: 'Verifică', buttonColor: '#8A3B12', buttonTextColor: '#FBF4E4'),
+    ];
+
+/// The event of mockup 01, for the gallery and the tests. Its puzzles are in
+/// the parchment colours of mockups 05 to 08.
 Event sampleEvent() => Event(
       eventId: 'sample',
       name: 'Moștenirea Cartografului',
@@ -33,14 +51,16 @@ Event sampleEvent() => Event(
           'locuri pe care doar un ochi atent le găsește. Prima vă așteaptă unde treptele nu se termină niciodată.',
       introSignature: 'Cartograful',
       hintsPerMission: 1,
-      look: EventLook.parchment,
+      defaults: const EventDefaults(backgroundColor: '#EADBC0', textColor: '#3B2A1A', accentColor: '#8A3B12', fontFamily: 'Gelasio'),
       missions: [
         Mission(
           id: '0',
           title: 'Scara Pasajului',
           teaser: 'Numără treptele. Nu toate sunt la vedere.',
           isTeaserPublic: true,
-          puzzles: [Puzzle(id: '0', type: PuzzleType.code)],
+          puzzles: [
+            Puzzle(id: '0', type: PuzzleType.code, components: parchmentCodePieces('Câte trepte are scara?')),
+          ],
         ),
         Mission(
           id: '1',
@@ -50,11 +70,52 @@ Event sampleEvent() => Event(
           puzzles: [Puzzle(id: '0', type: PuzzleType.imageToUpload)],
         ),
         Mission(id: '2', title: 'Turnul Sfatului', puzzles: [Puzzle(id: '0', type: PuzzleType.imageToUpload)]),
-        Mission(id: '3', title: 'Casa cu ochi', puzzles: [Puzzle(id: '0', type: PuzzleType.code)]),
+        Mission(
+          id: '3',
+          title: 'Casa cu ochi',
+          puzzles: [
+            Puzzle(
+              id: '0',
+              type: PuzzleType.code,
+              code: '1859',
+              maxAttempts: 3,
+              wrongAnswerMessage: 'Nu e anul ăsta. Uită-te mai sus pe ușă.',
+              indiciu: 'Anul e sculptat în piatră, deasupra ferestrei din mijloc.',
+              components: parchmentCodePieces('Acoperișul are ochi care nu dorm. Scrie anul de pe ușă.'),
+            ),
+          ],
+        ),
         Mission(id: '4', title: 'Unde dorm clopotele', puzzles: [Puzzle(id: '0', type: PuzzleType.geolocation)]),
         Mission(id: '5', title: 'Harta completă', puzzles: [Puzzle(id: '0', type: PuzzleType.code)]),
       ],
     )..nrMissions = 6;
+
+/// A code puzzle built in black and green, for showing that the game frame
+/// dresses itself from whatever the organiser chose.
+List<Component> neonCodePieces(String question) => [
+      Component(type: ComponentType.text, text: question, textColor: '#B8FFC8', fontFamily: 'Monospace', fontSize: 15),
+      Component(
+        type: ComponentType.code,
+        codeLength: 4,
+        inputType: 'Separated',
+        inputBackgroundColor: '#111A11',
+        colorBorderInput: '#33FF66',
+        glowColor: '#00CC44',
+      ),
+      Component(type: ComponentType.button, buttonLabel: 'Trimite', buttonColor: '#33FF66', buttonTextColor: '#0A0F0A'),
+    ];
+
+/// The sample event with its code puzzles rebuilt in black and green.
+Event neonSampleEvent() {
+  final event = sampleEvent()
+    ..defaults = const EventDefaults(backgroundColor: '#0A0F0A', textColor: '#B8FFC8', accentColor: '#33FF66', fontFamily: 'Monospace');
+  for (final mission in event.missions) {
+    for (final puzzle in mission.puzzles) {
+      if (puzzle.type == PuzzleType.code) puzzle.components = neonCodePieces('Introdu codul de acces.');
+    }
+  }
+  return event;
+}
 
 /// The other events of mockup 03 ("Deschise pentru înscriere").
 List<Event> sampleOpenEvents() => [

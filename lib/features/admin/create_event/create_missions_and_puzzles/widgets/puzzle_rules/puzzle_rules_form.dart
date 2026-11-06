@@ -82,6 +82,23 @@ class _PuzzleRulesFormState extends State<PuzzleRulesForm> {
             onChanged: (_) => _changed(),
           ),
           gap,
+          AppTextField(
+            controller: _controller.maxAttemptsController,
+            label: 'Număr maxim de încercări',
+            hint: 'Gol = nelimitat',
+            keyboardType: TextInputType.number,
+            validator: (_) => _controller.maxAttemptsError,
+            onChanged: (_) => _changed(),
+          ),
+          gap,
+          AppTextField(
+            controller: _controller.wrongAnswerController,
+            label: 'Mesaj la răspuns greșit',
+            hint: 'Gol = „Nu e corect. Mai încearcă.”',
+            maxLines: null,
+            onChanged: (_) => _changed(),
+          ),
+          gap,
         ],
         if (type == PuzzleType.geolocation) ...[
           AppTextField(

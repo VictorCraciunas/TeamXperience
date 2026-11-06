@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:teamxperience/enums/event_look.dart';
 import 'package:teamxperience/features/game_intro/controller/game_intro_controller.dart';
 import 'package:teamxperience/features/game_intro/logic/game_door.dart';
 import 'package:teamxperience/features/game_intro/widgets/game_intro_view.dart';
@@ -16,7 +15,7 @@ import 'package:teamxperience/ui/theme/event_theme_scope.dart';
 const _letter =
     'Dragi exploratori, harta mea a rămas neterminată. Am ascuns bucățile ei în șase locuri pe care doar un ochi atent le găsește. Prima vă așteaptă unde treptele nu se termină niciodată.';
 
-Event _event({String? letter = _letter, String? city = 'Sibiu', int? minutes = 120, EventLook look = EventLook.parchment}) => Event(
+Event _event({String? letter = _letter, String? city = 'Sibiu', int? minutes = 120}) => Event(
       eventId: 'e1',
       name: 'Moștenirea Cartografului',
       location: city,
@@ -25,7 +24,6 @@ Event _event({String? letter = _letter, String? city = 'Sibiu', int? minutes = 1
       durationMinutes: minutes,
       introLetter: letter,
       introSignature: 'Cartograful',
-      look: look,
     );
 
 Future<List<String>> _pump(
@@ -34,6 +32,7 @@ Future<List<String>> _pump(
   double width = 390,
   double textScale = 1,
   ThemeData? theme,
+  bool parchment = true,
 }) async {
   final calls = <String>[];
   tester.view.physicalSize = Size(width * 3, 760 * 3);
@@ -48,7 +47,7 @@ Future<List<String>> _pump(
       child: child ?? const SizedBox.shrink(),
     ),
     home: EventThemeScope(
-      palette: paletteFor(event.look, colors),
+      palette: parchment ? EventPalette.parchment : EventPalette.fromApp(colors),
       child: Scaffold(body: GameIntroView(event: event, onStart: () => calls.add('start'))),
     ),
   ));
@@ -108,10 +107,10 @@ void main() {
     expect(find.text('Spre prima misiune'), findsOneWidget);
   });
 
-  for (final look in EventLook.values) {
+  for (final parchment in [true, false]) {
     for (final theme in [AppTheme.light, AppTheme.dark]) {
-      testWidgets('fits 320 px at 1.3x text (${look.name}, ${theme.brightness.name})', (tester) async {
-        await _pump(tester, _event(look: look), width: 320, textScale: 1.3, theme: theme);
+      testWidgets('fits 320 px at 1.3x text (${parchment ? 'parchment' : 'app'}, ${theme.brightness.name})', (tester) async {
+        await _pump(tester, _event(), width: 320, textScale: 1.3, theme: theme, parchment: parchment);
         expect(tester.takeException(), isNull);
       });
     }

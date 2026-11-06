@@ -15,17 +15,32 @@ class Mission{
   /// count as secret.
   bool isTeaserPublic;
 
+  /// Where the mission is, for "la 180 m de tine" on the route; optional
+  /// (a mission's first location puzzle is used when it has none).
+  double? latitude;
+  double? longitude;
+
   Mission({
     required this.id,
     List<Puzzle>? puzzles,
     this.title,
     this.teaser,
     this.isTeaserPublic = false,
+    this.latitude,
+    this.longitude,
   }) : puzzles = puzzles ?? [];
 
   /// The same mission under another number.
   Mission withId(String newId) =>
-      Mission(id: newId, puzzles: puzzles, title: title, teaser: teaser, isTeaserPublic: isTeaserPublic);
+      Mission(
+        id: newId,
+        puzzles: puzzles,
+        title: title,
+        teaser: teaser,
+        isTeaserPublic: isTeaserPublic,
+        latitude: latitude,
+        longitude: longitude,
+      );
 
 
   int get puzzlesCount => puzzles.length;
@@ -45,6 +60,8 @@ class Mission{
       title: map['title'] as String?,
       teaser: map['teaser'] as String?,
       isTeaserPublic: map['isTeaserPublic'] as bool? ?? false,
+      latitude: (map['latitude'] as num?)?.toDouble(),
+      longitude: (map['longitude'] as num?)?.toDouble(),
     );
   }
 
@@ -55,6 +72,8 @@ class Mission{
       'title': title,
       'teaser': teaser,
       'isTeaserPublic': isTeaserPublic,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
     };
   }
   @override

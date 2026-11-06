@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../enums/difficulty.dart';
 import '../enums/event_status.dart';
 import '../enums/screen_animation.dart';
-import '../enums/event_look.dart';
 import '../enums/event_type.dart';
 import 'event_defaults.dart';
 import 'mission.dart';
@@ -93,9 +92,6 @@ class Event {
 
   /// How long after the start teams can still type the start code.
   int enterWindowMinutes;
-
-  /// The look of the event's own screens.
-  EventLook look;
 
   bool get isDraft => status == EventStatus.draft;
 
@@ -213,7 +209,6 @@ class Event {
     this.introSignature,
     this.hintsPerMission = 1,
     this.enterWindowMinutes = 60,
-    this.look = EventLook.app,
   })  : missions = missions ?? [],
         whatToBring = whatToBring ?? [];
 
@@ -276,7 +271,6 @@ class Event {
       introSignature: map['introSignature'] as String?,
       hintsPerMission: (map['hintsPerMission'] as num?)?.toInt() ?? 1,
       enterWindowMinutes: (map['enterWindowMinutes'] as num?)?.toInt() ?? 60,
-      look: EventLook.fromName(map['look'] as String?),
     );
   }
 
@@ -326,7 +320,6 @@ class Event {
       'introSignature': introSignature,
       'hintsPerMission': hintsPerMission,
       'enterWindowMinutes': enterWindowMinutes,
-      'look': look.name,
     };
   }
 

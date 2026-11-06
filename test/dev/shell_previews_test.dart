@@ -5,6 +5,8 @@ import 'package:teamxperience/dev/game_intro_preview.dart';
 import 'package:teamxperience/dev/start_code_preview.dart';
 import 'package:teamxperience/dev/home_preview.dart';
 import 'package:teamxperience/dev/play_tab_preview.dart';
+import 'package:teamxperience/dev/puzzle_frame_preview.dart';
+import 'package:teamxperience/dev/route_preview.dart';
 import 'package:teamxperience/dev/shell_previews_launcher.dart';
 import 'package:teamxperience/ui/ui.dart';
 
@@ -68,9 +70,37 @@ void main() {
       await _pump(tester, const GameIntroPreview(), theme);
       expect(find.text('Sibiu, 14 noiembrie'), findsOneWidget);
       expect(find.text('— Cartograful'), findsOneWidget);
-      await tester.tap(find.text('Aplicație'));
+      await tester.tap(find.text('Fără culori'));
       await tester.pump();
       expect(find.text('Spre prima misiune'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('the route preview renders in parchment and in neon in $name', (tester) async {
+      await _pump(tester, const RoutePreview(), theme);
+      expect(find.text('Moștenirea Cartografului'), findsOneWidget);
+      expect(find.text('1 · Scara Pasajului'), findsOneWidget);
+      expect(find.text('Misiunea 4 · acum'), findsOneWidget);
+      expect(find.text('Vulpile · locul 2 din 12'), findsOneWidget);
+      await tester.tap(find.text('Neon'));
+      await tester.pump();
+      expect(find.text('Misiunea 4 · acum'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('the puzzle frame preview renders a wrong answer and a lock, in both looks, in $name', (tester) async {
+      await _pump(tester, const PuzzleFramePreview(), theme);
+      expect(find.text('Misiunea 4 din 6'), findsOneWidget);
+      expect(find.text('Casa cu ochi'), findsOneWidget);
+      expect(find.text('Nu e anul ăsta. Uită-te mai sus pe ușă.'), findsOneWidget);
+      expect(find.text('2 încercări rămase'), findsOneWidget);
+      expect(find.text('Indiciu'), findsOneWidget);
+      await tester.tap(find.text('Blocat'));
+      await tester.pump();
+      expect(find.text('Mai încercați în 0:45'), findsOneWidget);
+      await tester.tap(find.text('Neon'));
+      await tester.pump();
+      expect(find.text('Introdu codul de acces.'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 
@@ -103,6 +133,16 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(GameIntroPreview), findsOneWidget);
     Navigator.of(tester.element(find.byType(GameIntroPreview))).pop();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Traseu'));
+    await tester.pumpAndSettle();
+    expect(find.byType(RoutePreview), findsOneWidget);
+    Navigator.of(tester.element(find.byType(RoutePreview))).pop();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Puzzle'));
+    await tester.pumpAndSettle();
+    expect(find.byType(PuzzleFramePreview), findsOneWidget);
+    Navigator.of(tester.element(find.byType(PuzzleFramePreview))).pop();
     await tester.pumpAndSettle();
     await tester.tap(find.text('Joacă'));
     await tester.pumpAndSettle();

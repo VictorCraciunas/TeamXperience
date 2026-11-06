@@ -40,6 +40,39 @@ void main() {
     expect(publics, [true]);
   });
 
+  testWidgets('the mission place shows as Google Maps writes it', (tester) async {
+    await pumpUi(
+      tester,
+      SingleChildScrollView(
+        child: MissionTextFields(
+          mission: Mission(id: '0', latitude: 45.7983, longitude: 24.1522),
+          onChanged: ({title, teaser, isTeaserPublic}) {},
+        ),
+      ),
+    );
+    expect(find.text('Locul misiunii (opțional)'), findsOneWidget);
+    expect(find.text('45.7983, 24.1522'), findsOneWidget);
+  });
+
+  testWidgets('typing a place reports it, clearing reports none, a typo reports nothing', (tester) async {
+    final places = <({double lat, double lng})?>[];
+    await pumpUi(
+      tester,
+      SingleChildScrollView(
+        child: MissionTextFields(
+          mission: Mission(id: '0'),
+          onChanged: ({title, teaser, isTeaserPublic}) {},
+          onPlaceChanged: places.add,
+        ),
+      ),
+    );
+    final field = find.widgetWithText(TextField, 'Ex. 45.7971, 24.1520');
+    await tester.enterText(field, '45.7983, 24.1522');
+    await tester.enterText(field, '45.79');
+    await tester.enterText(field, '');
+    expect(places, [(lat: 45.7983, lng: 24.1522), null]);
+  });
+
   testWidgets('a mission card shows the title next to the number', (tester) async {
     await pumpUi(
       tester,

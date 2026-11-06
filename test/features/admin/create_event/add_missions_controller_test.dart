@@ -87,6 +87,18 @@ void main() {
       expect(changed, 2);
     });
 
+    test('a mission place is set and cleared', () {
+      var changed = 0;
+      final c = AddMissionsController(_event([Mission(id: '0')]), 'create', onStateChanged: () => changed++);
+      c.setMissionPlace(0, (lat: 45.7983, lng: 24.1522));
+      expect((c.event.missions.single.latitude, c.event.missions.single.longitude), (45.7983, 24.1522));
+      c.setMissionPlace(0, null);
+      expect(c.event.missions.single.latitude, isNull);
+      expect(c.event.missions.single.longitude, isNull);
+      c.setMissionPlace(4, (lat: 1, lng: 1));
+      expect(changed, 2);
+    });
+
     test('mission text for a mission that does not exist changes nothing', () {
       final c = AddMissionsController(_event([Mission(id: '0')]), 'create');
       c.setMissionText(3, title: 'X');

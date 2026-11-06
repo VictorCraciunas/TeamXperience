@@ -97,6 +97,20 @@ class TeamService {
     return teamRepo.markPresent(eventId, teamName, uid);
   }
 
+  /// One wrong answer on puzzle [key] (`Team.puzzleKey`), as an increment.
+  Future<void> addWrongAttempt(String eventId, String teamName, String key) {
+    return teamRepo.addWrongAttempt(eventId, teamName, key);
+  }
+
+  /// Pauses answers on puzzle [key] until [until]; its count starts over.
+  Future<void> lockPuzzle(String eventId, String teamName, String key, DateTime until) {
+    return teamRepo.lockPuzzle(eventId, teamName, key, until);
+  }
+
+  Future<void> markHintUsed(String eventId, String teamName, String key) {
+    return teamRepo.markHintUsed(eventId, teamName, key);
+  }
+
   Future<void> updatePuzzleNumber(
     String eventId,
     String teamName,
