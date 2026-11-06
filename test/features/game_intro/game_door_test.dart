@@ -26,6 +26,7 @@ Future<NavigatorState> _app(WidgetTester tester) async {
     routes: {
       Routes.gameIntro: (context) => _page(context, 'intro'),
       Routes.eventGame: (context) => _page(context, 'game'),
+      Routes.finish: (context) => _page(context, 'finish'),
       '/start': (context) => const Scaffold(body: Text('start')),
     },
   ));
@@ -36,6 +37,14 @@ Future<NavigatorState> _app(WidgetTester tester) async {
 
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
+
+  testWidgets('a finished team goes to its finish screen', (tester) async {
+    final nav = await _app(tester);
+    final team = _team('Vulpile')..hasFinished = true;
+    await GameDoor().open(nav, _event, team);
+    await tester.pumpAndSettle();
+    expect(find.text('finish Vulpile'), findsOneWidget);
+  });
 
   testWidgets('the first time the intro opens, with the event and team', (tester) async {
     final nav = await _app(tester);

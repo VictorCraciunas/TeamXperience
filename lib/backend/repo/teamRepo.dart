@@ -108,6 +108,20 @@ class TeamRepo {
   DocumentReference<Map<String, dynamic>> _team(String eventId, String teamName) =>
       _firestore.collection('events').doc(eventId).collection('teams').doc(teamName);
 
+  /// Adds [meters] to the walk of the phone signed in as [uid].
+  Future<void> addWalked(String eventId, String teamName, String uid, double meters) {
+    return _team(eventId, teamName).update({'walked.$uid': FieldValue.increment(meters)});
+  }
+
+  /// A player's rating of the event (1–5), one per player; a new tap replaces it.
+  Future<void> saveRating(String eventId, String uid, {required String teamName, required int rating}) {
+    return _firestore.collection('events').doc(eventId).collection('feedback').doc(uid).set({
+      'rating': rating,
+      'teamName': teamName,
+      'at': FieldValue.serverTimestamp(),
+    });
+  }
+
   /// Counts one wrong answer on the puzzle [key] ("3_0"). An increment, so two
   /// phones answering at once both count.
   Future<void> addWrongAttempt(String eventId, String teamName, String key) {
@@ -230,11 +244,18 @@ class TeamRepo {
     }
   }
 
-  Future<void> finishTeam(String eventId, String teamName) async {
+  /// Marks the team finished. With [completed] (its last mission solved) it
+  /// also stamps `finishedAt` with the server time, only the first time.
+  Future<void> finishTeam(String eventId, String teamName, {required bool completed}) async {
     try {
-      await _firestore.collection('events').doc(eventId).collection('teams').doc(teamName).update({
-        'hasFinished': true,
-      });
+      final ref = _team(eventId, teamName);
+      await ref.update({'hasFinished': true});
+      if (completed) {
+        await _firestore.runTransaction((tx) async {
+          final snap = await tx.get(ref);
+          if (snap.data()?['finishedAt'] == null) tx.update(ref, {'finishedAt': FieldValue.serverTimestamp()});
+        });
+      }
     } catch (e, stacktrace) {
       print('Error finishing team: $e');
       print('Stack trace: $stacktrace');

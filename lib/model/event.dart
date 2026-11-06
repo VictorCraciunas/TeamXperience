@@ -87,6 +87,12 @@ class Event {
   String? introLetter;
   String? introSignature;
 
+  /// What the finish screen says once the route is done ("Harta e
+  /// completă" / "Vulpile au moștenit secretul cartografului."); defaults
+  /// when empty.
+  String? finishTitle;
+  String? finishMessage;
+
   /// How many hints a team may open in each mission.
   int hintsPerMission;
 
@@ -207,6 +213,8 @@ class Event {
     this.organiserName,
     this.introLetter,
     this.introSignature,
+    this.finishTitle,
+    this.finishMessage,
     this.hintsPerMission = 1,
     this.enterWindowMinutes = 60,
   })  : missions = missions ?? [],
@@ -269,6 +277,8 @@ class Event {
       organiserName: map['organiserName'] as String?,
       introLetter: map['introLetter'] as String?,
       introSignature: map['introSignature'] as String?,
+      finishTitle: map['finishTitle'] as String?,
+      finishMessage: map['finishMessage'] as String?,
       hintsPerMission: (map['hintsPerMission'] as num?)?.toInt() ?? 1,
       enterWindowMinutes: (map['enterWindowMinutes'] as num?)?.toInt() ?? 60,
     );
@@ -318,6 +328,8 @@ class Event {
       'organiserName': organiserName,
       'introLetter': introLetter,
       'introSignature': introSignature,
+      'finishTitle': finishTitle,
+      'finishMessage': finishMessage,
       'hintsPerMission': hintsPerMission,
       'enterWindowMinutes': enterWindowMinutes,
     };

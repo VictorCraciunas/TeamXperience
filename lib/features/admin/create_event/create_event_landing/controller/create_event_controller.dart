@@ -61,6 +61,10 @@ class CreateEventController {
   final introLetterController = TextEditingController();
   final introSignatureController = TextEditingController();
 
+  // "Sfârșitul jocului".
+  final finishTitleController = TextEditingController();
+  final finishMessageController = TextEditingController();
+
   /// 0 to 5; empty or anything else means 1.
   final hintsPerMissionController = TextEditingController(text: '1');
 
@@ -150,6 +154,8 @@ class CreateEventController {
     organiserController.text = event.organiserName ?? '';
     introLetterController.text = event.introLetter ?? '';
     introSignatureController.text = event.introSignature ?? '';
+    finishTitleController.text = event.finishTitle ?? '';
+    finishMessageController.text = event.finishMessage ?? '';
     hintsPerMissionController.text = '${event.hintsPerMission}';
     enterWindowController.text = '${event.enterWindowMinutes}';
   }
@@ -228,6 +234,8 @@ class CreateEventController {
       ..organiserName = _textOrNull(organiserController)
       ..introLetter = _textOrNull(introLetterController)
       ..introSignature = _textOrNull(introSignatureController)
+      ..finishTitle = _textOrNull(finishTitleController)
+      ..finishMessage = _textOrNull(finishMessageController)
       ..hintsPerMission = _inRange(hintsPerMissionController.text, 0, 5) ?? 1
       ..enterWindowMinutes = _inRange(enterWindowController.text, 10, 180) ?? 60
       // Cards and older screens still read the text fields. An empty number

@@ -5,7 +5,8 @@ import 'package:teamxperience/ui/ui.dart';
 
 /// "Începutul jocului" on the event form: the letter teams read before the
 /// first mission, who signs it, how many hints a mission allows and how long
-/// after the start the code still works. All optional.
+/// after the start the code still works; then "Sfârșitul jocului", what the
+/// finish screen says. All optional.
 class GameStartSection extends StatelessWidget {
   const GameStartSection({
     super.key,
@@ -13,12 +14,16 @@ class GameStartSection extends StatelessWidget {
     required this.signature,
     required this.hintsPerMission,
     required this.enterWindow,
+    required this.finishTitle,
+    required this.finishMessage,
   });
 
   final TextEditingController letter;
   final TextEditingController signature;
   final TextEditingController hintsPerMission;
   final TextEditingController enterWindow;
+  final TextEditingController finishTitle;
+  final TextEditingController finishMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +57,19 @@ class GameStartSection extends StatelessWidget {
           hint: 'Gol = 60',
           keyboardType: TextInputType.number,
           validator: (text) => CreateEventController.enterWindowProblem(text ?? ''),
+        ),
+        const SizedBox(height: 28),
+        Text('Sfârșitul jocului', style: AppTextStyles.sectionTitle(context)),
+        const SizedBox(height: 12),
+        AppTextField(controller: finishTitle, label: 'Titlul de final', hint: 'Gol = „Ați terminat traseul!”'),
+        gap,
+        AppTextField(
+          controller: finishMessage,
+          label: 'Mesajul de final',
+          hint: 'Ex. {team} au moștenit secretul cartografului.',
+          helper: '{team} devine numele fiecărei echipe.',
+          maxLines: null,
+          keyboardType: TextInputType.multiline,
         ),
       ],
     );

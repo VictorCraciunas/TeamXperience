@@ -92,6 +92,8 @@ Event _readEvent(Map<String, dynamic> map, List<String> errors) {
     organiserName: reader.text('organiserName'),
     introLetter: reader.text('introLetter'),
     introSignature: reader.text('introSignature'),
+    finishTitle: reader.text('finishTitle'),
+    finishMessage: reader.text('finishMessage'),
     hintsPerMission: reader.whole('hintsPerMission', min: 0, max: 5) ?? 1,
     enterWindowMinutes: reader.whole('enterWindowMinutes', min: 10, max: 180) ?? 60,
   );

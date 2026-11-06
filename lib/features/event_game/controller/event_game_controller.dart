@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/features/event_game/logic/route_texts.dart';
 import 'package:teamxperience/features/event_game/logic/style_hints.dart';
 import 'package:teamxperience/features/event_game/logic/trail_layout.dart';
@@ -113,6 +115,7 @@ class EventGameController extends ChangeNotifier {
       await _locationService.startLocationTracking(
         eventId: event.eventId,
         teamName: t.name,
+        uid: context.read<UserProvider>().currentUser?.uid,
       );
     }
   }
@@ -143,7 +146,7 @@ class EventGameController extends ChangeNotifier {
 
     final t = team;
     if (t != null && !t.hasFinished) {
-      _teamService.finishTeam(event.eventId, t.name);
+      _teamService.finishTeam(event.eventId, t.name, completed: false);
       t.hasFinished = true;
     }
     notifyListeners();

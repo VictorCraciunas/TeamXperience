@@ -38,6 +38,18 @@ class Team {
   /// clock. Set once by `TeamRepo.startTeam`; never written by [toJson].
   final DateTime? startedAt;
 
+  /// When the team solved its last mission (server time); null when the
+  /// event ended first. Set once by `TeamRepo.finishTeam`; never written by
+  /// [toJson].
+  final DateTime? finishedAt;
+
+  /// How far each phone walked (uid → metres), each phone adding its own.
+  /// Never written by [toJson].
+  final Map<String, double> walked;
+
+  /// The team's walk: the longest of its phones' (they walk together).
+  double get distanceMeters => walked.values.fold(0.0, (longest, m) => m > longest ? m : longest);
+
   /// When each mission was solved (mission index → time). Never written by
   /// [toJson]: the puzzle controller sets one entry at a time.
   final Map<int, DateTime> missionCompletedAt;
@@ -77,6 +89,8 @@ class Team {
     Map<String, DateTime>? presence,
     Map<int, DateTime>? missionCompletedAt,
     this.startedAt,
+    this.finishedAt,
+    Map<String, double>? walked,
     Map<String, int>? attempts,
     Map<String, bool>? hintsUsed,
     Map<String, DateTime>? lockedUntil,
@@ -87,7 +101,8 @@ class Team {
         missionCompletedAt = missionCompletedAt ?? {},
         attempts = attempts ?? {},
         hintsUsed = hintsUsed ?? {},
-        lockedUntil = lockedUntil ?? {};
+        lockedUntil = lockedUntil ?? {},
+        walked = walked ?? {};
 
   /// The key of one puzzle in [attempts], [hintsUsed] and [lockedUntil]: "3_0".
   static String puzzleKey(int mission, int puzzle) => '${mission}_$puzzle';
@@ -126,6 +141,16 @@ class Team {
     if (raw is Map) {
       raw.forEach((key, value) {
         if (value is num && value == value.roundToDouble()) result[key.toString()] = value.toInt();
+      });
+    }
+    return result;
+  }
+
+  static Map<String, double> _meters(Object? raw) {
+    final result = <String, double>{};
+    if (raw is Map) {
+      raw.forEach((key, value) {
+        if (value is num) result[key.toString()] = value.toDouble();
       });
     }
     return result;
@@ -242,6 +267,8 @@ class Team {
       presence: _timesByKey(map['presence']),
       missionCompletedAt: _missionTimes(map['missionCompletedAt']),
       startedAt: _time(map['startedAt']),
+      finishedAt: _time(map['finishedAt']),
+      walked: _meters(map['walked']),
       attempts: _counts(map['attempts']),
       hintsUsed: _flags(map['hintsUsed']),
       lockedUntil: _timesByKey(map['lockedUntil']),

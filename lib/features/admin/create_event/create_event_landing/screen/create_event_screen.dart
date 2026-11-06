@@ -78,6 +78,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
       controller.introSignatureController,
       controller.hintsPerMissionController,
       controller.enterWindowController,
+      controller.finishTitleController,
+      controller.finishMessageController,
     ]) {
       c.dispose();
     }
@@ -486,6 +488,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     signature: controller.introSignatureController,
                     hintsPerMission: controller.hintsPerMissionController,
                     enterWindow: controller.enterWindowController,
+                    finishTitle: controller.finishTitleController,
+                    finishMessage: controller.finishMessageController,
                   ),
                   const SizedBox(height: 20),
                   AppButton(

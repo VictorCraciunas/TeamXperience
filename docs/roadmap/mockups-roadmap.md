@@ -440,7 +440,10 @@ side: `finishedAt`, distance walked, the recap from the team's own data,
 rating, share), 7b the Profil tab, 7c the results Cloud Function
 `onEventFinished` (L7.1: places, XP, badges, season standings, crew stats,
 memories). **7c is parked with 3b** and done together with it later; until
-then Profil shows starter values.
+then Profil shows starter values. **7a is done (2026-11-07):** `finishedAt`,
+each phone's walk (`walked.{uid}`), the rating (`events/{id}/feedback/{uid}`),
+the organiser's `finishTitle`/`finishMessage`, the leaderboard counting a
+finished route rather than a stopped game, and the finish screen.
 
 **Step 3b (parked by Victor on 2026-11-05, to do later).** Tasks 1 and 3 of
 `docs/superpowers/plans/2026-11-04-redesign-step-3-teams-and-invites.md`:
@@ -460,6 +463,7 @@ live in the Firebase console) and the five callables (`checkTeamName`,
 - from step 5: the rules must let a team member update `presence.{uid}` (their own uid) and `missionCompletedAt.*` on their own team doc; otherwise presence fails silently and the mission-progress update (same write) fails;
 - from step 5: write `missionCompletedAt.{i}` only when absent (a transaction or the step 7 function), so a second phone or a replay does not move the tie-break;
 - from step 6b: the rules must let a team member increment `attempts.{key}`, set `lockedUntil.{key}` (with `attempts.{key}` back to 0) and set `hintsUsed.{key}` on their own team doc;
+- from step 7a: a team member may increment only `walked.{their uid}`, set `finishedAt` only once (server time) and write only `events/{id}/feedback/{their uid}`; 7c reads `finishedAt`, `walked` and the feedback;
 - from step 6c: a team member may write `photoApprovals.{key}` only as `{status: 'pending', url, at}`; only an organiser may set `approved` / `denied` (with `reason`);
 - whether "Editează" on team details is for the captain only, decided with
   the rules.

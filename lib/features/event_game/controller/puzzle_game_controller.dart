@@ -225,7 +225,7 @@ class PuzzleGameController {
       }
     } else {
       if (isMissionCompleted) {
-        Navigator.pop(context, team);
+        _leave(team);
         return;
       }
 
@@ -234,7 +234,7 @@ class PuzzleGameController {
       final solved = solvedMission(missionIndex, team.missionProgress);
       final stamp = solved.stamp;
       if (stamp == null) {
-        Navigator.pop(context, team);
+        _leave(team);
         return;
       }
       team.puzzleNumber = 0;
@@ -248,12 +248,26 @@ class PuzzleGameController {
           team.missionProgress,
           completedMission: stamp,
         );
-        Navigator.pop(context, team);
+        // The last mission: the team is done, and its time stops now.
+        if (team.missionProgress >= event.missions.length) {
+          team.hasFinished = true;
+          await teamService.finishTeam(event.eventId, team.name, completed: true);
+        }
+        _leave(team);
       } catch (e) {
         print("Error updating mission progress: $e");
-        Navigator.pop(context, null);
+        _leave(null);
       }
     }
+  }
+
+  /// Leaves the puzzle with [result], unless the screen is gone or no longer
+  /// on top (the route may have opened the finish screen meanwhile).
+  void _leave(Team? result) {
+    if (_disposed || !context.mounted) return;
+    final route = ModalRoute.of(context);
+    if (route == null || !route.isCurrent) return;
+    Navigator.pop(context, result);
   }
 
   Puzzle? getCurrentPuzzle() {

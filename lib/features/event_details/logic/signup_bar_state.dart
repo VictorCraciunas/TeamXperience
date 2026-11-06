@@ -5,7 +5,7 @@ import 'package:teamxperience/utils/event_formats.dart';
 import 'enrolment_window.dart';
 
 /// What the action of the bar does.
-enum SignupAction { register, teamDetails, enterCode, continueGame, none }
+enum SignupAction { register, teamDetails, enterCode, continueGame, seeResult, none }
 
 /// The colour of the bar's icon; the screen maps it to `BarTone`.
 enum SignupTone { neutral, success, accent }
@@ -52,6 +52,15 @@ SignupBar signupBar({
   required int teamsCount,
   bool teamLoading = false,
 }) {
+  final own = team;
+  if (own != null && own.hasFinished) {
+    return SignupBar(
+      title: 'Echipa ${own.name} a terminat',
+      tone: SignupTone.success,
+      actionLabel: 'Vezi rezultatul',
+      action: SignupAction.seeResult,
+    );
+  }
   if (isOverAt(event, now)) return const SignupBar(title: 'Evenimentul s-a încheiat');
   if (team == null && teamLoading) return const SignupBar(title: 'Se încarcă echipa ta…');
 

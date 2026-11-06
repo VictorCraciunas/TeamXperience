@@ -5,6 +5,7 @@ import 'package:teamxperience/ui/ui.dart';
 import 'events_tab_preview.dart';
 import 'game_intro_preview.dart';
 import 'home_preview.dart';
+import 'finish_preview.dart';
 import 'location_puzzle_preview.dart';
 import 'photo_puzzle_preview.dart';
 import 'play_tab_preview.dart';
@@ -13,7 +14,8 @@ import 'route_preview.dart';
 import 'start_code_preview.dart';
 
 /// The gallery buttons that open the Acasă, Evenimente and Joacă tabs with the
-/// five-tab bar, the start code, the intro letter, the route and the puzzles.
+/// five-tab bar, the start code, the intro letter, the route, the puzzles and
+/// the finish recap.
 class ShellPreviewsLauncher extends StatelessWidget {
   const ShellPreviewsLauncher({super.key});
 
@@ -46,6 +48,8 @@ class ShellPreviewsLauncher extends StatelessWidget {
             AppButton(label: 'Locație', onPressed: () => _open(context, const LocationPuzzlePreview())),
             const SizedBox(height: AppSpacing.sm),
             AppButton(label: 'Poză', onPressed: () => _open(context, const PhotoPuzzlePreview())),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(label: 'Final', onPressed: () => _open(context, const FinishPreview())),
           ],
         ),
       ),

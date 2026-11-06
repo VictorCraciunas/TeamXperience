@@ -123,8 +123,18 @@ class TeamService {
     return teamRepo.startTeam(eventId, teamName);
   }
 
-  Future<void> finishTeam(String eventId, String teamName) async {
-    return teamRepo.finishTeam(eventId, teamName);
+  /// Marks the team finished; [completed] when its last mission was solved
+  /// (stamps `finishedAt` once).
+  Future<void> finishTeam(String eventId, String teamName, {required bool completed}) async {
+    return teamRepo.finishTeam(eventId, teamName, completed: completed);
+  }
+
+  Future<void> addWalked(String eventId, String teamName, String uid, double meters) {
+    return teamRepo.addWalked(eventId, teamName, uid, meters);
+  }
+
+  Future<void> saveRating(String eventId, String uid, {required String teamName, required int rating}) {
+    return teamRepo.saveRating(eventId, uid, teamName: teamName, rating: rating);
   }
 
   Future<List<Team>> getTeams(String eventId) async {

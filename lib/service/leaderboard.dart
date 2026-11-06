@@ -14,35 +14,51 @@ class RankedTeam {
   final int mission;
 }
 
-/// The event's teams in leaderboard order: finished teams first, then more
-/// missions solved, then whoever solved their last mission earlier (teams
-/// without a time after those with one), then by name. The player's live
-/// Home and the organiser's board both use it.
+/// The event's teams in leaderboard order: teams that solved every mission
+/// first (the earlier `finishedAt` ahead), then more missions solved, then
+/// whoever solved their last mission earlier (teams without a time after
+/// those with one), then by name. A team the event stopped early is marked
+/// `hasFinished` but ranks by its missions. The player's live Home, the
+/// finish screen and the organiser's board use it.
 List<RankedTeam> rankTeams(List<Team> teams, {required int missionCount}) {
-  final sorted = [...teams]..sort(_compare);
+  bool done(Team t) => _completed(t, missionCount);
+  int compare(Team a, Team b) {
+    if (done(a) != done(b)) return done(a) ? -1 : 1;
+    if (done(a)) {
+      // A finish time that was never written falls back to the last mission.
+      final byFinish = _earlierFirst(a.finishedAt ?? a.lastMissionAt, b.finishedAt ?? b.lastMissionAt);
+      if (byFinish != 0) return byFinish;
+    }
+    return _compare(a, b);
+  }
+
+  final sorted = [...teams]..sort(compare);
   return [
     for (var i = 0; i < sorted.length; i++)
       RankedTeam(team: sorted[i], place: i + 1, mission: _mission(sorted[i], missionCount)),
   ];
 }
 
+bool _completed(Team team, int missionCount) => missionCount > 0 && team.missionProgress >= missionCount;
+
+/// Earlier time first; a missing time after a present one; 0 when equal or
+/// both missing.
+int _earlierFirst(DateTime? a, DateTime? b) {
+  if (a != null && b != null) return a.compareTo(b);
+  if (a != null || b != null) return a != null ? -1 : 1;
+  return 0;
+}
+
 int _compare(Team a, Team b) {
-  if (a.hasFinished != b.hasFinished) return a.hasFinished ? -1 : 1;
   final byProgress = b.missionProgress.compareTo(a.missionProgress);
   if (byProgress != 0) return byProgress;
-  final aLast = a.lastMissionAt;
-  final bLast = b.lastMissionAt;
-  if (aLast != null && bLast != null) {
-    final byTime = aLast.compareTo(bLast);
-    if (byTime != 0) return byTime;
-  } else if (aLast != null || bLast != null) {
-    return aLast != null ? -1 : 1;
-  }
+  final byTime = _earlierFirst(a.lastMissionAt, b.lastMissionAt);
+  if (byTime != 0) return byTime;
   return a.name.compareTo(b.name);
 }
 
 int _mission(Team team, int missionCount) {
   if (missionCount <= 0) return 0;
-  if (team.hasFinished) return missionCount;
+  if (_completed(team, missionCount)) return missionCount;
   return (team.missionProgress + 1).clamp(1, missionCount);
 }
