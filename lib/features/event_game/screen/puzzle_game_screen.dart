@@ -40,7 +40,7 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
     if (!_initialized) {
       final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       final mission = args['mission'] as Mission;
-      final background = args['background'] as ImageProvider;
+      final background = args['background'] as ImageProvider?;
       final event = args['event'] as Event;
       final team = args['team'] as Team;
       final missionIndex = args['missionIndex'] as int;
@@ -79,6 +79,10 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
     startEntrance(_animationController, controller.event.screenAnimation, count: componentCount, timing: _timing);
   }
 
+  /// The organiser's picture behind the puzzle, when there is one.
+  static DecorationImage? _backdrop(ImageProvider? image) =>
+      image == null ? null : DecorationImage(image: image, fit: BoxFit.cover, onError: (_, __) {});
+
   void _openHint() {
     final hint = controller.getCurrentPuzzle()?.indiciu?.trim() ?? '';
     if (hint.isEmpty) return;
@@ -113,7 +117,7 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
       child: Scaffold(
         backgroundColor: palette.background,
         body: Container(
-          decoration: BoxDecoration(image: DecorationImage(image: controller.background, fit: BoxFit.cover)),
+          decoration: BoxDecoration(image: _backdrop(controller.background)),
           child: SafeArea(
             child: Column(
               children: [

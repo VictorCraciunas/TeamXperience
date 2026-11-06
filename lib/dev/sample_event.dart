@@ -74,13 +74,48 @@ Event sampleEvent() => Event(
           id: '3',
           title: 'Casa cu ochi',
           puzzles: [
-            Puzzle(id: '0', type: PuzzleType.code, components: parchmentCodePieces('Ce an e scris deasupra ușii?')),
+            Puzzle(
+              id: '0',
+              type: PuzzleType.code,
+              code: '1859',
+              maxAttempts: 3,
+              wrongAnswerMessage: 'Nu e anul ăsta. Uită-te mai sus pe ușă.',
+              indiciu: 'Anul e sculptat în piatră, deasupra ferestrei din mijloc.',
+              components: parchmentCodePieces('Acoperișul are ochi care nu dorm. Scrie anul de pe ușă.'),
+            ),
           ],
         ),
         Mission(id: '4', title: 'Unde dorm clopotele', puzzles: [Puzzle(id: '0', type: PuzzleType.geolocation)]),
         Mission(id: '5', title: 'Harta completă', puzzles: [Puzzle(id: '0', type: PuzzleType.code)]),
       ],
     )..nrMissions = 6;
+
+/// A code puzzle built in black and green, for showing that the game frame
+/// dresses itself from whatever the organiser chose.
+List<Component> neonCodePieces(String question) => [
+      Component(type: ComponentType.text, text: question, textColor: '#B8FFC8', fontFamily: 'Monospace', fontSize: 15),
+      Component(
+        type: ComponentType.code,
+        codeLength: 4,
+        inputType: 'Separated',
+        inputBackgroundColor: '#111A11',
+        colorBorderInput: '#33FF66',
+        glowColor: '#00CC44',
+      ),
+      Component(type: ComponentType.button, buttonLabel: 'Trimite', buttonColor: '#33FF66', buttonTextColor: '#0A0F0A'),
+    ];
+
+/// The sample event with its code puzzles rebuilt in black and green.
+Event neonSampleEvent() {
+  final event = sampleEvent()
+    ..defaults = const EventDefaults(backgroundColor: '#0A0F0A', textColor: '#B8FFC8', accentColor: '#33FF66', fontFamily: 'Monospace');
+  for (final mission in event.missions) {
+    for (final puzzle in mission.puzzles) {
+      if (puzzle.type == PuzzleType.code) puzzle.components = neonCodePieces('Introdu codul de acces.');
+    }
+  }
+  return event;
+}
 
 /// The other events of mockup 03 ("Deschise pentru înscriere").
 List<Event> sampleOpenEvents() => [

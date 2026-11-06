@@ -14,7 +14,8 @@ import '../../../service/LocationService.dart';
 
 class EventGameController extends ChangeNotifier {
   late Event event;
-  late ImageProvider background;
+  /// The organiser's picture behind the puzzles, or null.
+  ImageProvider? background;
   late BuildContext context;
   late Team? team;
   List<MissionState> missionDone = [];
@@ -168,8 +169,9 @@ class EventGameController extends ChangeNotifier {
   }
 
   void _initializeBackground() {
-    background = gameBackgroundOf(event);
-    precacheImage(background, context);
+    final image = gameBackgroundOf(event);
+    background = image;
+    if (image != null) precacheImage(image, context);
   }
 
   MissionState getMissionState(int index) {

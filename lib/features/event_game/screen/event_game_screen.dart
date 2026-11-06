@@ -10,10 +10,10 @@ import 'package:teamxperience/ui/ui.dart';
 import '../../../constants/routes.dart';
 import '../../../model/event.dart';
 import '../controller/event_game_controller.dart';
+import '../widgets/game_backdrop.dart';
+import '../widgets/game_route_view.dart';
 import '../widgets/keeps_presence.dart';
 import '../widgets/refreshes_active_game.dart';
-import '../widgets/route_header.dart';
-import '../widgets/route_trail_view.dart';
 
 /// The mission route in the event's own colours (mockup 06): the header
 /// with the team's place and the two clocks, then the winding trail. The
@@ -109,7 +109,8 @@ class _EventGameScreenState extends State<EventGameScreen> {
   /// Opens the mission the team is on; the place line pauses meanwhile.
   Future<void> _openCurrentMission() async {
     final index = controller.currentMission;
-    if (index >= controller.event.missions.length) return;
+    // The organisers' preview has no team: the trail shows, nothing opens.
+    if (controller.team == null || index >= controller.event.missions.length) return;
     controller.watchRanking(false);
     final updated = await Navigator.pushNamed(
       context,
@@ -137,46 +138,29 @@ class _EventGameScreenState extends State<EventGameScreen> {
 
   Widget _screen(BuildContext context) {
     final palette = eventPaletteOf(controller.event, context.colors);
-    final image = palette.backgroundImage;
     return EventThemeScope(
       palette: palette,
       child: Scaffold(
         backgroundColor: palette.background,
-        body: Stack(
-          children: [
-            if (image != null) ...[
-              Positioned.fill(
-                child: Image(image: image, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox()),
-              ),
-              Positioned.fill(child: ColoredBox(color: palette.background.withValues(alpha: .85))),
-            ],
-            SafeArea(
-              child: ListenableBuilder(
-                listenable: controller,
-                builder: (context, _) => Column(
-                  children: [
-                    ValueListenableBuilder<DateTime>(
-                      valueListenable: controller.now,
-                      builder: (context, now, _) => RouteHeader(
-                        eventName: controller.event.name ?? '',
-                        placeLine: controller.placeText,
-                        played: playedClock(controller.team?.startedAt, controller.event.dateEvent, now),
-                        left: leftClock(controller.event, now),
-                        onClose: () => Navigator.maybePop(context),
-                        onChat: _openChat,
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6),
-                        child: RouteTrailView(stops: controller.stops, onContinue: _openCurrentMission),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+        body: GameBackdrop(
+          child: SafeArea(
+            child: ListenableBuilder(
+              listenable: Listenable.merge([controller, controller.now]),
+              builder: (context, _) {
+                final now = controller.now.value;
+                return GameRouteView(
+                  eventName: controller.event.name ?? '',
+                  placeLine: controller.placeText,
+                  played: playedClock(controller.team?.startedAt, controller.event.dateEvent, now),
+                  left: leftClock(controller.event, now),
+                  stops: controller.stops,
+                  onClose: () => Navigator.maybePop(context),
+                  onChat: _openChat,
+                  onContinue: _openCurrentMission,
+                );
+              },
             ),
-          ],
+          ),
         ),
       ),
     );

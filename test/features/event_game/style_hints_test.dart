@@ -120,11 +120,11 @@ void main() {
       expect(palette.voiceFont, 'Gelasio');
     });
 
-    test('an event with no puzzles looks like the app, with the default background image', () {
+    test('an event with no puzzles and no picture looks exactly like the app', () {
       final palette = eventPaletteOf(Event(eventId: 'e1'), AppColors.dark);
-      expect(palette.background, AppColors.dark.page);
-      expect(palette.accent, AppColors.dark.accent);
-      expect(palette.backgroundImage, const AssetImage('assets/images/default_background.png'));
+      expect(palette, EventPalette.fromApp(AppColors.dark));
+      expect(palette.backgroundImage, isNull);
+      expect(eventPaletteOf(Event(eventId: 'e1', taskBackgroundImageUrl: '  '), AppColors.dark).backgroundImage, isNull);
     });
 
     test('the puzzles\' background image comes along', () {

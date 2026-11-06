@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/features/event_game/logic/trail_layout.dart';
 import 'package:teamxperience/model/event.dart';
@@ -64,8 +62,8 @@ void main() {
     test('bottom to top, alternating left and right, 100 apart', () {
       final points = trailPoints(5, width: 304);
       expect(points, hasLength(5));
-      expect(points.first, Offset(304 * .2, 4 * 100 + 40));
-      expect(points[1], Offset(304 * .68, 3 * 100 + 40));
+      expect(points.first, const Offset(304 * .2, 4 * 100 + 40));
+      expect(points[1], const Offset(304 * .68, 3 * 100 + 40));
       expect(points[2].dx, 304 * .2);
       expect(points.last.dy, 40);
     });

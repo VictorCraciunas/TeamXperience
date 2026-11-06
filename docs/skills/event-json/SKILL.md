@@ -45,6 +45,10 @@ Event
   whatToBring?: List<String>
   story?: String
   organiserName?: String
+  introLetter?: String
+  introSignature?: String
+  hintsPerMission?: Whole number         (default 1)
+  enterWindowMinutes?: Whole number      (default 60)
   lungimeTraseu?: String                 (older events; write routeLengthKm instead)
   durata?: String                        (older events; write durationMinutes instead)
   dificultate?: String                   (older events; write difficulty instead)
@@ -59,6 +63,8 @@ Mission
   title: String                          (needed to publish)
   teaser?: String
   isTeaserPublic?: true | false          (default false)
+  latitude?: Number
+  longitude?: Number
   puzzles: List<Puzzle>                  (at least 1 to publish)
 
 Puzzle
@@ -67,6 +73,8 @@ Puzzle
   latitude?: Number                      (needed to publish when type is "geolocation")
   longitude?: Number                     (needed to publish when type is "geolocation")
   indiciu?: String
+  maxAttempts?: Whole number             (code puzzles; default no limit)
+  wrongAnswerMessage?: String            (code puzzles)
   components: List<Component>            (at least 1 to publish)
 
 Component
@@ -196,6 +204,10 @@ A one-mission event with a code puzzle. (A fuller one is in `docs/event-import-s
 | `whatToBring` | A list of short texts, for example `["Telefon încărcat", "încălțări comode"]`. |
 | `story` | Free text, the story on the event page ("Povestea"). Longer than three lines it folds, with "Citește tot". When missing, `description` is shown. |
 | `organiserName` | Free text. Leave it out for TeamXperience. |
+| `introLetter` | Free text: the letter teams read before the first mission, in the event's serif. Optional. |
+| `introSignature` | Who signs the letter, for example `"Cartograful"` (shown as "— Cartograful"). |
+| `hintsPerMission` | Whole number from 0 to 5, default 1: how many puzzle hints a team may open in each mission. `0` hides "Indiciu". |
+| `enterWindowMinutes` | Whole number from 10 to 180, default 60: how long after the start teams can still type the start code. |
 | `lungimeTraseu`, `durata`, `dificultate` | Text from older events, still read when the number fields are missing. Write `routeLengthKm`, `durationMinutes` and `difficulty` instead. |
 | `landingImageUrl` | A link starting with `https://`, or `null`. The event's cover picture. Files cannot be put in the JSON. |
 | `taskBackgroundImageUrl` | A link starting with `https://`, or `null`. Background behind every puzzle. Pictures are not kept inside the app: host the picture somewhere and paste its link. A dark picture needs light text (the hacker examples use light green). A sample dark picture is in `docs/event-examples/images/hacker_background.jpg`. |
@@ -203,6 +215,8 @@ A one-mission event with a code puzzle. (A fuller one is in `docs/event-import-s
 | `animationDuration` | Whole milliseconds from 200 to 1500: how long one component takes to come in. When missing, the whole puzzle takes 2 seconds. Not used with `"none"`. |
 | `animationDelay` | Whole milliseconds from 0 to 600: how long after the one before the next component starts. `0` makes them all come in together. Missing means automatic. Not used with `"none"`. |
 | `missions` | A list. The missions are played in the order written. |
+
+**How the game looks comes from your components.** The route, the puzzle header, the progress bars, the attempts and the "Indiciu" button take their colours and fonts from the puzzles: the most common button colour (else the code field's border) is the accent, the text pieces' colour and font are the ink and the title font, the code field's fill is the cards' colour, a code frame's colour is the page, and the glow colour is the second accent. Unreadable combinations are corrected automatically. There is nothing else to set.
 
 Keys you may see in an exported event but must **not** write: `eventId`, `status`, `isStopped`, `nrMissions`, `wizardStep`, `updatedAt`, `defaults`, and the `id` of missions and puzzles. They are ignored or set by the app.
 
@@ -213,6 +227,7 @@ Keys you may see in an exported event but must **not** write: `eventId`, `status
 | `title` | Free text, the name of the mission, for example `"Scara Pasajului"`. Needed to publish. |
 | `teaser` | Free text, one short line for the event page, for example `"Numără treptele. Nu toate sunt la vedere."`. |
 | `isTeaserPublic` | `true` shows the title and teaser on the event page before the game; `false` (default) counts the mission as secret ("Încă 4 misiuni secrete"). Show one or two, keep the rest secret. |
+| `latitude`, `longitude` | Optional: where the mission is (-90 to 90, -180 to 180), for "la 180 m de tine" on the route. Without them the mission's first `"geolocation"` puzzle is used, else no distance is shown. |
 | `puzzles` | A list. The puzzles are played in the order written. A mission is finished when its last puzzle is solved. |
 
 ### Puzzle
@@ -224,6 +239,8 @@ Keys you may see in an exported event but must **not** write: `eventId`, `status
 | `latitude` | Only for `"geolocation"`. A number from -90 to 90, for example `45.7983`. |
 | `longitude` | Only for `"geolocation"`. A number from -180 to 180, for example `24.1521`. Players count as arrived within **20 metres** of the point, so choose a spot they can reach. |
 | `indiciu` | Free text. The hint for the puzzle. Optional. |
+| `maxAttempts` | Only for `"code"` puzzles. Whole number from 1 to 20: how many wrong answers the team gets before the puzzle pauses for 60 seconds (the hint opens by itself). Leave it out for no limit. |
+| `wrongAnswerMessage` | Only for `"code"` puzzles. What players read after a wrong answer, for example `"Nu e anul ăsta. Uită-te mai sus pe ușă."`. Default "Nu e corect. Mai încearcă." |
 | `components` | A list of what is shown on the puzzle screen, from top to bottom in the order written. |
 
 ### Component: keys every kind can have

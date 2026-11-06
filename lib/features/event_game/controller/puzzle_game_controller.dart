@@ -18,7 +18,8 @@ import '../../../enums/component-type.dart';
 
 class PuzzleGameController {
   final Mission mission;
-  final ImageProvider background;
+  /// The organiser's picture behind the puzzles, or null.
+  final ImageProvider? background;
   final int missionIndex;
   List<List<Widget>> puzzleWidgets = [];
 

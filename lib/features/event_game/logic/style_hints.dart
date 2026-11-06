@@ -7,9 +7,6 @@ import 'package:teamxperience/ui/theme/app_colors.dart';
 import 'package:teamxperience/ui/theme/event_palette.dart';
 import 'package:teamxperience/ui/theme/event_palette_resolver.dart';
 
-/// The picture puzzles are drawn on when the event has none of its own.
-const AssetImage defaultGameBackground = AssetImage('assets/images/default_background.png');
-
 /// A colour written as 6 hex digits, with or without the #; null otherwise.
 Color? _hex(String? value) {
   final text = (value ?? '').trim().replaceFirst('#', '');
@@ -66,10 +63,11 @@ String? _blankToNull(String? text) {
   return value.isEmpty ? null : value;
 }
 
-/// The picture behind the event's puzzles, as the game has always loaded it.
-ImageProvider gameBackgroundOf(Event event) {
+/// The picture behind the event's puzzles; null when the organiser set none
+/// (the game screens then show the palette's page colour).
+ImageProvider? gameBackgroundOf(Event event) {
   final url = event.taskBackgroundImageUrl?.trim() ?? '';
-  if (url.isEmpty) return defaultGameBackground;
+  if (url.isEmpty) return null;
   if (url.startsWith('http://') || url.startsWith('https://')) return NetworkImage(url);
   return AssetImage(url);
 }

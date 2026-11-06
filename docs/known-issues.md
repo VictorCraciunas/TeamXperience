@@ -27,7 +27,7 @@ Verify before fixing; none of these were reproduced. Roughly ordered by impact.
 - Stray debug `print`s remain in files this redesign did not touch (`avoid_print` lint, e.g. `AuthUtil`, `EventGameController`, `AddMissionsController`).
 
 ## Platform
-- Release builds signed with the debug key; missing Android `POST_NOTIFICATIONS`; missing iOS `NSPhotoLibraryUsageDescription`; no iOS push setup visible; `assets/images/default_background.png` referenced but absent.
+- Release builds signed with the debug key; missing Android `POST_NOTIFICATIONS`; missing iOS `NSPhotoLibraryUsageDescription`; no iOS push setup visible. (`assets/images/default_background.png` is no longer referenced since step 6b.)
 - `test/widget_test.dart` is the Flutter template and fails.
 - Hardcoded Cloud Run URL (`NetworkAPI`), public OSRM server, placeholder OSM user agent.
 
