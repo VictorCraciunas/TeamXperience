@@ -39,25 +39,6 @@ class ImageUploadPuzzleController extends ChangeNotifier {
     teamStream = _teamService.getStreamTeam(eventId, teamName);
   }
 
-  PhotoApprovalStatus? statusFor(Team team) {
-    final prefix = approvalKeyPrefix;
-    PhotoApprovalStatus? latest;
-    int latestTry = -1;
-    for (final entry in team.photoApprovals.entries) {
-      if (entry.key.startsWith(prefix)) {
-        final tryStr = entry.key.substring(prefix.length);
-        final tryIdx = int.tryParse(tryStr) ?? 0;
-        if (tryIdx > latestTry) {
-          latestTry = tryIdx;
-          latest = entry.value;
-        }
-      }
-    }
-    return latest;
-  }
-
-  bool isApproved(Team team) => team.isPuzzleApproved(missionIndex, puzzleIndex);
-
   Future<void> pickAndUpload(Team team) async {
     final file = await ImageHelper.pickImage();
     if (file == null) return;
