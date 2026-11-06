@@ -6,7 +6,7 @@ import 'package:teamxperience/model/team.dart';
 import 'intro_seen_store.dart';
 
 /// Every player way into a game: the intro letter the first time on this
-/// device, then the game itself.
+/// device, then the game itself; for a team that finished, its finish screen.
 class GameDoor {
   GameDoor({IntroSeenStore? store}) : _store = store ?? IntroSeenStore();
 
@@ -15,8 +15,8 @@ class GameDoor {
   /// Opens the intro or the game. With [replace] the page that opened the
   /// door (the start screen) goes, so back does not lead to it.
   Future<void> open(NavigatorState navigator, Event event, Team team, {bool replace = false}) async {
-    final seen = await _store.seen(event.eventId, team.name);
-    final route = seen ? Routes.eventGame : Routes.gameIntro;
+    final seen = team.hasFinished || await _store.seen(event.eventId, team.name);
+    final route = team.hasFinished ? Routes.finish : (seen ? Routes.eventGame : Routes.gameIntro);
     final arguments = {'event': event, 'team': team};
     if (replace) {
       navigator.pushReplacementNamed(route, arguments: arguments);

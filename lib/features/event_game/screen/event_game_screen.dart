@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/features/event_game/logic/route_texts.dart';
 import 'package:teamxperience/features/event_game/logic/style_hints.dart';
+import 'package:teamxperience/features/finish/logic/finish_target.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
@@ -30,6 +31,7 @@ class _EventGameScreenState extends State<EventGameScreen> {
 
   bool _initialized = false;
   bool _endedDialogShown = false;
+  bool _finishShown = false;
 
   @override
   void dispose() {
@@ -51,18 +53,28 @@ class _EventGameScreenState extends State<EventGameScreen> {
       controller.addListener(_onControllerChanged);
       _initialized = true;
 
-      if (controller.eventEnded) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _showEventEndedDialog();
-        });
-      }
+      WidgetsBinding.instance.addPostFrameCallback((_) => _onControllerChanged());
     }
   }
 
+  /// The game is over for the team (last mission solved, or the event
+  /// ended): the finish screen takes the route's place. The organisers'
+  /// preview has no team and keeps the old dialog.
   void _onControllerChanged() {
-    if (controller.eventEnded && !_endedDialogShown) {
-      _showEventEndedDialog();
+    final team = controller.team;
+    if (team != null) {
+      if (!_finishShown && showFinish(controller.event, team, eventEnded: controller.eventEnded)) _openFinish(team);
+      return;
     }
+    if (controller.eventEnded && !_endedDialogShown) _showEventEndedDialog();
+  }
+
+  void _openFinish(Team team) {
+    if (_finishShown || !mounted) return;
+    _finishShown = true;
+    // An open puzzle closes first.
+    Navigator.popUntil(context, (route) => route.settings.name == Routes.eventGame || route.isFirst);
+    Navigator.pushReplacementNamed(context, Routes.finish, arguments: {'event': controller.event, 'team': team});
   }
 
   void _showEventEndedDialog() {

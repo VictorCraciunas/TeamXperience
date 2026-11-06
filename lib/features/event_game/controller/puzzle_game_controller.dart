@@ -248,6 +248,11 @@ class PuzzleGameController {
           team.missionProgress,
           completedMission: stamp,
         );
+        // The last mission: the team is done, and its time stops now.
+        if (team.missionProgress >= event.missions.length) {
+          team.hasFinished = true;
+          await teamService.finishTeam(event.eventId, team.name, completed: true);
+        }
         Navigator.pop(context, team);
       } catch (e) {
         print("Error updating mission progress: $e");
