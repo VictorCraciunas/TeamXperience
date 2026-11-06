@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:teamxperience/features/event_game/logic/answer_check.dart';
+import 'package:teamxperience/features/event_game/logic/mission_progress.dart';
 import 'package:teamxperience/features/event_game/logic/puzzle_rules.dart';
 import 'package:teamxperience/features/event_game/logic/puzzle_rules_keeper.dart';
 import 'package:teamxperience/features/event_game/logic/spaced_components.dart';
@@ -115,6 +116,11 @@ class PuzzleGameController {
   /// A fresh team doc: counts, locks and hints from every phone. A lock that
   /// starts here this way opens the hint as one this phone triggered would.
   void _absorb(Team fresh) {
+    // Teammates' progress only ever raises ours; the screen stays where it is.
+    if (fresh.missionProgress > team.missionProgress) team.missionProgress = fresh.missionProgress;
+    if (fresh.missionProgress == team.missionProgress && fresh.puzzleNumber > team.puzzleNumber) {
+      team.puzzleNumber = fresh.puzzleNumber;
+    }
     final justLocked = rules.absorb(fresh, puzzle: getCurrentPuzzle(), key: currentKey);
     if (justLocked && !isMissionCompleted) {
       wrongMessage.value = null;
@@ -201,7 +207,11 @@ class PuzzleGameController {
       wrongMessage.value = null;
 
       if (!isMissionCompleted) {
-        team.puzzleNumber = selectedPuzzleNotifier.value;
+        team.puzzleNumber = nextPuzzleNumber(
+          selectedPuzzleNotifier.value - 1,
+          team.puzzleNumber,
+          sameMission: team.missionProgress == missionIndex,
+        );
         try {
           await teamService.updatePuzzleNumber(event.eventId, team.name, team.puzzleNumber);
         } catch (e) {
@@ -214,9 +224,16 @@ class PuzzleGameController {
         return;
       }
 
-      // Mission completed - reset puzzle number first, then increment progress
+      // Mission solved. A teammate may have solved it first (and moved on):
+      // then nothing is written, so their progress is not set back.
+      final solved = solvedMission(missionIndex, team.missionProgress);
+      final stamp = solved.stamp;
+      if (stamp == null) {
+        Navigator.pop(context, team);
+        return;
+      }
       team.puzzleNumber = 0;
-      team.missionProgress = team.missionProgress + 1;
+      team.missionProgress = solved.progress;
 
       try {
         await teamService.updatePuzzleNumber(event.eventId, team.name, 0);
@@ -224,7 +241,7 @@ class PuzzleGameController {
           event.eventId,
           team.name,
           team.missionProgress,
-          completedMission: team.missionProgress - 1,
+          completedMission: stamp,
         );
         Navigator.pop(context, team);
       } catch (e) {
