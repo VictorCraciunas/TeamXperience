@@ -440,7 +440,10 @@ side: `finishedAt`, distance walked, the recap from the team's own data,
 rating, share), 7b the Profil tab, 7c the results Cloud Function
 `onEventFinished` (L7.1: places, XP, badges, season standings, crew stats,
 memories). **7c is parked with 3b** and done together with it later; until
-then Profil shows starter values.
+then Profil shows starter values. **7a is done (2026-11-07):** `finishedAt`,
+each phone's walk (`walked.{uid}`), the rating (`events/{id}/feedback/{uid}`),
+the organiser's `finishTitle`/`finishMessage`, the leaderboard counting a
+finished route rather than a stopped game, and the finish screen.
 
 **Step 3b (parked by Victor on 2026-11-05, to do later).** Tasks 1 and 3 of
 `docs/superpowers/plans/2026-11-04-redesign-step-3-teams-and-invites.md`:

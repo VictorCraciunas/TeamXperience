@@ -4,6 +4,7 @@ import 'package:teamxperience/dev/events_tab_preview.dart';
 import 'package:teamxperience/dev/game_intro_preview.dart';
 import 'package:teamxperience/dev/start_code_preview.dart';
 import 'package:teamxperience/dev/home_preview.dart';
+import 'package:teamxperience/dev/finish_preview.dart';
 import 'package:teamxperience/dev/location_puzzle_preview.dart';
 import 'package:teamxperience/dev/photo_puzzle_preview.dart';
 import 'package:teamxperience/dev/play_tab_preview.dart';
@@ -139,6 +140,21 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('the finish preview renders complete and partial, in both looks, in $name', (tester) async {
+      await _pump(tester, const FinishPreview(), theme);
+      expect(find.text('Harta e completă'), findsOneWidget);
+      expect(find.text('1:48'), findsOneWidget);
+      expect(find.text('4,7'), findsOneWidget);
+      expect(find.text('Cea mai rapidă: misiunea 2 (6 min)'), findsOneWidget);
+      expect(find.text('+4'), findsOneWidget);
+      await tester.tap(find.text('Oprit mai devreme'));
+      await tester.pump();
+      expect(find.text('Jocul s-a încheiat'), findsOneWidget);
+      await tester.tap(find.text('Neon'));
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('the Joacă preview renders its four states in $name', (tester) async {
       await _pump(tester, const PlayTabPreview(), theme);
       expect(find.text('Continuă jocul'), findsOneWidget);
@@ -188,6 +204,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(PhotoPuzzlePreview), findsOneWidget);
     Navigator.of(tester.element(find.byType(PhotoPuzzlePreview))).pop();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Final'));
+    await tester.pumpAndSettle();
+    expect(find.byType(FinishPreview), findsOneWidget);
+    Navigator.of(tester.element(find.byType(FinishPreview))).pop();
     await tester.pumpAndSettle();
     await tester.tap(find.text('Joacă'));
     await tester.pumpAndSettle();

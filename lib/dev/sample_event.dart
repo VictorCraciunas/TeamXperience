@@ -4,6 +4,8 @@ import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/event_defaults.dart';
+import 'package:teamxperience/model/photo_detail.dart';
+import 'package:teamxperience/enums/photo_approval_status.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/model/team.dart';
@@ -55,6 +57,8 @@ Event sampleEvent() => Event(
           'locuri pe care doar un ochi atent le găsește. Prima vă așteaptă unde treptele nu se termină niciodată.',
       introSignature: 'Cartograful',
       hintsPerMission: 1,
+      finishTitle: 'Harta e completă',
+      finishMessage: 'Vulpile au moștenit secretul cartografului.',
       defaults: const EventDefaults(backgroundColor: '#EADBC0', textColor: '#3B2A1A', accentColor: '#8A3B12', fontFamily: 'Gelasio'),
       missions: [
         Mission(
@@ -193,6 +197,34 @@ const sampleMembers = [
   TeamMember(uid: 'ir', displayName: 'Ioana Rus', initials: 'IR'),
   TeamMember(uid: 'dp', displayName: 'Dan Popa', initials: 'DP'),
 ];
+
+/// Mockup 08's Vulpile at the finish: 1:48 played, 4,7 km walked, the
+/// fastest mission the second (6 min), two hints, six approved photos. With
+/// [solved] below 6, the event ended first.
+Team sampleFinishedTeam({int solved = 6}) {
+  final start = DateTime(2026, 11, 14, 10, 2);
+  final minutes = [20, 26, 44, 63, 84, 108];
+  return Team(
+    name: 'Vulpile',
+    teamMembers: '',
+    captainName: 'Victor',
+    phoneNumber: '',
+    captainEmail: '',
+    members: sampleMembers,
+    hasStarted: true,
+    hasFinished: true,
+    missionProgress: solved,
+    startedAt: start,
+    finishedAt: solved >= 6 ? start.add(const Duration(minutes: 108)) : null,
+    walked: {'vc': 4712, 'am': 4630},
+    missionCompletedAt: {for (var i = 0; i < solved; i++) i: start.add(Duration(minutes: minutes[i]))},
+    hintsUsed: {'1_0': true, '3_0': true},
+    photoDetails: {
+      for (var i = 0; i < 6; i++)
+        '${i}_0_1': PhotoDetail(status: PhotoApprovalStatus.approved, url: 'https://example.com/poza$i.jpg'),
+    },
+  );
+}
 
 /// Mockup 02's team before the game: four of four, registered.
 Team sampleTeam() => Team(
