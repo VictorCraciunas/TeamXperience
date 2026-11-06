@@ -49,9 +49,18 @@ void main() {
     expect(puzzle.wrongAnswerMessage, 'Mai sus.');
   });
 
-  testWidgets('a location puzzle has no attempt limit', (tester) async {
-    await _pump(tester, Puzzle(id: '0', type: PuzzleType.geolocation));
+  testWidgets('a location puzzle has no attempt limit, but a circle size', (tester) async {
+    final puzzle = Puzzle(id: '0', type: PuzzleType.geolocation);
+    await _pump(tester, puzzle);
     expect(find.text('Număr maxim de încercări'), findsNothing);
+    expect(find.text('Raza cercului (m)'), findsOneWidget);
+    await tester.enterText(find.widgetWithText(TextField, 'Gol = 20').first, '35');
+    expect(puzzle.radiusMeters, 35);
+  });
+
+  testWidgets('a code puzzle has no circle size', (tester) async {
+    await _pump(tester, Puzzle(id: '0', type: PuzzleType.code));
+    expect(find.text('Raza cercului (m)'), findsNothing);
   });
 
   testWidgets('typing the answer writes it onto the puzzle', (tester) async {

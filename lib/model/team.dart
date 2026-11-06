@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
+import 'package:teamxperience/model/photo_detail.dart';
 import 'package:teamxperience/model/team_member.dart';
 import 'package:teamxperience/utils/invite_code.dart' as invite_code;
 
@@ -18,6 +19,9 @@ class Team {
   double longitude;
   int numberOfMembers;
   Map<String, PhotoApprovalStatus> photoApprovals;
+
+  /// Everything stored for each photo try: status, reason, picture, time.
+  final Map<String, PhotoDetail> photoDetails;
   final String? crewId;
   final String? captainUid;
   final List<TeamMember> members;
@@ -64,6 +68,7 @@ class Team {
     this.longitude = 0,
     this.numberOfMembers = 0,
     Map<String, PhotoApprovalStatus>? photoApprovals,
+    Map<String, PhotoDetail>? photoDetails,
     this.crewId,
     this.captainUid,
     this.members = const [],
@@ -77,6 +82,7 @@ class Team {
     Map<String, DateTime>? lockedUntil,
   })  : userIds = userIds ?? [],
         photoApprovals = photoApprovals ?? {},
+        photoDetails = photoDetails ?? {},
         presence = presence ?? {},
         missionCompletedAt = missionCompletedAt ?? {},
         attempts = attempts ?? {},
@@ -194,15 +200,17 @@ class Team {
     final rawUserIds = map['userIds'] as List<dynamic>? ?? [];
     final userIdsList = rawUserIds.map((id) => id.toString()).toList();
 
-    final rawApprovals = map['photoApprovals'] as Map<String, dynamic>? ?? {};
+    final rawApprovals = map['photoApprovals'];
     final approvals = <String, PhotoApprovalStatus>{};
-    rawApprovals.forEach((k, v) {
-      final name = v.toString();
-      final status = PhotoApprovalStatus.values
-          .where((s) => s.name == name)
-          .firstOrNull;
-      if (status != null) approvals[k] = status;
-    });
+    final details = <String, PhotoDetail>{};
+    if (rawApprovals is Map) {
+      rawApprovals.forEach((k, v) {
+        final detail = PhotoDetail.fromValue(v);
+        if (detail == null) return;
+        approvals[k.toString()] = detail.status;
+        details[k.toString()] = detail;
+      });
+    }
 
     final rawMembers = map['members'] as List<dynamic>? ?? [];
     final membersList = rawMembers
@@ -225,6 +233,7 @@ class Team {
       longitude: (map['longitude'] as num?)?.toDouble() ?? 0,
       numberOfMembers: map['numberOfMembers'] as int? ?? 0,
       photoApprovals: approvals,
+      photoDetails: details,
       crewId: map['crewId'] as String?,
       captainUid: map['captainUid'] as String?,
       members: membersList,
@@ -254,7 +263,9 @@ class Team {
       'latitude': latitude,
       'longitude': longitude,
       'numberOfMembers': numberOfMembers,
-      'photoApprovals': photoApprovals.map((k, v) => MapEntry(k, v.name)),
+      'photoApprovals': photoApprovals.map(
+        (k, v) => MapEntry(k, (photoDetails[k] ?? PhotoDetail(status: v)).toJson()),
+      ),
       if (crewId != null) 'crewId': crewId,
       if (captainUid != null) 'captainUid': captainUid,
       'members': members.map((m) => m.toJson()).toList(),

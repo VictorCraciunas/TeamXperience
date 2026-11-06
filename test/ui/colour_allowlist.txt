@@ -8,7 +8,6 @@ lib/features/chat/widgets/message_bubble.dart 3
 lib/features/enter_code/screen/enter_code.dart 7
 lib/features/event_game/screen/event_game_screen.dart 1
 lib/features/event_game/widgets/geolocation_puzzle_widget.dart 7
-lib/features/event_game/widgets/image_upload/image_upload_picker.dart 4
 lib/features/event_see_registered_teams/widgets/team_card_widget.dart 1
 lib/features/log-in/screen/log_in_screen.dart 2
 lib/features/map/screen/map_screen.dart 4

@@ -149,8 +149,10 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                   ),
                 ),
                 Expanded(
+                  // Location and photo puzzles run edge to edge with their own
+                  // bars; the organiser's components keep the page padding.
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
+                    padding: EdgeInsets.zero,
                     child: ValueListenableBuilder<int>(
                       valueListenable: controller.selectedPuzzleNotifier,
                       builder: (context, selectedPuzzle, child) {
@@ -173,7 +175,7 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                               // Render admin components (text, images, etc.)
                               if (components.isNotEmpty)
                                 Padding(
-                                  padding: const EdgeInsets.all(20),
+                                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page + 20, vertical: 20),
                                   child: AnimatedBuilder(
                                     animation: _animationController,
                                     builder: (context, child) {
@@ -191,6 +193,8 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                                   onSolved: () => controller.navigate(),
                                   isMissionCompleted: controller.isMissionCompleted,
                                   routeService: controller.routeService,
+                                  onHint: controller.canUseHint ? _openHint : null,
+                                  onPicture: controller.background != null,
                                 ),
                               ),
                             ],
@@ -202,7 +206,7 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                             children: [
                               if (components.isNotEmpty)
                                 Padding(
-                                  padding: const EdgeInsets.all(20),
+                                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page + 20, vertical: 20),
                                   child: AnimatedBuilder(
                                     animation: _animationController,
                                     builder: (context, child) {
@@ -220,7 +224,9 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                                   missionIndex: controller.missionIndex,
                                   puzzleIndex: selectedPuzzle,
                                   onSolved: () => controller.navigate(),
+                                  onChat: _openChat,
                                   isMissionCompleted: controller.isMissionCompleted,
+                                  onPicture: controller.background != null,
                                 ),
                               ),
                             ],
@@ -235,7 +241,7 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
 
                         return Center(
                           child: SingleChildScrollView(
-                            padding: const EdgeInsets.all(20),
+                            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page + 20, vertical: 20),
                             child: AnimatedBuilder(
                               animation: _animationController,
                               builder: (context, child) {
@@ -258,6 +264,10 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                   builder: (context, _) {
                     final puzzle = controller.getCurrentPuzzle();
                     final isCode = puzzle?.type == PuzzleType.code && !controller.isMissionCompleted;
+                    // Location and photo puzzles draw their own bar.
+                    if (puzzle?.type == PuzzleType.geolocation || puzzle?.type == PuzzleType.imageToUpload) {
+                      return const SizedBox.shrink();
+                    }
                     return FrameBand(
                       onPicture: controller.background != null,
                       child: Column(

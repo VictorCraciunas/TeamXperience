@@ -12,6 +12,7 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(theme: entry.value, home: const ComponentGallery()));
       expect(tester.takeException(), isNull);
+      await tester.scrollUntilVisible(find.text('4,5 km · 6 misiuni'), 300);
       expect(find.text('4,5 km · 6 misiuni'), findsOneWidget);
 
       await tester.scrollUntilVisible(find.text('Înscrie echipa'), 300);

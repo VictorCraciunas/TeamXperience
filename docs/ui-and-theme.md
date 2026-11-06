@@ -57,6 +57,7 @@ Moved from `lib/widgets/` (and `utils/snackbars.dart`) in UI redesign phase 1: `
 | `CustomIconDashBoard` | Icon button with active-filter indicator |
 | `SliderWidget`, `ColorPickerDialog`, `TermsText` | Misc (slider for component sizing, flutter_colorpicker dialog, terms link text) |
 | `game/RoundIconButton`, `MissionSegments`, `AttemptDots`, `GameOutlineButton`, `GameIconButton` | The game frame of mockup 06, all in `context.eventPalette`: the 32 px round header button (ink 10 %), one 5 px bar per mission (done accent, current second accent, rest ink 18 %), the attempts left as filled dots and used ones as rings (only the label past 10; `attemptsLeftLabel` gives "2 încercări rămase" / "1 încercare rămasă" / "20 de încercări rămase"), the outlined "Indiciu" (greyed without a tap) and the 42 px accent chat button |
+| `game/GameFilledButton`, `DistanceCompass`, `PhotoStatusBanner` | Mockup 07: the main bar button (accent fill, `onAccent` label; without a tap the ink at 12 % with muted text), the location card (46 px accent circle with an arrow turned to the bearing, the distance at 22, the walk line, "mai aproape" in `success` / "mai departe" in `danger`) and a photo state row (`waiting` / `approved` / `rejected` in the app's `warning` / `success` / `danger` with their `*Soft` fills) |
 
 Conventions in feature code: `Scaffold` per screen, `MyAppBar`, `AppSpacing.page`, feedback through `MySnackBars`, images through `cached_network_image` for URLs / `Image.file` for local paths (check with `startsWith('http')`).
 

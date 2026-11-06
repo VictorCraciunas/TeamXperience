@@ -15,6 +15,9 @@ class ImageMessageBubble extends StatelessWidget {
   final VoidCallback? onApprove;
   final VoidCallback? onDeny;
 
+  /// The organiser's reason, shown under a rejected photo.
+  final String? rejectReason;
+
   const ImageMessageBubble({
     super.key,
     required this.imageUrl,
@@ -26,6 +29,7 @@ class ImageMessageBubble extends StatelessWidget {
     this.status,
     this.onApprove,
     this.onDeny,
+    this.rejectReason,
   });
 
   @override
@@ -109,6 +113,14 @@ class ImageMessageBubble extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (status == PhotoApprovalStatus.denied && (rejectReason ?? '').trim().isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 6, 8, 4),
+                    child: Text(
+                      (rejectReason ?? '').trim(),
+                      style: TextStyle(fontSize: 12, height: 1.4, color: context.colors.danger),
+                    ),
+                  ),
                 if (showApprovalActions) ...[
                   const SizedBox(height: 8),
                   Padding(

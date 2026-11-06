@@ -74,6 +74,7 @@ Puzzle
   longitude?: Number                     (needed to publish when type is "geolocation")
   indiciu?: String
   maxAttempts?: Whole number             (code puzzles; default no limit)
+  radiusMeters?: Whole number            (location puzzles; default 20)
   wrongAnswerMessage?: String            (code puzzles)
   components: List<Component>            (at least 1 to publish)
 
@@ -237,8 +238,9 @@ Keys you may see in an exported event but must **not** write: `eventId`, `status
 | `type` | `"code"`: players type an answer. `"geolocation"`: players must walk to a place. `"imageToUpload"`: players send a photo that an organiser approves in the chat. `"redirect"` and `"ar"` exist in the app but have **no special game behaviour yet**, so do not use them. |
 | `code` | Only for `"code"` puzzles. The correct answer. Not case-sensitive, spaces at the ends are ignored. Letters and digits, no longer than `codeLength` of the code component. |
 | `latitude` | Only for `"geolocation"`. A number from -90 to 90, for example `45.7983`. |
-| `longitude` | Only for `"geolocation"`. A number from -180 to 180, for example `24.1521`. Players count as arrived within **20 metres** of the point, so choose a spot they can reach. |
+| `longitude` | Only for `"geolocation"`. A number from -180 to 180, for example `24.1521`. Players count as arrived within `radiusMeters` (**20 metres** by default) of the point, so choose a spot they can reach. |
 | `indiciu` | Free text. The hint for the puzzle. Optional. |
+| `radiusMeters` | Only for `"geolocation"`. Whole number from 10 to 200, default 20: how close (in metres) the team must get before "Intră în cerc" works. Use 30–50 in narrow streets where GPS wanders. |
 | `maxAttempts` | Only for `"code"` puzzles. Whole number from 1 to 20: how many wrong answers the team gets before the puzzle pauses for 60 seconds (the hint opens by itself). Leave it out for no limit. |
 | `wrongAnswerMessage` | Only for `"code"` puzzles. What players read after a wrong answer, for example `"Nu e anul ăsta. Uită-te mai sus pe ușă."`. Default "Nu e corect. Mai încearcă." |
 | `components` | A list of what is shown on the puzzle screen, from top to bottom in the order written. |

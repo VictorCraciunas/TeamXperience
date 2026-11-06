@@ -1,308 +1,202 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:teamxperience/features/event_game/logic/location_texts.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/service/LocationService.dart';
 import 'package:teamxperience/service/route_service.dart';
-import 'package:teamxperience/ui/components/buttons/app_button.dart';
 
+import 'location_map.dart';
+import 'location_puzzle_view.dart';
+
+/// A location puzzle: follows the phone's position, measures the distance and
+/// the way to the target, and lets the team in once inside the circle
+/// ([Puzzle.radiusMeters]). Draws [LocationPuzzleView].
 class GeolocationPuzzleWidget extends StatefulWidget {
-  final Puzzle puzzle;
-  final VoidCallback onSolved;
-  final bool isMissionCompleted;
-  final RouteService routeService;
-
   const GeolocationPuzzleWidget({
     super.key,
     required this.puzzle,
     required this.onSolved,
     required this.routeService,
     this.isMissionCompleted = false,
+    this.onHint,
+    this.onPicture = false,
   });
 
+  final Puzzle puzzle;
+  final VoidCallback onSolved;
+  final RouteService routeService;
+  final bool isMissionCompleted;
+  final VoidCallback? onHint;
+  final bool onPicture;
+
   @override
-  State<GeolocationPuzzleWidget> createState() =>
-      _GeolocationPuzzleWidgetState();
+  State<GeolocationPuzzleWidget> createState() => _GeolocationPuzzleWidgetState();
 }
 
-class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> {
-  final MapController _mapController = MapController();
-  final LocationService _locationService = LocationService();
-  StreamSubscription<Position>? _positionSubscription;
-  LatLng? _currentPosition;
-  bool _isInsideCircle = false;
-  bool _locationError = false;
-  String _errorMessage = '';
-  List<LatLng> _routePoints = [];
-  double? _straightLineDistance;
-  double? _routeDistance;
-  bool _hasInitialFit = false;
+class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> with WidgetsBindingObserver {
+  final MapController _map = MapController();
+  final LocationService _location = LocationService();
+  StreamSubscription<Position>? _positions;
 
-  static const double _circleRadiusMeters = 20.0;
+  LocationViewState _state = LocationViewState.waiting;
+  LatLng? _player;
+  double? _meters;
+  double? _bearing;
+  final List<double> _readings = [];
+  List<LatLng> _route = const [];
+  bool _fitted = false;
 
-  LatLng get _targetPosition =>
-      LatLng(widget.puzzle.latitude ?? 0, widget.puzzle.longitude ?? 0);
+  LatLng? get _target {
+    final point = locationTarget(widget.puzzle);
+    return point == null ? null : LatLng(point.lat, point.lng);
+  }
 
   @override
   void initState() {
     super.initState();
-    _startTracking();
+    WidgetsBinding.instance.addObserver(this);
+    if (widget.isMissionCompleted) {
+      _state = LocationViewState.done;
+    } else if (_target == null) {
+      _state = LocationViewState.noTarget;
+    } else {
+      _startTracking();
+    }
   }
 
   @override
   void dispose() {
-    _positionSubscription?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    _positions?.cancel();
     super.dispose();
   }
 
-  Future<void> _startTracking() async {
-    final hasPermission = await _locationService.checkAndRequestPermission();
-    if (!hasPermission) {
-      if (mounted) {
-        setState(() {
-          _locationError = true;
-          _errorMessage = 'Permisiunea de localizare nu a fost acordată.';
-        });
-      }
-      return;
-    }
-
-    // Get initial position immediately
-    try {
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-        ),
-      );
-      if (mounted) {
-        final userLatLng = LatLng(position.latitude, position.longitude);
-        final distance = Geolocator.distanceBetween(
-          position.latitude,
-          position.longitude,
-          _targetPosition.latitude,
-          _targetPosition.longitude,
-        );
-        setState(() {
-          _currentPosition = userLatLng;
-          _isInsideCircle = distance <= _circleRadiusMeters;
-          _straightLineDistance = distance;
-        });
-        _fetchRoute(userLatLng);
-        _fitMapToBounds(userLatLng);
-      }
-    } catch (_) {}
-
-    _positionSubscription = _locationService
-        .getPositionStream(distanceFilter: 2)
-        .listen(
-          (Position position) {
-            final userLatLng = LatLng(position.latitude, position.longitude);
-            final distance = Geolocator.distanceBetween(
-              position.latitude,
-              position.longitude,
-              _targetPosition.latitude,
-              _targetPosition.longitude,
-            );
-
-            if (mounted) {
-              setState(() {
-                _currentPosition = userLatLng;
-                _isInsideCircle = distance <= _circleRadiusMeters;
-                _straightLineDistance = distance;
-              });
-              _fetchRoute(userLatLng);
-            }
-          },
-          onError: (error) {
-            if (mounted) {
-              setState(() {
-                _locationError = true;
-                _errorMessage = 'Eroare la localizare: $error';
-              });
-            }
-          },
-        );
+  /// Back from the settings: check again, without asking a second time (the
+  /// permission dialog itself pauses and resumes the app).
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final blocked = _state == LocationViewState.denied || _state == LocationViewState.serviceOff;
+    if (state == AppLifecycleState.resumed && blocked) _startTracking(ask: false);
   }
 
-  void _fitMapToBounds(LatLng userPosition) {
-    if (_hasInitialFit) return;
-    _hasInitialFit = true;
+  /// Location switched off, or permission refused, as a view state.
+  Future<LocationAccess> _access({required bool ask}) async {
+    final serviceOn = await Geolocator.isLocationServiceEnabled();
+    var permission = await Geolocator.checkPermission();
+    if (ask && serviceOn && permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    return locationAccess(serviceOn: serviceOn, permission: permission);
+  }
 
-    final bounds = LatLngBounds.fromPoints([userPosition, _targetPosition]);
-    // Delay to ensure map is rendered
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (mounted) {
-        _mapController.fitCamera(
-          CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(60)),
-        );
-      }
+  void _blocked(LocationAccess access) {
+    if (!mounted) return;
+    setState(() {
+      _state = access == LocationAccess.serviceOff ? LocationViewState.serviceOff : LocationViewState.denied;
     });
   }
 
-  Future<void> _fetchRoute(LatLng from) async {
-    final result = await widget.routeService.fetchWalkingRoute(
-      from: from,
-      to: _targetPosition,
-    );
+  /// The stream failed (location switched off mid-puzzle, or taken away).
+  Future<void> _onStreamError() async {
+    final access = await _access(ask: false);
+    _blocked(access == LocationAccess.ok ? LocationAccess.denied : access);
+  }
 
-    if (result != null && mounted) {
-      setState(() {
-        _routePoints = result.points;
-        _routeDistance = result.distanceMeters;
-      });
+  Future<void> _startTracking({bool ask = true}) async {
+    final target = _target;
+    if (target == null) return;
+    final access = await _access(ask: ask);
+    if (!mounted) return;
+    if (access != LocationAccess.ok) return _blocked(access);
+    if (_state != LocationViewState.tracking) setState(() => _state = LocationViewState.waiting);
+
+    await _positions?.cancel();
+    if (!mounted) return;
+    _positions = _location.getPositionStream(distanceFilter: 2).listen(
+          (position) => _onFix(position, target),
+          onError: (Object _) => _onStreamError(),
+        );
+    try {
+      final first = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+      );
+      _onFix(first, target);
+    } catch (_) {}
+  }
+
+  void _onFix(Position position, LatLng target) {
+    if (!mounted) return;
+    final player = LatLng(position.latitude, position.longitude);
+    final meters = Geolocator.distanceBetween(position.latitude, position.longitude, target.latitude, target.longitude);
+    final bearing = Geolocator.bearingBetween(position.latitude, position.longitude, target.latitude, target.longitude);
+    setState(() {
+      _state = LocationViewState.tracking;
+      _player = player;
+      _meters = meters;
+      _bearing = bearing;
+      _readings.add(meters);
+      if (_readings.length > 3) _readings.removeAt(0);
+    });
+    _fetchRoute(player, target);
+    if (!_fitted) {
+      _fitted = true;
+      Future.delayed(const Duration(milliseconds: 300), _recenter);
+    }
+  }
+
+  Future<void> _fetchRoute(LatLng from, LatLng to) async {
+    final result = await widget.routeService.fetchWalkingRoute(from: from, to: to);
+    if (result != null && mounted) setState(() => _route = result.points);
+  }
+
+  void _recenter() {
+    final target = _target;
+    final player = _player;
+    if (!mounted || target == null) return;
+    try {
+      if (player == null) {
+        _map.move(target, 17);
+      } else {
+        _map.fitCamera(CameraFit.bounds(
+          bounds: LatLngBounds.fromPoints([player, target]),
+          padding: const EdgeInsets.all(40),
+          maxZoom: 18,
+        ));
+      }
+    } catch (_) {
+      // The map is not laid out yet.
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_locationError) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text(
-            _errorMessage,
-            style: const TextStyle(fontSize: 16, color: Colors.white),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
-    }
-
-    return Column(
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: FlutterMap(
-                mapController: _mapController,
-                options: MapOptions(
-                  initialCenter: _targetPosition,
-                  initialZoom: 17.0,
-                  maxZoom: 19.0,
-                  minZoom: 10.0,
-                ),
-                children: [
-                  TileLayer(
-                    urlTemplate:
-                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    userAgentPackageName: 'com.example.flutter_map_test',
-                  ),
-                  MarkerLayer(
-                    markers: [
-                      Marker(
-                        point: _targetPosition,
-                        width: 60,
-                        height: 60,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: context.colors.accent.withValues(
-                              alpha: 0.25,
-                            ),
-                            border: Border.all(
-                              color: context.colors.accent,
-                              width: 3,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: context.colors.accent.withValues(
-                                  alpha: 0.4,
-                                ),
-                                blurRadius: 12,
-                                spreadRadius: 4,
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.flag_rounded,
-                            color: Colors.red,
-                            size: 28,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (_routePoints.isNotEmpty)
-                    PolylineLayer(
-                      polylines: [
-                        Polyline(
-                          points: _routePoints,
-                          strokeWidth: 4.0,
-                          color: context.colors.accent,
-                        ),
-                      ],
-                    ),
-                  if (_currentPosition != null)
-                    MarkerLayer(
-                      markers: [
-                        Marker(
-                          point: _currentPosition ?? _targetPosition,
-                          width: 30,
-                          height: 30,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 3),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.blue.withValues(alpha: 0.4),
-                                  blurRadius: 8,
-                                  spreadRadius: 2,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                ],
-              ),
+    final target = _target;
+    final meters = _meters;
+    return LocationPuzzleView(
+      state: _state,
+      map: target == null
+          ? const SizedBox.shrink()
+          : LocationMap(
+              controller: _map,
+              target: target,
+              radius: widget.puzzle.radiusMeters,
+              player: _player,
+              route: _route,
+              onRecenter: _recenter,
             ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        if (_isInsideCircle || widget.isMissionCompleted)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
-            child: AppButton(label: 'Continuă', onPressed: widget.onSolved),
-          ),
-        if (!_isInsideCircle &&
-            !widget.isMissionCompleted &&
-            _currentPosition != null)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: Column(
-              children: [
-                if (_routeDistance != null || _straightLineDistance != null)
-                  Text(
-                    RouteService.formatDistance(
-                      _routeDistance ?? _straightLineDistance!,
-                    ),
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                const SizedBox(height: 4),
-                Text(
-                  'Deplasează-te spre zona marcată',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white.withValues(alpha: 0.8),
-                  ),
-                ),
-              ],
-            ),
-          ),
-      ],
+      meters: meters,
+      bearing: _bearing,
+      trend: trendOf(_readings),
+      inside: meters != null && insideCircle(meters, widget.puzzle.radiusMeters),
+      onEnter: widget.onSolved,
+      onHint: widget.onHint,
+      onOpenSettings: Geolocator.openAppSettings,
+      onOpenLocationSettings: Geolocator.openLocationSettings,
+      onPicture: widget.onPicture,
     );
   }
 }

@@ -4,6 +4,8 @@ import 'package:teamxperience/dev/events_tab_preview.dart';
 import 'package:teamxperience/dev/game_intro_preview.dart';
 import 'package:teamxperience/dev/start_code_preview.dart';
 import 'package:teamxperience/dev/home_preview.dart';
+import 'package:teamxperience/dev/location_puzzle_preview.dart';
+import 'package:teamxperience/dev/photo_puzzle_preview.dart';
 import 'package:teamxperience/dev/play_tab_preview.dart';
 import 'package:teamxperience/dev/puzzle_frame_preview.dart';
 import 'package:teamxperience/dev/route_preview.dart';
@@ -104,6 +106,39 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('the location puzzle preview renders its states in both looks in $name', (tester) async {
+      await _pump(tester, const LocationPuzzlePreview(), theme);
+      expect(find.text('Misiunea 5 din 6'), findsOneWidget);
+      expect(find.text('Unde dorm clopotele'), findsOneWidget);
+      expect(find.text('140 m'), findsOneWidget);
+      expect(find.text('mai aproape'), findsOneWidget);
+      await tester.tap(find.text('În cerc'));
+      await tester.pump();
+      expect(find.text('Ești în cerc'), findsOneWidget);
+      await tester.tap(find.text('Fără acces'));
+      await tester.pump();
+      expect(find.text('Deschide setările'), findsOneWidget);
+      await tester.tap(find.text('Neon'));
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('the photo puzzle preview renders its states in both looks in $name', (tester) async {
+      await _pump(tester, const PhotoPuzzlePreview(), theme);
+      expect(find.text('Misiunea 3 din 6'), findsOneWidget);
+      expect(find.text('Turnul Sfatului'), findsOneWidget);
+      expect(find.text('Organizatorul se uită la poză'), findsOneWidget);
+      await tester.tap(find.text('Aprobată'));
+      await tester.pump();
+      expect(find.text('Aprobată. Bravo!'), findsOneWidget);
+      await tester.tap(find.text('Respinsă'));
+      await tester.pump();
+      expect(find.text('Respinsă: „Nu se vede ceasul”'), findsOneWidget);
+      await tester.tap(find.text('Neon'));
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('the Joacă preview renders its four states in $name', (tester) async {
       await _pump(tester, const PlayTabPreview(), theme);
       expect(find.text('Continuă jocul'), findsOneWidget);
@@ -143,6 +178,16 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(PuzzleFramePreview), findsOneWidget);
     Navigator.of(tester.element(find.byType(PuzzleFramePreview))).pop();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Locație'));
+    await tester.pumpAndSettle();
+    expect(find.byType(LocationPuzzlePreview), findsOneWidget);
+    Navigator.of(tester.element(find.byType(LocationPuzzlePreview))).pop();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Poză'));
+    await tester.pumpAndSettle();
+    expect(find.byType(PhotoPuzzlePreview), findsOneWidget);
+    Navigator.of(tester.element(find.byType(PhotoPuzzlePreview))).pop();
     await tester.pumpAndSettle();
     await tester.tap(find.text('Joacă'));
     await tester.pumpAndSettle();

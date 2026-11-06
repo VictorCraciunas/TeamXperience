@@ -24,6 +24,10 @@ List<Component> parchmentCodePieces(String question) => [
       Component(type: ComponentType.button, buttonLabel: 'Verifică', buttonColor: '#8A3B12', buttonTextColor: '#FBF4E4'),
     ];
 
+/// A question in the parchment voice, as mockup 07 writes it.
+Component parchmentQuestion(String text) =>
+    Component(type: ComponentType.text, text: text, textColor: '#3B2A1A', fontFamily: 'Gelasio', fontSize: 14);
+
 /// The event of mockup 01, for the gallery and the tests. Its puzzles are in
 /// the parchment colours of mockups 05 to 08.
 Event sampleEvent() => Event(
@@ -69,7 +73,19 @@ Event sampleEvent() => Event(
           isTeaserPublic: true,
           puzzles: [Puzzle(id: '0', type: PuzzleType.imageToUpload)],
         ),
-        Mission(id: '2', title: 'Turnul Sfatului', puzzles: [Puzzle(id: '0', type: PuzzleType.imageToUpload)]),
+        Mission(
+          id: '2',
+          title: 'Turnul Sfatului',
+          puzzles: [
+            Puzzle(
+              id: '0',
+              type: PuzzleType.imageToUpload,
+              components: [
+                parchmentQuestion('Faceți o poză cu toată echipa sub ceasul turnului. Toți trebuie să arătați spre ora exactă.'),
+              ],
+            ),
+          ],
+        ),
         Mission(
           id: '3',
           title: 'Casa cu ochi',
@@ -85,7 +101,23 @@ Event sampleEvent() => Event(
             ),
           ],
         ),
-        Mission(id: '4', title: 'Unde dorm clopotele', puzzles: [Puzzle(id: '0', type: PuzzleType.geolocation)]),
+        Mission(
+          id: '4',
+          title: 'Unde dorm clopotele',
+          puzzles: [
+            Puzzle(
+              id: '0',
+              type: PuzzleType.geolocation,
+              latitude: 45.7978,
+              longitude: 24.1525,
+              radiusMeters: 30,
+              indiciu: 'Clopotele dorm în turnul bisericii evanghelice.',
+              components: [
+                parchmentQuestion('Mergeți acolo unde clopotele se odihnesc când nu bat. Harta vă arată doar cât de aproape sunteți.'),
+              ],
+            ),
+          ],
+        ),
         Mission(id: '5', title: 'Harta completă', puzzles: [Puzzle(id: '0', type: PuzzleType.code)]),
       ],
     )..nrMissions = 6;
@@ -111,7 +143,15 @@ Event neonSampleEvent() {
     ..defaults = const EventDefaults(backgroundColor: '#0A0F0A', textColor: '#B8FFC8', accentColor: '#33FF66', fontFamily: 'Monospace');
   for (final mission in event.missions) {
     for (final puzzle in mission.puzzles) {
-      if (puzzle.type == PuzzleType.code) puzzle.components = neonCodePieces('Introdu codul de acces.');
+      if (puzzle.type == PuzzleType.code) {
+        puzzle.components = neonCodePieces('Introdu codul de acces.');
+      } else {
+        for (final piece in puzzle.components) {
+          piece
+            ..textColor = '#B8FFC8'
+            ..fontFamily = 'Monospace';
+        }
+      }
     }
   }
   return event;
