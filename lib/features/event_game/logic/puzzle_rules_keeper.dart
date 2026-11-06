@@ -59,15 +59,20 @@ class PuzzleRulesKeeper {
 
     final max = puzzle.maxAttempts;
     if (max != null && used >= max) {
-      final until = _clock().add(rules.puzzleLock);
-      team.lockedUntil[key] = until;
-      team.attempts[key] = 0;
-      _send(() => lockPuzzle(key, until));
+      _lock(key);
       _changed();
       return WrongResult.outOfAttempts;
     }
     _changed();
     return WrongResult.counted;
+  }
+
+  /// Locks [key] for a minute here and on the team doc; its count starts over.
+  void _lock(String key) {
+    final until = _clock().add(rules.puzzleLock);
+    team.lockedUntil[key] = until;
+    team.attempts[key] = 0;
+    _send(() => lockPuzzle(key, until));
   }
 
   /// Notes that the team opened the hint of [key]; only the first time is sent.
@@ -80,8 +85,12 @@ class PuzzleRulesKeeper {
     } catch (_) {}
   }
 
-  /// Takes the counts, locks and hints of a fresh copy of the team doc.
-  void absorb(Team fresh) {
+  /// Takes the counts, locks and hints of a fresh copy of the team doc. For
+  /// the open [puzzle] ([key]): when teammates' answers used its last attempt
+  /// (two phones counting at once), it is locked here too. Returns true when
+  /// the open puzzle has just become locked, by this or by a teammate.
+  bool absorb(Team fresh, {Puzzle? puzzle, String? key}) {
+    final wasLocked = key != null && isLocked(key);
     team.attempts
       ..clear()
       ..addAll(fresh.attempts);
@@ -91,7 +100,18 @@ class PuzzleRulesKeeper {
     team.hintsUsed
       ..clear()
       ..addAll(fresh.hintsUsed);
+    var justLocked = false;
+    if (key != null && puzzle != null) {
+      final max = puzzle.maxAttempts;
+      if (isLocked(key)) {
+        justLocked = !wasLocked;
+      } else if (max != null && (team.attempts[key] ?? 0) >= max) {
+        _lock(key);
+        justLocked = true;
+      }
+    }
     _changed();
+    return justLocked;
   }
 
   void dispose() => changes.dispose();

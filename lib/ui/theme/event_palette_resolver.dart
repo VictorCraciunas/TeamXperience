@@ -27,6 +27,14 @@ class StyleHints {
       accent == null && ink == null && surface == null && background == null && glow == null && font == null;
 }
 
+/// The glow as the second accent when it shows on the surface (2:1: it only
+/// marks the current mission's bar and card; the mockup's gold is 2.9:1),
+/// else the accent, softer.
+Color _secondAccent(Color? glow, Color accent, Color surface) {
+  if (glow != null && contrastRatio(glow, surface) >= 2) return glow;
+  return accent.withValues(alpha: .55);
+}
+
 /// The colours of an event's game screens: what its puzzles use, else the
 /// app's. Text the puzzles' colours would make unreadable is replaced by
 /// near-black or near-white.
@@ -39,11 +47,17 @@ EventPalette resolveEventPalette({
   if (hints.isEmpty) return fromApp;
 
   final background = hints.background ?? app.page;
-  final surface = hints.surface ?? app.panel;
+  var surface = hints.surface ?? app.panel;
 
-  var ink = hints.ink ?? app.text;
-  if (contrastRatio(ink, background) < 4.5 || contrastRatio(ink, surface) < 4.5) {
-    ink = readableOn([background, surface]);
+  bool readsOnBoth(Color text) => contrastRatio(text, background) >= 4.5 && contrastRatio(text, surface) >= 4.5;
+  final wanted = hints.ink ?? app.text;
+  var ink = wanted;
+  if (!readsOnBoth(ink)) ink = readableOn([background, surface]);
+  if (!readsOnBoth(ink)) {
+    // The page and the surface need opposite text: the page wins, and the
+    // surface becomes a tint of it.
+    ink = contrastRatio(wanted, background) >= 4.5 ? wanted : readableOn([background]);
+    surface = Color.alphaBlend(ink.withValues(alpha: .06), background);
   }
 
   var accent = hints.accent ?? app.accent;
@@ -60,7 +74,7 @@ EventPalette resolveEventPalette({
     faint: ink.withValues(alpha: .55),
     accent: accent,
     onAccent: readableOn([accent]),
-    secondaryAccent: hints.glow ?? accent.withValues(alpha: .55),
+    secondaryAccent: _secondAccent(hints.glow, accent, surface),
     danger: app.danger,
     routeDash: ink.withValues(alpha: .3),
     voiceFont: hints.font ?? AppFonts.voice,

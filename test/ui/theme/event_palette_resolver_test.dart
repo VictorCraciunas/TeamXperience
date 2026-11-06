@@ -82,17 +82,33 @@ void main() {
       expect(palette.ink, _nearBlack);
     });
 
-    test('dark text that reads on the page but not on a dark surface is guarded too', () {
+    test('a light page with a dark surface: the text reads on both', () {
+      for (final ink in [const Color(0xFF222222), const Color(0xFFFFFFFF)]) {
+        final palette = resolveEventPalette(
+          hints: StyleHints(ink: ink, background: const Color(0xFFFFFFFF), surface: const Color(0xFF111111)),
+          app: AppColors.light,
+        );
+        expect(contrastRatio(palette.ink, palette.background), greaterThanOrEqualTo(4.5));
+        expect(contrastRatio(palette.ink, palette.surface), greaterThanOrEqualTo(4.5));
+      }
+    });
+
+    test('a second accent that vanishes on the surface becomes the accent, softer', () {
       final palette = resolveEventPalette(
-        hints: const StyleHints(ink: Color(0xFF222222), background: Color(0xFFFFFFFF), surface: Color(0xFF111111)),
+        hints: const StyleHints(
+          accent: Color(0xFF8A3B12),
+          background: Color(0xFF0A0A0A),
+          surface: Color(0xFF111111),
+          glow: Color(0xFF000000),
+        ),
         app: AppColors.light,
       );
-      expect(palette.ink, isNot(const Color(0xFF222222)));
+      expect(palette.secondaryAccent, palette.accent.withValues(alpha: .55));
     });
 
     test('text on accent fills is dark on a light accent and light on a dark one', () {
       final light = resolveEventPalette(
-        hints: const StyleHints(accent: Color(0xFFF5D76E), surface: Color(0xFF222222)),
+        hints: const StyleHints(accent: Color(0xFFF5D76E), background: Color(0xFF222222), surface: Color(0xFF222222)),
         app: AppColors.light,
       );
       final dark = resolveEventPalette(hints: const StyleHints(accent: Color(0xFF8A3B12)), app: AppColors.light);

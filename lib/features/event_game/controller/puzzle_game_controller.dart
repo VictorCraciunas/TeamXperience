@@ -68,7 +68,7 @@ class PuzzleGameController {
     );
     _teamWatch = teamService
         .getStreamTeam(event.eventId, team.name)
-        .listen(rules.absorb, onError: (Object _) {});
+        .listen(_absorb, onError: (Object _) {});
     _tick = Timer.periodic(const Duration(seconds: 1), (_) => now.value = DateTime.now());
     loadPuzzles();
     // Resume from saved puzzle progress (only for the current unlocked mission)
@@ -109,6 +109,16 @@ class PuzzleGameController {
       }
       puzzleWidgets.add(widgets);
       puzzleSpaces.add([for (final component in puzzle.components) component.spaceBelow]);
+    }
+  }
+
+  /// A fresh team doc: counts, locks and hints from every phone. A lock that
+  /// starts here this way opens the hint as one this phone triggered would.
+  void _absorb(Team fresh) {
+    final justLocked = rules.absorb(fresh, puzzle: getCurrentPuzzle(), key: currentKey);
+    if (justLocked && !isMissionCompleted) {
+      wrongMessage.value = null;
+      onOutOfAttempts?.call();
     }
   }
 

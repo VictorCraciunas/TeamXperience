@@ -7,11 +7,17 @@ import 'package:teamxperience/ui/theme/app_colors.dart';
 import 'package:teamxperience/ui/theme/event_palette.dart';
 import 'package:teamxperience/ui/theme/event_palette_resolver.dart';
 
-/// A colour written as 6 hex digits, with or without the #; null otherwise.
+/// A colour written as 6 hex digits (JSON) or as #aarrggbb (what the editor's
+/// colour picker saves), with or without the #, as an opaque colour; null for
+/// anything else and for a fully transparent one.
 Color? _hex(String? value) {
   final text = (value ?? '').trim().replaceFirst('#', '');
-  if (!RegExp(r'^[0-9A-Fa-f]{6}$').hasMatch(text)) return null;
-  return Color(int.parse('FF$text', radix: 16));
+  if (RegExp(r'^[0-9A-Fa-f]{6}$').hasMatch(text)) return Color(int.parse('FF$text', radix: 16));
+  if (RegExp(r'^[0-9A-Fa-f]{8}$').hasMatch(text)) {
+    if (int.parse(text.substring(0, 2), radix: 16) == 0) return null;
+    return Color(int.parse('FF${text.substring(2)}', radix: 16));
+  }
+  return null;
 }
 
 /// The value seen most often; a tie goes to the first seen.
@@ -54,7 +60,9 @@ StyleHints styleHintsFrom(Iterable<Component> components, EventDefaults? default
     font: _mostCommon(fonts) ?? _blankToNull(defaults?.fontFamily),
     surface: common(codes, (c) => c.inputBackgroundColor) ?? common(all, (c) => c.frameBackgroundColor),
     background: _hex(defaults?.backgroundColor) ?? common(all, (c) => c.frameBackgroundColor),
-    glow: common(all, (c) => c.glowColor),
+    // The editor writes a glow colour on every code piece; only a glow that is
+    // switched on is the organiser's choice.
+    glow: common(all.where((c) => c.enableGlow == true), (c) => c.glowColor),
   );
 }
 

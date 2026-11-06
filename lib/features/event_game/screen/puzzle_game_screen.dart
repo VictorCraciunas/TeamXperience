@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/event_game/logic/route_texts.dart';
 import 'package:teamxperience/features/event_game/logic/style_hints.dart';
+import 'package:teamxperience/features/event_game/widgets/frame_band.dart';
 import 'package:teamxperience/features/event_game/widgets/hint_sheet.dart';
 import 'package:teamxperience/features/event_game/widgets/puzzle_bottom_bar.dart';
 import 'package:teamxperience/features/event_game/widgets/puzzle_feedback.dart';
@@ -121,22 +122,30 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
           child: SafeArea(
             child: Column(
               children: [
-                ValueListenableBuilder<DateTime>(
-                  valueListenable: controller.now,
-                  builder:
-                      (context, now, _) => PuzzleHeader(
-                        mission: controller.missionIndex + 1,
-                        missions: controller.event.missions.length,
-                        title: controller.missionTitle,
-                        clock: playedClock(controller.team.startedAt, controller.event.dateEvent, now),
-                        onBack: () => Navigator.maybePop(context),
+                FrameBand(
+                  onPicture: controller.background != null,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ValueListenableBuilder<DateTime>(
+                        valueListenable: controller.now,
+                        builder:
+                            (context, now, _) => PuzzleHeader(
+                              mission: controller.missionIndex + 1,
+                              missions: controller.event.missions.length,
+                              title: controller.missionTitle,
+                              clock: playedClock(controller.team.startedAt, controller.event.dateEvent, now),
+                              onBack: () => Navigator.maybePop(context),
+                            ),
                       ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  child: MissionSegments(
-                    total: controller.event.missions.length,
-                    done: controller.team.missionProgress,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(14, 0, 14, 8),
+                        child: MissionSegments(
+                          total: controller.event.missions.length,
+                          done: controller.team.missionProgress,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Expanded(
@@ -249,21 +258,24 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                   builder: (context, _) {
                     final puzzle = controller.getCurrentPuzzle();
                     final isCode = puzzle?.type == PuzzleType.code && !controller.isMissionCompleted;
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (isCode)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 14),
-                            child: PuzzleFeedback(
-                              wrong: controller.wrongMessage.value,
-                              maxAttempts: puzzle?.maxAttempts,
-                              attemptsLeft: controller.currentAttemptsLeft,
-                              lockLeft: controller.currentLock,
+                    return FrameBand(
+                      onPicture: controller.background != null,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (isCode)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 14),
+                              child: PuzzleFeedback(
+                                wrong: controller.wrongMessage.value,
+                                maxAttempts: puzzle?.maxAttempts,
+                                attemptsLeft: controller.currentAttemptsLeft,
+                                lockLeft: controller.currentLock,
+                              ),
                             ),
-                          ),
-                        PuzzleBottomBar(onHint: controller.canUseHint ? _openHint : null, onChat: _openChat),
-                      ],
+                          PuzzleBottomBar(onHint: controller.canUseHint ? _openHint : null, onChat: _openChat),
+                        ],
+                      ),
                     );
                   },
                 ),

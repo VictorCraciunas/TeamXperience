@@ -132,13 +132,19 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('twelve missions scroll, and open at the bottom', (tester) async {
+  testWidgets('twelve missions scroll: open on the last one, the first at the bottom of the trail', (tester) async {
     await _pump(tester, [
       for (var i = 1; i <= 11; i++) DoneStop(i, 'Misiunea $i'),
       const CurrentStop(12, 'Harta completă', null),
       const FinishStop(),
     ]);
+    await tester.pump();
     expect(find.byType(Scrollable), findsOneWidget);
+    final card = tester.getRect(find.byKey(const ValueKey('trail-card')));
+    expect(card.top, greaterThanOrEqualTo(0));
+    expect(card.bottom, lessThanOrEqualTo(430));
+    await tester.drag(find.byType(Scrollable), const Offset(0, -3000));
+    await tester.pump();
     final first = tester.getRect(find.byKey(const ValueKey('trail-done-1')));
     expect(first.bottom, lessThanOrEqualTo(430));
     expect(first.top, greaterThan(300));
@@ -152,6 +158,19 @@ void main() {
     final card = tester.getRect(find.byKey(const ValueKey('trail-card')));
     expect(card.bottom, lessThanOrEqualTo(430), reason: 'the whole card, button included, is on screen');
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a long route opens on the current mission', (tester) async {
+    await _pump(tester, [
+      for (var i = 1; i <= 8; i++) DoneStop(i, 'Misiunea $i'),
+      const CurrentStop(9, 'Unde dorm clopotele', null),
+      const LockedStop('10–12'),
+      const FinishStop(),
+    ]);
+    await tester.pump();
+    final card = tester.getRect(find.byKey(const ValueKey('trail-card')));
+    expect(card.top, greaterThanOrEqualTo(0));
+    expect(card.bottom, lessThanOrEqualTo(430));
   });
 
   testWidgets('a card at the very top is not cut off', (tester) async {

@@ -115,6 +115,28 @@ void main() {
     expect(reopened.lockLeft('3_0'), const Duration(seconds: 40));
   });
 
+  test('teammates\' answers that used the last attempt lock the puzzle here too', () {
+    final fresh = Team.fromMap({'name': 'Vulpile', 'attempts': {'3_0': 3}});
+    expect(keeper.absorb(fresh, puzzle: puzzle, key: '3_0'), isTrue);
+    expect(writes.locks, [('3_0', now.add(const Duration(seconds: 60)))]);
+    expect(keeper.isLocked('3_0'), isTrue);
+    expect(keeper.wrong(puzzle, '3_0'), WrongResult.locked);
+  });
+
+  test('a lock that arrives from a teammate is reported once', () {
+    final locked = _team()..lockedUntil['3_0'] = now.add(const Duration(seconds: 30));
+    expect(keeper.absorb(locked, puzzle: puzzle, key: '3_0'), isTrue);
+    expect(writes.locks, isEmpty, reason: 'already locked: nothing to write');
+    final again = _team()..lockedUntil['3_0'] = now.add(const Duration(seconds: 30));
+    expect(keeper.absorb(again, puzzle: puzzle, key: '3_0'), isFalse);
+  });
+
+  test('counts below the limit change nothing', () {
+    final fresh = Team.fromMap({'name': 'Vulpile', 'attempts': {'3_0': 2}});
+    expect(keeper.absorb(fresh, puzzle: puzzle, key: '3_0'), isFalse);
+    expect(writes.locks, isEmpty);
+  });
+
   test('opening a hint is remembered once', () async {
     await keeper.useHint('3_0');
     await keeper.useHint('3_0');

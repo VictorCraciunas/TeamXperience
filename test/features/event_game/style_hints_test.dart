@@ -18,6 +18,7 @@ Component _code({String? border, String? fill, String? frame, String? glow}) => 
       inputBackgroundColor: fill,
       frameBackgroundColor: frame,
       glowColor: glow,
+      enableGlow: glow != null,
     );
 
 void main() {
@@ -35,6 +36,12 @@ void main() {
     test('the most common button colour is the accent', () {
       final hints = styleHintsFrom([_button('#000000'), _button('#8A3B12'), _button('8a3b12')], null);
       expect(hints.accent, const Color(0xFF8A3B12));
+    });
+
+    test('colours the editor wrote as #aarrggbb count too, fully transparent ones do not', () {
+      final hints = styleHintsFrom([_button('#ff8a3b12'), _button('#ff8a3b12'), _button('#00000000')], null);
+      expect(hints.accent, const Color(0xFF8A3B12));
+      expect(styleHintsFrom([_button('#00123456')], null).accent, isNull);
     });
 
     test('a tie goes to the first seen', () {
@@ -89,8 +96,14 @@ void main() {
       expect(styleHintsFrom([_code(frame: '#0A0F0A')], null).background, const Color(0xFF0A0F0A));
     });
 
-    test('the second accent is the most common glow', () {
-      expect(styleHintsFrom([_code(glow: '#B8862B')], null).glow, const Color(0xFFB8862B));
+    test('the second accent is the most common glow that is switched on', () {
+      Component glowing(String colour, bool? on) => Component(type: ComponentType.code, glowColor: colour, enableGlow: on);
+      expect(styleHintsFrom([glowing('#B8862B', true)], null).glow, const Color(0xFFB8862B));
+      expect(
+        styleHintsFrom([glowing('#000000', false), glowing('#000000', null), glowing('#B8862B', true)], null).glow,
+        const Color(0xFFB8862B),
+      );
+      expect(styleHintsFrom([glowing('#000000', false)], null).glow, isNull);
     });
   });
 
