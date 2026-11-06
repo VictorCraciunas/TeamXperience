@@ -51,6 +51,10 @@ class PuzzleGameController {
 
   StreamSubscription<Team>? _teamWatch;
 
+  /// The current time, ticking every second for the clock and the lock.
+  final ValueNotifier<DateTime> now = ValueNotifier(DateTime.now());
+  Timer? _tick;
+
   /// Whether this mission was already completed before entering
   bool get isMissionCompleted => missionIndex < team.missionProgress;
 
@@ -64,6 +68,7 @@ class PuzzleGameController {
     _teamWatch = teamService
         .getStreamTeam(event.eventId, team.name)
         .listen(rules.absorb, onError: (Object _) {});
+    _tick = Timer.periodic(const Duration(seconds: 1), (_) => now.value = DateTime.now());
     loadPuzzles();
     // Resume from saved puzzle progress (only for the current unlocked mission)
     if (!isMissionCompleted && team.puzzleNumber > 0 && team.puzzleNumber < mission.puzzles.length) {
@@ -120,6 +125,21 @@ class PuzzleGameController {
     return puzzle != null && !isMissionCompleted && hintAvailable(event, puzzle, team, missionIndex, selectedPuzzle);
   }
 
+  /// The mission's title, or "Misiunea 4" when it has none.
+  String get missionTitle {
+    final title = mission.title?.trim() ?? '';
+    return title.isEmpty ? 'Misiunea ${missionIndex + 1}' : title;
+  }
+
+  /// Attempts left on the puzzle on screen; null without a limit.
+  int? get currentAttemptsLeft {
+    final puzzle = getCurrentPuzzle();
+    return puzzle == null ? null : attemptsLeft(puzzle, team, currentKey);
+  }
+
+  /// How long the puzzle on screen still refuses answers; null when it does not.
+  Duration? get currentLock => rules.lockLeft(currentKey);
+
   /// Opens the hint of the puzzle on screen (counted once per puzzle).
   Future<void> useHint() => rules.useHint(currentKey);
 
@@ -149,8 +169,13 @@ class PuzzleGameController {
         final result = rules.wrong(puzzle, key);
         if (result == WrongResult.locked) return;
         answerFeedback.wrong();
-        wrongMessage.value = wrongLine(puzzle);
-        if (result == WrongResult.outOfAttempts) onOutOfAttempts?.call();
+        if (result == WrongResult.outOfAttempts) {
+          // The countdown takes the line's place until the lock ends.
+          wrongMessage.value = null;
+          onOutOfAttempts?.call();
+        } else {
+          wrongMessage.value = wrongLine(puzzle);
+        }
       }
     } else {
       navigate();
@@ -239,6 +264,8 @@ class PuzzleGameController {
   void dispose() {
     _disposed = true;
     _teamWatch?.cancel();
+    _tick?.cancel();
+    now.dispose();
     rules.dispose();
     wrongMessage.dispose();
     answerFeedback.dispose();

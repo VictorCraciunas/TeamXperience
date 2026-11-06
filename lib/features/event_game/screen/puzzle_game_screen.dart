@@ -1,5 +1,13 @@
-import 'package:teamxperience/ui/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/constants/routes.dart';
+import 'package:teamxperience/features/event_game/logic/route_texts.dart';
+import 'package:teamxperience/features/event_game/logic/style_hints.dart';
+import 'package:teamxperience/features/event_game/widgets/hint_sheet.dart';
+import 'package:teamxperience/features/event_game/widgets/puzzle_bottom_bar.dart';
+import 'package:teamxperience/features/event_game/widgets/puzzle_feedback.dart';
+import 'package:teamxperience/features/event_game/widgets/puzzle_header.dart';
+import 'package:teamxperience/ui/components/game/mission_segments.dart';
+import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/features/event_game/logic/component_fades.dart';
 import 'package:teamxperience/features/event_game/logic/entrance.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
@@ -10,6 +18,9 @@ import '../../../model/event.dart';
 import '../../../model/mission.dart';
 import '../../../model/team.dart';
 
+/// One mission's puzzles inside the game frame of mockup 06, in the event's
+/// colours: header, mission bars, the organiser's content (as built), the
+/// wrong-answer line and attempts, and "Indiciu" with the chat.
 class PuzzleGameScreen extends StatefulWidget {
   const PuzzleGameScreen({super.key});
 
@@ -17,7 +28,7 @@ class PuzzleGameScreen extends StatefulWidget {
   State<PuzzleGameScreen> createState() => _PuzzleGameScreenState();
 }
 
-class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerProviderStateMixin{
+class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerProviderStateMixin {
   late PuzzleGameController controller;
   bool _initialized = false;
   late AnimationController _animationController;
@@ -34,6 +45,9 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
       final team = args['team'] as Team;
       final missionIndex = args['missionIndex'] as int;
       controller = PuzzleGameController(mission, background, event, team, missionIndex);
+      controller.onOutOfAttempts = () {
+        if (mounted && controller.canUseHint) _openHint();
+      };
 
       // Initialize animation controller
       _animationController = AnimationController(
@@ -58,17 +72,25 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
     );
   }
 
-  EntranceTiming get _timing => EntranceTiming(
-    durationMs: controller.event.animationDuration,
-    delayMs: controller.event.animationDelay,
-  );
+  EntranceTiming get _timing =>
+      EntranceTiming(durationMs: controller.event.animationDuration, delayMs: controller.event.animationDelay);
 
   void _startAnimation(int componentCount) {
-    startEntrance(
-      _animationController,
-      controller.event.screenAnimation,
-      count: componentCount,
-      timing: _timing,
+    startEntrance(_animationController, controller.event.screenAnimation, count: componentCount, timing: _timing);
+  }
+
+  void _openHint() {
+    final hint = controller.getCurrentPuzzle()?.indiciu?.trim() ?? '';
+    if (hint.isEmpty) return;
+    controller.useHint();
+    showHintSheet(context, hint: hint, palette: eventPaletteOf(controller.event, context.colors));
+  }
+
+  void _openChat() {
+    Navigator.pushNamed(
+      context,
+      Routes.chatScreen,
+      arguments: {'eventId': controller.event.eventId, 'team': controller.team},
     );
   }
 
@@ -82,132 +104,166 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     if (!_initialized) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: controller.background,
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.page,
-            ),
-            child: ValueListenableBuilder<int>(
-              valueListenable: controller.selectedPuzzleNotifier,
-              builder: (context, selectedPuzzle, child) {
-                final currentPuzzle = controller.getCurrentPuzzle();
-                final components = controller.getCurrentPuzzleWidgets();
-                final isGeolocation = currentPuzzle?.type == PuzzleType.geolocation;
-                final isImageUpload = currentPuzzle?.type == PuzzleType.imageToUpload;
-
-                // Create animations for current puzzle components
-                _createAnimations(components.length);
-
-                // Start animation when puzzle changes
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _startAnimation(components.length);
-                });
-
-                if (isGeolocation && currentPuzzle != null) {
-                  return Column(
-                    children: [
-                      // Render admin components (text, images, etc.)
-                      if (components.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: AnimatedBuilder(
-                            animation: _animationController,
-                            builder: (context, child) {
-                              return Column(
-                                children: controller.buildComponentsWithSpacing(
-                                  components,
-                                  _animations,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      // Map + button
-                      Expanded(
-                        child: GeolocationPuzzleWidget(
-                          key: ValueKey('geo_$selectedPuzzle'),
-                          puzzle: currentPuzzle,
-                          onSolved: () => controller.navigate(),
-                          isMissionCompleted: controller.isMissionCompleted,
-                          routeService: controller.routeService,
-                        ),
+    final palette = eventPaletteOf(controller.event, context.colors);
+    return EventThemeScope(
+      palette: palette,
+      child: Scaffold(
+        backgroundColor: palette.background,
+        body: Container(
+          decoration: BoxDecoration(image: DecorationImage(image: controller.background, fit: BoxFit.cover)),
+          child: SafeArea(
+            child: Column(
+              children: [
+                ValueListenableBuilder<DateTime>(
+                  valueListenable: controller.now,
+                  builder:
+                      (context, now, _) => PuzzleHeader(
+                        mission: controller.missionIndex + 1,
+                        missions: controller.event.missions.length,
+                        title: controller.missionTitle,
+                        clock: playedClock(controller.team.startedAt, controller.event.dateEvent, now),
+                        onBack: () => Navigator.maybePop(context),
                       ),
-                    ],
-                  );
-                }
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  child: MissionSegments(
+                    total: controller.event.missions.length,
+                    done: controller.team.missionProgress,
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
+                    child: ValueListenableBuilder<int>(
+                      valueListenable: controller.selectedPuzzleNotifier,
+                      builder: (context, selectedPuzzle, child) {
+                        final currentPuzzle = controller.getCurrentPuzzle();
+                        final components = controller.getCurrentPuzzleWidgets();
+                        final isGeolocation = currentPuzzle?.type == PuzzleType.geolocation;
+                        final isImageUpload = currentPuzzle?.type == PuzzleType.imageToUpload;
 
-                if (isImageUpload && currentPuzzle != null) {
-                  return Column(
-                    children: [
-                      if (components.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: AnimatedBuilder(
-                            animation: _animationController,
-                            builder: (context, child) {
-                              return Column(
-                                children: controller.buildComponentsWithSpacing(
-                                  components,
-                                  _animations,
+                        // Create animations for current puzzle components
+                        _createAnimations(components.length);
+
+                        // Start animation when puzzle changes
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          _startAnimation(components.length);
+                        });
+
+                        if (isGeolocation && currentPuzzle != null) {
+                          return Column(
+                            children: [
+                              // Render admin components (text, images, etc.)
+                              if (components.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: AnimatedBuilder(
+                                    animation: _animationController,
+                                    builder: (context, child) {
+                                      return Column(
+                                        children: controller.buildComponentsWithSpacing(components, _animations),
+                                      );
+                                    },
+                                  ),
                                 ),
-                              );
-                            },
-                          ),
-                        ),
-                      Expanded(
-                        child: ImageUploadPuzzleWidget(
-                          key: ValueKey('img_$selectedPuzzle'),
-                          eventId: controller.event.eventId,
-                          teamName: controller.team.name,
-                          missionIndex: controller.missionIndex,
-                          puzzleIndex: selectedPuzzle,
-                          onSolved: () => controller.navigate(),
-                          isMissionCompleted: controller.isMissionCompleted,
-                        ),
-                      ),
-                    ],
-                  );
-                }
+                              // Map + button
+                              Expanded(
+                                child: GeolocationPuzzleWidget(
+                                  key: ValueKey('geo_$selectedPuzzle'),
+                                  puzzle: currentPuzzle,
+                                  onSolved: () => controller.navigate(),
+                                  isMissionCompleted: controller.isMissionCompleted,
+                                  routeService: controller.routeService,
+                                ),
+                              ),
+                            ],
+                          );
+                        }
 
-                if (components.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'No puzzle components found',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  );
-                }
+                        if (isImageUpload && currentPuzzle != null) {
+                          return Column(
+                            children: [
+                              if (components.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: AnimatedBuilder(
+                                    animation: _animationController,
+                                    builder: (context, child) {
+                                      return Column(
+                                        children: controller.buildComponentsWithSpacing(components, _animations),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              Expanded(
+                                child: ImageUploadPuzzleWidget(
+                                  key: ValueKey('img_$selectedPuzzle'),
+                                  eventId: controller.event.eventId,
+                                  teamName: controller.team.name,
+                                  missionIndex: controller.missionIndex,
+                                  puzzleIndex: selectedPuzzle,
+                                  onSolved: () => controller.navigate(),
+                                  isMissionCompleted: controller.isMissionCompleted,
+                                ),
+                              ),
+                            ],
+                          );
+                        }
 
-                return Center(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(20),
-                    child: AnimatedBuilder(
-                      animation: _animationController,
-                      builder: (context, child) {
-                        return Column(
-                          children: controller.buildComponentsWithSpacing(
-                            components,
-                            _animations,
+                        if (components.isEmpty) {
+                          return const Center(
+                            child: Text('No puzzle components found', style: TextStyle(fontSize: 18)),
+                          );
+                        }
+
+                        return Center(
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.all(20),
+                            child: AnimatedBuilder(
+                              animation: _animationController,
+                              builder: (context, child) {
+                                return Column(children: controller.buildComponentsWithSpacing(components, _animations));
+                              },
+                            ),
                           ),
                         );
                       },
                     ),
                   ),
-                );
-              },
+                ),
+                ListenableBuilder(
+                  listenable: Listenable.merge([
+                    controller.rules.changes,
+                    controller.wrongMessage,
+                    controller.now,
+                    controller.selectedPuzzleNotifier,
+                  ]),
+                  builder: (context, _) {
+                    final puzzle = controller.getCurrentPuzzle();
+                    final isCode = puzzle?.type == PuzzleType.code && !controller.isMissionCompleted;
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (isCode)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 14),
+                            child: PuzzleFeedback(
+                              wrong: controller.wrongMessage.value,
+                              maxAttempts: puzzle?.maxAttempts,
+                              attemptsLeft: controller.currentAttemptsLeft,
+                              lockLeft: controller.currentLock,
+                            ),
+                          ),
+                        PuzzleBottomBar(onHint: controller.canUseHint ? _openHint : null, onChat: _openChat),
+                      ],
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ),
