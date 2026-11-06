@@ -10,6 +10,7 @@ import 'package:teamxperience/features/chat/widgets/bubble_position.dart';
 import 'package:teamxperience/features/chat/widgets/day_separator.dart';
 import 'package:teamxperience/features/chat/widgets/image_message_bubble.dart';
 import 'package:teamxperience/features/chat/widgets/message_bubble.dart';
+import 'package:teamxperience/features/chat/widgets/reject_photo_dialog.dart';
 
 import '../../../model/team.dart';
 import '../../../state_management/user_provider.dart';
@@ -144,10 +145,16 @@ class MessagesStream extends StatelessWidget {
                   showTime: m.showTime,
                   showApprovalActions: canApprove,
                   status: status,
+                  rejectReason: m.approvalKey == null ? null : team?.photoDetails[m.approvalKey]?.reason,
                   onApprove:
                       canApprove ? () => controller.approvePhoto(team, m.approvalKey!) : null,
-                  onDeny:
-                      canApprove ? () => controller.denyPhoto(team, m.approvalKey!, '') : null,
+                  onDeny: canApprove
+                      ? () async {
+                          final key = m.approvalKey;
+                          final reason = await showRejectPhotoDialog(context);
+                          if (reason != null && key != null) await controller.denyPhoto(team, key, reason);
+                        }
+                      : null,
                 ));
               } else {
                 widgets.add(MessageBubble(
