@@ -66,7 +66,8 @@ class GameStartSection extends StatelessWidget {
         AppTextField(
           controller: finishMessage,
           label: 'Mesajul de final',
-          hint: 'Ex. Vulpile au moștenit secretul cartografului.',
+          hint: 'Ex. {team} au moștenit secretul cartografului.',
+          helper: '{team} devine numele fiecărei echipe.',
           maxLines: null,
           keyboardType: TextInputType.multiline,
         ),

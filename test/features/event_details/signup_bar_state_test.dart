@@ -24,6 +24,26 @@ Team _team({int members = 4, bool started = false, bool finished = false}) => Te
       ..hasFinished = finished;
 
 void main() {
+  test('a finished team can see its result, even after the event ended', () {
+    final finished = Team(
+      name: 'Vulpile',
+      teamMembers: '',
+      captainName: '',
+      phoneNumber: '',
+      captainEmail: '',
+      hasStarted: true,
+      hasFinished: true,
+    );
+    final start = DateTime(2026, 11, 14, 10);
+    final event = Event(eventId: 'e1', dateEvent: start);
+    for (final now in [start.add(const Duration(hours: 1)), start.add(const Duration(hours: 5))]) {
+      final bar = signupBar(event: event, now: now, team: finished, teamsCount: 3);
+      expect(bar.action, SignupAction.seeResult);
+      expect(bar.actionLabel, 'Vezi rezultatul');
+      expect(bar.title, 'Echipa Vulpile a terminat');
+    }
+  });
+
   SignupBar bar(DateTime now, {Event? e, Team? team, int teams = 12}) =>
       signupBar(event: e ?? _event(), now: now, team: team, teamsCount: teams);
 
@@ -62,8 +82,8 @@ void main() {
         ('Echipa Vulpile e în joc', SignupTone.accent, true, 'Continuă', SignupAction.continueGame));
   });
 
-  test('a finished team before the end sees its team', () {
-    expect(bar(DateTime(2026, 11, 14, 12), team: _team(started: true, finished: true)).action, SignupAction.teamDetails);
+  test('a finished team before the end sees its result', () {
+    expect(bar(DateTime(2026, 11, 14, 12), team: _team(started: true, finished: true)).action, SignupAction.seeResult);
   });
 
   test('before enrolment opens', () {

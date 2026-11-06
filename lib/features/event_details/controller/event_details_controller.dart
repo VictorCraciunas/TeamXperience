@@ -83,6 +83,7 @@ class EventDetailsController extends ChangeNotifier {
       case SignupAction.enterCode:
         Navigator.pushNamed(context, Routes.enterCodeScreen, arguments: event);
       case SignupAction.continueGame:
+      case SignupAction.seeResult:
         if (team != null) GameDoor().open(Navigator.of(context), event, team);
       case SignupAction.none:
         break;

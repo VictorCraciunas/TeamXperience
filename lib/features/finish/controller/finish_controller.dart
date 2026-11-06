@@ -19,14 +19,17 @@ class FinishController extends ChangeNotifier {
     DateTime Function()? clock,
   })  : _team = team,
         _saveRating = saveRating,
-        _clock = clock ?? DateTime.now {
+        _openedAt = (clock ?? DateTime.now)() {
     _teamsWatch = teams.listen(_onTeams, onError: (Object _) {});
     _teamWatch = teamStream.listen(_onTeam, onError: (Object _) {});
   }
 
   final Event event;
   final Future<void> Function(int stars) _saveRating;
-  final DateTime Function() _clock;
+
+  /// When the screen opened: a stopped game's time ends here and does not
+  /// keep running while the recap is open.
+  final DateTime _openedAt;
   StreamSubscription<List<Team>>? _teamsWatch;
   StreamSubscription<Team>? _teamWatch;
   bool _disposed = false;
@@ -61,7 +64,7 @@ class FinishController extends ChangeNotifier {
   }
 
   /// How long the team played, as of now.
-  Duration get timePlayed => playedTime(event, _team, _clock());
+  Duration get timePlayed => playedTime(event, _team, _openedAt);
 
   /// What "Distribuie" shares.
   String get shareText => shareLine(event, _team, _place, timePlayed, _team.distanceMeters);

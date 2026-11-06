@@ -30,6 +30,20 @@ void main() {
     expect(walk.add(_fix(12, 15)), closeTo(12, 0.5));
   });
 
+  test('a 200 m jump while standing still (long after the last fix) adds nothing', () {
+    final walk = WalkTracker()..add(_fix(0, 0));
+    expect(walk.add(_fix(200, 40)), 0);
+    expect(walk.add(_fix(2, 80)), 0, reason: 'back where they were');
+    expect(walk.total, 0);
+  });
+
+  test('wander smaller than the fixes\' accuracy adds nothing', () {
+    final walk = WalkTracker()..add(_fix(0, 0, accuracy: 20));
+    expect(walk.add(_fix(12, 30, accuracy: 20)), 0);
+    expect(walk.add(_fix(-8, 60, accuracy: 20)), 0);
+    expect(walk.total, 0);
+  });
+
   test('60 m in 30 s is a real walk', () {
     final walk = WalkTracker()..add(_fix(0, 0));
     expect(walk.add(_fix(60, 30)), closeTo(60, 0.5));

@@ -63,7 +63,11 @@ class _EventGameScreenState extends State<EventGameScreen> {
   void _onControllerChanged() {
     final team = controller.team;
     if (team != null) {
-      if (!_finishShown && showFinish(controller.event, team, eventEnded: controller.eventEnded)) _openFinish(team);
+      final onTop = ModalRoute.of(context)?.isCurrent ?? false;
+      if (!_finishShown &&
+          openFinishNow(controller.event, team, eventEnded: controller.eventEnded, routeOnTop: onTop)) {
+        _openFinish(team);
+      }
       return;
     }
     if (controller.eventEnded && !_endedDialogShown) _showEventEndedDialog();
@@ -71,10 +75,11 @@ class _EventGameScreenState extends State<EventGameScreen> {
 
   void _openFinish(Team team) {
     if (_finishShown || !mounted) return;
-    _finishShown = true;
-    // An open puzzle closes first.
-    Navigator.popUntil(context, (route) => route.settings.name == Routes.eventGame || route.isFirst);
-    Navigator.pushReplacementNamed(context, Routes.finish, arguments: {'event': controller.event, 'team': team});
+    _finishShown = replaceWithFinish(
+      Navigator.of(context),
+      ModalRoute.of(context),
+      {'event': controller.event, 'team': team},
+    );
   }
 
   void _showEventEndedDialog() {
@@ -138,6 +143,8 @@ class _EventGameScreenState extends State<EventGameScreen> {
     if (!mounted) return;
     controller.watchRanking(true);
     if (updated is Team) controller.takeTeam(updated);
+    // Back on top: the puzzle may have solved the last mission.
+    _onControllerChanged();
   }
 
   void _openChat() {

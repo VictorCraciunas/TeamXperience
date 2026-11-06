@@ -25,7 +25,8 @@ String? _clean(String? text) {
   }
   return (
     title: _clean(event.finishTitle) ?? 'Ați terminat traseul!',
-    message: _clean(event.finishMessage) ?? '${team.name} a rezolvat toate cele $total misiuni.',
+    message: _clean(event.finishMessage)?.replaceAll('{team}', team.name) ??
+        '${team.name} a rezolvat toate cele $total misiuni.',
   );
 }
 
@@ -37,7 +38,9 @@ String placeLabel(int teams) => teams == 1 ? 'din 1 echipă' : 'din $teams echip
 Duration playedTime(Event event, Team team, DateTime now) {
   final start = team.startedAt ?? event.dateEvent;
   if (start == null) return Duration.zero;
-  final finish = team.finishedAt;
+  // A complete route ends at its finish, or at its last mission when the
+  // finish time was never written (offline, app closed).
+  final finish = team.finishedAt ?? team.lastMissionAt;
   if (finish != null && routeCompleted(event, team)) return finish.difference(start);
   final close = (event.dateEvent ?? start).add(Event.maxDuration);
   final end = now.isBefore(close) ? now : close;

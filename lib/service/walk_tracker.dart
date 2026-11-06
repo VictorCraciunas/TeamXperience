@@ -11,12 +11,13 @@ class WalkFix {
 }
 
 /// Adds up how far one phone walked from its position fixes, leaving out GPS
-/// noise: a fix less accurate than 30 m is ignored, and so is a jump of more
-/// than 50 m within 5 s (the last kept point stays where it was).
+/// noise: a fix less accurate than 30 m, a step shorter than the fixes'
+/// accuracy (wander while standing), and a step faster than 4 m/s (a jump,
+/// however long after the last fix) are ignored, and the last kept point
+/// stays where it was.
 class WalkTracker {
   static const double worstAccuracy = 30;
-  static const double jumpMetres = 50;
-  static const Duration jumpWindow = Duration(seconds: 5);
+  static const double fastestWalk = 4;
 
   WalkFix? _last;
   double _total = 0;
@@ -34,7 +35,9 @@ class WalkTracker {
       return 0;
     }
     final metres = Geolocator.distanceBetween(last.lat, last.lng, fix.lat, fix.lng);
-    if (metres > jumpMetres && fix.at.difference(last.at) < jumpWindow) return 0;
+    if (metres < (last.accuracy > fix.accuracy ? last.accuracy : fix.accuracy)) return 0;
+    final seconds = fix.at.difference(last.at).inMilliseconds / 1000;
+    if (seconds <= 0 || metres / seconds > fastestWalk) return 0;
     _last = fix;
     _total += metres;
     _pending += metres;

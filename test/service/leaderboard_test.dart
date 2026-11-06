@@ -43,13 +43,21 @@ void main() {
     expect(ranked.first.mission, 6, reason: 'on its sixth mission, not done');
   });
 
-  test('two complete routes rank by when they finished; one without a time comes after', () {
+  test('two complete routes rank by when they finished; one with no time at all comes after', () {
     final ranked = rankTeams([
       _team('Târziu', progress: 6, finished: true, finishedAt: t.add(const Duration(minutes: 9))),
       _team('Fără oră', progress: 6, finished: true),
       _team('Devreme', progress: 6, finished: true, finishedAt: t),
     ], missionCount: 6);
     expect(_names(ranked), ['Devreme', 'Târziu', 'Fără oră']);
+  });
+
+  test('a complete route whose finish time was not written ranks by its last mission', () {
+    final ranked = rankTeams([
+      _team('Târziu', progress: 6, finished: true, finishedAt: t.add(const Duration(minutes: 30))),
+      _team('Devreme', progress: 6, finished: true, last: t),
+    ], missionCount: 6);
+    expect(_names(ranked), ['Devreme', 'Târziu']);
   });
 
   test('more missions rank higher', () {

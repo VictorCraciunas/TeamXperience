@@ -48,6 +48,11 @@ void main() {
       expect(texts.message, 'Vulpile a rezolvat 3 din 6 misiuni.');
     });
 
+    test('the organiser may name the team with {team}', () {
+      final texts = finishTexts(_event(message: '{team} au moștenit secretul.'), _team());
+      expect(texts.message, 'Vulpile au moștenit secretul.');
+    });
+
     test('the organiser\'s words win for a complete route; blank ones do not', () {
       final texts = finishTexts(_event(title: ' Harta e completă ', message: 'Ați moștenit secretul.'), _team());
       expect((texts.title, texts.message), ('Harta e completă', 'Ați moștenit secretul.'));
@@ -76,6 +81,11 @@ void main() {
       final team = _team(progress: 3, startedAt: _start);
       expect(playedTime(_event(), team, _start.add(const Duration(minutes: 75))), const Duration(minutes: 75));
       expect(playedTime(_event(), team, _start.add(const Duration(hours: 5))), const Duration(hours: 3));
+    });
+
+    test('a complete route without its finish time ends at its last mission', () {
+      final team = _team(startedAt: _start, completed: {5: _start.add(const Duration(minutes: 108))});
+      expect(playedTime(_event(), team, _start.add(const Duration(hours: 5))), const Duration(minutes: 108));
     });
 
     test('no start at all, or a finish before the start: zero', () {

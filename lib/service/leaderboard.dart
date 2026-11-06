@@ -25,7 +25,8 @@ List<RankedTeam> rankTeams(List<Team> teams, {required int missionCount}) {
   int compare(Team a, Team b) {
     if (done(a) != done(b)) return done(a) ? -1 : 1;
     if (done(a)) {
-      final byFinish = _earlierFirst(a.finishedAt, b.finishedAt);
+      // A finish time that was never written falls back to the last mission.
+      final byFinish = _earlierFirst(a.finishedAt ?? a.lastMissionAt, b.finishedAt ?? b.lastMissionAt);
       if (byFinish != 0) return byFinish;
     }
     return _compare(a, b);
