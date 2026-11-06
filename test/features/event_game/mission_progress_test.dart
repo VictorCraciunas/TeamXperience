@@ -14,6 +14,21 @@ void main() {
     });
   });
 
+  group('mergeProgress', () {
+    test('a teammate a mission ahead: take their mission and their puzzle', () {
+      expect(mergeProgress(mission: 3, puzzle: 3, freshMission: 4, freshPuzzle: 0), (mission: 4, puzzle: 0));
+    });
+
+    test('same mission: the furthest puzzle', () {
+      expect(mergeProgress(mission: 3, puzzle: 1, freshMission: 3, freshPuzzle: 2), (mission: 3, puzzle: 2));
+      expect(mergeProgress(mission: 3, puzzle: 2, freshMission: 3, freshPuzzle: 1), (mission: 3, puzzle: 2));
+    });
+
+    test('a stale copy behind us changes nothing', () {
+      expect(mergeProgress(mission: 4, puzzle: 0, freshMission: 3, freshPuzzle: 3), (mission: 4, puzzle: 0));
+    });
+  });
+
   group('nextPuzzleNumber', () {
     test('on the stored mission, never below what a teammate reached', () {
       expect(nextPuzzleNumber(0, 2, sameMission: true), 2);

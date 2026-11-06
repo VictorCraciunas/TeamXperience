@@ -75,27 +75,50 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> with 
     super.dispose();
   }
 
-  /// Back from the settings: try again.
+  /// Back from the settings: check again, without asking a second time (the
+  /// permission dialog itself pauses and resumes the app).
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && _state == LocationViewState.denied) _startTracking();
+    final blocked = _state == LocationViewState.denied || _state == LocationViewState.serviceOff;
+    if (state == AppLifecycleState.resumed && blocked) _startTracking(ask: false);
   }
 
-  void _denied() {
-    if (mounted) setState(() => _state = LocationViewState.denied);
+  /// Location switched off, or permission refused, as a view state.
+  Future<LocationAccess> _access({required bool ask}) async {
+    final serviceOn = await Geolocator.isLocationServiceEnabled();
+    var permission = await Geolocator.checkPermission();
+    if (ask && serviceOn && permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    return locationAccess(serviceOn: serviceOn, permission: permission);
   }
 
-  Future<void> _startTracking() async {
+  void _blocked(LocationAccess access) {
+    if (!mounted) return;
+    setState(() {
+      _state = access == LocationAccess.serviceOff ? LocationViewState.serviceOff : LocationViewState.denied;
+    });
+  }
+
+  /// The stream failed (location switched off mid-puzzle, or taken away).
+  Future<void> _onStreamError() async {
+    final access = await _access(ask: false);
+    _blocked(access == LocationAccess.ok ? LocationAccess.denied : access);
+  }
+
+  Future<void> _startTracking({bool ask = true}) async {
     final target = _target;
     if (target == null) return;
-    final allowed = await _location.checkAndRequestPermission();
-    if (!allowed) return _denied();
-    if (mounted && _state == LocationViewState.denied) setState(() => _state = LocationViewState.waiting);
+    final access = await _access(ask: ask);
+    if (!mounted) return;
+    if (access != LocationAccess.ok) return _blocked(access);
+    if (_state != LocationViewState.tracking) setState(() => _state = LocationViewState.waiting);
 
     await _positions?.cancel();
+    if (!mounted) return;
     _positions = _location.getPositionStream(distanceFilter: 2).listen(
           (position) => _onFix(position, target),
-          onError: (Object _) => _denied(),
+          onError: (Object _) => _onStreamError(),
         );
     try {
       final first = await Geolocator.getCurrentPosition(
@@ -172,6 +195,7 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> with 
       onEnter: widget.onSolved,
       onHint: widget.onHint,
       onOpenSettings: Geolocator.openAppSettings,
+      onOpenLocationSettings: Geolocator.openLocationSettings,
       onPicture: widget.onPicture,
     );
   }

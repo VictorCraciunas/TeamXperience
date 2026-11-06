@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:teamxperience/model/puzzle.dart';
 
 import 'route_texts.dart';
@@ -50,6 +51,18 @@ GeoPoint? locationTarget(Puzzle puzzle) {
   final lng = puzzle.longitude;
   if (lat == null || lng == null) return null;
   return (lat: lat, lng: lng);
+}
+
+enum LocationAccess { ok, serviceOff, denied }
+
+/// Whether the game can follow the phone: location switched off, permission
+/// refused (or unknown), or fine.
+LocationAccess locationAccess({required bool serviceOn, required LocationPermission permission}) {
+  if (!serviceOn) return LocationAccess.serviceOff;
+  return switch (permission) {
+    LocationPermission.always || LocationPermission.whileInUse => LocationAccess.ok,
+    _ => LocationAccess.denied,
+  };
 }
 
 /// Inside the circle, its edge included.

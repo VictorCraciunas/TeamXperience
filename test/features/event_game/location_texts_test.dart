@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/features/event_game/logic/location_texts.dart';
 import 'package:teamxperience/model/puzzle.dart';
@@ -58,6 +59,15 @@ void main() {
       locationTarget(Puzzle(id: '0', type: PuzzleType.geolocation, latitude: 45.79, longitude: 24.15)),
       (lat: 45.79, lng: 24.15),
     );
+  });
+
+  test('location access: service off, refused, or fine', () {
+    expect(locationAccess(serviceOn: false, permission: LocationPermission.always), LocationAccess.serviceOff);
+    expect(locationAccess(serviceOn: true, permission: LocationPermission.denied), LocationAccess.denied);
+    expect(locationAccess(serviceOn: true, permission: LocationPermission.deniedForever), LocationAccess.denied);
+    expect(locationAccess(serviceOn: true, permission: LocationPermission.unableToDetermine), LocationAccess.denied);
+    expect(locationAccess(serviceOn: true, permission: LocationPermission.whileInUse), LocationAccess.ok);
+    expect(locationAccess(serviceOn: true, permission: LocationPermission.always), LocationAccess.ok);
   });
 
   test('inside the circle includes its edge', () {

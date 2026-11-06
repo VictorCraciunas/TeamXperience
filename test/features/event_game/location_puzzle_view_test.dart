@@ -55,6 +55,7 @@ Future<List<String>> _pump(
           onEnter: () => calls.add('enter'),
           onHint: hint ? () => calls.add('hint') : null,
           onOpenSettings: () => calls.add('settings'),
+          onOpenLocationSettings: () => calls.add('location settings'),
         ),
       ),
     ),
@@ -93,6 +94,14 @@ void main() {
     expect(_enter(tester).onTap, isNull);
     await tester.tap(find.text('Deschide setările'));
     expect(calls, ['settings']);
+  });
+
+  testWidgets('location switched off: ask to turn it on, open the location settings', (tester) async {
+    final calls = await _pump(tester, state: LocationViewState.serviceOff, meters: null, bearing: null);
+    expect(find.text('Pornește locația ca să vedeți cât de aproape sunteți.'), findsOneWidget);
+    expect(_enter(tester).onTap, isNull);
+    await tester.tap(find.text('Deschide setările'));
+    expect(calls, ['location settings']);
   });
 
   testWidgets('no place set: the team is told and may go on', (tester) async {

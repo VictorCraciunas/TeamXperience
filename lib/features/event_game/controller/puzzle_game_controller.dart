@@ -116,11 +116,16 @@ class PuzzleGameController {
   /// A fresh team doc: counts, locks and hints from every phone. A lock that
   /// starts here this way opens the hint as one this phone triggered would.
   void _absorb(Team fresh) {
-    // Teammates' progress only ever raises ours; the screen stays where it is.
-    if (fresh.missionProgress > team.missionProgress) team.missionProgress = fresh.missionProgress;
-    if (fresh.missionProgress == team.missionProgress && fresh.puzzleNumber > team.puzzleNumber) {
-      team.puzzleNumber = fresh.puzzleNumber;
-    }
+    // Teammates' progress only ever moves ours on; the screen stays where it is.
+    final merged = mergeProgress(
+      mission: team.missionProgress,
+      puzzle: team.puzzleNumber,
+      freshMission: fresh.missionProgress,
+      freshPuzzle: fresh.puzzleNumber,
+    );
+    team
+      ..missionProgress = merged.mission
+      ..puzzleNumber = merged.puzzle;
     final justLocked = rules.absorb(fresh, puzzle: getCurrentPuzzle(), key: currentKey);
     if (justLocked && !isMissionCompleted) {
       wrongMessage.value = null;

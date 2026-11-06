@@ -17,8 +17,11 @@ enum LocationViewState {
   /// Waiting for the first fix.
   waiting,
 
-  /// Location refused or switched off.
+  /// Location permission refused.
   denied,
+
+  /// The phone's location is switched off.
+  serviceOff,
 
   /// The organiser set no place.
   noTarget,
@@ -42,6 +45,7 @@ class LocationPuzzleView extends StatelessWidget {
     required this.onEnter,
     this.onHint,
     required this.onOpenSettings,
+    this.onOpenLocationSettings,
     this.onPicture = false,
   });
 
@@ -55,6 +59,9 @@ class LocationPuzzleView extends StatelessWidget {
   final VoidCallback? onHint;
   final VoidCallback onOpenSettings;
 
+  /// Opens the phone's location settings; the app settings when null.
+  final VoidCallback? onOpenLocationSettings;
+
   /// Whether the puzzle is drawn on the organiser's picture (the bar then
   /// gets its band).
   final bool onPicture;
@@ -62,7 +69,7 @@ class LocationPuzzleView extends StatelessWidget {
   bool get _canEnter => switch (state) {
         LocationViewState.tracking => inside,
         LocationViewState.noTarget || LocationViewState.done => true,
-        LocationViewState.waiting || LocationViewState.denied => false,
+        LocationViewState.waiting || LocationViewState.denied || LocationViewState.serviceOff => false,
       };
 
   @override
@@ -100,6 +107,16 @@ class LocationPuzzleView extends StatelessWidget {
           message(
             'Permite accesul la locație ca să vedeți cât de aproape sunteți.',
             action: GameFilledButton(label: 'Deschide setările', icon: TablerIcons.settings, onTap: onOpenSettings),
+          ),
+        ],
+      LocationViewState.serviceOff => [
+          message(
+            'Pornește locația ca să vedeți cât de aproape sunteți.',
+            action: GameFilledButton(
+              label: 'Deschide setările',
+              icon: TablerIcons.settings,
+              onTap: onOpenLocationSettings ?? onOpenSettings,
+            ),
           ),
         ],
       LocationViewState.noTarget => [message('Organizatorul n-a pus locul pe hartă. Puteți merge mai departe.')],

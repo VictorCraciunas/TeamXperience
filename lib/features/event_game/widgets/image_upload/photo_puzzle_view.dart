@@ -24,7 +24,11 @@ class PhotoPuzzleView extends StatelessWidget {
     required this.onContinue,
     required this.onChat,
     this.onPicture = false,
+    this.error,
   });
+
+  /// Shown when the last photo did not go out.
+  final String? error;
 
   final PhotoStep step;
   final ImageProvider? picture;
@@ -43,7 +47,12 @@ class PhotoPuzzleView extends StatelessWidget {
     final palette = context.eventPalette;
     final canRedo = step == PhotoStep.waiting || step == PhotoStep.rejected;
 
+    final failed = error;
     final below = <Widget>[
+      if (failed != null && step != PhotoStep.uploading) ...[
+        const SizedBox(height: 8),
+        PhotoStatusBanner(kind: PhotoBannerKind.rejected, text: failed),
+      ],
       if (step == PhotoStep.waiting) ...[
         const SizedBox(height: 8),
         PhotoStatusBanner(kind: PhotoBannerKind.waiting, text: 'Organizatorul se uită la poză', trailing: sentAgo(sentAt, now)),

@@ -32,6 +32,27 @@ void main() {
       expect(rejected.detail?.reason, 'Prea întuneric');
     });
 
+    test('an approved try wins over a later pending one (a teammate\'s late upload)', () {
+      final state = photoState(
+        _team({
+          '2_0_1731580000000': {'status': 'approved', 'url': 'https://x/a.jpg'},
+          '2_0_1731580009000': {'status': 'pending', 'url': 'https://x/b.jpg'},
+        }),
+        2,
+        0,
+        uploading: false,
+      );
+      expect(state.step, PhotoStep.approved);
+      expect(state.detail?.url, 'https://x/a.jpg');
+    });
+
+    test('try keys made from the upload time order by time', () {
+      expect(
+        photoState(_team({'2_0_1731580009000': 'pending', '2_0_1731580000000': 'denied'}), 2, 0, uploading: false).step,
+        PhotoStep.waiting,
+      );
+    });
+
     test('try 10 comes after try 9', () {
       expect(photoState(_team({'2_0_9': 'denied', '2_0_10': 'approved'}), 2, 0, uploading: false).step, PhotoStep.approved);
     });

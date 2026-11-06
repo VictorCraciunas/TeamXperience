@@ -6,13 +6,16 @@ import 'package:teamxperience/model/team.dart';
 enum PhotoStep { none, uploading, waiting, approved, rejected }
 
 /// The photo puzzle [puzzle] of mission [mission]: an upload in progress
-/// wins; otherwise the latest try (highest try number) decides.
+/// wins; then any approved try (a teammate's later upload cannot undo an
+/// approval); otherwise the latest try (highest try number) decides.
 ({PhotoStep step, PhotoDetail? detail}) photoState(Team team, int mission, int puzzle, {required bool uploading}) {
   final prefix = Team.approvalKeyPrefix(mission, puzzle);
   PhotoDetail? latest;
+  PhotoDetail? approved;
   var latestTry = -1;
   team.photoDetails.forEach((key, detail) {
     if (!key.startsWith(prefix)) return;
+    if (detail.status == PhotoApprovalStatus.approved) approved ??= detail;
     final number = int.tryParse(key.substring(prefix.length));
     if (number != null && number > latestTry) {
       latestTry = number;
@@ -20,6 +23,8 @@ enum PhotoStep { none, uploading, waiting, approved, rejected }
     }
   });
   if (uploading) return (step: PhotoStep.uploading, detail: latest);
+  final done = approved;
+  if (done != null) return (step: PhotoStep.approved, detail: done);
   final detail = latest;
   if (detail == null) return (step: PhotoStep.none, detail: null);
   return (

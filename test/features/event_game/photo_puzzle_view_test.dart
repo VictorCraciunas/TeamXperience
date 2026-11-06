@@ -102,6 +102,29 @@ void main() {
     expect(_main(tester).onTap, isNull);
   });
 
+  testWidgets('a photo that did not go out says so', (tester) async {
+    tester.view.physicalSize = const Size(632, 1280);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(MaterialApp(
+      theme: AppTheme.light,
+      home: Scaffold(
+        body: EventThemeScope(
+          palette: EventPalette.parchment,
+          child: PhotoPuzzleView(
+            step: PhotoStep.none,
+            now: _now,
+            error: 'Poza nu s-a trimis. Încearcă din nou.',
+            onTakePhoto: () {},
+            onContinue: () {},
+            onChat: () {},
+          ),
+        ),
+      ),
+    ));
+    expect(find.text('Poza nu s-a trimis. Încearcă din nou.'), findsOneWidget);
+  });
+
   testWidgets('"Chat" calls back', (tester) async {
     final calls = await _pump(tester, PhotoStep.waiting);
     await tester.tap(find.text('Chat'));

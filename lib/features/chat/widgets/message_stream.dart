@@ -147,12 +147,14 @@ class MessagesStream extends StatelessWidget {
                   status: status,
                   rejectReason: m.approvalKey == null ? null : team?.photoDetails[m.approvalKey]?.reason,
                   onApprove:
-                      canApprove ? () => controller.approvePhoto(team, m.approvalKey!) : null,
+                      canApprove ? () => controller.approvePhoto(team, m.approvalKey!, url: m.imageUrl) : null,
                   onDeny: canApprove
                       ? () async {
                           final key = m.approvalKey;
                           final reason = await showRejectPhotoDialog(context);
-                          if (reason != null && key != null) await controller.denyPhoto(team, key, reason);
+                          if (reason != null && key != null) {
+                            await controller.denyPhoto(team, key, reason, url: m.imageUrl);
+                          }
                         }
                       : null,
                 ));
