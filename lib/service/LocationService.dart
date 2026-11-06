@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
+import 'package:teamxperience/service/walk_tracker.dart';
 
 class LocationService {
   static final LocationService _instance = LocationService._internal();
@@ -13,6 +14,10 @@ class LocationService {
   String? _currentEventId;
   String? _currentTeamName;
   bool _isTracking = false;
+
+  /// The signed-in player, whose own walk this phone adds to `walked.{uid}`.
+  String? _uid;
+  WalkTracker _walk = WalkTracker();
 
   /// Checks and requests location permissions.
   /// Returns true if permissions are granted, false otherwise.
@@ -44,6 +49,7 @@ class LocationService {
   Future<void> startLocationTracking({
     required String eventId,
     required String teamName,
+    String? uid,
   }) async {
     if (_isTracking) {
       stopLocationTracking();
@@ -51,6 +57,8 @@ class LocationService {
 
     _currentEventId = eventId;
     _currentTeamName = teamName;
+    _uid = uid;
+    _walk = WalkTracker();
 
     final hasPermission = await checkAndRequestPermission();
     if (!hasPermission) {
@@ -60,6 +68,7 @@ class LocationService {
 
     _positionStream = getPositionStream(distanceFilter: 10).listen(
       (Position position) async {
+        _countWalk(position);
         await _updateTeamLocation(position);
       },
       onError: (error) {
@@ -88,8 +97,30 @@ class LocationService {
     }
   }
 
+  /// Adds this fix to the phone's walk and sends it in steps of 20 m.
+  void _countWalk(Position position) {
+    _walk.add(WalkFix(
+      lat: position.latitude,
+      lng: position.longitude,
+      accuracy: position.accuracy,
+      at: position.timestamp,
+    ));
+    _sendWalk(_walk.takePending());
+  }
+
+  void _sendWalk(double metres) {
+    final eventId = _currentEventId;
+    final teamName = _currentTeamName;
+    final uid = _uid;
+    if (metres <= 0 || eventId == null || teamName == null || uid == null) return;
+    teamService.addWalked(eventId, teamName, uid, metres).catchError((Object _) {});
+  }
+
   // Stop location tracking
   void stopLocationTracking() {
+    // What was walked since the last step still counts.
+    _sendWalk(_walk.takePending(atLeast: 0));
+    _uid = null;
     _positionStream?.cancel();
     _positionStream = null;
     _isTracking = false;
