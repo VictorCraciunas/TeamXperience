@@ -38,6 +38,22 @@ void main() {
     expect(find.text('Răspuns corect'), findsNothing);
   });
 
+  testWidgets('a code puzzle also asks for the attempt limit and the wrong-answer line', (tester) async {
+    final puzzle = Puzzle(id: '0', type: PuzzleType.code);
+    await _pump(tester, puzzle);
+    expect(find.text('Număr maxim de încercări'), findsOneWidget);
+    expect(find.text('Mesaj la răspuns greșit'), findsOneWidget);
+    await tester.enterText(find.widgetWithText(TextField, 'Gol = nelimitat').first, '3');
+    await tester.enterText(find.widgetWithText(TextField, 'Gol = „Nu e corect. Mai încearcă.”').first, 'Mai sus.');
+    expect(puzzle.maxAttempts, 3);
+    expect(puzzle.wrongAnswerMessage, 'Mai sus.');
+  });
+
+  testWidgets('a location puzzle has no attempt limit', (tester) async {
+    await _pump(tester, Puzzle(id: '0', type: PuzzleType.geolocation));
+    expect(find.text('Număr maxim de încercări'), findsNothing);
+  });
+
   testWidgets('typing the answer writes it onto the puzzle', (tester) async {
     final puzzle = Puzzle(id: '0', type: PuzzleType.code);
     var changes = 0;

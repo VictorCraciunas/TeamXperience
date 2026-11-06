@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/enums/event_look.dart';
 import 'package:teamxperience/features/game_intro/widgets/game_intro_view.dart';
 import 'package:teamxperience/ui/components/misc/segmented_switch.dart';
 import 'package:teamxperience/ui/ui.dart';
@@ -15,12 +14,12 @@ class GameIntroPreview extends StatefulWidget {
 }
 
 class _GameIntroPreviewState extends State<GameIntroPreview> {
-  EventLook _look = EventLook.parchment;
+  bool _parchment = true;
 
   @override
   Widget build(BuildContext context) {
-    final event = sampleEvent()..look = _look;
-    final palette = paletteFor(_look, context.colors);
+    final event = sampleEvent();
+    final palette = _parchment ? EventPalette.parchment : EventPalette.fromApp(context.colors);
     return Scaffold(
       backgroundColor: palette.background,
       body: Column(
@@ -44,8 +43,8 @@ class _GameIntroPreviewState extends State<GameIntroPreview> {
                 padding: const EdgeInsets.all(AppSpacing.sm),
                 child: SegmentedSwitch(
                   labels: const ['Pergament', 'Aplicație'],
-                  selectedIndex: _look == EventLook.parchment ? 0 : 1,
-                  onSelected: (i) => setState(() => _look = i == 0 ? EventLook.parchment : EventLook.app),
+                  selectedIndex: _parchment ? 0 : 1,
+                  onSelected: (i) => setState(() => _parchment = i == 0),
                 ),
               ),
             ),

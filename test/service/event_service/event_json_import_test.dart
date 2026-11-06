@@ -683,4 +683,68 @@ void main() {
       expect(weight.errors.single, contains('Bold (700)'));
     });
   });
+  group('the game start and the puzzle rules', () {
+    Map<String, dynamic> withRules() => _event(
+          extra: {
+            'introLetter': 'Dragi exploratori…',
+            'introSignature': 'Cartograful',
+            'hintsPerMission': 2,
+            'enterWindowMinutes': 30,
+          },
+          missions: [
+            {
+              'title': 'Podul Minciunilor',
+              'latitude': 45.7983,
+              'longitude': 24.1522,
+              'puzzles': [
+                {
+                  'type': 'code',
+                  'code': '1859',
+                  'maxAttempts': 3,
+                  'wrongAnswerMessage': 'Nu e anul ăsta.',
+                  'components': [
+                    {'type': 'text', 'text': 'Salut'},
+                  ],
+                },
+              ],
+            },
+          ],
+        );
+
+    test('are read', () {
+      final result = _import(withRules());
+      expect(result.errors, isEmpty);
+      final event = result.event;
+      expect(event?.introLetter, 'Dragi exploratori…');
+      expect(event?.introSignature, 'Cartograful');
+      expect(event?.hintsPerMission, 2);
+      expect(event?.enterWindowMinutes, 30);
+      final mission = event?.missions.single;
+      expect((mission?.latitude, mission?.longitude), (45.7983, 24.1522));
+      final puzzle = mission?.puzzles.single;
+      expect(puzzle?.maxAttempts, 3);
+      expect(puzzle?.wrongAnswerMessage, 'Nu e anul ăsta.');
+    });
+
+    test('left out, the defaults apply', () {
+      final event = _import(_event()).event;
+      expect(event?.hintsPerMission, 1);
+      expect(event?.enterWindowMinutes, 60);
+      expect(event?.missions.single.latitude, isNull);
+      expect(event?.missions.single.puzzles.single.maxAttempts, isNull);
+    });
+
+    test('out of range is refused, with where it is', () {
+      final json = withRules();
+      json['hintsPerMission'] = 9;
+      json['enterWindowMinutes'] = 5;
+      ((json['missions'] as List).single as Map)['latitude'] = 120;
+      (((json['missions'] as List).single as Map)['puzzles'] as List).single['maxAttempts'] = 50;
+      final errors = _import(json).errors.join(' | ');
+      expect(errors, contains('hintsPerMission'));
+      expect(errors, contains('enterWindowMinutes'));
+      expect(errors, contains('Misiunea 1: „latitude”'));
+      expect(errors, contains('Misiunea 1, puzzle 1: „maxAttempts”'));
+    });
+  });
 }

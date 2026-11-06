@@ -56,6 +56,16 @@ class CreateEventController {
 
   /// Empty means TeamXperience.
   final organiserController = TextEditingController();
+
+  // "Începutul jocului".
+  final introLetterController = TextEditingController();
+  final introSignatureController = TextEditingController();
+
+  /// 0 to 5; empty or anything else means 1.
+  final hintsPerMissionController = TextEditingController(text: '1');
+
+  /// 10 to 180 minutes; empty or anything else means 60.
+  final enterWindowController = TextEditingController(text: '60');
   Difficulty? difficulty;
 
   File? landingImageFile;
@@ -138,11 +148,28 @@ class CreateEventController {
     whatToBringController.text = event.whatToBring.join('\n');
     storyController.text = event.story ?? '';
     organiserController.text = event.organiserName ?? '';
+    introLetterController.text = event.introLetter ?? '';
+    introSignatureController.text = event.introSignature ?? '';
+    hintsPerMissionController.text = '${event.hintsPerMission}';
+    enterWindowController.text = '${event.enterWindowMinutes}';
   }
 
   /// The message for a start pin that cannot be read, or null.
   static String? startPinProblem(String text) =>
       text.trim().isEmpty || parseCoordinates(text) != null ? null : 'Coordonate greșite';
+
+  static int? _inRange(String text, int min, int max) {
+    final value = int.tryParse(text.trim());
+    return value != null && value >= min && value <= max ? value : null;
+  }
+
+  /// The message for a hint count that is not 0 to 5, or null.
+  static String? hintsProblem(String text) =>
+      text.trim().isEmpty || _inRange(text, 0, 5) != null ? null : 'Între 0 și 5';
+
+  /// The message for minutes that are not 10 to 180, or null.
+  static String? enterWindowProblem(String text) =>
+      text.trim().isEmpty || _inRange(text, 10, 180) != null ? null : 'Între 10 și 180 de minute';
 
   static String? _textOrNull(TextEditingController c) {
     final text = c.text.trim();
@@ -199,6 +226,10 @@ class CreateEventController {
       ]
       ..story = _textOrNull(storyController)
       ..organiserName = _textOrNull(organiserController)
+      ..introLetter = _textOrNull(introLetterController)
+      ..introSignature = _textOrNull(introSignatureController)
+      ..hintsPerMission = _inRange(hintsPerMissionController.text, 0, 5) ?? 1
+      ..enterWindowMinutes = _inRange(enterWindowController.text, 10, 180) ?? 60
       // Cards and older screens still read the text fields. An empty number
       // keeps the old text, so text the form could not read is not lost.
       ..lungimeTraseu = km == null ? (event.lungimeTraseu ?? '') : formatKm(km)

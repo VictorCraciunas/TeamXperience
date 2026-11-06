@@ -96,6 +96,28 @@ class TeamRepo {
     });
   }
 
+  DocumentReference<Map<String, dynamic>> _team(String eventId, String teamName) =>
+      _firestore.collection('events').doc(eventId).collection('teams').doc(teamName);
+
+  /// Counts one wrong answer on the puzzle [key] ("3_0"). An increment, so two
+  /// phones answering at once both count.
+  Future<void> addWrongAttempt(String eventId, String teamName, String key) {
+    return _team(eventId, teamName).update({'attempts.$key': FieldValue.increment(1)});
+  }
+
+  /// Pauses answers on the puzzle [key] until [until] and starts its count over.
+  Future<void> lockPuzzle(String eventId, String teamName, String key, DateTime until) {
+    return _team(eventId, teamName).update({
+      'lockedUntil.$key': Timestamp.fromDate(until),
+      'attempts.$key': 0,
+    });
+  }
+
+  /// Notes that the team opened the hint of the puzzle [key].
+  Future<void> markHintUsed(String eventId, String teamName, String key) {
+    return _team(eventId, teamName).update({'hintsUsed.$key': true});
+  }
+
   /// Sets the team's progress and, with [completedMission], stamps when that
   /// mission was solved (server time) in the same write.
   Future<void> updateMissionProgress(String eventId, String teamName, int progress, {int? completedMission}) async {

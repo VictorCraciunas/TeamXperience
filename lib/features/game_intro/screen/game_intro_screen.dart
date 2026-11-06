@@ -32,7 +32,7 @@ class _GameIntroScreenState extends State<GameIntroScreen> {
   Widget build(BuildContext context) {
     final controller = _controller;
     if (controller == null) return Scaffold(backgroundColor: context.colors.page);
-    final palette = paletteFor(controller.event.look, context.colors);
+    final palette = EventPalette.fromApp(context.colors);
     return EventThemeScope(
       palette: palette,
       child: Scaffold(

@@ -85,6 +85,7 @@ class _MissionPageState extends State<MissionPage> {
                 teaser: teaser,
                 isTeaserPublic: isTeaserPublic,
               ),
+              onPlaceChanged: (place) => _controller.setMissionPlace(widget.index, place),
             ),
           ),
           itemCount: puzzles.length,

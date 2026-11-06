@@ -38,6 +38,17 @@ class Team {
   /// [toJson]: the puzzle controller sets one entry at a time.
   final Map<int, DateTime> missionCompletedAt;
 
+  /// Wrong answers per puzzle ([puzzleKey] → count), shared by the team's
+  /// phones through increments. Never written by [toJson].
+  final Map<String, int> attempts;
+
+  /// The puzzles whose hint the team opened. Never written by [toJson].
+  final Map<String, bool> hintsUsed;
+
+  /// Until when a puzzle refuses answers after its attempts ran out. Never
+  /// written by [toJson].
+  final Map<String, DateTime> lockedUntil;
+
   Team({
     required this.name,
     required this.teamMembers,
@@ -61,10 +72,19 @@ class Team {
     Map<String, DateTime>? presence,
     Map<int, DateTime>? missionCompletedAt,
     this.startedAt,
+    Map<String, int>? attempts,
+    Map<String, bool>? hintsUsed,
+    Map<String, DateTime>? lockedUntil,
   })  : userIds = userIds ?? [],
         photoApprovals = photoApprovals ?? {},
         presence = presence ?? {},
-        missionCompletedAt = missionCompletedAt ?? {};
+        missionCompletedAt = missionCompletedAt ?? {},
+        attempts = attempts ?? {},
+        hintsUsed = hintsUsed ?? {},
+        lockedUntil = lockedUntil ?? {};
+
+  /// The key of one puzzle in [attempts], [hintsUsed] and [lockedUntil]: "3_0".
+  static String puzzleKey(int mission, int puzzle) => '${mission}_$puzzle';
 
   /// The time the latest mission was solved, or null before the first.
   DateTime? get lastMissionAt {
@@ -84,12 +104,32 @@ class Team {
         _ => null,
       };
 
-  static Map<String, DateTime> _presence(Object? raw) {
+  static Map<String, DateTime> _timesByKey(Object? raw) {
     final result = <String, DateTime>{};
     if (raw is Map) {
       raw.forEach((key, value) {
         final at = _time(value);
         if (at != null) result[key.toString()] = at;
+      });
+    }
+    return result;
+  }
+
+  static Map<String, int> _counts(Object? raw) {
+    final result = <String, int>{};
+    if (raw is Map) {
+      raw.forEach((key, value) {
+        if (value is num && value == value.roundToDouble()) result[key.toString()] = value.toInt();
+      });
+    }
+    return result;
+  }
+
+  static Map<String, bool> _flags(Object? raw) {
+    final result = <String, bool>{};
+    if (raw is Map) {
+      raw.forEach((key, value) {
+        if (value == true) result[key.toString()] = true;
       });
     }
     return result;
@@ -190,9 +230,12 @@ class Team {
       members: membersList,
       inviteCode: map['inviteCode'] as String?,
       photoConsent: map['photoConsent'] as bool? ?? false,
-      presence: _presence(map['presence']),
+      presence: _timesByKey(map['presence']),
       missionCompletedAt: _missionTimes(map['missionCompletedAt']),
       startedAt: _time(map['startedAt']),
+      attempts: _counts(map['attempts']),
+      hintsUsed: _flags(map['hintsUsed']),
+      lockedUntil: _timesByKey(map['lockedUntil']),
     );
   }
 

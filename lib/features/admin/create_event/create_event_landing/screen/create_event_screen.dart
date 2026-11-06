@@ -14,6 +14,7 @@ import '../../../../../enums/event_type.dart';
 import 'package:teamxperience/ui/components/inputs/app_dropdown.dart';
 import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
 import '../controller/create_event_controller.dart';
+import '../widgets/game_start_section.dart';
 
 class CreateEventPage extends StatefulWidget {
   const CreateEventPage({super.key});
@@ -73,6 +74,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
       controller.whatToBringController,
       controller.storyController,
       controller.organiserController,
+      controller.introLetterController,
+      controller.introSignatureController,
+      controller.hintsPerMissionController,
+      controller.enterWindowController,
     ]) {
       c.dispose();
     }
@@ -474,6 +479,13 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     controller: controller.organiserController,
                     label: 'Organizator',
                     hint: 'Gol = TeamXperience',
+                  ),
+                  const SizedBox(height: 28),
+                  GameStartSection(
+                    letter: controller.introLetterController,
+                    signature: controller.introSignatureController,
+                    hintsPerMission: controller.hintsPerMissionController,
+                    enterWindow: controller.enterWindowController,
                   ),
                   const SizedBox(height: 20),
                   AppButton(
