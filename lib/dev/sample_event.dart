@@ -1,12 +1,31 @@
+import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/difficulty.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
+import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/model/event_defaults.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/model/team_member.dart';
 
-/// The event of mockup 01, for the gallery and the tests.
+/// A code puzzle built in the mockups' parchment colours, the way an
+/// organiser would: the game frame takes its look from pieces like these.
+List<Component> parchmentCodePieces(String question) => [
+      Component(type: ComponentType.text, text: question, textColor: '#3B2A1A', fontFamily: 'Gelasio', fontSize: 16),
+      Component(
+        type: ComponentType.code,
+        codeLength: 4,
+        inputType: 'Separated',
+        inputBackgroundColor: '#FBF4E4',
+        colorBorderInput: '#8A3B12',
+        glowColor: '#B8862B',
+      ),
+      Component(type: ComponentType.button, buttonLabel: 'Verifică', buttonColor: '#8A3B12', buttonTextColor: '#FBF4E4'),
+    ];
+
+/// The event of mockup 01, for the gallery and the tests. Its puzzles are in
+/// the parchment colours of mockups 05 to 08.
 Event sampleEvent() => Event(
       eventId: 'sample',
       name: 'Moștenirea Cartografului',
@@ -32,13 +51,16 @@ Event sampleEvent() => Event(
           'locuri pe care doar un ochi atent le găsește. Prima vă așteaptă unde treptele nu se termină niciodată.',
       introSignature: 'Cartograful',
       hintsPerMission: 1,
+      defaults: const EventDefaults(backgroundColor: '#EADBC0', textColor: '#3B2A1A', accentColor: '#8A3B12', fontFamily: 'Gelasio'),
       missions: [
         Mission(
           id: '0',
           title: 'Scara Pasajului',
           teaser: 'Numără treptele. Nu toate sunt la vedere.',
           isTeaserPublic: true,
-          puzzles: [Puzzle(id: '0', type: PuzzleType.code)],
+          puzzles: [
+            Puzzle(id: '0', type: PuzzleType.code, components: parchmentCodePieces('Câte trepte are scara?')),
+          ],
         ),
         Mission(
           id: '1',
@@ -48,7 +70,13 @@ Event sampleEvent() => Event(
           puzzles: [Puzzle(id: '0', type: PuzzleType.imageToUpload)],
         ),
         Mission(id: '2', title: 'Turnul Sfatului', puzzles: [Puzzle(id: '0', type: PuzzleType.imageToUpload)]),
-        Mission(id: '3', title: 'Casa cu ochi', puzzles: [Puzzle(id: '0', type: PuzzleType.code)]),
+        Mission(
+          id: '3',
+          title: 'Casa cu ochi',
+          puzzles: [
+            Puzzle(id: '0', type: PuzzleType.code, components: parchmentCodePieces('Ce an e scris deasupra ușii?')),
+          ],
+        ),
         Mission(id: '4', title: 'Unde dorm clopotele', puzzles: [Puzzle(id: '0', type: PuzzleType.geolocation)]),
         Mission(id: '5', title: 'Harta completă', puzzles: [Puzzle(id: '0', type: PuzzleType.code)]),
       ],
