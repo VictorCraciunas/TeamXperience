@@ -61,3 +61,19 @@ Registered in `main.dart`:
 `firestore.rules`, tested in `functions/src/test/rules.emu.test.ts`, one test per client write. Add to both together: a write a rule forgets fails silently on a phone in the middle of a game. In short: everyone signed in reads events, teams, news and seasons; a team member changes only the progress fields of their own team, and only as the app does (own `presence` and `walked`, a mission's time once, `hintsUsed` only added, photos only as `pending` with `lastPhotoKey` naming the try, the unread mark set but not cleared, `phoneNumber` for the captain); organisers change anything but create no teams; `crews`, `inviteCodes`, `seasons`, `memories`, `xp`, `stats`, `badges` and `resultsComputedAt` belong to the functions. Rules cannot walk a map, so the size of `attempts` is not checked. Storage rules are not in the repo.
 
 **The live rules open the whole database until 2026-12-31,** after which every request is refused. Deploy these before then.
+
+## Team functions
+
+Callables in `functions/src/teams/` (region `us-central1`). A refusal is `HttpsError` with `details: {reason}`, which `TeamError.fromException` maps; a signed-out call is `unauthenticated` with `notSignedIn`.
+
+| Callable | Input | Output |
+|---|---|---|
+| `checkTeamName` | `{eventId, name}` | `{free, problem?: 'short'/'long'/'characters'}` |
+| `createCrew` | `{name}` | `{crewId, inviteCode}` |
+| `registerTeam` | `{eventId, name, size, phone, rulesAccepted, photoConsent, crewId?}` | `{teamName, crewId, inviteCode, skippedUids}` |
+| `previewInvite` | `{code}` | `{crewId, crewName, captainName, members, alreadyMember, event?}` |
+| `joinTeam` | `{code}` | `{crewId, eventIds}`; joining again returns the player's events |
+
+## Results
+
+`onEventStopped` (when `isStopped` turns true) and `closeExpiredEvents` (every 15 minutes, events whose three hours ran out in the past week) call `applyResults`: the pure rules are in `results/player.ts`, `ranking.ts` (the same order as `lib/service/leaderboard.dart`) and `season.ts`. XP: 100 for a finished game, 20 per mission, +50 with no hints, 50 per new badge. Season points: 100, 75, 60, then 50 minus 5 per place, never under 10. Seasons follow the calendar in Romania: `2026-autumn`, "Toamna 2026". The memory marks a player as counted, and `crews/{id}/results/{eventId}` a crew, so a rerun counts nobody twice; `resultsComputedAt` is written last.

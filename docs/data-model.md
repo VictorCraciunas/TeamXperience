@@ -82,3 +82,17 @@ Upload helpers (`service/event_service/upload_images.dart`, `service/news_servic
 3. At/after `dateEvent` (up to 1h after, per `UserEventsProvider.nextEventWithinHour`) the player enters `startCode` (`enter_code`) → `TeamService.startTeam` (`hasStarted=true`) → `Routes.eventGame`.
 4. Game: missions list (`event_game_screen`) → `puzzle_game_screen` per mission. Progress writes: `puzzleNumber` per puzzle, `missionProgress`+1 and `puzzleNumber=0` when mission finishes. `LocationService` streams position into the team doc (distanceFilter 10 m).
 5. End: all missions done, admin `stopEvent` (`isStopped=true`), or 3h timer → `EventGameController._triggerEventEnded` → `finishTeam` (`hasFinished=true`).
+
+## Written by the functions (steps 3b and 7c)
+
+```
+crews/{id}                       name, captainUid, memberUids[], members[], inviteCode, teams[{eventId, teamName}], stats{games, wins, distanceMeters}, createdAt
+crews/{id}/results/{eventId}     place (marks the crew as counted)
+inviteCodes/{code}               crewId
+seasons/{id}                     name, startsAt, endsAt
+seasons/{id}/standings/{crewId}  crewName, points, games
+users/{uid}                      + xp, level, stats, badges
+users/{uid}/memories/{eventId}   eventName, date, place, totalTime, photoUrls
+events/{id}                      + resultsComputedAt
+events/{id}/teams/{name}         + place, nameKey, lastPhotoKey (a player's latest photo try, for the rules)
+```

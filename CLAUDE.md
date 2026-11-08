@@ -114,7 +114,9 @@ Event lifecycle: players register for events (`registeredEventIds`), enter the e
 
 - `service/FCMService.dart`: permission + token, foreground handler that shows a local notification on the `chat_notifications` Android channel. Token is saved on the user doc.
 - `functions/src/index.ts` (v2 functions): `sendNotification` (HTTP POST `{title, description, eventId?}` -> FCM to all users, or only those with `eventId` in `registeredEventIds`), `onChatMessage` (Firestore trigger on `events/{eventId}/teams/{teamName}/messages/{id}`: admin message -> notify team members via `userIds`; user message -> notify admins), `testEndpoint`.
-- Team Cloud Functions live in `functions/src/teams/`: the callables `checkTeamName`, `createCrew`, `registerTeam`, `previewInvite` and `joinTeam`, which the app calls through `TeamFunctions` in `lib/backend/functions/`. They are NOT built yet: parked as "step 3b" together with `firestore.rules`, so until then registering or joining a team shows an error.
+- Team Cloud Functions live in `functions/src/teams/`: the callables `checkTeamName`, `createCrew`, `registerTeam`, `previewInvite` and `joinTeam`, which the app calls through `TeamFunctions` in `lib/backend/functions/`. Each handler takes `(db, uid, data)`; `callables.ts` holds the one-line `onCall` wrappers.
+- Results: `functions/src/results/` works out places, XP, badges, memories, crew stats and season points when an event stops (`onEventStopped`) or its three hours run out (`closeExpiredEvents`, every 15 minutes). Safe to run again: each player and crew is counted once.
+- `firestore.rules` is tested on the emulator with `npm --prefix functions test`; add a rule and a test with any new client write, since a forgotten one fails silently in the middle of a game.
 - The app calls `sendNotification` via a **hardcoded Cloud Run URL** in `backend/network/NetworkAPI.dart`; update it if the function is redeployed to a different project/region.
 
 ### Theme

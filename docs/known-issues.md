@@ -37,3 +37,7 @@ Verify before fixing; none of these were reproduced. Roughly ordered by impact.
 - `sendNotification` HTTP function has no authentication (anyone with the URL can POST and push to all users).
 - `firebase_options.dart` / `google-services.json` are public client config by design, but the project's rules decide what they can access.
 
+## Rules (step 3b)
+- Everyone signed in can read `users` (emails, push tokens), because `findByEmail` queries by email, and `events` (drafts, answer codes), because the app lists them unfiltered. Moving answers out of the event document would close the second.
+- A member can lower their own team's `attempts` with a hand-made request: rules cannot walk a map to compare each value.
+- Storage rules are not in the repo; the console's stay as they are.
