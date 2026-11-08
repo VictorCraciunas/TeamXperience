@@ -285,7 +285,7 @@ that:
    - photos pending
    - a team with no mission solved in 20 min ("stau de 25 min")
    - 3 or more wrong attempts on the current puzzle
-   - unread team messages, using `unreadByAdmin`, written by the player's send in one batch with the message (no function needed) and cleared when the organiser opens or leaves the chat
+   - unread team messages, using `unreadByAdmin`, written by the player's send right after the message, as its own write (no function needed) and cleared when the organiser opens or leaves the chat
 4. Board: rank, team, missions done / total and status text, with filters Toate / Blocate / Neporniți.
 5. "Sună căpitanul": a `tel:` link to the team phone (`MyMapController.callTeam` already does this).
 6. "Anunț": calls `sendNotification` with `eventId`, which exists, and also posts the text into every team chat.

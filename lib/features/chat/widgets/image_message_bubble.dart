@@ -57,13 +57,13 @@ class ImageMessageBubble extends StatelessWidget {
                   BoxShadow(
                     color: context.colors.navy.withValues(alpha: .2),
                     blurRadius: 18,
-                    offset: Offset(0, 6),
+                    offset: const Offset(0, 6),
                   )
                 else
                   BoxShadow(
                     color: context.colors.liveCard.withValues(alpha: .04),
                     blurRadius: 2,
-                    offset: Offset(0, 1),
+                    offset: const Offset(0, 1),
                   ),
               ],
             ),
@@ -263,7 +263,7 @@ class _ActionButton extends StatelessWidget {
                   BoxShadow(
                     color: context.colors.navy.withValues(alpha: .25),
                     blurRadius: 12,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                   )
                 ]
               : null,

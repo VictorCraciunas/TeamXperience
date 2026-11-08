@@ -23,6 +23,7 @@ class BoardView extends StatelessWidget {
     required this.filter,
     required this.now,
     required this.canStop,
+    this.announcing = false,
     required this.onFilter,
     required this.onTeam,
     required this.onCall,
@@ -39,6 +40,9 @@ class BoardView extends StatelessWidget {
 
   /// Shows "Oprește".
   final bool canStop;
+
+  /// An announcement is on its way: its button rests and says so.
+  final bool announcing;
   final ValueChanged<BoardFilter> onFilter;
   final ValueChanged<Team> onTeam;
   final ValueChanged<Team> onCall;
@@ -110,10 +114,10 @@ class BoardView extends StatelessWidget {
               children: [
                 Expanded(
                   child: BoardActionButton(
-                    label: 'Anunț',
+                    label: announcing ? 'Se trimite...' : 'Anunț',
                     icon: TablerIcons.speakerphone,
                     colour: colors.accent,
-                    onTap: onAnnounce,
+                    onTap: announcing ? null : onAnnounce,
                   ),
                 ),
                 if (canStop) ...[

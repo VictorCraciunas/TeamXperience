@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
-import 'package:teamxperience/features/admin/home/logic/admin_event_stats.dart';
+
 import 'package:teamxperience/features/live_room/logic/attention_queue.dart';
 import 'package:teamxperience/features/live_room/logic/live_board.dart';
 import 'package:teamxperience/features/live_room/logic/live_map_points.dart';
@@ -15,7 +15,6 @@ import 'package:teamxperience/model/photo_detail.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/ui/components/misc/app_chip.dart';
 import 'package:teamxperience/ui/components/misc/app_chip_style.dart';
-import 'package:teamxperience/ui/ui.dart';
 
 import 'sample_event.dart';
 
@@ -119,7 +118,7 @@ class _LiveRoomPreviewState extends State<LiveRoomPreview> {
             )
           : LiveRoomView(
               event: _event,
-              stats: AdminEventStats.fromTeams(teams),
+              stats: liveCounts(teams, missionCount: missions, now: now, eventOver: over),
               items: attentionQueue(teams, missionCount: missions, now: now, eventOver: over),
               map: LiveMap(
                 event: _event,

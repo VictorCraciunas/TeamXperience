@@ -23,6 +23,7 @@ Team _team(
   Map<String, PhotoDetail>? details,
   Map<String, int>? attempts,
   Map<String, DateTime>? presence,
+  Map<String, DateTime>? locked,
   String? unread,
   DateTime? unreadAt,
 }) =>
@@ -42,6 +43,7 @@ Team _team(
       photoDetails: details,
       attempts: attempts,
       presence: presence,
+      lockedUntil: locked,
       unreadText: unread,
       unreadAt: unreadAt,
     );
@@ -91,12 +93,46 @@ void main() {
       expect(_state(_team('A', progress: 9, solved: {5: _ago(50)})), LiveState.finished);
     });
 
-    test('nobody is stuck once the event is over', () {
-      expect(_state(_team('A', solved: {0: _ago(90)}), over: true), LiveState.playing);
+    test('once the event is over, a team still out there has stopped', () {
+      expect(_state(_team('A', solved: {0: _ago(90)}), over: true), LiveState.stopped);
+      expect(_state(_team('A'), over: true), LiveState.stopped);
+    });
+
+    test('the end changes nothing for who finished, never started or waits on a photo', () {
+      expect(_state(_team('A', progress: 6), over: true), LiveState.finished);
+      expect(_state(_team('A', started: false), over: true), LiveState.notStarted);
+      expect(_state(_team('A', photos: {'0_0_0': PhotoApprovalStatus.pending}), over: true), LiveState.waitingPhoto);
     });
 
     test('an event without missions does not count as finished', () {
       expect(_state(_team('A', finished: true), missions: 0), LiveState.stopped);
+    });
+  });
+
+  group('liveCounts', () {
+    final teams = [
+      _team('Out there', progress: 1),
+      _team('Done', finished: true, progress: 6),
+      _team('Stopped', finished: true, progress: 2),
+      _team('New', started: false),
+    ];
+
+    test('in play, finished and not started, by the same states as the board', () {
+      final counts = liveCounts(teams, missionCount: 6, now: _now, eventOver: false);
+      expect((counts.inPlay, counts.finished, counts.notStarted), (1, 1, 1));
+    });
+
+    test('after the end nobody is in play', () {
+      final counts = liveCounts(teams, missionCount: 6, now: _now, eventOver: true);
+      expect((counts.inPlay, counts.finished, counts.notStarted), (0, 1, 1));
+    });
+
+    test('stuck and waiting on a photo are in play', () {
+      final counts = liveCounts([
+        _team('A', solved: {0: _ago(40)}),
+        _team('B', photos: {'0_0_0': PhotoApprovalStatus.pending}),
+      ], missionCount: 6, now: _now, eventOver: false);
+      expect(counts.inPlay, 2);
     });
   });
 
@@ -154,6 +190,22 @@ void main() {
 
     test('wrong answers on another puzzle do not count', () {
       expect(_queue([_team('A', progress: 1, puzzle: 1, solved: {0: _ago(2)}, attempts: {'1_0': 5})]), isEmpty);
+    });
+
+    test('a puzzle locked for running out of attempts shows while it is locked, on top', () {
+      final until = _now.add(const Duration(seconds: 40));
+      final items = _queue([
+        _team('Lupii', progress: 1, solved: {0: _ago(2)}, locked: {'1_0': until}),
+        _team('Other', unread: 'x', unreadAt: _ago(1)),
+      ]);
+      final item = items.first as StuckAttention;
+      expect((item.team.name, item.locked, item.minutes, item.wrong), ('Lupii', true, null, 0));
+      expect(item.at, until);
+    });
+
+    test('a lock that ended, or on another puzzle, is nothing', () {
+      expect(_queue([_team('A', progress: 1, solved: {0: _ago(2)}, locked: {'1_0': _ago(1)})]), isEmpty);
+      expect(_queue([_team('A', progress: 1, solved: {0: _ago(2)}, locked: {'0_0': _now.add(const Duration(minutes: 1))})]), isEmpty);
     });
 
     test('an unread message, also from a team that finished', () {
@@ -282,6 +334,15 @@ void main() {
       final wrong = _queue([_team('Lupii', progress: 1, solved: {0: _ago(2)}, attempts: {'1_0': 4})]).single as StuckAttention;
       expect(stuckTitle(wrong), 'Lupii: 4 încercări greșite');
       expect(stuckSubtitle(wrong), 'Misiunea 2');
+
+      final until = {'1_0': _now.add(const Duration(minutes: 1))};
+      final locked = _queue([_team('Lupii', progress: 1, solved: {0: _ago(2)}, locked: until)]).single as StuckAttention;
+      expect(stuckTitle(locked), 'Lupii: încercări epuizate');
+      expect(stuckSubtitle(locked), 'Misiunea 2');
+
+      final stuckLocked = _queue([_team('Lupii', progress: 1, solved: {0: _ago(30)}, locked: until)]).single as StuckAttention;
+      expect(stuckTitle(stuckLocked), 'Lupii stau de 30 min');
+      expect(stuckSubtitle(stuckLocked), 'Misiunea 2 · încercări epuizate');
     });
 
     test('the initial on a pin', () {

@@ -44,13 +44,17 @@ class _LiveMapScreenState extends State<LiveMapScreen> {
         animation: controller,
         builder: (context, _) => ClockBuilder(
           interval: const Duration(seconds: 30),
-          builder: (context, now) => LiveMap(
-            event: controller.event,
-            teams: controller.teams,
-            now: now,
-            interactive: true,
-            onTeam: (team) => actions.openTeam(team, now),
-          ),
+          // After the first teams arrive, so the map opens on them: the
+          // organiser moves it from then on.
+          builder: (context, now) => controller.loading
+              ? const Center(child: CircularProgressIndicator())
+              : LiveMap(
+                  event: controller.event,
+                  teams: controller.teams,
+                  now: now,
+                  interactive: true,
+                  onTeam: (team) => actions.openTeam(team, now),
+                ),
         ),
       ),
     );

@@ -54,20 +54,23 @@ String boardStatusText(BoardRow row, DateTime now) {
   };
 }
 
+const _lockedLine = 'încercări epuizate';
+
 String _wrongLine(int wrong) => wrong == 1 ? 'o încercare greșită' : '$wrong încercări greșite';
 
 /// "Cometele stau de 25 min", or "Cometele: 3 încercări greșite".
 String stuckTitle(StuckAttention item) {
   final minutes = item.minutes;
-  if (minutes == null) return '${item.team.name}: ${_wrongLine(item.wrong)}';
-  return '${item.team.name} stau de ${_minutes(minutes)}';
+  if (minutes != null) return '${item.team.name} stau de ${_minutes(minutes)}';
+  return '${item.team.name}: ${item.locked ? _lockedLine : _wrongLine(item.wrong)}';
 }
 
 /// "Misiunea 2 · 3 încercări greșite".
 String stuckSubtitle(StuckAttention item) {
   final mission = 'Misiunea ${item.mission}';
-  if (item.minutes == null || item.wrong == 0) return mission;
-  return '$mission · ${_wrongLine(item.wrong)}';
+  if (item.minutes == null) return mission;
+  if (item.locked) return '$mission · $_lockedLine';
+  return item.wrong == 0 ? mission : '$mission · ${_wrongLine(item.wrong)}';
 }
 
 /// The letter on a team's pin. By rune, not code unit: a name may start with

@@ -44,7 +44,8 @@ class _LiveRoomScreenState extends State<LiveRoomScreen> {
           interval: const Duration(seconds: 30),
           builder: (context, now) => LiveRoomView(
             event: controller.event,
-            stats: controller.stats,
+            stats: controller.stats(now),
+            announcing: controller.announcing,
             items: controller.attention(now),
             loading: controller.loading,
             failed: controller.error != null,

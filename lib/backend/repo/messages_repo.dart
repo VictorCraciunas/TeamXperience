@@ -21,16 +21,16 @@ class MessageRepo {
   DocumentReference<Map<String, dynamic>> _team(String eventId, String teamName) =>
       _firestore.collection('events').doc(eventId).collection('teams').doc(teamName);
 
-  /// A player's text: the message, and in the same write the mark that tells
-  /// the organiser's live room there is something to read.
+  /// A player's text, and the mark that tells the organiser's live room there
+  /// is something to read. Two writes on purpose: a mark that cannot be saved
+  /// must never take the message with it.
   Future<void> sendPlayerMessage(Message message, String eventId, String teamName) {
     final team = _team(eventId, teamName);
-    final batch = _firestore.batch();
-    batch.set(team.collection('messages').doc(), message.toJson());
-    batch.update(team, {
+    final sent = team.collection('messages').add(message.toJson());
+    team.update({
       'unreadByAdmin': {'text': message.text, 'at': FieldValue.serverTimestamp()},
-    });
-    return batch.commit();
+    }).catchError((Object _) {});
+    return sent;
   }
 
   /// One message to each of [teamNames], all or none.

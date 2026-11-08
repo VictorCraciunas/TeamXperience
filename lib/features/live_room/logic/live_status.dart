@@ -1,4 +1,5 @@
 import 'package:teamxperience/enums/photo_approval_status.dart';
+import 'package:teamxperience/features/admin/home/logic/admin_event_stats.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 
@@ -48,7 +49,24 @@ LiveState liveStateOf(Team team, {required int missionCount, required DateTime n
   if (team.hasFinished) return LiveState.stopped;
   if (!team.hasStarted) return LiveState.notStarted;
   if (team.photoApprovals.values.contains(PhotoApprovalStatus.pending)) return LiveState.waitingPhoto;
+  // The phones write hasFinished only with the game open; a team whose phones
+  // are closed has stopped all the same.
+  if (eventOver) return LiveState.stopped;
   final last = lastActivity(team);
-  if (!eventOver && last != null && now.difference(last) >= stuckAfter) return LiveState.stuck;
+  if (last != null && now.difference(last) >= stuckAfter) return LiveState.stuck;
   return LiveState.playing;
+}
+
+/// The room's counts, from the same states as the board: a team the event
+/// stopped is neither in play nor finished.
+AdminEventStats liveCounts(List<Team> teams, {required int missionCount, required DateTime now, required bool eventOver}) {
+  final states = [for (final team in teams) liveStateOf(team, missionCount: missionCount, now: now, eventOver: eventOver)];
+  int count(Set<LiveState> wanted) => states.where(wanted.contains).length;
+  return AdminEventStats(
+    teams: teams.length,
+    persons: teams.fold<int>(0, (sum, team) => sum + team.numberOfMembers),
+    inPlay: count({LiveState.playing, LiveState.waitingPhoto, LiveState.stuck}),
+    finished: count({LiveState.finished}),
+    notStarted: count({LiveState.notStarted}),
+  );
 }

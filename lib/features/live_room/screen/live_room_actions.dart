@@ -77,10 +77,17 @@ class LiveRoomActions {
   }
 
   Future<void> _decide(PhotoAttention item, {required bool approve, String? reason}) async {
-    if (controller.isDeciding(item)) return;
-    final saved = await controller.decidePhoto(item, approve: approve, reason: reason);
-    if (saved || !context.mounted) return;
-    MySnackBars.errorSnackBar(context, title: 'Nu am putut salva decizia.');
+    final result = await controller.decidePhoto(item, approve: approve, reason: reason);
+    if (!context.mounted) return;
+    switch (result) {
+      case PhotoDecision.saved:
+      case PhotoDecision.busy:
+        break;
+      case PhotoDecision.alreadyDecided:
+        MySnackBars.errorSnackBar(context, title: 'Poza a fost deja decisă.');
+      case PhotoDecision.failed:
+        MySnackBars.errorSnackBar(context, title: 'Nu am putut salva decizia.');
+    }
   }
 
   /// Asks for the text and sends it. A send that fails entirely asks again,
@@ -110,6 +117,9 @@ class LiveRoomActions {
           return;
         case AnnounceResult.failed:
           MySnackBars.errorSnackBar(context, title: 'Nu am putut trimite anunțul.');
+          draft = text;
+        case AnnounceResult.busy:
+          MySnackBars.errorSnackBar(context, title: 'Un anunț se trimite deja. Încearcă peste câteva secunde.');
           draft = text;
       }
     }

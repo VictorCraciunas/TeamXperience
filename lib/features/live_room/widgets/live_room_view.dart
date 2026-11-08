@@ -26,6 +26,7 @@ class LiveRoomView extends StatelessWidget {
     required this.map,
     this.loading = false,
     this.failed = false,
+    this.announcing = false,
     this.clock,
     required this.isDeciding,
     required this.onBoard,
@@ -47,6 +48,9 @@ class LiveRoomView extends StatelessWidget {
 
   /// The teams could not be read: what shows may be old.
   final bool failed;
+
+  /// An announcement is on its way: its button rests.
+  final bool announcing;
 
   /// Overrides the header's clock (for tests).
   final DateTime Function()? clock;
@@ -77,7 +81,7 @@ class LiveRoomView extends StatelessWidget {
                 label: 'Progresul echipelor',
                 onTap: () => onBoard(BoardFilter.all),
               ),
-              LiveHeaderAction(icon: TablerIcons.speakerphone, label: 'Anunț', onTap: onAnnounce),
+              LiveHeaderAction(icon: TablerIcons.speakerphone, label: 'Anunț', onTap: announcing ? null : onAnnounce),
             ],
           ),
         ),

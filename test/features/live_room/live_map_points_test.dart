@@ -60,12 +60,12 @@ void main() {
       expect(_tone(team), PinTone.stuck);
     });
 
-    test('after the end nobody is quiet or stuck', () {
+    test('after the end a team still out there is grey', () {
       final team = _team(
         startedAt: _now.subtract(const Duration(minutes: 30)),
         presence: {'u': _now.subtract(const Duration(minutes: 6))},
       );
-      expect(_tone(team, over: true), PinTone.playing);
+      expect(_tone(team, over: true), PinTone.silent);
     });
   });
 

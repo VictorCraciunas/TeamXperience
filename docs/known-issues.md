@@ -16,6 +16,7 @@ Verify before fixing; none of these were reproduced. Roughly ordered by impact.
 
 ## Robustness / UX
 - `TeamDetailsScreen` re-fetches the team on every rebuild (`FutureBuilder` future built in `build`).
+- `flutter_map` `userAgentPackageName` is `com.teamxperience.app` on both maps, while the real id is `ro.teamxperience.teamxperience`, and no map shows the OpenStreetMap attribution its tile policy asks for.
 - `ChatController.sendMessage` doesn't await or validate (empty messages allowed); `MessageService.sendMessage` doesn't await the repo call.
 - `SignUpService.register/signInGoogle` don't await `saveUser`.
 - `TeamService.updateTeamLocation` doesn't await; `LocationService` swallows all errors; tracking only while the game screen is alive and app in foreground.

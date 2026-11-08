@@ -240,6 +240,28 @@ void main() {
       expect(calls.list, ['filter stuck', 'team Lupii', 'call Pisicile', 'announce', 'stop']);
     });
 
+    testWidgets('an announcement on its way rests the button', (tester) async {
+      _bigScreen(tester);
+      final calls = _Calls();
+      final teams = _mockupTeams();
+      await tester.pumpWidget(_frame(BoardView(
+        teamCount: teams.length,
+        missionCount: 6,
+        rows: boardRows(teams, missionCount: 6, now: _now, eventOver: false),
+        filter: BoardFilter.all,
+        now: _now,
+        canStop: true,
+        announcing: true,
+        onFilter: (_) {},
+        onTeam: (_) {},
+        onCall: (_) {},
+        onAnnounce: () => calls.add('announce'),
+        onStop: () {},
+      )));
+      await tester.tap(find.text('Se trimite...'));
+      expect(calls.list, isEmpty);
+    });
+
     testWidgets('no stop when it cannot be stopped', (tester) async {
       await tester.pumpWidget(_frame(_board(_mockupTeams(), _Calls(), canStop: false)));
       expect(find.text('Oprește'), findsNothing);

@@ -25,17 +25,28 @@ class PhotoAttention extends AttentionItem {
   final int mission;
 }
 
-/// A team stuck for [minutes], or with too many wrong answers ([minutes] null).
+/// A team stuck for [minutes], or ([minutes] null) with too many wrong answers
+/// or a puzzle locked for running out of them.
 class StuckAttention extends AttentionItem {
-  const StuckAttention({required super.team, required super.at, this.minutes, required this.mission, required this.wrong});
+  const StuckAttention({
+    required super.team,
+    required super.at,
+    this.minutes,
+    required this.mission,
+    required this.wrong,
+    this.locked = false,
+  });
 
   final int? minutes;
 
   /// 1 for the first mission.
   final int mission;
 
-  /// Wrong answers on the puzzle the team is on.
+  /// Wrong answers on the puzzle the team is on. Back to 0 once it locks.
   final int wrong;
+
+  /// The team ran out of attempts and the puzzle is locked right now.
+  final bool locked;
 }
 
 /// A message the organiser has not read.
@@ -83,13 +94,24 @@ StuckAttention? _stuck(Team team, {required int missionCount, required DateTime 
   if (state != LiveState.playing && state != LiveState.stuck) return null;
   final wrong = wrongOnCurrent(team);
   final stuck = state == LiveState.stuck;
-  if (!stuck && wrong < wrongLimit) return null;
+  final until = team.lockedUntil[Team.puzzleKey(team.missionProgress, team.puzzleNumber)];
+  final locked = until != null && until.isAfter(now);
+  if (!stuck && !locked && wrong < wrongLimit) return null;
   final last = lastActivity(team);
+  final DateTime at;
+  if (stuck && last != null) {
+    at = last.add(stuckAfter);
+  } else if (locked) {
+    at = until;
+  } else {
+    at = last ?? now;
+  }
   return StuckAttention(
     team: team,
-    at: last == null ? now : (stuck ? last.add(stuckAfter) : last),
+    at: at,
     minutes: stuck && last != null ? now.difference(last).inMinutes : null,
     mission: team.missionProgress + 1,
     wrong: wrong,
+    locked: locked,
   );
 }
