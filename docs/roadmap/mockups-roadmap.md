@@ -450,7 +450,7 @@ finished route rather than a stopped game, and the finish screen.
 
 **Step 9 is done (2026-11-08):** organisers place the start, mission and location puzzle pins on a map (typing stays, for pasting from Google Maps); "Vezi Eveniment" walks through the event with a throwaway team and saves nothing; photo puzzles have no hint field; every screen reads theme colours (only the photo viewers and the Facebook button keep their own); failed reads say so (`LoadFailed`), also offline on first open; game and live room controls have 48 px tap areas (`TapArea`); countdown tick, route pulse, code box shake. **Left out on purpose:** golden tests (Victor, 2026-11-08: the look is judged in the gallery), `series` and the puzzle `badge` (they belong to the parked results function), `theme` (6b: an event's look comes only from its puzzles).
 
-**Steps 3b and 7c are done (2026-11-08), not deployed:** `firestore.rules`, the five team functions, `onEventStopped` and `closeExpiredEvents`, crew stats, the season leaderboard, signing up an existing crew. All tested on the emulator.
+**Steps 3b and 7c are done (2026-11-08). The functions are deployed (2026-11-08, Node 22, checklist step 3 is done); `firestore.rules` is not, and Victor deploys it later:** `firestore.rules`, the five team functions, `onEventStopped` and `closeExpiredEvents`, crew stats, the season leaderboard, signing up an existing crew. All tested on the emulator.
 
 **Deploy checklist (Victor's call, in this order):**
 1. The live rules leave the database open to everyone until **2026-12-31**, and refuse every request after it. The new rules must be live before then. Check the Storage rules' expiry in the console too: if they are date-limited as well, photo puzzles stop.
