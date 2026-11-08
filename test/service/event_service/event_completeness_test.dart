@@ -185,6 +185,106 @@ void main() {
     });
   });
 
+  group('an answer that does not fit its boxes', () {
+    Puzzle boxes(String code, {int? length = 4, String? input = 'Separated'}) => Puzzle(
+          id: 'p',
+          type: PuzzleType.code,
+          code: code,
+          components: [Component(type: ComponentType.code, codeLength: length, inputType: input)],
+        );
+
+    test('longer than the boxes cannot be typed', () {
+      expect(puzzleIssues(boxes('ABCDE')), [PuzzleIssue.answerDoesNotFit]);
+    });
+
+    test('as long as the boxes is fine, and so is shorter, since it can still be typed', () {
+      expect(puzzleIssues(boxes('ABCD')), isEmpty);
+      expect(puzzleIssues(boxes('ABC')), isEmpty);
+    });
+
+    test('spaces at the ends are not typed, so they do not count', () {
+      expect(puzzleIssues(boxes(' ABCD ')), isEmpty);
+    });
+
+    test('no number of boxes means five', () {
+      expect(puzzleIssues(boxes('ABCDE', length: null)), isEmpty);
+      expect(puzzleIssues(boxes('ABCDEF', length: null)), [PuzzleIssue.answerDoesNotFit]);
+    });
+
+    test('one free box takes any length, also when the input type is left out', () {
+      expect(puzzleIssues(boxes('ABCDEFGHIJKLMNOP', input: 'Free')), isEmpty);
+      expect(puzzleIssues(boxes('ABCDEFGHIJKLMNOP', input: null)), isEmpty);
+    });
+
+    test('one box takes one whole character, whatever it is made of', () {
+      expect(puzzleIssues(boxes('🔑🔑', length: 2)), isEmpty);
+      expect(puzzleIssues(boxes('🔑🔑🔑', length: 2)), [PuzzleIssue.answerDoesNotFit]);
+    });
+
+    test('it is enough that one of two inputs fits', () {
+      final puzzle = boxes('ABCDE')..components.add(Component(type: ComponentType.code, inputType: 'Free'));
+      expect(puzzleIssues(puzzle), isEmpty);
+    });
+
+    test('a puzzle that is not a code puzzle is not checked', () {
+      expect(puzzleIssues(boxes('ABCDE')..type = PuzzleType.imageToUpload), isEmpty);
+    });
+
+    test('stops the event from being published, and says where', () {
+      final problems = publishProblems(_event(missions: [_mission([boxes('ABCDE')])]));
+      expect(problems.map((p) => p.text), ['Misiunea 1: Puzzle 1: răspunsul nu încape în căsuțe']);
+    });
+  });
+
+  group('stuckProblems, what would leave teams stuck on a live event', () {
+    Puzzle boxes(String code) => Puzzle(
+          id: 'p',
+          type: PuzzleType.code,
+          code: code,
+          components: [Component(type: ComponentType.code, codeLength: 4, inputType: 'Separated')],
+        );
+
+    test('a playable event has none, even with newer details missing', () {
+      final event = _event(missions: [_mission([boxes('ABCD')])])
+        ..finishPoint = null
+        ..startLatitude = null;
+      expect(stuckProblems(event), isEmpty);
+    });
+
+    test('says which mission and puzzle has an answer that does not fit', () {
+      final event = _event(missions: [
+        _mission([boxes('ABCD')]),
+        _mission([boxes('ABCD'), boxes('ABCDE')]),
+      ]);
+      final problems = stuckProblems(event);
+      expect(problems.map((p) => p.text), ['Misiunea 2: Puzzle 2: răspunsul nu încape în căsuțe']);
+      expect(problems.single.missionIndex, 1);
+    });
+
+    test('team sizes the wrong way round', () {
+      final event = _event()
+        ..teamSizeMin = 6
+        ..teamSizeMax = 2;
+      expect(stuckProblems(event).map((p) => p.text), [EventIssue.teamSizeOrder.label]);
+    });
+  });
+
+  group('team sizes', () {
+    test('a minimum above the maximum stops the event from being published', () {
+      final event = _event()
+        ..teamSizeMin = 6
+        ..teamSizeMax = 2;
+      expect(eventIssues(event), [EventIssue.teamSizeOrder]);
+    });
+
+    test('the same minimum and maximum is fine', () {
+      final event = _event()
+        ..teamSizeMin = 4
+        ..teamSizeMax = 4;
+      expect(eventIssues(event), isEmpty);
+    });
+  });
+
   group('publishProblems', () {
     test('event details come first, then each mission', () {
       final event = _event(missions: [

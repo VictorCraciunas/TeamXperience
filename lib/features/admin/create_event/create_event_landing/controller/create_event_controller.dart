@@ -306,12 +306,20 @@ class CreateEventController {
     return null;
   }
 
+  /// A message when the team sizes are the wrong way round, else null. An empty
+  /// field counts as its default, as it does when the event is saved.
+  String? teamSizeProblem() {
+    final min = _whole(teamSizeMinController) ?? 2;
+    final max = _whole(teamSizeMaxController) ?? 6;
+    return min > max ? EventIssue.teamSizeOrder.label : null;
+  }
+
   /// Continue to the missions. [mode] is 'create', 'blueprint' (copied from
   /// another event), 'edit' (a published event) or 'draft' (resuming a draft).
   Future<void> createEvent(BuildContext context, String mode) async {
     if (!(formKey.currentState?.validate() ?? false)) return;
 
-    final problem = enrollmentProblem();
+    final problem = enrollmentProblem() ?? teamSizeProblem();
     if (problem != null) {
       MySnackBars.warningSnackBar(context, title: problem);
       return;

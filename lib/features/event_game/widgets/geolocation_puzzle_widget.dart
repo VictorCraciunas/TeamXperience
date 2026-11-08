@@ -21,6 +21,7 @@ class GeolocationPuzzleWidget extends StatefulWidget {
     required this.puzzle,
     required this.onSolved,
     required this.routeService,
+    this.header,
     this.isMissionCompleted = false,
     this.onHint,
     this.onPicture = false,
@@ -32,6 +33,9 @@ class GeolocationPuzzleWidget extends StatefulWidget {
   final bool isMissionCompleted;
   final VoidCallback? onHint;
   final bool onPicture;
+
+  /// The organiser's content above the map.
+  final Widget? header;
 
   @override
   State<GeolocationPuzzleWidget> createState() => _GeolocationPuzzleWidgetState();
@@ -197,6 +201,7 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> with 
       onOpenSettings: Geolocator.openAppSettings,
       onOpenLocationSettings: Geolocator.openLocationSettings,
       onPicture: widget.onPicture,
+      header: widget.header,
     );
   }
 }

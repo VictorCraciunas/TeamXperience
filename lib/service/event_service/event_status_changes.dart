@@ -13,6 +13,15 @@ Event asDraft(Event event, {required DateTime now, int? wizardStep}) {
   return event;
 }
 
+/// Throws [EventNotPublishableException] if saving this edit of a live event
+/// would leave teams stuck.
+void checkLiveEdit(Event event) {
+  final problems = stuckProblems(event);
+  if (problems.isNotEmpty) {
+    throw EventNotPublishableException([for (final p in problems) p.text]);
+  }
+}
+
 /// Marks [event] as published at [now]. Throws [EventNotPublishableException]
 /// listing everything that is missing, and then leaves [event] untouched.
 Event asPublished(Event event, {required DateTime now}) {

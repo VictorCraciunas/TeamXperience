@@ -171,77 +171,64 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                           _startAnimation(components.length);
                         });
 
-                        if (isGeolocation && currentPuzzle != null) {
-                          return Column(
-                            children: [
-                              // Render admin components (text, images, etc.)
-                              if (components.isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page + 20, vertical: 20),
-                                  child: AnimatedBuilder(
-                                    animation: _animationController,
-                                    builder: (context, child) {
-                                      return Column(
-                                        children: controller.buildComponentsWithSpacing(components, _animations),
-                                      );
-                                    },
-                                  ),
+                        // The organiser's content (text, images, etc.) on a
+                        // location or photo puzzle: it goes inside what scrolls
+                        // there, so a long one cannot push the button off.
+                        final organiser = components.isEmpty
+                            ? null
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page + 20, vertical: 20),
+                                child: AnimatedBuilder(
+                                  animation: _animationController,
+                                  builder: (context, child) {
+                                    return Column(
+                                      children: controller.buildComponentsWithSpacing(components, _animations),
+                                    );
+                                  },
                                 ),
-                              // Map + button
-                              Expanded(
-                                child: controller.preview
-                                    ? PreviewSkipView(
-                                        text: 'Aici echipele trebuie să ajungă la locul de pe hartă.',
-                                        onSkip: controller.navigate,
-                                      )
-                                    : GeolocationPuzzleWidget(
-                                        key: ValueKey('geo_$selectedPuzzle'),
-                                        puzzle: currentPuzzle,
-                                        onSolved: () => controller.navigate(),
-                                        isMissionCompleted: controller.isMissionCompleted,
-                                        routeService: controller.routeService,
-                                        onHint: controller.canUseHint ? _openHint : null,
-                                        onPicture: controller.background != null,
-                                      ),
-                              ),
-                            ],
+                              );
+
+                        if (isGeolocation && currentPuzzle != null) {
+                          if (controller.preview) {
+                            return PreviewSkipView(
+                              key: ValueKey('preview_$selectedPuzzle'),
+                              text: 'Aici echipele trebuie să ajungă la locul de pe hartă.',
+                              onSkip: controller.navigate,
+                              header: organiser,
+                            );
+                          }
+                          return GeolocationPuzzleWidget(
+                            key: ValueKey('geo_$selectedPuzzle'),
+                            puzzle: currentPuzzle,
+                            onSolved: () => controller.navigate(),
+                            isMissionCompleted: controller.isMissionCompleted,
+                            routeService: controller.routeService,
+                            onHint: controller.canUseHint ? _openHint : null,
+                            onPicture: controller.background != null,
+                            header: organiser,
                           );
                         }
 
                         if (isImageUpload && currentPuzzle != null) {
-                          return Column(
-                            children: [
-                              if (components.isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page + 20, vertical: 20),
-                                  child: AnimatedBuilder(
-                                    animation: _animationController,
-                                    builder: (context, child) {
-                                      return Column(
-                                        children: controller.buildComponentsWithSpacing(components, _animations),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              Expanded(
-                                child: controller.preview
-                                    ? PreviewSkipView(
-                                        text: 'Aici echipele trimit o fotografie, iar tu o aprobi din chat.',
-                                        onSkip: controller.navigate,
-                                      )
-                                    : ImageUploadPuzzleWidget(
-                                        key: ValueKey('img_$selectedPuzzle'),
-                                        eventId: controller.event.eventId,
-                                        teamName: controller.team.name,
-                                        missionIndex: controller.missionIndex,
-                                        puzzleIndex: selectedPuzzle,
-                                        onSolved: () => controller.navigate(),
-                                        onChat: _openChat,
-                                        isMissionCompleted: controller.isMissionCompleted,
-                                        onPicture: controller.background != null,
-                                      ),
-                              ),
-                            ],
+                          if (controller.preview) {
+                            return PreviewSkipView(
+                              key: ValueKey('preview_$selectedPuzzle'),
+                              text: 'Aici echipele trimit o fotografie, iar tu o aprobi din chat.',
+                              onSkip: controller.navigate,
+                              header: organiser,
+                            );
+                          }
+                          return ImageUploadPuzzleWidget(
+                            key: ValueKey('img_$selectedPuzzle'),
+                            eventId: controller.event.eventId,
+                            teamName: controller.team.name,
+                            missionIndex: controller.missionIndex,
+                            puzzleIndex: selectedPuzzle,
+                            onSolved: () => controller.navigate(),
+                            onChat: _openChat,
+                            isMissionCompleted: controller.isMissionCompleted,
+                            onPicture: controller.background != null,
+                            header: organiser,
                           );
                         }
 

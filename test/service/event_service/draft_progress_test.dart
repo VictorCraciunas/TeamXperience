@@ -49,6 +49,14 @@ void main() {
       expect(draftProgress(_complete()), 1);
     });
 
+    test('team sizes the wrong way round keep it from the end, and right ones add nothing', () {
+      final reversed = _complete()
+        ..teamSizeMin = 6
+        ..teamSizeMax = 2;
+      expect(draftProgress(reversed), lessThan(1));
+      expect(draftSummary(reversed), 'Minimul de membri e mai mare decât maximul');
+    });
+
     test('more filled in means further along, never outside 0 to 1', () {
       final one = Event(eventId: 'd', name: 'Doar numele', status: EventStatus.draft);
       final more = Event(

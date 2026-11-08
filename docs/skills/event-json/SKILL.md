@@ -205,7 +205,7 @@ A one-mission event with a code puzzle. The coordinates only show the format. (A
 | `routeLengthKm` | Number from 0.1 to 100, the route in km, for example `4.5`. Shown as "4,5 km". |
 | `durationMinutes` | Whole number from 10 to 600, for example `120`. Shown as "2 h", `90` as "1 h 30". The game still ends 3 hours after `dateEvent`, so keep it at `180` or less. |
 | `difficulty` | `"easy"`, `"medium"` or `"hard"`, shown as one, two or three dots with "Ușoară", "Medie", "Grea". |
-| `teamSizeMin`, `teamSizeMax` | Whole numbers from 1 to 20, how many people a team can have. Default 2 and 6, shown as "Echipe de 2–6". `teamSizeMin` must not be larger than `teamSizeMax`: neither the import nor publishing catches it, and no team could register. |
+| `teamSizeMin`, `teamSizeMax` | Whole numbers from 1 to 20, how many people a team can have. Default 2 and 6, shown as "Echipe de 2–6". `teamSizeMin` must not be larger than `teamSizeMax`: the import lets it through, but the event cannot be published that way. |
 | `maxTeams` | Whole number from 1 to 500, how many teams can register. Leave it out for no limit. |
 | `meetingPointNote` | Free text, exactly where teams meet, for example `"Piața Mare, lângă fântână"`. Shown as "Start:" in the logistics. When missing, `punctDeStart` is shown. |
 | `arriveMinutesBefore` | Whole number from 0 to 120, default 15: "fii acolo la 9:45" for a 10:00 start. |
@@ -335,7 +335,7 @@ The place where players type the answer of a `code` puzzle.
 
 | Field | What it can hold |
 |---|---|
-| `codeLength` | A whole number from 1 to 10: how many boxes `"Separated"` shows. Default 5. It must match the length of the puzzle's `code`: nothing checks this, and an answer longer than the boxes cannot be typed, so the team is stuck. `"Free"` ignores it. |
+| `codeLength` | A whole number from 1 to 10: how many boxes `"Separated"` shows. Default 5. It must match the length of the puzzle's `code`: an answer longer than the boxes stops the event from being published, and a shorter one leaves boxes empty. `"Free"` ignores it. |
 | `inputType` | `"Separated"` (one box per character) or `"Free"` (one single box, for an answer of any length). Missing means `"Free"`, so always write it. A `"Free"` box is only as wide as `width`, so give it a `width` near 200. |
 | `capsLock` | `"CapsLock"` (typed letters become capitals) or `"Fără"` (as typed). |
 | `frameCornerRadius` | A number from 0 to 50. The outer frame (only with `"Separated"`). Default 15. |
@@ -399,7 +399,7 @@ The third is the one to avoid, because text and typed characters without a `text
 - **`code`**: a `text` component with the question, a `code` component whose `codeLength` equals the length of `code`, and a `button` component. Without the button, players cannot submit.
 - **`geolocation`**: a `text` component telling them where to go. The app adds the map, the distance and its own "Intră în cerc" button, which works once the team is within `radiusMeters`. Both `latitude` and `longitude` are required.
 - **`imageToUpload`**: a `text` component telling them what to photograph. The app adds the photo upload; an organiser approves the photo from the chat.
-- **Keep `geolocation` and `imageToUpload` puzzles short:** one short text and no tall picture. Only `code` puzzles scroll. On these two the app's map or upload and its button sit under your components, and tall content pushes them off the screen.
+- **Keep `geolocation` and `imageToUpload` puzzles short:** one short text and no tall picture. Your components scroll together with the app's map or photo card, and the button stays at the bottom, so after tall content teams have to scroll to find the map.
 - Every puzzle needs at least one component, otherwise the event cannot be published.
 
 ## Checklist before answering
@@ -420,6 +420,6 @@ The third is the one to avoid, because text and typed characters without a `text
 - [ ] `fontWeight` values are written exactly as listed, `fontFamily` is one of the fonts, spelled as in the list.
 - [ ] Colours are `#RRGGBB`.
 - [ ] The event has a `frameBackgroundColor` that fixes the page, and every `text` and `code` component has a `textColor` that reads on it.
-- [ ] Every `geolocation` and `imageToUpload` puzzle is short enough to leave room for the map or upload and its button.
+- [ ] Every `geolocation` and `imageToUpload` puzzle is short enough that the map or photo card shows without scrolling.
 - [ ] No `id`, `eventId`, `status` keys.
 - [ ] Images are `https://` links or left out.

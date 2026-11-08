@@ -99,24 +99,6 @@ class EventList extends ChangeNotifier {
     }
   }
 
-  Future<Event> createEvent(Event event) async {
-    _setLoading(true);
-    clearError();
-
-    try {
-      final createdEvent = await _eventService.createEvent(event);
-      _events.add(createdEvent);
-      _sortEvents();
-      notifyListeners();
-      return createdEvent;
-    } catch (e) {
-      _setError(e.toString());
-      rethrow;
-    } finally {
-      _setLoading(false);
-    }
-  }
-
   Future<void> updateEvent(Event event) async {
     clearError();
 

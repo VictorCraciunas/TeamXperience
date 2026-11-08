@@ -143,6 +143,30 @@ void main() {
     });
   });
 
+  group('teamSizeProblem', () {
+    test('is fine by default, and for the same minimum and maximum', () {
+      final c = CreateEventController(null);
+      expect(c.teamSizeProblem(), isNull);
+      c.teamSizeMinController.text = '4';
+      c.teamSizeMaxController.text = '4';
+      expect(c.teamSizeProblem(), isNull);
+    });
+
+    test('says when the minimum is above the maximum', () {
+      final c = CreateEventController(null);
+      c.teamSizeMinController.text = '6';
+      c.teamSizeMaxController.text = '2';
+      expect(c.teamSizeProblem(), 'Minimul de membri e mai mare decât maximul');
+    });
+
+    test('an empty field counts as its default, as it does when saved', () {
+      final c = CreateEventController(null);
+      c.teamSizeMinController.text = '';
+      c.teamSizeMaxController.text = '1';
+      expect(c.teamSizeProblem(), 'Minimul de membri e mai mare decât maximul');
+    });
+  });
+
   group('enrollmentProblem', () {
     test('is fine when the dates are in order, or not all set yet', () {
       final c = CreateEventController(null);

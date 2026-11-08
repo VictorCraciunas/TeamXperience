@@ -22,7 +22,7 @@ Repos (`lib/backend/`) are thin Firestore/Storage wrappers (throw generic `Excep
 - `functions/notification_functions.dart` — `NotificationFunctions.send(title, description, eventId?)`, the `sendNotification` callable; failures surface as `FirebaseFunctionsException`.
 
 ## service/
-- `event_service/event_service.dart` — CRUD wrappers; `createEvent` generates id if empty then uploads images; `updateEvent` uploads images then `set`s the whole doc (same repo call as create); `registeredEventsFromUser(allEvents, user)` maps ids → events.
+- `event_service/event_service.dart` — CRUD wrappers; `publishEvent` refuses an event with `publishProblems`, generates an id if empty, then uploads images and saves it (the only way a new event goes live); `updateEvent` uploads images then `set`s the whole doc, and its caller first runs `checkLiveEdit`; `registeredEventsFromUser(allEvents, user)` maps ids → events.
 - `event_service/upload_images.dart`, `news_service/upload_news_images.dart` — local-path → Storage URL replacement.
 - `team_service/team_service.dart` — pass-through to `TeamRepo` plus: `deleteTeam` (removes the event from every member's `registeredEventIds` first), and the callable-backed methods: `registerTeam(...)` → `RegisterResult`, `isTeamNameFree(eventId, name)` (`bool?`, null on a network error), `previewInvite(code)` → `InvitePreview`, `joinTeam(code)` → event ids joined, `createCrew(name)` → `(crewId, inviteCode)`, `streamUserCrews(uid)`. Codes go through `normaliseCode` first. Constructor `TeamService({TeamFunctions? functions, CrewRepo? crews})` so tests can inject fakes.
 - `team_service/team_errors.dart` — `enum TeamError` (the 14 function `reason`s plus `network`, `unknown`), `TeamError.fromException(e)` (reason from `details`; `unavailable`/`deadline-exceeded` → `network`; else `unknown`), `TeamError.teamNameFrom(e)` (`details.teamName` of `alreadyInTeam`), and `teamErrorText(error, {teamName})` with the Romanian message for each.
@@ -39,7 +39,7 @@ Registered in `main.dart`:
 `UserProvider` (ChangeNotifier) → `UserRepo`, `AuthenticationRepository` (Provider) → `AuthUtil` (Provider) → `EventService`, `NewsService` → `EventList`, `NewsList` → `UserEventsProvider` (+ a second, duplicate `NewsList` registration at the end).
 
 - `UserProvider` — `currentUser`, `firebaseUser`, `isLoggedIn`, `setUser`, `clearUser`, `addRegisteredEvent`, `updateProfile` (takes a fresh copy's XP, stats and badges for the same uid; Profil calls it).
-- `EventList` — cached `events` (5-min staleness; `loadEvents({forceRefresh})`, `refresh()`), `upcomingEvents`, `liveEvents`, `pastEvents`, `createEvent/updateEvent/deleteEvent/getEventById`, `clear()` (called on logout).
+- `EventList` — cached `events` (5-min staleness; `loadEvents({forceRefresh})`, `refresh()`), `upcomingEvents`, `liveEvents`, `pastEvents`, `publishEvent/updateEvent/deleteEvent/getEventById`, `clear()` (called on logout).
 - `NewsList` — same for `Stire`: `getNewsByType`, `getNewsByCategory`, `allNewsSorted`, `getLatestNews(n)`, `getNewsFromPeriod`, `createStire/updateStire/getStireById`.
 - `UserEventsProvider` — listens to `UserProvider` + `EventList`; `registeredEvents`, `upcomingRegisteredEvents`, `pastRegisteredEvents`, `nextEventWithinHour`, `loadActiveEvent()` (async scan of started-and-not-finished teams — one Firestore query per past registered event on every change), `activeEvent`, `activeTeam`.
 
