@@ -5,15 +5,20 @@ import 'package:teamxperience/features/admin/create_event/create_missions_and_pu
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/puzzle_rules/puzzle_type_tile.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/ui/components/feedback/app_dialog.dart';
+import 'package:teamxperience/features/admin/create_event/common_widgets/pin_field_button.dart';
+import 'package:teamxperience/features/admin/create_event/common_widgets/pin_picker_screen.dart';
 import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
 import 'package:teamxperience/ui/theme/theme_context.dart';
 
 /// The "Reguli" tab of a puzzle: what counts as correct, the hint, and how many
 /// attempts players get. Every change goes straight onto the puzzle.
 class PuzzleRulesForm extends StatefulWidget {
-  const PuzzleRulesForm({super.key, required this.puzzle, this.onChanged});
+  const PuzzleRulesForm({super.key, required this.puzzle, this.onChanged, this.near});
 
   final Puzzle puzzle;
+
+  /// Where the map opens when the puzzle has no place: its mission's.
+  final MapPlace? near;
 
   /// Called after a change was written onto the puzzle.
   final VoidCallback? onChanged;
@@ -117,6 +122,15 @@ class _PuzzleRulesFormState extends State<PuzzleRulesForm> {
             keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
             validator: (_) => _controller.longitudeError,
             onChanged: (_) => _changed(),
+          ),
+          const SizedBox(height: 8),
+          PinFieldButton(
+            current: () => _controller.placeInFields,
+            near: widget.near,
+            onPicked: (place) {
+              _controller.setPlace(place);
+              _changed();
+            },
           ),
           gap,
           AppTextField(
