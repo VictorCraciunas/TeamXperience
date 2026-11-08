@@ -32,7 +32,6 @@
 - Firebase Auth (email/password, Google), Firestore, Storage, FCM.
 - `router.project-osrm.org` public routing demo (walking directions; rate-limited, no SLA) — `RouteService`.
 - `tile.openstreetmap.org` tiles (OSM tile usage policy requires a real User-Agent; currently placeholder package name).
-- Cloud Run URL of the `sendNotification` function hardcoded in `backend/network/NetworkAPI.dart`.
 
 ## Testing
 `test/widget_test.dart` is the untouched Flutter counter template; it would fail (the app has no counter and needs Firebase initialised). There are no unit/integration tests.

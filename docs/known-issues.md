@@ -29,12 +29,13 @@ Verify before fixing; none of these were reproduced. Roughly ordered by impact.
 ## Platform
 - Release builds signed with the debug key; missing Android `POST_NOTIFICATIONS`; missing iOS `NSPhotoLibraryUsageDescription`; no iOS push setup visible. (`assets/images/default_background.png` is no longer referenced since step 6b.)
 - `test/widget_test.dart` is the Flutter template and fails.
-- Hardcoded Cloud Run URL (`NetworkAPI`), public OSRM server, placeholder OSM user agent.
+- Public OSRM server, placeholder OSM user agent.
 
 ## Security (client-visible)
 - **Drafts are hidden only in the app.** `EventRepo.getAllEvents` reads every event document, drafts included, for every signed-in user, and the filtering is done in `EventList`. Real protection needs Firestore rules (or a query that excludes drafts); the rules are not in the repo, so check them in the Firebase console.
 - Admin = `users/{uid}.role == "ADMIN"`, checked only client-side at login. Without Firestore rules (none in repo) any signed-in user could write that field or any event/team data. Rules must be reviewed in the Firebase console.
-- `sendNotification` HTTP function has no authentication (anyone with the URL can POST and push to all users).
+- ~~`sendNotification` had no authentication~~ — fixed: it is a callable only organisers may use. Until that is deployed, the live HTTP version stays open to anyone with the URL.
+- `sendNotification` sends one FCM multicast, and FCM takes at most 500 tokens per call, so a broadcast to more than 500 phones fails. It also keeps tokens FCM has rejected.
 - `firebase_options.dart` / `google-services.json` are public client config by design, but the project's rules decide what they can access.
 
 ## Rules (step 3b)

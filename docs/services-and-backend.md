@@ -19,7 +19,7 @@ Repos (`lib/backend/`) are thin Firestore/Storage wrappers (throw generic `Excep
 - `functions/team_functions.dart` — `TeamFunctions`, a thin wrapper over `FirebaseFunctions.instance.httpsCallable(name)` (package `cloud_functions`): `checkTeamName`, `createCrew`, `registerTeam`, `previewInvite`, `joinTeam`. Each returns the decoded `Map<String, dynamic>`, no logic. Errors arrive as `FirebaseFunctionsException` with `details['reason']`.
 - `repo/crew_repo.dart` — `CrewRepo.streamUserCrews(uid)`: `crews` where `memberUids` array-contains `uid`, ordered by name (read-only; crews are written by functions).
 - `storage/storage_images.dart` — `ImageRepo.uploadImage` / `uploadStireImage` (see `data-model.md`).
-- `network/` — `NetworkAPI.sendNotification` (POST JSON to the deployed `sendNotification` function, **hardcoded Cloud Run URL**), `NotificationDTO` (`title, description, eventId?`), `NotificationDTOResponse` (`success, message`).
+- `functions/notification_functions.dart` — `NotificationFunctions.send(title, description, eventId?)`, the `sendNotification` callable; failures surface as `FirebaseFunctionsException`.
 
 ## service/
 - `event_service/event_service.dart` — CRUD wrappers; `createEvent` generates id if empty then uploads images; `updateEvent` uploads images then `set`s the whole doc (same repo call as create); `registeredEventsFromUser(allEvents, user)` maps ids → events.
@@ -47,8 +47,7 @@ Registered in `main.dart`:
 `auth_util.dart` (role redirect), `calendar_helper.dart` (Romanian date/time formatting + date-picker helper), `color_conversion.dart` (hex ↔ Color), `image_helper.dart` (gallery picker + `eventImageCache` CacheManager), `link_util.dart` (open URLs), `component_conversion/` (`Component` → runtime widgets, see `ui-and-theme.md`).
 
 ## functions/ (Firebase Cloud Functions v2, Node 20, TypeScript, `functions/src/index.ts`)
-- `testEndpoint` (HTTP) — health check.
-- `sendNotification` (HTTP POST) — body `{title, description, eventId?}`; reads `users` (filtered by `registeredEventIds array-contains eventId` when given), collects non-empty `fcmToken`s, sends via FCM multicast. Responds `{success, message}`.
+- `sendNotification` (callable, `functions/src/notifications/`) — input `{title, description, eventId?}`. Refuses anyone whose `users/{uid}.role` is not `ADMIN` (`notOrganiser`), a blank title or text or a non-text event id (`notificationInvalid`), and nobody to reach (`noRecipients`). Reads `users` (filtered by `registeredEventIds array-contains eventId` when given), collects non-empty `fcmToken`s, sends via FCM multicast. Answers `{recipients, sent, failed}`.
 - `onChatMessage` (Firestore `onDocumentCreated` on `events/{eventId}/teams/{teamName}/messages/{messageId}`) — if `sender == "ADMIN"` notifies team members (tokens of `team.userIds`), otherwise notifies admin users.
 - Deploy: `firebase deploy --only functions` (predeploy runs `npm run build`). `functions/lib/` and `node_modules/` are build output.
 

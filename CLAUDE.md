@@ -58,7 +58,7 @@ main.dart          Firebase init, FCM init, MultiProvider, MaterialApp, ALL rout
 constants/         routes.dart (Routes.* string consts)
 enums/             Role, EventType, PuzzleType, ComponentType, MissionState, MessageType, PhotoApprovalStatus, StireType, AnimationType
 model/             Plain data classes with fromMap/fromFirestore + toJson (see "Data model")
-backend/           Raw Firebase access: authentication/, repo/*_repo.dart (Firestore), storage/ (Firebase Storage), network/ (HTTP to Cloud Function)
+backend/           Raw Firebase access: authentication/, repo/*_repo.dart (Firestore), storage/ (Firebase Storage), functions/ (Cloud Function callables)
 service/           Business logic over repos: event_service/, team_service/, news_service/, message_service, FCMService, LocationService, RouteService, share_service
 state_management/  ChangeNotifier providers: UserProvider, EventList, NewsList, UserEventsProvider
 features/          One folder per screen/flow: controller/ + screen/ (+ widgets/, service/)
@@ -113,11 +113,11 @@ Event lifecycle: players register for events (`registeredEventIds`), enter the e
 ### Notifications
 
 - `service/FCMService.dart`: permission + token, foreground handler that shows a local notification on the `chat_notifications` Android channel. Token is saved on the user doc.
-- `functions/src/index.ts` (v2 functions): `sendNotification` (HTTP POST `{title, description, eventId?}` -> FCM to all users, or only those with `eventId` in `registeredEventIds`), `onChatMessage` (Firestore trigger on `events/{eventId}/teams/{teamName}/messages/{id}`: admin message -> notify team members via `userIds`; user message -> notify admins), `testEndpoint`.
+- `functions/src/index.ts` (v2 functions): `onChatMessage` (Firestore trigger on `events/{eventId}/teams/{teamName}/messages/{id}`: admin message -> notify team members via `userIds`; user message -> notify admins).
+- Organiser push: `functions/src/notifications/`, the callable `sendNotification` (`{title, description, eventId?}` -> FCM to all users, or only those with `eventId` in `registeredEventIds`). Only `role: ADMIN` may call it; the app calls it through `NotificationFunctions` in `lib/backend/functions/`.
 - Team Cloud Functions live in `functions/src/teams/`: the callables `checkTeamName`, `createCrew`, `registerTeam`, `previewInvite` and `joinTeam`, which the app calls through `TeamFunctions` in `lib/backend/functions/`. Each handler takes `(db, uid, data)`; `callables.ts` holds the one-line `onCall` wrappers.
 - Results: `functions/src/results/` works out places, XP, badges, memories, crew stats and season points when an event stops (`onEventStopped`) or its three hours run out (`closeExpiredEvents`, every 15 minutes). Safe to run again: each player and crew is counted once.
 - `firestore.rules` is tested on the emulator with `npm --prefix functions test`; add a rule and a test with any new client write, since a forgotten one fails silently in the middle of a game.
-- The app calls `sendNotification` via a **hardcoded Cloud Run URL** in `backend/network/NetworkAPI.dart`; update it if the function is redeployed to a different project/region.
 
 ### Theme
 
