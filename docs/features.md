@@ -83,7 +83,7 @@ Every folder under `lib/features/` follows `controller/` + `screen/` (+ `widgets
 - `admin/create_event/common_widgets`: `PinFieldButton` ("Alege pe hartă") and `PinPickerScreen` (the map moves under a fixed pin) for the start, mission and location puzzle places.
 - `event_see_registered_teams` — list of teams with `team_card_widget` (the "Componență" row lists `Team.memberList` names, the count reads "{userIds} din {numberOfMembers}", the initial is `onTick` on `tick`).
 - `team_chats` — teams of an event → `ChatScreen`.
-- `notification` — title/description form → `NetworkAPI.sendNotification` (HTTP to Cloud Function). `event` arg scopes recipients to registrants.
+- `notification` — title/description form → `NotificationFunctions.send` (the organiser-only `sendNotification` callable). `event` arg scopes recipients to registrants.
 - `admin/create_news` (+`create_news_service.dart`) — news form (main + secondary images, type, category, optional button text/link). `news_category_manipulation` — create/select categories.
 - `ui/components/navigation/menu.dart` (`MenuWidget`) — overlay menu in `MyAppBar` dropdown: edit event (→ `createEvent`), duplicate as blueprint, "start game" (→ `eventGame`, admin preview).
 

@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:teamxperience/backend/network/NetworkAPI.dart';
-import 'package:teamxperience/backend/network/NotificationDTO.dart';
+import 'package:teamxperience/backend/functions/notification_functions.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
 import 'package:teamxperience/features/admin/home/logic/admin_event_stats.dart';
 import 'package:teamxperience/model/event.dart';
@@ -77,10 +76,12 @@ class LiveRoomController extends ChangeNotifier {
   }
 
   static Future<bool> _sendPush(String eventId, String title, String text) async {
-    final response = await NetworkAPI.sendNotification(
-      NotificationDTO(title: title, description: text, eventId: eventId),
-    );
-    return response.success;
+    try {
+      await NotificationFunctions().send(title: title, description: text, eventId: eventId);
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 
   final DateTime Function() _now;

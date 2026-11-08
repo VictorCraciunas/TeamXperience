@@ -15,11 +15,16 @@ export type Reason =
   | "codeUnknown"
   | "teamFull"
   | "alreadyMember"
-  | "rulesNotAccepted";
+  | "rulesNotAccepted"
+  | "notOrganiser"
+  | "notificationInvalid"
+  | "noRecipients";
 
 /** The error the app maps to text; `extra` carries e.g. the team's name. */
 export function refuse(reason: Reason, extra: Record<string, unknown> = {}): HttpsError {
-  const code = reason === "notSignedIn" ? "unauthenticated" : "failed-precondition";
+  const code = reason === "notSignedIn" ? "unauthenticated"
+    : reason === "notOrganiser" ? "permission-denied"
+    : "failed-precondition";
   return new HttpsError(code, reason, {reason, ...extra});
 }
 
