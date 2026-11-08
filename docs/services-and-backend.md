@@ -13,7 +13,7 @@ Repos (`lib/backend/`) are thin Firestore/Storage wrappers (throw generic `Excep
 - `repo/`
   - `event_repo` — `events` CRUD, `stopEvent`, `streamEvent`.
   - `teamRepo` — `events/{id}/teams` CRUD, streams (`getStreamTeam`, `getStreamTeamsForEvent`), `setPhotoApproval` (updates `photoApprovals.<key>` via dotted path), `updateMissionProgress/PuzzleNumber`, `startTeam/finishTeam`, `updateTeamLocation`, `addUserToTeam` (arrayUnion), `isTeamNameTaken` (returns **true on error**), `getUserTeamForEvent` (query `userIds array-contains uid`).
-  - `user_repo` — `saveUser`, `findByEmail`, `addEventToUser/removeEventFromUser` (arrayUnion/Remove), `updateFCMToken`, `getRegisteredEventsFromUser` (legacy; reads fields `title`/`date` that Event docs don't have).
+  - `user_repo` — `saveUser`, `findByEmail` (null only when there is no such user; a failed lookup throws `UserLookupFailed`), `addEventToUser/removeEventFromUser` (arrayUnion/Remove), `updateFCMToken`, `getRegisteredEventsFromUser` (legacy; reads fields `title`/`date` that Event docs don't have).
   - `messages_repo` — `sendMessage`, `getMessages` stream.
   - `stire_repo`, `news_category_repo` — `stire` / `categories` collections.
 - `functions/team_functions.dart` — `TeamFunctions`, a thin wrapper over `FirebaseFunctions.instance.httpsCallable(name)` (package `cloud_functions`): `checkTeamName`, `createCrew`, `registerTeam`, `previewInvite`, `joinTeam`. Each returns the decoded `Map<String, dynamic>`, no logic. Errors arrive as `FirebaseFunctionsException` with `details['reason']`.

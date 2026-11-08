@@ -25,7 +25,12 @@ class AuthUtil {
     } else {
       // User is logged in, fetch their data
       String email = currentUser.email!;
-      AppUser? appUser = await userRepo.findByEmail(email);
+      AppUser? appUser;
+      try {
+        appUser = await userRepo.findByEmail(email);
+      } on UserLookupFailed {
+        appUser = null;
+      }
 
       if(appUser != null){
         userProvider.setUser(appUser, currentUser);
@@ -41,8 +46,11 @@ class AuthUtil {
         }
       }
       else{
+        // No user to show (the lookup failed, or there is no document): back
+        // to the start rather than staying on the loader for ever.
         userProvider.clearUser();
-        print("ceva nu mergeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+        if (!context.mounted) return;
+        Navigator.pushNamedAndRemoveUntil(context, Routes.splash, (Route<dynamic> route) => false);
       }
     }
   }
