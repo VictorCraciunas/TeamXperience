@@ -45,12 +45,12 @@ Moved from `lib/widgets/` (and `utils/snackbars.dart`) in UI redesign phase 1: `
 | `SizePicker` | Equal boxes (gap 5, 12 radius, 1 px border) from `min` to `max` (team size), the chosen one navy; more than 8 values wrap into rows of 8 |
 | `InviteCodeCard` | Navy card for a team's invite code: caption, the code in a dashed box (mono 26), a teal WhatsApp button and a faint-white copy button, and an optional `footer` (the avatar row) |
 | `FieldStatusLine` (+ `FieldStatus` neutral / checking / ok / problem) | The 11 px line under a field: a hint, a spinner while checking, a green check ("Numele e liber") or a red alert |
-| `showAppDialog`, `AsyncState`, `MySnackBars` | Confirm dialog (destructive uses `danger`), loading/error/empty/content switcher, semantic snackbars |
+| `showAppDialog`, `MySnackBars` | Confirm dialog (destructive uses `danger`), loading/error/empty/content switcher, semantic snackbars |
 | `MyAppBar` | App bar with title, optional icon, `showDropdown` + `event` → shows `MenuWidget` |
 | `ScreenBar` | Bar of a short task screen (mockup 04 `.bar`): leading icon (× or ←), title, optional subtitle, panel fill with a 1 px line under it; keeps clear of the status bar |
 | `NavyButton` | Mockup `.btn`: full-width navy button, 12 radius, 11 padding, medium 12 px label; greyed out with `onPressed` null, spinner with `isLoading` |
 | `MenuWidget` (`menu.dart`) | Admin event actions overlay (edit / duplicate / start) |
-| `EventCard`, `EventsCarousel`, `EventsList` | Event presentation (admin variant shows `nrTeams`/`nrPerson`) |
+| `EventCard`, `EventsList` | Event presentation (admin variant shows `nrTeams`/`nrPerson`) |
 | `RegisteredEventCard/Carousel/List` | Player's registered events |
 | `StireCard`, `StiriCarousel` | News presentation (`showBadge` for type) |
 | `EventImage` | Event image with overlay info (cached network image) |
