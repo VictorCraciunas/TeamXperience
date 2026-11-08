@@ -372,6 +372,9 @@ class _StiriDashboardState extends State<StiriDashboard> {
                       controller.hasActiveFilters ||
                       controller.searchQuery.isNotEmpty;
 
+                  if (newsList.isLoading && newsList.stireList.isEmpty) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
                   if (newsList.error != null && newsList.stireList.isEmpty) {
                     return LoadFailed(
                       message: 'Nu am putut încărca știrile.',

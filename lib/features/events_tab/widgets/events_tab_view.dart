@@ -30,6 +30,7 @@ class EventsTabView extends StatelessWidget {
     required this.onRefresh,
     required this.map,
     this.failed = false,
+    this.loading = false,
   });
 
   final ({List<Event> registered, List<Event> open, List<Event> soon}) sections;
@@ -38,6 +39,9 @@ class EventsTabView extends StatelessWidget {
 
   /// The events could not be read and there are none from before.
   final bool failed;
+
+  /// The first read is running.
+  final bool loading;
   final bool searching;
   final Map<String, String> teamNames;
   final Map<String, int> teamCounts;
@@ -63,7 +67,9 @@ class EventsTabView extends StatelessWidget {
         if (searching) EventsSearchField(initial: query.search, onChanged: onSearch),
         FilterChipsRow(query: query, onToggle: onToggle, onAll: onAll),
         Expanded(
-          child: failed
+          child: loading
+              ? const Center(child: CircularProgressIndicator())
+              : failed
               ? LoadFailed(message: 'Nu am putut încărca evenimentele.', onRetry: onRefresh)
               : mapMode
               ? Padding(padding: const EdgeInsets.only(top: 10), child: map)

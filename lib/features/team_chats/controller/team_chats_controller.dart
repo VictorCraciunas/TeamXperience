@@ -4,16 +4,24 @@ import 'package:teamxperience/service/team_service/team_service.dart';
 
 class TeamChatsController{
   late Event event;
-  late List<Team> teams;
-  TeamService teamService = TeamService();
+  List<Team> teams = [];
+  bool isLoading = true;
 
-  TeamChatsController({required this.event}) {
-    loadTeams();
-  }
+  /// The teams could not be read.
+  bool failed = false;
+  final Future<List<Team>> Function(String eventId)? _load;
 
-  // Async method to load teams
+  TeamChatsController({required this.event, Future<List<Team>> Function(String eventId)? load}) : _load = load;
+
   Future<void> loadTeams() async {
-    teams = await teamService.getTeams(event.eventId);
+    isLoading = true;
+    failed = false;
+    try {
+      teams = await (_load ?? TeamService().getTeamsOrFail)(event.eventId);
+    } catch (_) {
+      failed = true;
+    }
+    isLoading = false;
   }
 
 }

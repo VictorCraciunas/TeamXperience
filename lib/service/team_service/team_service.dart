@@ -137,6 +137,10 @@ class TeamService {
     return teamRepo.saveRating(eventId, uid, teamName: teamName, rating: rating);
   }
 
+  /// The teams for a screen that lists them; throws when they cannot be read,
+  /// also offline with nothing cached.
+  Future<List<Team>> getTeamsOrFail(String eventId) => teamRepo.getTeamsOrFail(eventId);
+
   Future<List<Team>> getTeams(String eventId) async {
     return teamRepo.getAllTeamsForEvent(eventId);
   }

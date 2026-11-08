@@ -1,3 +1,5 @@
+import 'package:teamxperience/ui/components/feedback/load_failed.dart';
+import 'package:teamxperience/ui/theme/contrast.dart';
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/features/team_chats/controller/team_chats_controller.dart';
@@ -15,7 +17,6 @@ class TeamChatsScreen extends StatefulWidget {
 
 class _TeamChatsScreenState extends State<TeamChatsScreen> {
   late TeamChatsController controller;
-  bool isLoading = true;
   late Event event;
 
   bool _initialized = false;
@@ -36,14 +37,13 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
   }
 
   Future<void> _loadTeams() async {
+    setState(() => controller.isLoading = true);
     await controller.loadTeams();
-    setState(() {
-      isLoading = false;
-    });
+    if (mounted) setState(() {});
   }
 
   void _navigateToChat(int index) {
-    final team = controller.teams![index];
+    final team = controller.teams[index];
     Navigator.pushNamed(
       context,
       Routes.chatScreen, // Make sure you have this route defined
@@ -58,11 +58,13 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(appBarText: "Conversații"),
-      body: isLoading
+      body: controller.isLoading
           ? const Center(
         child: CircularProgressIndicator(),
       )
-          : controller.teams.length == 0
+          : controller.failed
+          ? LoadFailed(message: 'Nu am putut încărca echipele.', onRetry: _loadTeams)
+          : controller.teams.isEmpty
           ? const Center(
         child: Text(
           "Nicio echipă înscrisă.",
@@ -74,7 +76,7 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
         child: ListView.builder(
           itemCount: controller.teams.length,
           itemBuilder: (context, index) {
-            final team = controller.teams![index];
+            final team = controller.teams[index];
             return Card(
               margin: const EdgeInsets.only(bottom: 12.0),
               elevation: 2,
@@ -88,7 +90,7 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
                   child: Text(
                     team.name.isNotEmpty ? team.name[0].toUpperCase() : 'T',
                     style: TextStyle(
-                      color: context.colors.onNavy,
+                      color: readableOn([context.colors.accent]),
                       fontWeight: FontWeight.bold,
                     ),
                   ),

@@ -49,9 +49,9 @@ void main() {
     expect(team.startedAt, now);
   });
 
-  test('the preview writes through nothing; a real game through the team', () {
+  test('the preview writes through nothing', () {
     expect(puzzleWritesFor('e', 'A', preview: true), isA<NoPuzzleWrites>());
-    expect(() => puzzleWritesFor('e', 'A', preview: false), isNot(isA<NoPuzzleWrites>()));
+
   });
 
   test('NoPuzzleWrites never touches anything and streams nothing', () async {

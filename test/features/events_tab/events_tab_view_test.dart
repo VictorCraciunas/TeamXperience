@@ -12,6 +12,7 @@ final _now = DateTime(2026, 11, 11, 12);
 
 Future<void> _pump(
   WidgetTester tester, {
+  bool loading = false,
   EventQuery query = const EventQuery(),
   List<Event>? events,
   void Function(EventFilter)? onToggle,
@@ -33,6 +34,7 @@ Future<void> _pump(
     ),
     home: Scaffold(
       body: EventsTabView(
+        loading: loading,
         sections: sections,
         query: query,
         mapMode: false,
@@ -55,6 +57,12 @@ Future<void> _pump(
 }
 
 void main() {
+  testWidgets('while the first read runs it waits, and does not say "nothing here"', (tester) async {
+    await _pump(tester, loading: true);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.text('Niciun eveniment nu se potrivește.'), findsNothing);
+  });
+
   testWidgets('a failed read says so and retries', (tester) async {
     var refreshed = 0;
     await tester.pumpWidget(MaterialApp(

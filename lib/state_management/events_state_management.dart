@@ -69,6 +69,9 @@ class EventList extends ChangeNotifier {
 
   /// The last read failed and there is nothing to show from before it.
   bool get loadFailed => _error != null && !hasData;
+
+  /// The first read is running: nothing is known yet.
+  bool get firstLoading => _isLoading && !hasData;
   bool get hasData => _events.isNotEmpty;
   bool get needsRefresh => _lastFetch == null ||
       DateTime.now().difference(_lastFetch!).inMinutes > 5;

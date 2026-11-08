@@ -1,3 +1,4 @@
+import 'confirmed_docs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../enums/photo_approval_status.dart';
@@ -21,6 +22,15 @@ class TeamRepo {
   Future<int> countTeams(String eventId) async {
     final snapshot = await _firestore.collection('events').doc(eventId).collection('teams').count().get();
     return snapshot.count ?? 0;
+  }
+
+  /// The event's teams for a screen that lists them: offline with nothing
+  /// cached it throws, instead of answering that there are none.
+  Future<List<Team>> getTeamsOrFail(String eventId) async {
+    final teams = _firestore.collection('events').doc(eventId).collection('teams');
+    final snapshot = await teams.get();
+    final docs = await confirmedDocs(teams, snapshot);
+    return [for (final doc in docs) Team.fromMap(doc.data())];
   }
 
   Future<List<Team>> getAllTeamsForEvent(String eventId) async {

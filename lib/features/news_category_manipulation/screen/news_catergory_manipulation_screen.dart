@@ -140,7 +140,7 @@ class _NewsCategoryManipulationScreenState
                                             });
                                           },
                                           activeColor: context.colors.accent,
-                                          checkColor: context.colors.onNavy,
+                                          checkColor: context.colors.onTick,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
                                               6,

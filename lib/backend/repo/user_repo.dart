@@ -1,3 +1,4 @@
+import 'confirmed_docs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../model/memory.dart';
@@ -31,14 +32,16 @@ class UserRepo{
 
   /// The user's latest finished games, newest first.
   Stream<List<Memory>> streamMemories(String uid, {int limit = 3}) {
-    return _firestore
+    final query = _firestore
         .collection('users')
         .doc(uid)
         .collection('memories')
         .orderBy('date', descending: true)
-        .limit(limit)
-        .snapshots()
-        .map((snap) => [for (final doc in snap.docs) Memory.fromMap(doc.id, doc.data())]);
+        .limit(limit);
+    return query.snapshots().asyncMap((snap) async {
+      final docs = await confirmedDocs(query, snap);
+      return [for (final doc in docs) Memory.fromMap(doc.id, doc.data())];
+    });
   }
 
   /// The user with this email, or null only when there truly is none. A

@@ -35,6 +35,13 @@ String leftClock(Event event, DateTime now) {
   return liveClock(start.add(Event.maxDuration).difference(now));
 }
 
+/// The time left in an organiser's walk-through, counted from when it began:
+/// the event's own date means nothing there.
+String previewLeftClock(DateTime? startedAt, DateTime now) {
+  if (startedAt == null) return liveClock(Event.maxDuration);
+  return liveClock(startedAt.add(Event.maxDuration).difference(now));
+}
+
 /// Where a mission is: its own place, else its first location puzzle with
 /// both coordinates; null when neither.
 GeoPoint? missionPoint(Mission mission) {

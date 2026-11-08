@@ -47,7 +47,9 @@ class _PlayTabScreenState extends State<PlayTabScreen> {
         Expanded(
           child: ListenableBuilder(
             listenable: controller,
-            builder: (context, _) => controller.eventList.loadFailed
+            builder: (context, _) => controller.eventList.firstLoading
+                ? const Center(child: CircularProgressIndicator())
+                : controller.eventList.loadFailed
                 ? LoadFailed(
                     message: 'Nu am putut încărca evenimentele.',
                     onRetry: () => controller.eventList.loadEvents(forceRefresh: true),

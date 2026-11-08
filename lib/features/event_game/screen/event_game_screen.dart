@@ -139,8 +139,14 @@ class _EventGameScreenState extends State<EventGameScreen> {
                 return GameRouteView(
                   eventName: controller.event.name ?? '',
                   placeLine: controller.placeText,
-                  played: playedClock(controller.team?.startedAt, controller.event.dateEvent, now),
-                  left: leftClock(controller.event, now),
+                  played: playedClock(
+                    (controller.team ?? controller.previewTeam)?.startedAt,
+                    controller.event.dateEvent,
+                    now,
+                  ),
+                  left: controller.isPreview
+                      ? previewLeftClock(controller.previewTeam?.startedAt, now)
+                      : leftClock(controller.event, now),
                   stops: controller.stops,
                   onClose: () => Navigator.maybePop(context),
                   onChat: _openChat,
