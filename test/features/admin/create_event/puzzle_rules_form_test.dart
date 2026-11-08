@@ -34,6 +34,7 @@ void main() {
 
   testWidgets('a photo puzzle explains how it is checked', (tester) async {
     await _pump(tester, Puzzle(id: '0', type: PuzzleType.imageToUpload));
+    expect(find.text('Indiciu (opțional)'), findsNothing, reason: 'the game shows no hint on a photo puzzle');
     expect(find.textContaining('aprobi'), findsOneWidget);
     expect(find.text('Răspuns corect'), findsNothing);
   });

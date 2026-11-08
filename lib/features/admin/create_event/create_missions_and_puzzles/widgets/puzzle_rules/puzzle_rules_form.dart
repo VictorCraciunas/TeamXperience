@@ -150,13 +150,15 @@ class _PuzzleRulesFormState extends State<PuzzleRulesForm> {
           ),
           gap,
         ],
-        AppTextField(
-          controller: _controller.hintController,
-          label: 'Indiciu (opțional)',
-          hint: 'Un ajutor pentru echipele blocate',
-          maxLines: null,
-          onChanged: (_) => _changed(),
-        ),
+        // The game shows no hint on a photo puzzle.
+        if (type != PuzzleType.imageToUpload)
+          AppTextField(
+            controller: _controller.hintController,
+            label: 'Indiciu (opțional)',
+            hint: 'Un ajutor pentru echipele blocate',
+            maxLines: null,
+            onChanged: (_) => _changed(),
+          ),
       ],
     );
   }
