@@ -108,6 +108,11 @@ class TeamRepo {
   DocumentReference<Map<String, dynamic>> _team(String eventId, String teamName) =>
       _firestore.collection('events').doc(eventId).collection('teams').doc(teamName);
 
+  /// The organiser has read the team's messages.
+  Future<void> clearUnread(String eventId, String teamName) {
+    return _team(eventId, teamName).update({'unreadByAdmin': FieldValue.delete()});
+  }
+
   /// Adds [meters] to the walk of the phone signed in as [uid].
   Future<void> addWalked(String eventId, String teamName, String uid, double meters) {
     return _team(eventId, teamName).update({'walked.$uid': FieldValue.increment(meters)});

@@ -20,6 +20,7 @@ class _ChatScreenState extends State<ChatScreen> {
   late ChatController controller;
   bool _initialized = false;
   bool _hasText = false;
+  bool _isAdmin = false;
 
   @override
   void didChangeDependencies() {
@@ -32,6 +33,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
       controller = ChatController(eventId, team!, context);
       controller.chatTextField.addListener(_onTextChanged);
+      _isAdmin = Provider.of<UserProvider>(context, listen: false).currentUser?.role == Role.ADMIN;
+      if (_isAdmin) controller.markRead();
       _initialized = true;
     }
   }
@@ -51,6 +54,8 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void dispose() {
     controller.chatTextField.removeListener(_onTextChanged);
+    // Whatever came in while the chat was open has been read too.
+    if (_isAdmin) controller.markRead();
     super.dispose();
   }
 

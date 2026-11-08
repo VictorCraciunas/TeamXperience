@@ -114,10 +114,4 @@ class EventDetailsController extends ChangeNotifier {
     return () => Navigator.pushNamed(context, Routes.chatScreen, arguments: {'eventId': event.eventId, 'team': team});
   }
 
-  void navigateToMap() {
-    final teams = service.getStreamTeams(event.eventId);
-    if (context.mounted) {
-      Navigator.pushNamed(context, Routes.map, arguments: {'eventId': event.eventId, 'teams': teams});
-    }
-  }
 }

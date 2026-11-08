@@ -7,6 +7,7 @@ class AdminEventStats {
     this.persons = 0,
     this.finished = 0,
     this.inPlay = 0,
+    this.notStarted = 0,
   });
 
   factory AdminEventStats.fromTeams(List<Team> teams) {
@@ -15,6 +16,7 @@ class AdminEventStats {
       persons: teams.fold<int>(0, (sum, team) => sum + team.numberOfMembers),
       finished: teams.where((t) => t.hasFinished).length,
       inPlay: teams.where((t) => t.hasStarted && !t.hasFinished).length,
+      notStarted: teams.where((t) => !t.hasStarted && !t.hasFinished).length,
     );
   }
 
@@ -22,4 +24,5 @@ class AdminEventStats {
   final int persons;
   final int finished;
   final int inPlay;
+  final int notStarted;
 }

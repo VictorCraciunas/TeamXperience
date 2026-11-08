@@ -8,12 +8,15 @@ import '../route/waypoint_dot.dart';
 /// at the right, a muted count or an accent link. 14 px above and to the
 /// sides ([top]), 8 below.
 class SectionHeader extends StatelessWidget {
-  const SectionHeader({super.key, required this.title, this.trailing, this.link, this.onLink, this.top = 14});
+  const SectionHeader({super.key, required this.title, this.trailing, this.trailingChild, this.link, this.onLink, this.top = 14});
 
   final String title;
 
   /// A count or note at the right, muted.
   final String? trailing;
+
+  /// Anything else at the right (a count in a pill), instead of [trailing].
+  final Widget? trailingChild;
 
   /// A link at the right ("Vezi toate"), used instead of [trailing].
   final String? link;
@@ -27,6 +30,7 @@ class SectionHeader extends StatelessWidget {
     final colors = context.colors;
     final note = trailing;
     final action = link;
+    final child = trailingChild;
     return Padding(
       padding: EdgeInsets.fromLTRB(14, top, 14, 8),
       child: Row(
@@ -41,7 +45,9 @@ class SectionHeader extends StatelessWidget {
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
             ),
           ),
-          if (action != null)
+          if (child != null)
+            child
+          else if (action != null)
             GestureDetector(
               onTap: onLink,
               behavior: HitTestBehavior.opaque,

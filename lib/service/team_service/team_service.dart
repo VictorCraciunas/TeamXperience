@@ -159,6 +159,9 @@ class TeamService {
     return teamRepo.getStreamTeam(eventId, teamName);
   }
 
+  /// The organiser has read the team's messages.
+  Future<void> clearUnread(String eventId, String teamName) => teamRepo.clearUnread(eventId, teamName);
+
   /// Sets one photo try's status, with the organiser's [reason] for a
   /// rejection and the picture's [url] when it is sent; the time is the
   /// server's.

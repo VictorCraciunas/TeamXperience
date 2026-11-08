@@ -35,5 +35,6 @@ abstract class Routes {
   static const map = '/map';
   static const sendNotification = '/notifcation';
   static const eventManagement = '/event_management';
+  static const liveBoard = '/event_management/board';
 
 }

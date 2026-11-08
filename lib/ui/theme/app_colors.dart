@@ -20,6 +20,7 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.soon,
     required this.success,
     required this.warning,
+    required this.amber,
     required this.danger,
     required this.successSoft,
     required this.warningSoft,
@@ -56,6 +57,8 @@ class AppColors extends ThemeExtension<AppColors> {
   /// their soft backgrounds.
   final Color success;
   final Color warning;
+  /// The mockups' #F2A93B: a stuck team's pin, card border and current bar.
+  final Color amber;
   final Color danger;
   final Color successSoft;
   final Color warningSoft;
@@ -103,6 +106,7 @@ class AppColors extends ThemeExtension<AppColors> {
     soon: Color(0xFFF2A93B),
     success: Color(0xFF1F8F5A),
     warning: Color(0xFFB7791F),
+    amber: Color(0xFFF2A93B),
     danger: Color(0xFFD13438),
     successSoft: Color(0xFFE2F4EA),
     warningSoft: Color(0xFFFBEFD8),
@@ -135,6 +139,7 @@ class AppColors extends ThemeExtension<AppColors> {
     soon: Color(0xFFF2A93B),
     success: Color(0xFF3DBE7F),
     warning: Color(0xFFE8A94B),
+    amber: Color(0xFFF2A93B),
     danger: Color(0xFFEF6A6E),
     successSoft: Color(0xFF173226),
     warningSoft: Color(0xFF352A14),
@@ -174,6 +179,7 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? soon,
     Color? success,
     Color? warning,
+    Color? amber,
     Color? danger,
     Color? successSoft,
     Color? warningSoft,
@@ -205,6 +211,7 @@ class AppColors extends ThemeExtension<AppColors> {
       soon: soon ?? this.soon,
       success: success ?? this.success,
       warning: warning ?? this.warning,
+      amber: amber ?? this.amber,
       danger: danger ?? this.danger,
       successSoft: successSoft ?? this.successSoft,
       warningSoft: warningSoft ?? this.warningSoft,
@@ -243,6 +250,7 @@ class AppColors extends ThemeExtension<AppColors> {
       soon: mix(soon, other.soon),
       success: mix(success, other.success),
       warning: mix(warning, other.warning),
+      amber: mix(amber, other.amber),
       danger: mix(danger, other.danger),
       successSoft: mix(successSoft, other.successSoft),
       warningSoft: mix(warningSoft, other.warningSoft),

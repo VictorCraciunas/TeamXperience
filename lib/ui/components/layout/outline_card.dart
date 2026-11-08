@@ -7,9 +7,12 @@ import '../../theme/theme_context.dart';
 /// [padding] is the CSS padding; the border adds 1 px to it, as in CSS, and
 /// children are clipped to the rounded corners.
 class OutlineCard extends StatelessWidget {
-  const OutlineCard({super.key, this.padding = EdgeInsets.zero, required this.child});
+  const OutlineCard({super.key, this.padding = EdgeInsets.zero, this.borderColor, required this.child});
 
   final EdgeInsets padding;
+
+  /// Instead of the usual border colour, for a card that asks for attention.
+  final Color? borderColor;
   final Widget child;
 
   @override
@@ -17,7 +20,7 @@ class OutlineCard extends StatelessWidget {
     final colors = context.colors;
     final radius = BorderRadius.circular(AppRadius.card);
     return DecoratedBox(
-      decoration: BoxDecoration(color: colors.panel, border: Border.all(color: colors.border), borderRadius: radius),
+      decoration: BoxDecoration(color: colors.panel, border: Border.all(color: borderColor ?? colors.border), borderRadius: radius),
       child: Padding(
         padding: const EdgeInsets.all(1),
         child: ClipRRect(
