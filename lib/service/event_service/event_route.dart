@@ -1,9 +1,10 @@
 import 'package:latlong2/latlong.dart';
+import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
 
-/// How many pieces each leg of a smoothed line is cut into.
-const int _piecesPerLeg = 8;
+/// How many times [smoothLine] cuts the corners.
+const int _smoothingRounds = 3;
 
 LatLng? _pointOf(double? lat, double? lng) => lat != null && lng != null ? LatLng(lat, lng) : null;
 
@@ -12,6 +13,7 @@ LatLng? _missionPoint(Mission mission) {
   final pin = _pointOf(mission.latitude, mission.longitude);
   if (pin != null) return pin;
   for (final puzzle in mission.puzzles) {
+    if (puzzle.type != PuzzleType.geolocation) continue;
     final point = _pointOf(puzzle.latitude, puzzle.longitude);
     if (point != null) return point;
   }
@@ -25,23 +27,24 @@ List<LatLng> routePoints(Event event) => [
       _pointOf(event.finishLatitude, event.finishLongitude),
     ].nonNulls.toList();
 
-/// A curve through [points] (Catmull-Rom), so a bend does not show exactly
-/// where a mission is the way a sharp corner would. It passes through every
-/// point and ends exactly on the last one.
+LatLng _between(LatLng a, LatLng b, double t) =>
+    LatLng(a.latitude + (b.latitude - a.latitude) * t, a.longitude + (b.longitude - a.longitude) * t);
+
+/// A rounded line that follows [points] without touching the ones in the
+/// middle (Chaikin's corner cutting), so it shows the way of a route and not
+/// where its missions are. Both ends stay exactly where they are.
 List<LatLng> smoothLine(List<LatLng> points) {
   if (points.length < 3) return points;
-  LatLng at(int i) => points[i.clamp(0, points.length - 1)];
-  double curve(double a, double b, double c, double d, double t) =>
-      0.5 * (2 * b + (c - a) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (3 * b - a - 3 * c + d) * t * t * t);
-  return [
-    for (var leg = 0; leg < points.length - 1; leg++) ...[
-      points[leg],
-      for (var piece = 1; piece < _piecesPerLeg; piece++)
-        LatLng(
-          curve(at(leg - 1).latitude, at(leg).latitude, at(leg + 1).latitude, at(leg + 2).latitude, piece / _piecesPerLeg),
-          curve(at(leg - 1).longitude, at(leg).longitude, at(leg + 1).longitude, at(leg + 2).longitude, piece / _piecesPerLeg),
-        ),
-    ],
-    points.last,
-  ];
+  var line = points;
+  for (var round = 0; round < _smoothingRounds; round++) {
+    line = [
+      line.first,
+      for (var i = 0; i < line.length - 1; i++) ...[
+        _between(line[i], line[i + 1], .25),
+        _between(line[i], line[i + 1], .75),
+      ],
+      line.last,
+    ];
+  }
+  return line;
 }

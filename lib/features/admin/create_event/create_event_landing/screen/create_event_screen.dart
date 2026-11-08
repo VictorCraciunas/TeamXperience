@@ -200,11 +200,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     validator: (v) => CreateEventController.pinProblem(v ?? ''),
                   ),
                   const SizedBox(height: 8),
-                  PinFieldButton(
-                    current: () => parseCoordinates(controller.finishPinController.text),
-                    near: parseCoordinates(controller.startPinController.text),
-                    onPicked: (place) =>
-                        controller.finishPinController.text = formatCoordinates(place.lat, place.lng),
+                  ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: controller.startPinController,
+                    builder: (context, start, _) => PinFieldButton(
+                      current: () => parseCoordinates(controller.finishPinController.text),
+                      near: parseCoordinates(start.text),
+                      onPicked: (place) =>
+                          controller.finishPinController.text = formatCoordinates(place.lat, place.lng),
+                    ),
                   ),
                   const SizedBox(height: 20),
                   AppTextField(

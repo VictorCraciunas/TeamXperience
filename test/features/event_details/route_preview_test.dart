@@ -19,11 +19,12 @@ void main() {
     expect(routePreviewOf(_event(finish: false)), isNull);
   });
 
-  test('the pins are the start and the finish, and the line passes the missions', () {
+  test('the pins are the start and the finish, and the line bends towards the mission without reaching it', () {
     final preview = routePreviewOf(_event());
     expect(preview?.start, const LatLng(45.79, 24.15));
     expect(preview?.finish, const LatLng(45.80, 24.16));
-    expect(preview?.line.contains(const LatLng(45.81, 24.14)), isTrue);
+    expect(preview?.line.contains(const LatLng(45.81, 24.14)), isFalse);
+    expect(preview?.line.any((p) => p.latitude > 45.80), isTrue);
     expect(preview?.line.first, preview?.start);
     expect(preview?.line.last, preview?.finish);
   });

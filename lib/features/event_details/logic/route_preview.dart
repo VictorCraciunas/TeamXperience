@@ -3,7 +3,7 @@ import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/service/event_service/event_route.dart';
 
 /// What the event page draws before the game: a pin at each end, and a line
-/// that passes the missions without marking them.
+/// that bends towards the missions without reaching or marking them.
 class RoutePreview {
   const RoutePreview({required this.start, required this.finish, required this.line});
 

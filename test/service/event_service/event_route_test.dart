@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
@@ -32,6 +34,13 @@ void main() {
       expect(routePoints(event), const [LatLng(3, 4)]);
     });
 
+    test('coordinates on any other kind of puzzle are ignored', () {
+      final event = Event(eventId: 'e', missions: [
+        Mission(id: 'm', puzzles: [Puzzle(id: '0', type: PuzzleType.code, latitude: 0, longitude: 0)]),
+      ]);
+      expect(routePoints(event), isEmpty);
+    });
+
     test('the pin on a mission wins over its puzzle', () {
       final event = Event(eventId: 'e', missions: [
         Mission(id: 'm', latitude: 1, longitude: 2, puzzles: [
@@ -61,16 +70,26 @@ void main() {
       expect(line.length, greaterThan(points.length));
     });
 
-    test('rounds the corner at a mission rather than turning sharply on it', () {
+    test('bends towards a mission but stops short of it', () {
       const points = [LatLng(0, 0), LatLng(1, 1), LatLng(0, 2)];
+      final peak = smoothLine(points).map((p) => p.latitude).reduce(max);
+      expect(peak, greaterThan(0.4));
+      expect(peak, lessThan(0.8));
+    });
+
+    test('a route that doubles back does not end its tip on the mission', () {
+      const points = [LatLng(0, 0), LatLng(1, 1), LatLng(0, 0)];
       final line = smoothLine(points);
-      final corner = line.indexOf(points[1]);
-      final before = line[corner - 1];
-      final after = line[corner + 1];
-      // Straight legs would drop by a whole step on each side of the bend.
-      // A rounded line stays nearly level over the top of it.
-      expect(1 - before.latitude, lessThan(0.05));
-      expect(1 - after.latitude, lessThan(0.05));
+      expect(line.contains(points[1]), isFalse);
+      expect(line.map((p) => p.latitude).reduce(max), lessThan(0.8));
+    });
+
+    test('two close missions on a straight road do not tie a knot', () {
+      const points = [LatLng(0, 0), LatLng(0, 10), LatLng(0, 10.001), LatLng(0, 20)];
+      final line = smoothLine(points);
+      for (var i = 1; i < line.length; i++) {
+        expect(line[i].longitude, greaterThanOrEqualTo(line[i - 1].longitude));
+      }
     });
 
     test('the same point twice does not break it', () {

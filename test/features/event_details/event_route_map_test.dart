@@ -47,13 +47,14 @@ void main() {
     expect(find.byType(MiniRouteSketch), findsOneWidget);
   });
 
-  testWidgets('only the start and the finish get a pin, though the line passes the missions', (tester) async {
+  testWidgets('only the start and the finish get a pin, and the line bends with the missions', (tester) async {
     await _pump(tester, _event());
     final markers = tester.widget<MarkerLayer>(find.byType(MarkerLayer)).markers;
     expect(markers.map((m) => m.point), const [LatLng(45.79, 24.15), LatLng(45.80, 24.16)]);
     final line = tester.widget<PolylineLayer>(find.byType(PolylineLayer)).polylines.single.points;
-    expect(line.contains(const LatLng(45.81, 24.14)), isTrue);
-    expect(line.contains(const LatLng(45.82, 24.17)), isTrue);
+    expect(line.any((p) => p.latitude > 45.80), isTrue);
+    expect(line.contains(const LatLng(45.81, 24.14)), isFalse);
+    expect(line.contains(const LatLng(45.82, 24.17)), isFalse);
   });
 
   testWidgets('credits OpenStreetMap, as its tile policy asks', (tester) async {

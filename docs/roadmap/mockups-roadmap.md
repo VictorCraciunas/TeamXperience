@@ -452,7 +452,7 @@ finished route rather than a stopped game, and the finish screen.
 
 **Steps 3b and 7c are done (2026-11-08). The functions are deployed (2026-11-08, Node 22, checklist step 3 is done); `firestore.rules` is not, and Victor deploys it later:** `firestore.rules`, the five team functions, `onEventStopped` and `closeExpiredEvents`, crew stats, the season leaderboard, signing up an existing crew. All tested on the emulator.
 
-**Route map (2026-11-08):** `finishLatitude`/`finishLongitude` on the event (optional, in the form and the JSON import). The event page draws them with the start as the only pins, and a curved line through the missions so a sharp corner does not give a mission away. `routePoints` moved to `service/event_service/event_route.dart`; a mission without a pin goes by its first location puzzle, and the live room line now runs to the finish too.
+**Route map (2026-11-08):** `finishLatitude`/`finishLongitude` on the event (optional, in the form and the JSON import). The event page draws them with the start as the only pins, and a rounded line (Chaikin corner cutting) that bends towards the missions and stops short of them, so it does not give their places away. `routePoints` moved to `service/event_service/event_route.dart`; a mission without a pin goes by its first location puzzle, and the live room line now runs to the finish too.
 
 **Deploy checklist (Victor's call, in this order):**
 1. The live rules leave the database open to everyone until **2026-12-31**, and refuse every request after it. The new rules must be live before then. Check the Storage rules' expiry in the console too: if they are date-limited as well, photo puzzles stop.

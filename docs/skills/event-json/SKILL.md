@@ -33,6 +33,8 @@ Event
   finishPoint: String                    (needed to publish)
   startLatitude: Number                  (needed to publish)
   startLongitude: Number                 (needed to publish)
+  finishLatitude: Number                 (optional)
+  finishLongitude: Number                (optional)
   routeLengthKm: Number                  (needed to publish, or lungimeTraseu)
   durationMinutes: Whole number          (needed to publish, or durata)
   difficulty: "easy" | "medium" | "hard" (needed to publish, or dificultate)
@@ -197,6 +199,7 @@ A one-mission event with a code puzzle. (A fuller one is in `docs/event-import-s
 | `area` | Free text, the part of town under the city on the event page, for example `"Orașul de Sus"`. |
 | `finishPoint` | Free text, where the route ends, for example `"Turnul Sfatului"`. Shown at the end of the route strip. |
 | `startLatitude`, `startLongitude` | Numbers, the start pin (latitude −90 to 90, longitude −180 to 180). "Hartă" on the event page opens it in Google Maps. Copy them from Google Maps: right-click the place, click the numbers. |
+| `finishLatitude`, `finishLongitude` | Numbers, the finish pin (same ranges). Optional. With the start pin it turns on the route map on the event page: only those two get a pin, and the line bends towards the missions without reaching them. |
 | `routeLengthKm` | Number from 0.1 to 100, the route in km, for example `4.5`. Shown as "4,5 km". |
 | `durationMinutes` | Whole number from 10 to 600, for example `120`. Shown as "2 h", `90` as "1 h 30". |
 | `difficulty` | `"easy"`, `"medium"` or `"hard"`, shown as one, two or three dots with "Ușoară", "Medie", "Grea". |
