@@ -398,7 +398,7 @@ class _CodeComponentFieldsWidgetState extends State<CodeComponentFieldsWidget> {
             onChanged:
                 (value) => setState(() => controller.enableGlow = value!),
             activeColor: context.colors.accent,
-            checkColor: Colors.white,
+            checkColor: context.colors.onNavy,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),
             ),

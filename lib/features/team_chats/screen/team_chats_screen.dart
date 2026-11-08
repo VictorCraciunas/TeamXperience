@@ -57,7 +57,7 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(appBarText: "Team Chats"),
+      appBar: MyAppBar(appBarText: "Conversații"),
       body: isLoading
           ? const Center(
         child: CircularProgressIndicator(),
@@ -65,7 +65,7 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
           : controller.teams.length == 0
           ? const Center(
         child: Text(
-          "No teams available",
+          "Nicio echipă înscrisă.",
           style: TextStyle(fontSize: 18),
         ),
       )
@@ -84,11 +84,11 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
               child: ListTile(
                 contentPadding: const EdgeInsets.all(16.0),
                 leading: CircleAvatar(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: context.colors.accent,
                   child: Text(
                     team.name.isNotEmpty ? team.name[0].toUpperCase() : 'T',
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: context.colors.onNavy,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -105,7 +105,7 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
                   children: [
                     const SizedBox(height: 4),
                     Text(
-                      "Captain: ${team.captainName}",
+                      "Căpitan: ${team.captainName}",
                       style: TextStyle(
                         color: context.colors.muted,
                         fontSize: 14,
@@ -113,7 +113,7 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      "Members: ${team.teamMembers}",
+                      "Membri: ${team.memberList.map((member) => member.name).join(', ')}",
                       style: TextStyle(
                         color: context.colors.muted,
                         fontSize: 12,
@@ -123,9 +123,9 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
                     ),
                   ],
                 ),
-                trailing: const Icon(
+                trailing: Icon(
                   Icons.chat_bubble_outline,
-                  color: Colors.blue,
+                  color: context.colors.accent,
                 ),
                 onTap: () => _navigateToChat(index),
               ),
