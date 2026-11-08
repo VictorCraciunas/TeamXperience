@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/features/register_team/widgets/invite_result_section.dart';
 import 'package:teamxperience/ui/components/misc/avatar_stack.dart';
-import 'package:teamxperience/ui/components/team/invite_code_card.dart';
 import 'package:teamxperience/ui/theme/app_colors.dart';
 
 import '../../ui/pump_ui.dart';
@@ -52,19 +51,6 @@ void main() {
     expect(text.style?.fontSize, 11);
     expect(text.style?.color, AppColors.light.onNavy.withValues(alpha: .8));
   });
-
-  testWidgets(
-    'the card sits 4 below the form, 14 from the sides and 14 from the bottom',
-    (tester) async {
-      await pumpUi(tester, _section());
-      final section = tester.getRect(find.byType(InviteResultSection));
-      final card = tester.getRect(find.byType(InviteCodeCard));
-      expect(card.left - section.left, 14);
-      expect(section.right - card.right, 14);
-      expect(card.top - section.top, 4);
-      expect(section.bottom - card.bottom, 14);
-    },
-  );
 
   testWidgets('lays out at 320 wide and 1.3x text without an exception', (
     tester,

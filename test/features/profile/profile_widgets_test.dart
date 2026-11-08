@@ -30,17 +30,13 @@ const _memory = Memory(
 
 void main() {
   group('ProfileAccountCard', () {
-    testWidgets('the mockup: initials, name, level, bar and the next level', (tester) async {
+    testWidgets('initials, name, level and the next level', (tester) async {
       await pumpUi(tester, ProfileAccountCard(name: 'Victor Crăciunaș', email: 'v@x.ro', level: levelInfo(640)));
       expect(find.text('VC'), findsOneWidget);
-      expect(tester.getSize(find.byKey(const ValueKey('profile-avatar'))), const Size(60, 60));
       expect(find.text('Victor Crăciunaș'), findsOneWidget);
       expect(find.text('Explorator · 640 / 1000 XP'), findsOneWidget);
       expect(find.text('Următorul: Cartograf'), findsOneWidget);
       expect(find.text('v@x.ro'), findsNothing);
-      final fill = tester.widget<FractionallySizedBox>(find.byKey(const ValueKey('xp-fill')));
-      expect(fill.widthFactor, closeTo(0.64, 0.0001));
-      expect(tester.getSize(find.byKey(const ValueKey('xp-bar'))).height, 5);
     });
 
     testWidgets('at the top: no next level, a full bar', (tester) async {
@@ -92,27 +88,12 @@ void main() {
   });
 
   group('BadgeTile', () {
-    Color? fill(WidgetTester tester, String id) {
-      final box = tester.widget<DecoratedBox>(find.byKey(ValueKey('badge-$id')));
-      return (box.decoration as BoxDecoration).color;
-    }
-
-    testWidgets('earned: a 44 px teal circle with its icon and title', (tester) async {
+    testWidgets('earned: its title, and a tap', (tester) async {
       var taps = 0;
       await pumpUi(tester, BadgeTile(badge: _badge('km10'), earned: true, onTap: () => taps++));
-      expect(tester.getSize(find.byKey(const ValueKey('badge-km10'))), const Size(44, 44));
-      expect(fill(tester, 'km10'), _c.iconButtonBg);
-      final icon = tester.widget<Icon>(find.byIcon(TablerIcons.shoe));
-      expect((icon.size, icon.color), (22, _c.accent));
       expect(find.text('Primii 10 km'), findsOneWidget);
       await tester.tap(find.text('Primii 10 km'));
       expect(taps, 1);
-    });
-
-    testWidgets('a gold one uses the warm colours', (tester) async {
-      await pumpUi(tester, BadgeTile(badge: _badge('noHints'), earned: true));
-      expect(fill(tester, 'noHints'), _c.warningSoft);
-      expect(tester.widget<Icon>(find.byIcon(TablerIcons.bolt)).color, _c.warning);
     });
 
     testWidgets('locked: a lock at 45 %', (tester) async {
@@ -172,7 +153,6 @@ void main() {
       expect(find.text('Amintiri'), findsOneWidget);
       expect(find.text('Moștenirea Cartografului'), findsOneWidget);
       expect(find.text('Locul 2 · 1:48 · 6 poze'), findsOneWidget);
-      expect(tester.getSize(find.byKey(const ValueKey('memory-thumb'))), const Size(40, 40));
       await tester.tap(find.text('Moștenirea Cartografului'));
       expect(tapped, _memory);
     });

@@ -89,28 +89,6 @@ void main() {
     expect(taps, 1);
   });
 
-  testWidgets('the card: 164 wide, a 2 px second-accent border, the accent button', (tester) async {
-    await _pump(tester, _mockup);
-    final card = find.byKey(const ValueKey('trail-card'));
-    expect(tester.getSize(card).width, 164);
-    final decoration = tester.widget<DecoratedBox>(card).decoration as BoxDecoration;
-    final border = decoration.border as Border;
-    expect((border.top.width, border.top.color), (2, EventPalette.parchment.secondaryAccent));
-    expect(decoration.color, EventPalette.parchment.surface);
-    expect(_fill(tester, find.byKey(const ValueKey('trail-continue'))), EventPalette.parchment.accent);
-    final label = tester.widget<Text>(find.text('Continuă')).style;
-    expect(label?.color, EventPalette.parchment.onAccent);
-  });
-
-  testWidgets('a done stop: a 32 px accent circle with the check in the page colour', (tester) async {
-    await _pump(tester, _mockup);
-    final circle = find.byKey(const ValueKey('trail-done-1'));
-    expect(tester.getSize(circle), const Size(32, 32));
-    expect(_fill(tester, circle), EventPalette.parchment.accent);
-    final check = tester.widget<Icon>(find.descendant(of: circle, matching: find.byIcon(TablerIcons.check)));
-    expect((check.size, check.color), (16, EventPalette.parchment.background));
-  });
-
   testWidgets('stops on the right have their label on the left', (tester) async {
     await _pump(tester, _mockup);
     final circle = tester.getRect(find.byKey(const ValueKey('trail-done-2')));

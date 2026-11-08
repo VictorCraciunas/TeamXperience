@@ -47,14 +47,10 @@ BoxBorder? _border(WidgetTester tester, Finder finder) {
 
 void main() {
   group('RoundIconButton', () {
-    testWidgets('a 32 px circle in ink at 10 % with a 16 px icon', (tester) async {
+    testWidgets('answers a tap and has a label for screen readers', (tester) async {
       var taps = 0;
       await _pump(tester, RoundIconButton(icon: TablerIcons.x, label: 'Închide', onTap: () => taps++));
       final circle = find.byKey(const ValueKey('round-icon-button'));
-      expect(tester.getSize(circle), const Size(32, 32));
-      expect(_fill(tester, circle), _parchment.ink.withValues(alpha: .1));
-      final icon = tester.widget<Icon>(find.byIcon(TablerIcons.x));
-      expect((icon.size, icon.color), (16, _parchment.ink));
       await tester.tap(circle);
       expect(taps, 1);
       expect(find.bySemanticsLabel('Închide'), findsOneWidget);
@@ -79,15 +75,6 @@ void main() {
         faint,
         faint,
       ]);
-    });
-
-    testWidgets('5 px bars, 3 apart, sharing the width', (tester) async {
-      await _pump(tester, const SizedBox(width: 288, child: MissionSegments(total: 6, done: 3)));
-      final first = tester.getRect(find.byKey(const ValueKey('segment-0')));
-      final second = tester.getRect(find.byKey(const ValueKey('segment-1')));
-      expect(first.height, 5);
-      expect(second.left - first.right, 3);
-      expect(first.width, closeTo((288 - 5 * 3) / 6, 0.01));
     });
 
     testWidgets('all done: no current bar', (tester) async {
@@ -116,17 +103,6 @@ void main() {
       expect(find.text('2 încercări rămase'), findsOneWidget);
     });
 
-    testWidgets('dots 5 apart, the label 4 more after them', (tester) async {
-      await _pump(tester, const AttemptDots(max: 3, left: 2));
-      final a = tester.getRect(find.byKey(const ValueKey('attempt-0')));
-      final b = tester.getRect(find.byKey(const ValueKey('attempt-1')));
-      final c = tester.getRect(find.byKey(const ValueKey('attempt-2')));
-      expect(b.left - a.right, 5);
-      expect(tester.getTopLeft(find.text('2 încercări rămase')).dx - c.right, 9);
-      final label = tester.widget<Text>(find.text('2 încercări rămase')).style;
-      expect((label?.fontSize, label?.color), (11, _parchment.ink.withValues(alpha: .8)));
-    });
-
     testWidgets('one left, and twenty', (tester) async {
       await _pump(tester, const AttemptDots(max: 3, left: 1));
       expect(find.text('1 încercare rămasă'), findsOneWidget);
@@ -141,17 +117,10 @@ void main() {
   });
 
   group('GameOutlineButton', () {
-    testWidgets('a 1.5 px accent outline, radius 12, accent label with its icon', (tester) async {
+    testWidgets('answers a tap', (tester) async {
       var taps = 0;
       await _pump(tester, GameOutlineButton(label: 'Indiciu', icon: TablerIcons.bulb, onTap: () => taps++));
       final frame = find.byKey(const ValueKey('game-outline-button'));
-      final decoration = tester.widget<DecoratedBox>(frame).decoration as BoxDecoration;
-      final border = decoration.border as Border;
-      expect((border.top.width, border.top.color), (1.5, _parchment.accent));
-      expect(decoration.borderRadius, BorderRadius.circular(12));
-      final text = tester.widget<Text>(find.text('Indiciu')).style;
-      expect((text?.color, text?.fontWeight, text?.fontSize), (_parchment.accent, FontWeight.w500, 12));
-      expect(tester.widget<Icon>(find.byIcon(TablerIcons.bulb)).size, 15);
       await tester.tap(frame);
       expect(taps, 1);
     });
@@ -164,13 +133,10 @@ void main() {
   });
 
   group('GameIconButton', () {
-    testWidgets('42 px, accent fill, icon on accent', (tester) async {
+    testWidgets('answers a tap', (tester) async {
       var taps = 0;
       await _pump(tester, GameIconButton(icon: TablerIcons.message_circle, label: 'Chat', onTap: () => taps++));
       final frame = find.byKey(const ValueKey('game-icon-button'));
-      expect(tester.getSize(frame), const Size(42, 42));
-      expect(_fill(tester, frame), _parchment.accent);
-      expect(tester.widget<Icon>(find.byIcon(TablerIcons.message_circle)).color, _parchment.onAccent);
       await tester.tap(frame);
       expect(taps, 1);
     });

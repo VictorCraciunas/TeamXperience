@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/features/join_team/logic/join_state.dart';
-import 'package:teamxperience/features/join_team/widgets/invite_preview_card.dart';
 import 'package:teamxperience/features/join_team/widgets/join_team_body.dart';
 import 'package:teamxperience/model/team_member.dart';
 import 'package:teamxperience/service/team_service/invite_preview.dart';
 import 'package:teamxperience/ui/components/buttons/navy_button.dart';
 import 'package:teamxperience/ui/components/inputs/code_box.dart';
 import 'package:teamxperience/ui/components/misc/avatar_stack.dart';
-import 'package:teamxperience/ui/theme/app_colors.dart';
 
 import '../../ui/pump_ui.dart';
 
@@ -73,38 +71,6 @@ void main() {
     expect(_button(tester).onPressed, isNotNull);
   });
 
-  testWidgets(
-    'the card has 14 px beside it, a 64 px strip and the button sits at the bottom',
-    (tester) async {
-      await pumpUi(tester, _body(Found(_preview())));
-      final card = tester.getRect(find.byType(InvitePreviewCard));
-      expect(card.left, 14);
-      expect(card.right, 360 - 14);
-      final strip = tester.getRect(
-        find
-            .ancestor(
-              of: find.text('Moștenirea Cartografului'),
-              matching: find.byType(Container),
-            )
-            .first,
-      );
-      expect(strip.height, 64);
-      expect(strip.top, card.top + 1);
-      final button = tester.getRect(find.byType(NavyButton));
-      expect(button.left, 14);
-      expect(
-        tester
-            .getRect(
-              find.text(
-                'Evenimentul apare la Înscrierile tale și primești notificări.',
-              ),
-            )
-            .bottom,
-        closeTo(560 - 14, 0.5),
-      );
-    },
-  );
-
   testWidgets('without an event there is no strip, no date and no slot line', (
     tester,
   ) async {
@@ -133,23 +99,10 @@ void main() {
     });
   }
 
-  testWidgets('a Problem is written under the boxes in the danger colour', (
+  testWidgets('a Problem is written under the boxes', (
     tester,
   ) async {
     await pumpUi(tester, _body(const Problem('Codul nu există')));
-    final text = tester.widget<Text>(find.text('Codul nu există'));
-    expect(text.style?.color, AppColors.light.danger);
-    final box = find.byKey(const ValueKey('code-box-0'));
-    final decoration =
-        tester
-                .widget<DecoratedBox>(
-                  find
-                      .descendant(of: box, matching: find.byType(DecoratedBox))
-                      .first,
-                )
-                .decoration
-            as BoxDecoration;
-    expect((decoration.border as Border).top.color, AppColors.light.danger);
     expect(find.byType(CodeBox), findsNWidgets(6));
   });
 

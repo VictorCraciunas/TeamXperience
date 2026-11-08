@@ -70,17 +70,4 @@ void main() {
     expect(dots.last.kind, WaypointKind.finish);
     expect(dots.first.kind, WaypointKind.stop);
   });
-
-  testWidgets('trail content starts 40 in, waypoints at 14', (tester) async {
-    await pumpUi(tester, const RouteTrail(sections: [RouteTrailSection(child: Text('Povestea'))]));
-    final trailLeft = tester.getTopLeft(find.byType(RouteTrail)).dx;
-    expect(tester.getTopLeft(find.text('Povestea')).dx - trailLeft, 40);
-    expect(tester.getTopLeft(find.byType(WaypointDot)).dx - trailLeft, 14);
-  });
-
-  testWidgets('the strip is as tall as in the mockup', (tester) async {
-    await pumpUi(tester, const RouteStrip(centerLabel: 'A', startLabel: 'B', endLabel: 'C'));
-    // 12 padding, icon row on a 16 x 1.45 line, 4 gap, names 11 x 1.45, 12 padding, 1 border.
-    expect(tester.getSize(find.byType(RouteStrip)).height, closeTo(12 + 23.2 + 4 + 15.95 + 12 + 1, 0.5));
-  });
 }

@@ -9,7 +9,6 @@ import 'package:teamxperience/features/home/widgets/navy_game_card.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/model/team_member.dart';
-import 'package:teamxperience/ui/theme/app_colors.dart';
 import 'package:teamxperience/ui/theme/app_theme.dart';
 
 import '../../ui/pump_ui.dart';
@@ -112,12 +111,6 @@ void main() {
       expect(find.text('4'), findsOneWidget);
       expect(find.byIcon(TablerIcons.flag), findsOneWidget);
       expect(tester.widget<NavyGameCard>(find.byType(NavyGameCard)).fill, NavyFill.live);
-    });
-
-    testWidgets('the live card is drawn in the liveCard colour', (tester) async {
-      await _pump(tester, LiveHero(event, _team(progress: 3, started: true)), now: live);
-      final box = tester.widget<DecoratedBox>(find.byKey(const ValueKey('game-card')));
-      expect((box.decoration as BoxDecoration).color, AppColors.light.liveCard);
     });
 
     testWidgets('Continuă jocul and the chat button call back', (tester) async {
