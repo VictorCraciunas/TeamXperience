@@ -7,7 +7,7 @@ import {createCrew} from "../teams/create_crew";
 import {joinTeam} from "../teams/join_team";
 import {previewInvite} from "../teams/preview_invite";
 import {registerTeam, RegisterInput} from "../teams/register_team";
-import {clearDb, emulatorDb, reasonOf} from "./helpers";
+import {clearDb, emulatorDb, reasonOf, retryLostRace} from "./helpers";
 
 const NOW = new Date("2026-11-08T10:00:00Z");
 const DAY = 24 * 60 * 60 * 1000;
@@ -175,7 +175,10 @@ describe("team functions", () => {
     });
 
     test("two captains with one name at once: one gets it", async () => {
-      const results = await Promise.allSettled([register("u1"), register("u2", {name: "vulpile"})]);
+      const results = await Promise.allSettled([
+        retryLostRace(() => register("u1")),
+        retryLostRace(() => register("u2", {name: "vulpile"})),
+      ]);
       const fulfilled = results.filter((r) => r.status === "fulfilled");
       const rejected = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");
       assert.equal(fulfilled.length, 1);
@@ -355,7 +358,10 @@ describe("team functions", () => {
       const {inviteCode} = await register("u1");
       await join("u2", inviteCode);
       await join("u3", inviteCode);
-      const results = await Promise.allSettled([join("u4", inviteCode), join("u5", inviteCode)]);
+      const results = await Promise.allSettled([
+        retryLostRace(() => join("u4", inviteCode)),
+        retryLostRace(() => join("u5", inviteCode)),
+      ]);
       const rejected = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");
       assert.equal(rejected.length, 1);
       assert.equal(reasonOf(rejected[0].reason), "teamFull");

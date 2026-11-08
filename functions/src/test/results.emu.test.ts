@@ -147,7 +147,9 @@ describe("results", () => {
 
   test("running twice at once counts nobody twice", async () => {
     await seedGame();
-    await Promise.all([applyResults(db, "e1"), applyResults(db, "e1")]);
+    // One may lose a transaction and fail: the schedule runs it again.
+    await Promise.allSettled([applyResults(db, "e1"), applyResults(db, "e1")]);
+    await applyResults(db, "e1");
     assert.equal((await read("users/u1"))?.xp, 710);
     assert.equal((await read("crews/c1"))?.stats.games, 3);
     assert.equal((await read(`${SEASON}/standings/c1`))?.points, 100);

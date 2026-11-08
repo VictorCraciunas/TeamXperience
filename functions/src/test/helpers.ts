@@ -23,3 +23,17 @@ export function reasonOf(error: unknown): unknown {
   const details = (error as {details?: {reason?: string}}).details;
   return details?.reason ?? error;
 }
+
+/**
+ * Tries again when the emulator closes a transaction that lost a race. It
+ * reports this as an error of its own; real Firestore aborts, and the SDK retries.
+ */
+export async function retryLostRace<T>(call: () => Promise<T>): Promise<T> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await call();
+    } catch (error) {
+      if (attempt >= 5 || !String(error).includes("Transaction is invalid or closed")) throw error;
+    }
+  }
+}

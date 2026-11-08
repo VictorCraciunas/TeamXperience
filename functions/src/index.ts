@@ -12,6 +12,7 @@ if (getApps().length === 0) {
 }
 
 export {checkTeamName, createCrew, joinTeam, previewInvite, registerTeam} from "./teams/callables";
+export {closeExpiredEvents, onEventStopped} from "./results/on_event_finished";
 
 // Simple test function to verify endpoint works
 export const testEndpoint = onRequest((request, response) => {
