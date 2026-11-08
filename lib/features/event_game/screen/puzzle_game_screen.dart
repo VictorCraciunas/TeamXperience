@@ -191,6 +191,7 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                         if (isGeolocation && currentPuzzle != null) {
                           if (controller.preview) {
                             return PreviewSkipView(
+                              key: ValueKey('preview_$selectedPuzzle'),
                               text: 'Aici echipele trebuie să ajungă la locul de pe hartă.',
                               onSkip: controller.navigate,
                               header: organiser,
@@ -211,6 +212,7 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                         if (isImageUpload && currentPuzzle != null) {
                           if (controller.preview) {
                             return PreviewSkipView(
+                              key: ValueKey('preview_$selectedPuzzle'),
                               text: 'Aici echipele trimit o fotografie, iar tu o aprobi din chat.',
                               onSkip: controller.navigate,
                               header: organiser,

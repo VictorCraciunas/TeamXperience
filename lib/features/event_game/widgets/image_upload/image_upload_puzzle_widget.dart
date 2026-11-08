@@ -43,6 +43,7 @@ class ImageUploadPuzzleWidget extends StatefulWidget {
 }
 
 class _ImageUploadPuzzleWidgetState extends State<ImageUploadPuzzleWidget> {
+  final _headerKey = GlobalKey();
   ImageUploadPuzzleController? _controller;
   Timer? _tick;
   DateTime _now = DateTime.now();
@@ -76,7 +77,10 @@ class _ImageUploadPuzzleWidgetState extends State<ImageUploadPuzzleWidget> {
   @override
   Widget build(BuildContext context) {
     final controller = _controller;
-    final top = widget.header;
+    final header = widget.header;
+    // The same key while loading and after, so a text that types itself out
+    // does not start again when the team arrives.
+    final top = header == null ? null : KeyedSubtree(key: _headerKey, child: header);
     // Until the team is known: the organiser's content, and a spinner under it.
     final loading = SingleChildScrollView(
       child: Column(

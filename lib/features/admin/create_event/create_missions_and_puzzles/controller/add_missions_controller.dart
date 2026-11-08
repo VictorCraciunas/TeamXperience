@@ -5,6 +5,7 @@ import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/service/event_service/event_completeness.dart';
+import 'package:teamxperience/service/event_service/event_status_changes.dart';
 import 'package:teamxperience/ui/components/feedback/snackbars.dart';
 
 import '../../../../../exceptions/events_exceptions.dart';
@@ -193,8 +194,9 @@ class AddMissionsController {
     return '${problems.first.text}$more';
   }
 
-  /// Creates, updates or publishes the event. True when it worked, so the
-  /// screen knows whether to leave.
+  /// Publishes or updates the event. True when it worked, so the screen knows
+  /// whether to leave. A new event or a draft has to be complete; an edit of a
+  /// live event only must not leave teams stuck.
   Future<bool> saveEvent(BuildContext context) async {
     _showProgress(context);
     final eventList = context.read<EventList>();
@@ -207,13 +209,14 @@ class AddMissionsController {
         Navigator.of(context).pop();
         MySnackBars.successSnackBar(context, title: "Eveniment publicat !", message: "Evenimentul este acum vizibil pentru jucători");
       } else if (mode == 'edit') {
+        checkLiveEdit(event);
         await eventList.updateEvent(event);
         if (!context.mounted) return true;
         Navigator.of(context).pop();
         MySnackBars.successSnackBar(context, title: "Eveniment editat !", message: "Eveniment editat cu success");
       } else {
         // EventService handles all image uploads.
-        await eventList.createEvent(event);
+        await eventList.publishEvent(event);
         if (!context.mounted) return true;
         Navigator.of(context).pop();
         MySnackBars.successSnackBar(context, title: "Eveniment create !", message: "Eveniment creat cu success");
@@ -224,7 +227,7 @@ class AddMissionsController {
         Navigator.of(context).pop(); // the progress dialog
         MySnackBars.warningSnackBar(
           context,
-          title: 'Evenimentul nu poate fi publicat încă',
+          title: !isDraft && mode == 'edit' ? 'Evenimentul nu poate fi salvat' : 'Evenimentul nu poate fi publicat încă',
           message: publishFailureMessage(e),
         );
       }

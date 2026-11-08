@@ -7,6 +7,7 @@ import 'package:teamxperience/features/event_game/logic/preview_team.dart';
 import 'package:teamxperience/features/event_game/screen/puzzle_game_screen.dart';
 import 'package:teamxperience/features/event_game/widgets/image_upload/photo_puzzle_view.dart';
 import 'package:teamxperience/features/event_game/widgets/location_puzzle_view.dart';
+import 'package:teamxperience/features/event_game/widgets/preview_skip_view.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
@@ -28,13 +29,14 @@ Future<void> _useSmallPhone(WidgetTester tester) async {
 Future<void> _pumpScreen(WidgetTester tester, PuzzleType type) async {
   await _useSmallPhone(tester);
   final mission = Mission(id: '0', title: 'Fântâna', puzzles: [
-    Puzzle(
-      id: '0',
-      type: type,
-      latitude: 45.79,
-      longitude: 24.15,
-      components: [Component(type: ComponentType.text, text: _story)],
-    ),
+    for (final id in ['0', '1'])
+      Puzzle(
+        id: id,
+        type: type,
+        latitude: 45.79,
+        longitude: 24.15,
+        components: [Component(type: ComponentType.text, text: _story)],
+      ),
   ]);
   await tester.pumpWidget(MaterialApp(
     theme: AppTheme.light,
@@ -60,6 +62,12 @@ Future<void> _pumpView(WidgetTester tester, Widget view) async {
   await tester.pumpWidget(MaterialApp(theme: AppTheme.light, home: Scaffold(body: view)));
   await tester.pump();
 }
+
+/// How far the content of the puzzle has been scrolled.
+double _scrolled(WidgetTester tester) => tester
+    .state<ScrollableState>(find.descendant(of: find.byType(PreviewSkipView), matching: find.byType(Scrollable)))
+    .position
+    .pixels;
 
 final _tallHeader = SizedBox(key: const ValueKey('tall-header'), height: 2000, child: Text(_story));
 
@@ -116,11 +124,26 @@ void main() {
     expect(tester.getTopLeft(find.byKey(const ValueKey('location-map-card'))).dy, lessThan(_small.height));
   });
 
+  testWidgets('in a walk-through the next puzzle opens at its top', (tester) async {
+    await _pumpScreen(tester, PuzzleType.geolocation);
+    await tester.drag(find.byType(PreviewSkipView), const Offset(0, -300));
+    await tester.pump();
+    expect(_scrolled(tester), greaterThan(0));
+
+    await tester.tap(find.text('Sari peste'));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(_scrolled(tester), 0);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   for (final type in [PuzzleType.geolocation, PuzzleType.imageToUpload]) {
     testWidgets('a long ${type.name} puzzle keeps its button on the screen', (tester) async {
       await _pumpScreen(tester, type);
       expect(tester.takeException(), isNull);
       expect(tester.getBottomLeft(find.text('Sari peste')).dy, lessThanOrEqualTo(_small.height));
+      expect(find.textContaining('fântâna veche'), findsOneWidget);
 
       // Closing the screen stops its clock.
       await tester.pumpWidget(const SizedBox.shrink());

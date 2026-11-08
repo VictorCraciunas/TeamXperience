@@ -216,6 +216,11 @@ void main() {
       expect(puzzleIssues(boxes('ABCDEFGHIJKLMNOP', input: null)), isEmpty);
     });
 
+    test('one box takes one whole character, whatever it is made of', () {
+      expect(puzzleIssues(boxes('🔑🔑', length: 2)), isEmpty);
+      expect(puzzleIssues(boxes('🔑🔑🔑', length: 2)), [PuzzleIssue.answerDoesNotFit]);
+    });
+
     test('it is enough that one of two inputs fits', () {
       final puzzle = boxes('ABCDE')..components.add(Component(type: ComponentType.code, inputType: 'Free'));
       expect(puzzleIssues(puzzle), isEmpty);
@@ -228,6 +233,39 @@ void main() {
     test('stops the event from being published, and says where', () {
       final problems = publishProblems(_event(missions: [_mission([boxes('ABCDE')])]));
       expect(problems.map((p) => p.text), ['Misiunea 1: Puzzle 1: răspunsul nu încape în căsuțe']);
+    });
+  });
+
+  group('stuckProblems, what would leave teams stuck on a live event', () {
+    Puzzle boxes(String code) => Puzzle(
+          id: 'p',
+          type: PuzzleType.code,
+          code: code,
+          components: [Component(type: ComponentType.code, codeLength: 4, inputType: 'Separated')],
+        );
+
+    test('a playable event has none, even with newer details missing', () {
+      final event = _event(missions: [_mission([boxes('ABCD')])])
+        ..finishPoint = null
+        ..startLatitude = null;
+      expect(stuckProblems(event), isEmpty);
+    });
+
+    test('says which mission and puzzle has an answer that does not fit', () {
+      final event = _event(missions: [
+        _mission([boxes('ABCD')]),
+        _mission([boxes('ABCD'), boxes('ABCDE')]),
+      ]);
+      final problems = stuckProblems(event);
+      expect(problems.map((p) => p.text), ['Misiunea 2: Puzzle 2: răspunsul nu încape în căsuțe']);
+      expect(problems.single.missionIndex, 1);
+    });
+
+    test('team sizes the wrong way round', () {
+      final event = _event()
+        ..teamSizeMin = 6
+        ..teamSizeMax = 2;
+      expect(stuckProblems(event).map((p) => p.text), [EventIssue.teamSizeOrder.label]);
     });
   });
 

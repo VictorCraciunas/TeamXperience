@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart' show StringCharacters;
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/model/event.dart';
@@ -47,7 +48,7 @@ const _defaultBoxes = 5;
 bool _answerDoesNotFit(Puzzle puzzle) {
   final inputs = puzzle.components.where((c) => c.type == ComponentType.code);
   if (inputs.isEmpty) return false;
-  final length = (puzzle.code ?? '').trim().length;
+  final length = (puzzle.code ?? '').trim().characters.length;
   return inputs.every((c) => c.inputType == 'Separated' && length > (c.codeLength ?? _defaultBoxes));
 }
 
@@ -175,6 +176,20 @@ List<PublishProblem> publishProblems(Event event) {
 }
 
 bool canPublish(Event event) => publishProblems(event).isEmpty;
+
+/// What would leave teams stuck in an event that is already live. Editing one
+/// is held to this and not to [publishProblems], because an older event may
+/// lack details added since, and that must not stop a quick correction.
+List<PublishProblem> stuckProblems(Event event) => [
+      if (eventIssues(event).contains(EventIssue.teamSizeOrder)) PublishProblem(EventIssue.teamSizeOrder.label),
+      for (var m = 0; m < event.missions.length; m++)
+        for (var p = 0; p < event.missions[m].puzzles.length; p++)
+          if (puzzleIssues(event.missions[m].puzzles[p]).contains(PuzzleIssue.answerDoesNotFit))
+            PublishProblem(
+              'Misiunea ${m + 1}: Puzzle ${p + 1}: ${PuzzleIssue.answerDoesNotFit.label}',
+              missionIndex: m,
+            ),
+    ];
 
 /// How far along a draft is, from 0 (nothing filled in) to 1 (ready to
 /// publish). Each detail counts once, and each mission counts once.
