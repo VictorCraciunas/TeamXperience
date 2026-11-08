@@ -19,9 +19,21 @@ class CountdownBox extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              '$value',
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500, height: 1.45, color: colors.onNavy),
+            AnimatedSwitcher(
+              // The tick; none when the phone asks for reduced motion.
+              duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : const Duration(milliseconds: 250),
+              transitionBuilder: (child, animation) => FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween(begin: const Offset(0, .35), end: Offset.zero).animate(animation),
+                  child: child,
+                ),
+              ),
+              child: Text(
+                '$value',
+                key: ValueKey(value),
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500, height: 1.45, color: colors.onNavy),
+              ),
             ),
             Text(
               label,

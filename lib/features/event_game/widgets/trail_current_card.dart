@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/pulse_dot.dart';
 import 'package:teamxperience/ui/theme/event_theme_scope.dart';
 
 /// The mission the team is on, as a card on the trail (mockup 06): 140 wide
@@ -45,9 +46,17 @@ class TrailCurrentCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  'Misiunea $number · acum',
-                  style: TextStyle(fontSize: 11, height: 1.45, fontWeight: FontWeight.w500, color: palette.accent),
+                Row(
+                  children: [
+                    PulseDot(colour: palette.accent),
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        'Misiunea $number · acum',
+                        style: TextStyle(fontSize: 11, height: 1.45, fontWeight: FontWeight.w500, color: palette.accent),
+                      ),
+                    ),
+                  ],
                 ),
                 Text(
                   title,
