@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/features/home/logic/home_texts.dart';
 import 'package:teamxperience/features/profile/logic/badge_catalog.dart';
@@ -69,6 +70,12 @@ void main() {
       expect(levelLine(levelInfo(3100)), 'Legendă · 3100 XP');
       expect(nextLevelLine(levelInfo(3100)), 'Nivel maxim');
     });
+  });
+
+  test('the theme\'s name', () {
+    expect(themeLabel(ThemeMode.system), 'Sistem');
+    expect(themeLabel(ThemeMode.light), 'Luminos');
+    expect(themeLabel(ThemeMode.dark), 'Întunecat');
   });
 
   test('initials', () {

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:teamxperience/features/home/logic/home_texts.dart';
 import 'package:teamxperience/model/memory.dart';
 
@@ -12,6 +13,13 @@ String nextLevelLine(LevelInfo info) {
   final next = info.nextName;
   return next == null ? 'Nivel maxim' : 'Următorul: $next';
 }
+
+/// "Sistem", "Luminos" or "Întunecat".
+String themeLabel(ThemeMode mode) => switch (mode) {
+      ThemeMode.system => 'Sistem',
+      ThemeMode.light => 'Luminos',
+      ThemeMode.dark => 'Întunecat',
+    };
 
 /// The first letters of the first two words, upper-case; "" for a blank name.
 String initialsOf(String name) {

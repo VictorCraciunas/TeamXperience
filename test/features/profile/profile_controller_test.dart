@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/profile/controller/profile_controller.dart';
 import 'package:teamxperience/features/profile/logic/notification_access.dart';
+import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/memory.dart';
 import 'package:teamxperience/model/user.dart';
 
@@ -128,6 +130,43 @@ void main() {
         status = NotifStatus.refused;
         await c.onNotificationsTap();
         expect(opened, 1);
+      });
+    });
+
+    group('opening a memory', () {
+      Future<ProfileController> inApp(WidgetTester tester, Event? Function(String id) find_) async {
+        await tester.pumpWidget(MaterialApp(
+          routes: {Routes.eventDetails: (_) => const Text('pagina evenimentului')},
+          home: const SizedBox(),
+        ));
+        return ProfileController(
+          tester.element(find.byType(SizedBox)),
+          user: _user(),
+          userStream: const Stream.empty(),
+          memoriesStream: const Stream.empty(),
+          notifications: NotificationAccess(read: () async => NotifStatus.allowed),
+          onFreshUser: (_) {},
+          findEvent: find_,
+        );
+      }
+
+      const memory = Memory(eventId: 'e1', eventName: 'Joc');
+
+      testWidgets('opens the event\'s page', (tester) async {
+        final c = await inApp(tester, (id) => Event(eventId: id));
+        c.openMemory(memory);
+        await tester.pumpAndSettle();
+        expect(find.text('pagina evenimentului'), findsOneWidget);
+        c.dispose();
+      });
+
+      testWidgets('an event that is not loaded: nothing happens', (tester) async {
+        final c = await inApp(tester, (_) => null);
+        c.openMemory(memory);
+        await tester.pumpAndSettle();
+        expect(find.text('pagina evenimentului'), findsNothing);
+        expect(tester.takeException(), isNull);
+        c.dispose();
       });
     });
 

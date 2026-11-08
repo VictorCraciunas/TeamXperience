@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:teamxperience/backend/authentication/AuthenticationRepository.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/profile/logic/notification_access.dart';
+import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/memory.dart';
 import 'package:teamxperience/model/user.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
@@ -22,9 +23,11 @@ class ProfileController extends ChangeNotifier {
     required Stream<List<Memory>> memoriesStream,
     required NotificationAccess notifications,
     required void Function(AppUser fresh) onFreshUser,
+    Event? Function(String eventId)? findEvent,
   })  : _user = user,
         _access = notifications,
-        _onFreshUser = onFreshUser {
+        _onFreshUser = onFreshUser,
+        _findEvent = findEvent {
     _userWatch = userStream.listen(_onUser, onError: (Object _) {});
     _memoriesWatch = memoriesStream.listen(_onMemories, onError: (Object _) {});
     _readNotifications();
@@ -33,6 +36,7 @@ class ProfileController extends ChangeNotifier {
   final BuildContext context;
   final NotificationAccess _access;
   final void Function(AppUser fresh) _onFreshUser;
+  final Event? Function(String eventId)? _findEvent;
   late final AuthenticationRepository _authRepo = AuthenticationRepository();
   StreamSubscription<AppUser?>? _userWatch;
   StreamSubscription<List<Memory>>? _memoriesWatch;
@@ -77,6 +81,21 @@ class ProfileController extends ChangeNotifier {
   Future<void> onNotificationsTap() async {
     _notifications = await _access.askOrOpenSettings();
     _changed();
+  }
+
+  /// Opens the page of a past game's event, when that event is loaded.
+  void openMemory(Memory memory) {
+    final find = _findEvent;
+    final event = find != null ? find(memory.eventId) : _loadedEvent(memory.eventId);
+    if (event == null) return;
+    Navigator.pushNamed(context, Routes.eventDetails, arguments: {'event': event, 'isAdmin': false});
+  }
+
+  Event? _loadedEvent(String eventId) {
+    for (final event in context.read<EventList>().events) {
+      if (event.eventId == eventId) return event;
+    }
+    return null;
   }
 
   void logout() {
