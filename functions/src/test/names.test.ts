@@ -31,3 +31,9 @@ test("teamNameProblem accepts a normal name", () => {
 test("nameKey ignores case and surrounding spaces", () => {
   assert.equal(nameKey(" Vulpile "), nameKey("VULPILE"));
 });
+
+test("nameKey treats the old and new s and t as one letter", () => {
+  assert.equal(nameKey("Bufni\u0163ele"), nameKey("Bufni\u021bele"));
+  assert.equal(nameKey("Cra\u015fi"), nameKey("Cra\u0219i"));
+  assert.equal(nameKey("\u015e\u0162"), nameKey("\u0218\u021a"));
+});

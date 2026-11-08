@@ -9,7 +9,7 @@
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
     "test:unit": "tsc && node scripts/run-tests.js unit",
-    "test": "tsc && firebase emulators:exec --only firestore,auth --project demo-teamxperience \"node scripts/run-tests.js all\""
+    "test": "tsc && node scripts/test-all.js"
   },
   "engines": {
     "node": "20"

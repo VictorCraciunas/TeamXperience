@@ -10,6 +10,8 @@ if (getApps().length === 0) {
   initializeApp();
 }
 
+export {checkTeamName, createCrew, joinTeam, previewInvite, registerTeam} from "./teams/callables";
+
 // Simple test function to verify endpoint works
 export const testEndpoint = onRequest((request, response) => {
   logger.info("Test endpoint called!", {structuredData: true});
