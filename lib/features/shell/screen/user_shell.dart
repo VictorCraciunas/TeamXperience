@@ -1,3 +1,7 @@
+import 'package:teamxperience/backend/repo/user_repo.dart';
+import 'package:teamxperience/features/profile/logic/profile_texts.dart';
+import 'package:teamxperience/features/shell/logic/user_doc_watch.dart';
+import 'package:teamxperience/state_management/user_provider.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -26,6 +30,16 @@ class UserShell extends StatefulWidget {
 
 class _UserShellState extends State<UserShell> {
   final ShellController _controller = ShellController(5);
+  UserDocWatch? _userWatch;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_userWatch != null) return;
+    final users = context.read<UserProvider>();
+    final uid = profileDocId(users.firebaseUser?.uid, users.currentUser?.uid ?? '');
+    if (uid != null) _userWatch = UserDocWatch(UserRepo().streamUser(uid), users.updateProfile);
+  }
 
   /// The game's end is time-based, so the live flag is re-read every 30 s.
   late final Timer _tick = Timer.periodic(const Duration(seconds: 30), (_) {
@@ -41,6 +55,7 @@ class _UserShellState extends State<UserShell> {
   @override
   void dispose() {
     _tick.cancel();
+    _userWatch?.cancel();
     _controller.dispose();
     super.dispose();
   }

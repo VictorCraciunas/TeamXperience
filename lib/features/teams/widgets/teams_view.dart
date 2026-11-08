@@ -1,3 +1,5 @@
+import 'package:teamxperience/model/season_standing.dart';
+import 'package:teamxperience/features/teams/widgets/season_leaderboard.dart';
 import 'package:teamxperience/ui/components/feedback/load_failed.dart';
 import 'package:flutter/material.dart';
 import 'package:teamxperience/features/teams/widgets/crew_card.dart';
@@ -22,6 +24,8 @@ class TeamsView extends StatelessWidget {
     required this.onRetry,
     this.loading = false,
     this.failed = false,
+    this.seasonName,
+    this.standings = const [],
   });
 
   final List<Crew> crews;
@@ -38,6 +42,10 @@ class TeamsView extends StatelessWidget {
   /// The crews could not be loaded: a message with a retry link stands in
   /// for them. The header and the join card stay either way.
   final bool failed;
+
+  /// The season now under way; without it there is no leaderboard.
+  final String? seasonName;
+  final List<SeasonStanding> standings;
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +81,12 @@ class TeamsView extends StatelessWidget {
                   crew: crew,
                   onShare: () => onShare(crew),
                   onCopy: () => onCopy(crew),
+                ),
+              if (seasonName case final name?)
+                SeasonLeaderboard(
+                  seasonName: name,
+                  standings: standings,
+                  myCrewIds: {for (final crew in crews) crew.id},
                 ),
               JoinLink(onJoin: onJoin),
             ],
