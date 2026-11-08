@@ -4,6 +4,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
+import 'package:teamxperience/service/event_service/event_route.dart';
 import 'package:teamxperience/ui/components/misc/app_chip.dart';
 import 'package:teamxperience/ui/ui.dart';
 

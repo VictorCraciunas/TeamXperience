@@ -5,6 +5,8 @@
   "punctDeStart": "Piața Mare, lângă Turnul Sfatului",
   "startLatitude": 45.7971,
   "startLongitude": 24.152,
+  "finishLatitude": 45.7975,
+  "finishLongitude": 24.1513,
   "finishPoint": "Turnul Sfatului",
   "area": "Orașul de Sus",
   "routeLengthKm": 1.2,

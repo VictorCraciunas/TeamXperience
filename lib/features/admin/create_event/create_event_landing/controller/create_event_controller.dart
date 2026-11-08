@@ -47,6 +47,7 @@ class CreateEventController {
 
   /// "45.7971, 24.1520", as Google Maps copies it.
   final startPinController = TextEditingController();
+  final finishPinController = TextEditingController();
   final meetingNoteController = TextEditingController();
   final arriveBeforeController = TextEditingController(text: '15');
 
@@ -138,6 +139,8 @@ class CreateEventController {
     final max = event.maxTeams;
     final lat = event.startLatitude;
     final lng = event.startLongitude;
+    final finishLat = event.finishLatitude;
+    final finishLng = event.finishLongitude;
     areaController.text = event.area ?? '';
     finishPointController.text = event.finishPoint ?? '';
     routeKmController.text = km == null ? '' : formatKm(km).replaceAll(' km', '');
@@ -147,6 +150,7 @@ class CreateEventController {
     teamSizeMaxController.text = '${event.teamSizeMax}';
     maxTeamsController.text = max == null ? '' : '$max';
     startPinController.text = lat == null || lng == null ? '' : formatCoordinates(lat, lng);
+    finishPinController.text = finishLat == null || finishLng == null ? '' : formatCoordinates(finishLat, finishLng);
     meetingNoteController.text = event.meetingPointNote ?? '';
     arriveBeforeController.text = '${event.arriveMinutesBefore}';
     whatToBringController.text = event.whatToBring.join('\n');
@@ -160,8 +164,8 @@ class CreateEventController {
     enterWindowController.text = '${event.enterWindowMinutes}';
   }
 
-  /// The message for a start pin that cannot be read, or null.
-  static String? startPinProblem(String text) =>
+  /// The message for a pin that cannot be read, or null.
+  static String? pinProblem(String text) =>
       text.trim().isEmpty || parseCoordinates(text) != null ? null : 'Coordonate greșite';
 
   static int? _inRange(String text, int min, int max) {
@@ -213,6 +217,7 @@ class CreateEventController {
     final minutes = _whole(durationController);
     final level = difficulty;
     final pin = parseCoordinates(startPinController.text);
+    final finishPin = parseCoordinates(finishPinController.text);
     event
       ..area = _textOrNull(areaController)
       ..finishPoint = _textOrNull(finishPointController)
@@ -224,6 +229,8 @@ class CreateEventController {
       ..maxTeams = _whole(maxTeamsController)
       ..startLatitude = pin?.lat
       ..startLongitude = pin?.lng
+      ..finishLatitude = finishPin?.lat
+      ..finishLongitude = finishPin?.lng
       ..meetingPointNote = _textOrNull(meetingNoteController)
       ..arriveMinutesBefore = _whole(arriveBeforeController) ?? 15
       ..whatToBring = [

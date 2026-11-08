@@ -1,22 +1,9 @@
-import 'package:latlong2/latlong.dart';
-import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 
 import 'live_status.dart';
 
 /// The colour family of a team's pin.
 enum PinTone { playing, stuck, finished, silent }
-
-/// The route line: the start pin, then every mission that has a pin.
-List<LatLng> routePoints(Event event) {
-  final startLat = event.startLatitude;
-  final startLng = event.startLongitude;
-  return [
-    if (startLat != null && startLng != null) LatLng(startLat, startLng),
-    for (final mission in event.missions)
-      if (mission.latitude case final lat? when mission.longitude != null) LatLng(lat, mission.longitude ?? 0),
-  ];
-}
 
 /// A team gets a pin once it has started and has sent a position: (0, 0) is
 /// what a team holds before its first one.

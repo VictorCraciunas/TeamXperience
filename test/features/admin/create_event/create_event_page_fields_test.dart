@@ -15,6 +15,8 @@ Event _full() => Event(
       maxTeams: 14,
       startLatitude: 45.7971,
       startLongitude: 24.152,
+      finishLatitude: 45.7975,
+      finishLongitude: 24.1513,
       meetingPointNote: 'Piața Mare, lângă fântână',
       arriveMinutesBefore: 20,
       whatToBring: ['Telefon încărcat', 'încălțări comode'],
@@ -34,6 +36,7 @@ void main() {
     expect(c.teamSizeMaxController.text, '5');
     expect(c.maxTeamsController.text, '14');
     expect(c.startPinController.text, '45.7971, 24.1520');
+    expect(c.finishPinController.text, '45.7975, 24.1513');
     expect(c.meetingNoteController.text, 'Piața Mare, lângă fântână');
     expect(c.arriveBeforeController.text, '20');
     expect(c.whatToBringController.text, 'Telefon încărcat\nîncălțări comode');
@@ -50,6 +53,7 @@ void main() {
     expect(e.difficulty, Difficulty.medium);
     expect((e.teamSizeMin, e.teamSizeMax, e.maxTeams), (3, 5, 14));
     expect((e.startLatitude, e.startLongitude), (45.7971, 24.152));
+    expect((e.finishLatitude, e.finishLongitude), (45.7975, 24.1513));
     expect(e.meetingPointNote, 'Piața Mare, lângă fântână');
     expect(e.arriveMinutesBefore, 20);
     expect(e.whatToBring, ['Telefon încărcat', 'încălțări comode']);
@@ -98,9 +102,9 @@ void main() {
   });
 
   test('the start pin field is checked', () {
-    expect(CreateEventController.startPinProblem(''), isNull);
-    expect(CreateEventController.startPinProblem('45.79, 24.15'), isNull);
-    expect(CreateEventController.startPinProblem('Piața Mare'), 'Coordonate greșite');
+    expect(CreateEventController.pinProblem(''), isNull);
+    expect(CreateEventController.pinProblem('45.79, 24.15'), isNull);
+    expect(CreateEventController.pinProblem('Piața Mare'), 'Coordonate greșite');
   });
 
   test('old text the form cannot read is kept when the field stays empty', () {

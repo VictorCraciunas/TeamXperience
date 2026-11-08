@@ -71,6 +71,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       controller.teamSizeMaxController,
       controller.maxTeamsController,
       controller.startPinController,
+      controller.finishPinController,
       controller.meetingNoteController,
       controller.arriveBeforeController,
       controller.whatToBringController,
@@ -182,13 +183,28 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     label: 'Coordonate start',
                     hint: '45.7971, 24.1520',
                     helper: 'Copiază din Google Maps, ex. 45.7971, 24.1520',
-                    validator: (v) => CreateEventController.startPinProblem(v ?? ''),
+                    validator: (v) => CreateEventController.pinProblem(v ?? ''),
                   ),
                   const SizedBox(height: 8),
                   PinFieldButton(
                     current: () => parseCoordinates(controller.startPinController.text),
                     onPicked: (place) =>
                         controller.startPinController.text = formatCoordinates(place.lat, place.lng),
+                  ),
+                  const SizedBox(height: 20),
+                  AppTextField(
+                    controller: controller.finishPinController,
+                    label: 'Coordonate final',
+                    hint: '45.7971, 24.1520',
+                    helper: 'Opțional. Cu start și final, pagina evenimentului arată traseul pe hartă.',
+                    validator: (v) => CreateEventController.pinProblem(v ?? ''),
+                  ),
+                  const SizedBox(height: 8),
+                  PinFieldButton(
+                    current: () => parseCoordinates(controller.finishPinController.text),
+                    near: parseCoordinates(controller.startPinController.text),
+                    onPicked: (place) =>
+                        controller.finishPinController.text = formatCoordinates(place.lat, place.lng),
                   ),
                   const SizedBox(height: 20),
                   AppTextField(

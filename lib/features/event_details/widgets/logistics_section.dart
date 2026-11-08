@@ -4,18 +4,25 @@ import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/layout/outline_card.dart';
 import 'package:teamxperience/utils/event_formats.dart';
 
+import '../logic/route_preview.dart';
+import 'event_route_map.dart';
 import 'logistics_row.dart';
 import 'mini_route_sketch.dart';
 
 /// "Logistică": where to meet, when to be there, until when to sign up and
-/// what to bring, under a little route sketch.
+/// what to bring, under the route's map, or a little sketch until the event
+/// has a start and a finish pin.
 class LogisticsSection extends StatelessWidget {
-  const LogisticsSection({super.key, required this.event});
+  const LogisticsSection({super.key, required this.event, this.showMapTiles = true});
 
   final Event event;
 
+  /// Off in tests, which have no network.
+  final bool showMapTiles;
+
   @override
   Widget build(BuildContext context) {
+    final route = routePreviewOf(event);
     final start = event.dateEvent;
     final deadline = event.dateDeadlineEnrollment;
     final note = event.meetingPointNote?.trim() ?? '';
@@ -31,7 +38,10 @@ class LogisticsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const MiniRouteSketch(),
+          if (route != null)
+            EventRouteMap(route: route, showTiles: showMapTiles)
+          else
+            const MiniRouteSketch(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Column(

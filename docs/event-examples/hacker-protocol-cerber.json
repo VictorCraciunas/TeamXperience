@@ -5,6 +5,8 @@
   "punctDeStart": "Piața Mare, la baza Turnului Sfatului",
   "startLatitude": 45.7971,
   "startLongitude": 24.152,
+  "finishLatitude": 45.7978,
+  "finishLongitude": 24.1525,
   "finishPoint": "Catedrala Evanghelică",
   "area": "Orașul de Sus",
   "routeLengthKm": 3.2,

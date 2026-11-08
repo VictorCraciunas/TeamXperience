@@ -85,6 +85,8 @@ Event _readEvent(Map<String, dynamic> map, List<String> errors) {
     maxTeams: reader.whole('maxTeams', min: 1, max: 500),
     startLatitude: reader.decimal('startLatitude', min: -90, max: 90),
     startLongitude: reader.decimal('startLongitude', min: -180, max: 180),
+    finishLatitude: reader.decimal('finishLatitude', min: -90, max: 90),
+    finishLongitude: reader.decimal('finishLongitude', min: -180, max: 180),
     meetingPointNote: reader.text('meetingPointNote'),
     arriveMinutesBefore: reader.whole('arriveMinutesBefore', min: 0, max: 120) ?? 15,
     whatToBring: reader.texts('whatToBring'),

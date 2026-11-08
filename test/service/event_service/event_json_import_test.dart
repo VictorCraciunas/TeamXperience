@@ -50,6 +50,8 @@ void main() {
         'maxTeams': 14,
         'startLatitude': 45.7971,
         'startLongitude': 24.152,
+        'finishLatitude': 45.7975,
+        'finishLongitude': 24.1513,
         'meetingPointNote': 'Piața Mare, lângă fântână',
         'arriveMinutesBefore': 15,
         'whatToBring': ['Telefon încărcat', 'încălțări comode'],
@@ -62,6 +64,7 @@ void main() {
           ('Orașul de Sus', 'Turnul Sfatului', 4.5, 120, 'medium'));
       expect((e.teamSizeMin, e.teamSizeMax, e.maxTeams, e.arriveMinutesBefore), (2, 6, 14, 15));
       expect((e.startLatitude, e.startLongitude), (45.7971, 24.152));
+      expect((e.finishLatitude, e.finishLongitude), (45.7975, 24.1513));
       expect(e.meetingPointNote, 'Piața Mare, lângă fântână');
       expect(e.whatToBring, ['Telefon încărcat', 'încălțări comode']);
       expect((e.story, e.organiserName), ('Un cartograf a lăsat o hartă.', 'TeamXperience'));
