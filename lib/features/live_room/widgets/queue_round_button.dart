@@ -7,14 +7,14 @@ class QueueRoundButton extends StatelessWidget {
     super.key,
     required this.icon,
     required this.label,
-    required this.fill,
+    this.fill,
     required this.ink,
     this.onTap,
   });
 
   final IconData icon;
   final String label;
-  final Color fill;
+  final Color? fill;
   final Color ink;
   final VoidCallback? onTap;
 

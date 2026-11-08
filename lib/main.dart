@@ -11,14 +11,16 @@ import 'package:teamxperience/features/admin/shell/screen/admin_shell.dart';
 import 'package:teamxperience/features/calendar/screen/calendar_screen.dart';
 import 'package:teamxperience/features/chat/screen/chat_screen.dart';
 import 'package:teamxperience/features/enter_code/screen/enter_code.dart';
-import 'package:teamxperience/features/event_management/screen/event_management_screen.dart';
+import 'package:teamxperience/features/live_room/screen/live_board_screen.dart';
+import 'package:teamxperience/features/live_room/screen/live_map_screen.dart';
+import 'package:teamxperience/features/live_room/screen/live_room_screen.dart';
 import 'package:teamxperience/features/event_details/screen/event_details_screen.dart';
 import 'package:teamxperience/features/event_game/screen/event_game_screen.dart';
 import 'package:teamxperience/features/event_game/screen/puzzle_game_screen.dart';
 import 'package:teamxperience/features/event_see_registered_teams/event_registered_teams_screen.dart';
 import 'package:teamxperience/features/filter/filter_news/screen/filter_news.dart';
 import 'package:teamxperience/features/forgot-password/screen/forgot_password_screen.dart';
-import 'package:teamxperience/features/map/screen/map_screen.dart';
+
 import 'package:teamxperience/features/news_category_manipulation/screen/news_catergory_manipulation_screen.dart';
 import 'package:teamxperience/features/news_dashboard/screen/stiri_dashboard_screen.dart';
 import 'package:teamxperience/features/news_details/news_screen.dart';
@@ -171,11 +173,12 @@ class MyApp extends StatelessWidget {
                 Routes.enterCodeScreen: (_) => const EnterCode(),
                 Routes.chatScreen: (_) => const ChatScreen(),
                 Routes.teamConversations: (_) => const TeamChatsScreen(),
-                Routes.map: (_) => const MapScreen(),
+                Routes.map: (_) => const LiveMapScreen(),
                 Routes.sendNotification: (_) => const NotificationScreen(),
                 Routes.eventRegisteredTeams:
                     (_) => const EventRegisteredTeams(),
-                Routes.eventManagement: (_) => const EventManagementScreen(),
+                Routes.eventManagement: (_) => const LiveRoomScreen(),
+                Routes.liveBoard: (_) => const LiveBoardScreen(),
               },
             ),
       ),

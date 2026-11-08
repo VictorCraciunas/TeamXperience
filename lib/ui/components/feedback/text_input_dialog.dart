@@ -11,6 +11,7 @@ Future<String?> showTextInputDialog(
   required String confirmLabel,
   String cancelLabel = 'Anulează',
   String emptyMessage = 'Scrie un nume',
+  String initialText = '',
 }) {
   return showDialog<String>(
     context: context,
@@ -21,6 +22,7 @@ Future<String?> showTextInputDialog(
           confirmLabel: confirmLabel,
           cancelLabel: cancelLabel,
           emptyMessage: emptyMessage,
+          initialText: initialText,
         ),
   );
 }
@@ -32,6 +34,7 @@ class _TextInputDialog extends StatefulWidget {
     required this.confirmLabel,
     required this.cancelLabel,
     required this.emptyMessage,
+    required this.initialText,
   });
 
   final String title;
@@ -39,13 +42,14 @@ class _TextInputDialog extends StatefulWidget {
   final String confirmLabel;
   final String cancelLabel;
   final String emptyMessage;
+  final String initialText;
 
   @override
   State<_TextInputDialog> createState() => _TextInputDialogState();
 }
 
 class _TextInputDialogState extends State<_TextInputDialog> {
-  final TextEditingController _controller = TextEditingController();
+  late final TextEditingController _controller = TextEditingController(text: widget.initialText);
   String? _error;
 
   @override

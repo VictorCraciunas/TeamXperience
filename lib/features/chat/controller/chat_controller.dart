@@ -38,6 +38,12 @@ class ChatController{
     messageService.sendMessage(eventId, team.name, chatTextField.text,user!);
   }
 
+  /// The organiser has seen this chat: the live room stops asking about it.
+  /// A failure only leaves the card up.
+  void markRead() {
+    teamService.clearUnread(eventId, team.name).catchError((_) {});
+  }
+
   Stream<QuerySnapshot<Map<String, dynamic>>>  getMessages() {
     return messageService.getMessages(eventId, team.name);
   }

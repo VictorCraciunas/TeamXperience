@@ -40,7 +40,6 @@ class StuckAttentionCard extends StatelessWidget {
             QueueRoundButton(
               icon: TablerIcons.message_circle,
               label: 'Scrie echipei',
-              fill: Colors.transparent,
               ink: colors.accent,
               onTap: onChat,
             ),
