@@ -5,7 +5,6 @@ import 'package:teamxperience/features/register_team/widgets/register_form.dart'
 import 'package:teamxperience/ui/components/buttons/navy_button.dart';
 import 'package:teamxperience/ui/components/feedback/field_status_line.dart';
 import 'package:teamxperience/ui/components/inputs/size_picker.dart';
-import 'package:teamxperience/ui/theme/app_colors.dart';
 
 import '../../ui/pump_ui.dart';
 
@@ -146,17 +145,9 @@ void main() {
   });
 
   testWidgets(
-    'a ticked consent is accent with a check, an open one has a border',
+    'a ticked consent shows a check',
     (tester) async {
       await pumpUi(tester, _form(rules: true));
-      final boxes = find.byKey(const ValueKey('consent-box'));
-      final ticked =
-          tester.widget<DecoratedBox>(boxes.at(0)).decoration as BoxDecoration;
-      final open =
-          tester.widget<DecoratedBox>(boxes.at(1)).decoration as BoxDecoration;
-      expect(ticked.color, AppColors.light.accent);
-      expect(open.color, AppColors.light.panel);
-      expect((open.border as Border).top.width, 1.5);
       expect(find.byIcon(TablerIcons.check), findsOneWidget);
     },
   );

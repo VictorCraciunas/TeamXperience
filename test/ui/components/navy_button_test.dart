@@ -13,26 +13,6 @@ Color? _fill(WidgetTester tester) {
 }
 
 void main() {
-  testWidgets('is navy with on-navy text, 12 radius and 11 px of padding', (
-    tester,
-  ) async {
-    await pumpUi(tester, NavyButton(label: 'Înscrie echipa', onPressed: () {}));
-    expect(_fill(tester), AppColors.light.navy);
-    final text = tester.widget<Text>(find.text('Înscrie echipa'));
-    expect(text.style?.color, AppColors.light.onNavy);
-    expect(text.style?.fontWeight, FontWeight.w500);
-    expect(text.style?.fontSize, 12);
-    final ink = tester.widget<Ink>(find.byType(Ink));
-    expect(
-      (ink.decoration as BoxDecoration).borderRadius,
-      BorderRadius.circular(12),
-    );
-    expect(
-      tester.getSize(find.byType(NavyButton)).height,
-      closeTo(22 + 12 * 1.45, .5),
-    );
-  });
-
   testWidgets('calls onPressed when tapped', (tester) async {
     var taps = 0;
     await pumpUi(

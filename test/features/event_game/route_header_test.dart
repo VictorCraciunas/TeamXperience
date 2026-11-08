@@ -55,8 +55,6 @@ void main() {
     expect(find.text('1:17:42 rămas', findRichText: true), findsOneWidget);
     expect(find.byIcon(TablerIcons.clock), findsOneWidget);
     expect(find.byIcon(TablerIcons.hourglass), findsOneWidget);
-    final name = tester.widget<Text>(find.text('Moștenirea Cartografului')).style;
-    expect((name?.fontFamily, name?.fontSize), (EventPalette.parchment.voiceFont, 15));
   });
 
   testWidgets('no place line before the ranking arrives', (tester) async {

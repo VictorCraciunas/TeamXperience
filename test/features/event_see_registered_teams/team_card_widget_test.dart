@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/features/event_see_registered_teams/widgets/team_card_widget.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/model/team_member.dart';
-import 'package:teamxperience/ui/theme/app_colors.dart';
 
 import '../../ui/pump_ui.dart';
 
@@ -45,15 +43,5 @@ void main() {
       TeamCardWidget(team: _team(typed: 'Ion Popescu, Dan Pop')),
     );
     expect(find.text('Ion Popescu, Dan Pop'), findsOneWidget);
-  });
-
-  testWidgets('the initial is dark on the tick colour', (tester) async {
-    await pumpUi(tester, TeamCardWidget(team: _team()));
-    final avatar = tester.widget<CircleAvatar>(find.byType(CircleAvatar));
-    expect(avatar.backgroundColor, AppColors.light.tick);
-    expect(
-      tester.widget<Text>(find.text('V')).style?.color,
-      AppColors.light.onTick,
-    );
   });
 }

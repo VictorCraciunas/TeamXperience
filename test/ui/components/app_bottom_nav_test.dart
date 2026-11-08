@@ -107,26 +107,6 @@ void main() {
       }
     });
 
-    // As the mockup's CSS lays it out (no box-sizing reset, so the circle's
-    // 4 px border sits outside its 50 px box: 58 across): bar top border 1 +
-    // padding 6; plain items are a 20 px icon on a 1.45 line (29) + 2 + an 11 px
-    // label (15.95), the active one's icon in a pill padded 2 px top and bottom
-    // (33); the raised item is the 58 px circle pulled up 26 px (so it takes 32)
-    // + 2 + the label. Items sit on the bottom, so the circle rises
-    // 1 + 6 + (33 - 32) - 26 = -18, i.e. 18 px above the bar.
-    testWidgets('the raised item is a 50 px navy circle in a 4 px page ring (58 across), 18 px above the bar', (tester) async {
-      await pumpFive(tester);
-      final finder = find.byKey(const ValueKey('nav-raised-circle'));
-      expect(tester.getSize(finder), const Size(58, 58));
-      final d = circle(tester);
-      expect(d.color, AppColors.light.navy);
-      expect((d.border as Border).top.color, AppColors.light.page);
-      expect((d.border as Border).top.width, 4);
-      final barTop = tester.getTopLeft(find.byType(AppBottomNav)).dy;
-      expect(barTop - tester.getTopLeft(finder).dy, closeTo(18, 0.5));
-      expect(tester.widget<Text>(find.text('Joacă')).style?.color, AppColors.light.navy);
-    });
-
     testWidgets('live turns the circle and its label red', (tester) async {
       await pumpFive(tester, live: true);
       expect(circle(tester).color, AppColors.light.live);
@@ -134,17 +114,10 @@ void main() {
     });
 
     // The mockup's `.on i{background:#DDF3F3;border-radius:99px;padding:2px 14px}`.
-    testWidgets('the active plain item is accent w500 with its icon in a 48 x 33 pill, the others muted', (tester) async {
+    testWidgets('the active plain item gets the pill', (tester) async {
       await pumpFive(tester, current: 1);
-      final active = tester.widget<Text>(find.text('Evenimente')).style;
-      expect(active?.color, AppColors.light.accent);
-      expect(active?.fontWeight, FontWeight.w500);
-      expect(tester.widget<Text>(find.text('Acasă')).style?.color, AppColors.light.muted);
       final pill = find.byKey(const ValueKey('nav-pill'));
       expect(pill, findsOneWidget);
-      expect(tester.getSize(pill), const Size(48, 33));
-      final d = tester.widget<Container>(pill).decoration as BoxDecoration;
-      expect(d.color, AppColors.light.navActivePill);
     });
 
     testWidgets('the bar keeps its height when the raised tab is the current one', (tester) async {

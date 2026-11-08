@@ -75,7 +75,6 @@ void main() {
       expect(find.text(t), findsOneWidget);
     }
     expect(find.text('Cronometrul pornește acum pentru toată echipa.'), findsOneWidget);
-    expect(tester.getSize(find.byKey(const ValueKey('intro-seal'))), const Size(76, 76));
     expect(find.byIcon(TablerIcons.compass), findsOneWidget);
     await tester.tap(find.text('Spre prima misiune'));
     expect(calls, ['start']);

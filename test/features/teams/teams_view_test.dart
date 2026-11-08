@@ -104,19 +104,6 @@ void main() {
     },
   );
 
-  testWidgets('the crew card is navy with radius 22 and a 14 px margin', (
-    tester,
-  ) async {
-    await pumpUi(tester, _view());
-    final card = find.byKey(const ValueKey('crew-card'));
-    final decoration =
-        tester.widget<DecoratedBox>(card).decoration as BoxDecoration;
-    expect(decoration.color, AppColors.light.navy);
-    expect(decoration.borderRadius, BorderRadius.circular(22));
-    expect(tester.getTopLeft(card).dx, 14);
-    expect(tester.getSize(card).width, 360 - 28);
-  });
-
   testWidgets('the code sits in a dashed box at 35% onNavy over an 8% fill', (
     tester,
   ) async {

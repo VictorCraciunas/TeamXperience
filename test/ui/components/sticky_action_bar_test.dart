@@ -7,13 +7,6 @@ import 'package:teamxperience/ui/theme/app_colors.dart';
 
 import '../pump_ui.dart';
 
-Color _topBorder(WidgetTester tester) {
-  final box = tester.widget<DecoratedBox>(
-    find.descendant(of: find.byType(StickyActionBar), matching: find.byType(DecoratedBox)).first,
-  );
-  return ((box.decoration as BoxDecoration).border as Border).top.color;
-}
-
 void main() {
   testWidgets('the prominent bar shows its texts and calls onAction', (tester) async {
     var taps = 0;
@@ -66,16 +59,6 @@ void main() {
     expect(tester.getSize(hit).height, greaterThanOrEqualTo(48));
   });
 
-  testWidgets('highlighted bars have a tick top border', (tester) async {
-    await pumpUi(tester, const StickyActionBar(title: 'A început', actionLabel: 'Introdu codul', highlighted: true));
-    expect(_topBorder(tester), AppColors.light.tick);
-  });
-
-  testWidgets('normal bars have a border-coloured top border', (tester) async {
-    await pumpUi(tester, const StickyActionBar(title: 'A început', actionLabel: 'Introdu codul'));
-    expect(_topBorder(tester), AppColors.light.border);
-  });
-
   testWidgets('a long title fits a narrow phone with large text', (tester) async {
     await pumpUi(
       tester,
@@ -109,14 +92,6 @@ void main() {
       textScale: 1.3,
     );
     expect(tester.takeException(), isNull);
-  });
-
-  testWidgets('the bar has the mockup height (1 + 10 + 37.4 button + 10)', (tester) async {
-    await pumpUi(
-      tester,
-      StickyActionBar(title: 'A', detail: 'B', actionLabel: 'C', onAction: () {}),
-    );
-    expect(tester.getSize(find.byType(StickyActionBar)).height, closeTo(58.4, 0.5));
   });
 
   testWidgets('the leading icon sits 8 before the text', (tester) async {

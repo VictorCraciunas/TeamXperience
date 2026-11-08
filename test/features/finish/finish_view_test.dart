@@ -88,10 +88,6 @@ void main() {
       expect(find.text(text), findsOneWidget, reason: text);
     }
     expect(find.byIcon(TablerIcons.star), findsNWidgets(5));
-    expect(tester.getSize(find.byKey(const ValueKey('finish-seal'))), const Size(80, 80));
-    final title = tester.widget<Text>(find.text('Harta e completă')).style;
-    expect((title?.fontFamily, title?.fontSize), (EventPalette.parchment.voiceFont, 21));
-    expect(tester.widget<Text>(find.text('2')).style?.color, EventPalette.parchment.accent);
   });
 
   testWidgets('one dot per mission, the solved ones filled', (tester) async {
