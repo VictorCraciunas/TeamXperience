@@ -10,7 +10,7 @@ You write one JSON object that describes a whole event: its details, its mission
 ## How to work
 
 1. If the person has not told you the essentials, ask for them first (briefly, all in one message): event name, city/location, where it starts and where it ends (the names and the map coordinates), date and time, who can join (public or private), route length, duration and difficulty, how many missions and where each one happens, and for each puzzle what it asks and its answer or place.
-2. **Never make up coordinates or answers.** A wrong pin sends teams to the wrong place, and a number that only looks right is hard to catch. If you do not have one, leave the key out and list what is missing in your notes: the import still works, and the draft shows the organiser what to fill in.
+2. **Never make up coordinates or answers.** A wrong pin sends teams to the wrong place, and a number that only looks right is hard to catch. If you do not have one, leave the key out and list what is missing in your notes. The import still works. The draft flags only a missing start pin, puzzle answer or location puzzle's coordinates: a missing finish pin or mission place publishes without a warning, so your notes are the only reminder.
 3. Write the **content in Romanian** unless asked otherwise.
 4. Answer with **one JSON code block** and nothing inside it except JSON (no comments, no trailing commas). Put any notes after the block, not inside it.
 5. Keep to the values listed in this file. Do not invent keys or values: the app ignores unknown keys, but it **refuses the whole import** if a value is not one of the listed ones (a wrong `type`, a font weight, a colour that is not `#RRGGBB`, a number outside its range). The message says where the mistake is.
@@ -205,7 +205,7 @@ A one-mission event with a code puzzle. The coordinates only show the format. (A
 | `routeLengthKm` | Number from 0.1 to 100, the route in km, for example `4.5`. Shown as "4,5 km". |
 | `durationMinutes` | Whole number from 10 to 600, for example `120`. Shown as "2 h", `90` as "1 h 30". The game still ends 3 hours after `dateEvent`, so keep it at `180` or less. |
 | `difficulty` | `"easy"`, `"medium"` or `"hard"`, shown as one, two or three dots with "Ușoară", "Medie", "Grea". |
-| `teamSizeMin`, `teamSizeMax` | Whole numbers from 1 to 20, how many people a team can have. Default 2 and 6, shown as "Echipe de 2–6". `teamSizeMin` must not be larger than `teamSizeMax`: the import does not catch it, and no team could register. |
+| `teamSizeMin`, `teamSizeMax` | Whole numbers from 1 to 20, how many people a team can have. Default 2 and 6, shown as "Echipe de 2–6". `teamSizeMin` must not be larger than `teamSizeMax`: neither the import nor publishing catches it, and no team could register. |
 | `maxTeams` | Whole number from 1 to 500, how many teams can register. Leave it out for no limit. |
 | `meetingPointNote` | Free text, exactly where teams meet, for example `"Piața Mare, lângă fântână"`. Shown as "Start:" in the logistics. When missing, `punctDeStart` is shown. |
 | `arriveMinutesBefore` | Whole number from 0 to 120, default 15: "fii acolo la 9:45" for a 10:00 start. |
@@ -246,7 +246,7 @@ There is nothing to write for results either: places, XP, badges, memories and s
 | Field | What it can hold |
 |---|---|
 | `type` | `"code"`: players type an answer. `"geolocation"`: players must walk to a place. `"imageToUpload"`: players send a photo that an organiser approves in the chat. `"redirect"` and `"ar"` exist in the app but have **no special game behaviour yet**, so do not use them. |
-| `code` | Only for `"code"` puzzles. The correct answer. Not case-sensitive, spaces at the ends are ignored. Letters and digits, at most 10 characters, as long as `codeLength` of the code component. Leave out Romanian diacritics: "ș" and "s" count as different letters, and players on the street rarely type them. |
+| `code` | Only for `"code"` puzzles. The correct answer. Not case-sensitive, spaces at the ends are ignored. Letters and digits. With `"Separated"` boxes: at most 10 characters and exactly as long as `codeLength`. Leave out Romanian diacritics: "ș" and "s" count as different letters, and players on the street rarely type them. |
 | `latitude` | Only for `"geolocation"`. A number from -90 to 90, for example `45.7983`. |
 | `longitude` | Only for `"geolocation"`. A number from -180 to 180, for example `24.1521`. Players count as arrived within `radiusMeters` (**20 metres** by default) of the point, so choose a spot they can reach. |
 | `indiciu` | Free text. The hint for the puzzle. Optional. |
@@ -335,8 +335,8 @@ The place where players type the answer of a `code` puzzle.
 
 | Field | What it can hold |
 |---|---|
-| `codeLength` | A whole number from 1 to 10: how many characters the answer has. Default 5. It must match the length of the puzzle's `code`. |
-| `inputType` | `"Separated"` (one box per character) or `"Free"` (one single box). |
+| `codeLength` | A whole number from 1 to 10: how many boxes `"Separated"` shows. Default 5. It must match the length of the puzzle's `code`: nothing checks this, and an answer longer than the boxes cannot be typed, so the team is stuck. `"Free"` ignores it. |
+| `inputType` | `"Separated"` (one box per character) or `"Free"` (one single box, for an answer of any length). Missing means `"Free"`, so always write it. A `"Free"` box is only as wide as `width`, so give it a `width` near 200. |
 | `capsLock` | `"CapsLock"` (typed letters become capitals) or `"Fără"` (as typed). |
 | `frameCornerRadius` | A number from 0 to 50. The outer frame (only with `"Separated"`). Default 15. |
 | `inputCornerRadius` | A number from 0 to 50. Each box. Default 15. |
@@ -351,10 +351,10 @@ The place where players type the answer of a `code` puzzle.
 | `fontSize` | A number from 8 to 72. Default 16. |
 | `fontFamily` | One of the fonts listed under "Fonts" below. |
 | `textColor` | Hex colour of the typed characters. |
-| `frameBackgroundColor` | Hex colour of the frame (only with `"Separated"`). |
-| `inputBackgroundColor` | Hex colour of the boxes. |
-| `colorBorderContainer` | Hex colour of the frame border. |
-| `colorBorderInput` | Hex colour of each box border. |
+| `frameBackgroundColor` | Hex colour of the frame, drawn only with `"Separated"`. Whatever the `inputType` it also sets the page colour of the game (see "Colours"), and the cards' colour if the event has no `inputBackgroundColor`. |
+| `inputBackgroundColor` | Hex colour of the boxes. Default no fill. |
+| `colorBorderContainer` | Hex colour of the frame border. Default black. |
+| `colorBorderInput` | Hex colour of each box border. Default black. |
 | `enableGlow` | `true` or `false`. |
 | `glowColor` | Hex colour of the glow. Only used when `enableGlow` is `true`. |
 
@@ -385,20 +385,21 @@ Always `"#RRGGBB"` with 6 hex digits, for example `"#33FF66"`.
 What is behind the components of a puzzle, in this order:
 
 1. The picture in `taskBackgroundImageUrl`.
-2. Else the most common `frameBackgroundColor` of the event, which becomes the page colour of the game.
-3. Else the app's own page colour, which **follows the phone**: light by default, dark for a player who chose the dark theme.
+2. Else the most common `frameBackgroundColor` of the event, on any kind of component, which becomes the page colour of the game.
+3. Else the app's own page colour, which **follows the player's theme setting**: light by default, dark for a player who chose the dark theme.
 
 The third is the one to avoid, because text and typed characters without a `textColor` are always black, and they cannot be read on the dark page. So:
 
-- **Fix the page** with a picture or a `frameBackgroundColor`. An event with no `code` puzzle has no code frame, so it needs the picture.
+- **Fix the page** with a `frameBackgroundColor`, also when there is a picture: choose a colour close to the picture's, because it shows while the picture loads and if its link fails. With no `code` component, write it on a `text` component, where only the page uses it.
 - **Set `textColor`** on every `text` and `code` component.
-- On a dark page or picture use light colours such as `"#FFFFFF"`. On a light one use dark colours such as `"#1B1B1B"`.
+- On a dark page or picture use light colours such as `"#FFFFFF"`, also for `colorBorderInput` and `colorBorderContainer`: the boxes have no fill and black borders by default, so they disappear on dark. On a light page use dark colours such as `"#1B1B1B"`.
 
 ## What a playable puzzle looks like
 
 - **`code`**: a `text` component with the question, a `code` component whose `codeLength` equals the length of `code`, and a `button` component. Without the button, players cannot submit.
 - **`geolocation`**: a `text` component telling them where to go. The app adds the map, the distance and its own "Intră în cerc" button, which works once the team is within `radiusMeters`. Both `latitude` and `longitude` are required.
 - **`imageToUpload`**: a `text` component telling them what to photograph. The app adds the photo upload; an organiser approves the photo from the chat.
+- **Keep `geolocation` and `imageToUpload` puzzles short:** one short text and no tall picture. Only `code` puzzles scroll. On these two the app's map or upload and its button sit under your components, and tall content pushes them off the screen.
 - Every puzzle needs at least one component, otherwise the event cannot be published.
 
 ## Checklist before answering
@@ -408,16 +409,17 @@ The third is the one to avoid, because text and typed characters without a `text
 - [ ] `type` of the event is `"PUBLIC"` or `"PRIVAT"`.
 - [ ] The event has `finishPoint`, `startLatitude`, `startLongitude`, `routeLengthKm`, `durationMinutes` and `difficulty` (`easy`, `medium` or `hard`).
 - [ ] For the route map: `finishLatitude` and `finishLongitude` are there, and every mission has a place of its own or a `geolocation` puzzle.
-- [ ] No coordinate or answer is made up, and what is missing is listed in the notes after the JSON.
+- [ ] No coordinate or answer is made up. One you do not have is left out and listed in the notes after the JSON, even where another item here asks for it.
 - [ ] Every pair of coordinates is complete: both numbers or neither.
 - [ ] `teamSizeMin` is not larger than `teamSizeMax`, and `durationMinutes` is at most `180`.
 - [ ] Every mission has a `title`; one or two have `isTeaserPublic: true` and a `teaser`.
 - [ ] Every puzzle `type` is one of `code`, `imageToUpload`, `geolocation` (avoid `redirect` and `ar`).
-- [ ] Every `code` puzzle has `code` (at most 10 characters, no diacritics), a `code` component with a matching `codeLength`, and a `button` component.
+- [ ] Every `code` puzzle has `code` (at most 10 characters, no diacritics), a `code` component with `inputType` written and a matching `codeLength`, and a `button` component.
 - [ ] Every `geolocation` puzzle has both `latitude` and `longitude`.
 - [ ] Every puzzle has at least one component, and every component has a valid `type`.
 - [ ] `fontWeight` values are written exactly as listed, `fontFamily` is one of the fonts, spelled as in the list.
 - [ ] Colours are `#RRGGBB`.
-- [ ] The page is fixed with a picture or a `frameBackgroundColor`, and every `text` and `code` component has a `textColor` that reads on it.
+- [ ] The event has a `frameBackgroundColor` that fixes the page, and every `text` and `code` component has a `textColor` that reads on it.
+- [ ] Every `geolocation` and `imageToUpload` puzzle is short enough to leave room for the map or upload and its button.
 - [ ] No `id`, `eventId`, `status` keys.
 - [ ] Images are `https://` links or left out.

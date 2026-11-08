@@ -88,7 +88,7 @@ void main() {
       expect(preview?.line.length, greaterThan(2));
     });
 
-    test('looks the same on a light and a dark phone: the page and the text colours are set', () {
+    test('looks the same in the light and dark themes: the page and the text colours are set', () {
       final event = importEventFromJson(_jsonAfter('## Small example')).event;
       final components = [...?event?.missions.expand((m) => m.puzzles).expand((p) => p.components)];
       expect(styleHintsFrom(components, null).background, isNotNull);

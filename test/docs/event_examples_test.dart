@@ -47,11 +47,10 @@ void main() {
         expect(routePreviewOf(_load(file)), isNotNull);
       });
 
-      test('looks the same on a light and a dark phone: the page and the text colours are set', () {
+      test('looks the same in the light and dark themes: the page and the text colours are set', () {
         final event = _load(file);
         final components = [...event.missions.expand((m) => m.puzzles).expand((p) => p.components)];
-        final hasPicture = (event.taskBackgroundImageUrl ?? '').isNotEmpty;
-        expect(hasPicture || components.any((c) => c.frameBackgroundColor != null), isTrue);
+        expect(components.any((c) => c.frameBackgroundColor != null), isTrue);
         final written = components.where((c) => c.type == ComponentType.text || c.type == ComponentType.code);
         expect(written.map((c) => c.textColor), everyElement(isNotNull));
       });
