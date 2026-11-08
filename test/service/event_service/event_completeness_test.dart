@@ -185,6 +185,68 @@ void main() {
     });
   });
 
+  group('an answer that does not fit its boxes', () {
+    Puzzle boxes(String code, {int? length = 4, String? input = 'Separated'}) => Puzzle(
+          id: 'p',
+          type: PuzzleType.code,
+          code: code,
+          components: [Component(type: ComponentType.code, codeLength: length, inputType: input)],
+        );
+
+    test('longer than the boxes cannot be typed', () {
+      expect(puzzleIssues(boxes('ABCDE')), [PuzzleIssue.answerDoesNotFit]);
+    });
+
+    test('as long as the boxes is fine, and so is shorter, since it can still be typed', () {
+      expect(puzzleIssues(boxes('ABCD')), isEmpty);
+      expect(puzzleIssues(boxes('ABC')), isEmpty);
+    });
+
+    test('spaces at the ends are not typed, so they do not count', () {
+      expect(puzzleIssues(boxes(' ABCD ')), isEmpty);
+    });
+
+    test('no number of boxes means five', () {
+      expect(puzzleIssues(boxes('ABCDE', length: null)), isEmpty);
+      expect(puzzleIssues(boxes('ABCDEF', length: null)), [PuzzleIssue.answerDoesNotFit]);
+    });
+
+    test('one free box takes any length, also when the input type is left out', () {
+      expect(puzzleIssues(boxes('ABCDEFGHIJKLMNOP', input: 'Free')), isEmpty);
+      expect(puzzleIssues(boxes('ABCDEFGHIJKLMNOP', input: null)), isEmpty);
+    });
+
+    test('it is enough that one of two inputs fits', () {
+      final puzzle = boxes('ABCDE')..components.add(Component(type: ComponentType.code, inputType: 'Free'));
+      expect(puzzleIssues(puzzle), isEmpty);
+    });
+
+    test('a puzzle that is not a code puzzle is not checked', () {
+      expect(puzzleIssues(boxes('ABCDE')..type = PuzzleType.imageToUpload), isEmpty);
+    });
+
+    test('stops the event from being published, and says where', () {
+      final problems = publishProblems(_event(missions: [_mission([boxes('ABCDE')])]));
+      expect(problems.map((p) => p.text), ['Misiunea 1: Puzzle 1: răspunsul nu încape în căsuțe']);
+    });
+  });
+
+  group('team sizes', () {
+    test('a minimum above the maximum stops the event from being published', () {
+      final event = _event()
+        ..teamSizeMin = 6
+        ..teamSizeMax = 2;
+      expect(eventIssues(event), [EventIssue.teamSizeOrder]);
+    });
+
+    test('the same minimum and maximum is fine', () {
+      final event = _event()
+        ..teamSizeMin = 4
+        ..teamSizeMax = 4;
+      expect(eventIssues(event), isEmpty);
+    });
+  });
+
   group('publishProblems', () {
     test('event details come first, then each mission', () {
       final event = _event(missions: [

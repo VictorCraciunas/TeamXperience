@@ -15,6 +15,7 @@ import 'photo_puzzle_view.dart';
 class ImageUploadPuzzleWidget extends StatefulWidget {
   const ImageUploadPuzzleWidget({
     super.key,
+    this.header,
     required this.eventId,
     required this.teamName,
     required this.missionIndex,
@@ -33,6 +34,9 @@ class ImageUploadPuzzleWidget extends StatefulWidget {
   final VoidCallback onChat;
   final bool isMissionCompleted;
   final bool onPicture;
+
+  /// The organiser's content above the photo.
+  final Widget? header;
 
   @override
   State<ImageUploadPuzzleWidget> createState() => _ImageUploadPuzzleWidgetState();
@@ -72,14 +76,25 @@ class _ImageUploadPuzzleWidgetState extends State<ImageUploadPuzzleWidget> {
   @override
   Widget build(BuildContext context) {
     final controller = _controller;
-    if (controller == null) return const SizedBox.shrink();
+    final top = widget.header;
+    // Until the team is known: the organiser's content, and a spinner under it.
+    final loading = SingleChildScrollView(
+      child: Column(
+        children: [
+          if (top != null) top,
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: CircularProgressIndicator(color: context.eventPalette.accent),
+          ),
+        ],
+      ),
+    );
+    if (controller == null) return loading;
     return StreamBuilder<Team>(
       stream: controller.teamStream,
       builder: (context, snapshot) {
         final team = snapshot.data;
-        if (team == null) {
-          return Center(child: CircularProgressIndicator(color: context.eventPalette.accent));
-        }
+        if (team == null) return loading;
         return ListenableBuilder(
           listenable: controller,
           builder: (context, _) {
@@ -101,6 +116,7 @@ class _ImageUploadPuzzleWidgetState extends State<ImageUploadPuzzleWidget> {
               onContinue: widget.onSolved,
               onChat: widget.onChat,
               onPicture: widget.onPicture,
+              header: top,
             );
           },
         );

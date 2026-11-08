@@ -47,6 +47,7 @@ class LocationPuzzleView extends StatelessWidget {
     required this.onOpenSettings,
     this.onOpenLocationSettings,
     this.onPicture = false,
+    this.header,
   });
 
   final LocationViewState state;
@@ -66,6 +67,10 @@ class LocationPuzzleView extends StatelessWidget {
   /// gets its band).
   final bool onPicture;
 
+  /// The organiser's content above the map; it scrolls with the map, so the
+  /// bar stays on the screen however long it is.
+  final Widget? header;
+
   bool get _canEnter => switch (state) {
         LocationViewState.tracking => inside,
         LocationViewState.noTarget || LocationViewState.done => true,
@@ -75,6 +80,7 @@ class LocationPuzzleView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.eventPalette;
+    final top = header;
     final far = meters;
     final way = bearing;
 
@@ -158,7 +164,7 @@ class LocationPuzzleView extends StatelessWidget {
 
     return Column(
       children: [
-        Expanded(child: SingleChildScrollView(child: Column(children: body))),
+        Expanded(child: SingleChildScrollView(child: Column(children: [if (top != null) top, ...body]))),
         FrameBand(
           onPicture: onPicture,
           child: Padding(

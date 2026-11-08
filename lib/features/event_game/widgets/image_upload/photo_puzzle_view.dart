@@ -25,6 +25,7 @@ class PhotoPuzzleView extends StatelessWidget {
     required this.onChat,
     this.onPicture = false,
     this.error,
+    this.header,
   });
 
   /// Shown when the last photo did not go out.
@@ -42,9 +43,14 @@ class PhotoPuzzleView extends StatelessWidget {
   /// Whether the puzzle is drawn on the organiser's picture.
   final bool onPicture;
 
+  /// The organiser's content above the photo; it scrolls with the photo, so
+  /// the bar stays on the screen however long it is.
+  final Widget? header;
+
   @override
   Widget build(BuildContext context) {
     final palette = context.eventPalette;
+    final top = header;
     final canRedo = step == PhotoStep.waiting || step == PhotoStep.rejected;
 
     final failed = error;
@@ -85,12 +91,20 @@ class PhotoPuzzleView extends StatelessWidget {
       children: [
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
-            child: PhotoCard(
-              picture: picture,
-              onTake: step == PhotoStep.none ? onTakePhoto : null,
-              onRedo: canRedo ? onTakePhoto : null,
-              below: below,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (top != null) top,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
+                  child: PhotoCard(
+                    picture: picture,
+                    onTake: step == PhotoStep.none ? onTakePhoto : null,
+                    onRedo: canRedo ? onTakePhoto : null,
+                    below: below,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

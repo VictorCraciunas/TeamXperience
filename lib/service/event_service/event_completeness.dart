@@ -1,3 +1,4 @@
+import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
@@ -7,6 +8,7 @@ import 'package:teamxperience/model/puzzle.dart';
 enum PuzzleIssue {
   noType('lipsește tipul'),
   noAnswer('lipsește răspunsul'),
+  answerDoesNotFit('răspunsul nu încape în căsuțe'),
   noLocation('lipsește locația'),
   noComponents('nu are nimic pe ecran');
 
@@ -22,7 +24,11 @@ List<PuzzleIssue> puzzleIssues(Puzzle puzzle) {
   if (type == null) {
     issues.add(PuzzleIssue.noType);
   } else if (type == PuzzleType.code) {
-    if ((puzzle.code ?? '').trim().isEmpty) issues.add(PuzzleIssue.noAnswer);
+    if ((puzzle.code ?? '').trim().isEmpty) {
+      issues.add(PuzzleIssue.noAnswer);
+    } else if (_answerDoesNotFit(puzzle)) {
+      issues.add(PuzzleIssue.answerDoesNotFit);
+    }
   } else if (type == PuzzleType.geolocation) {
     if (!_validCoordinates(puzzle.latitude, puzzle.longitude)) {
       issues.add(PuzzleIssue.noLocation);
@@ -31,6 +37,18 @@ List<PuzzleIssue> puzzleIssues(Puzzle puzzle) {
 
   if (puzzle.components.isEmpty) issues.add(PuzzleIssue.noComponents);
   return issues;
+}
+
+/// How many boxes a separated code input shows when it does not say.
+const _defaultBoxes = 5;
+
+/// One character goes in each box of a separated input, so a longer answer can
+/// never be typed. A shorter one can, and one free box takes any length.
+bool _answerDoesNotFit(Puzzle puzzle) {
+  final inputs = puzzle.components.where((c) => c.type == ComponentType.code);
+  if (inputs.isEmpty) return false;
+  final length = (puzzle.code ?? '').trim().length;
+  return inputs.every((c) => c.inputType == 'Separated' && length > (c.codeLength ?? _defaultBoxes));
 }
 
 bool _validCoordinates(double? lat, double? lng) {
@@ -79,6 +97,7 @@ enum EventIssue {
   enrollmentAfterEvent('Înscrierile trebuie să se închidă înainte de eveniment'),
   noType('Lipsește tipul evenimentului'),
   noStartCode('Lipsește codul de start'),
+  teamSizeOrder('Minimul de membri e mai mare decât maximul'),
   noRoute('Lipsește lungimea traseului'),
   noDuration('Lipsește durata'),
   noDifficulty('Lipsește dificultatea'),
@@ -119,6 +138,7 @@ List<EventIssue> eventIssues(Event event) {
 
   if (event.type == null) issues.add(EventIssue.noType);
   if (_blank(event.startCode)) issues.add(EventIssue.noStartCode);
+  if (event.teamSizeMin > event.teamSizeMax) issues.add(EventIssue.teamSizeOrder);
   if (event.effectiveRouteKm == null) issues.add(EventIssue.noRoute);
   if (event.effectiveDurationMinutes == null) issues.add(EventIssue.noDuration);
   if (event.effectiveDifficulty == null) issues.add(EventIssue.noDifficulty);
@@ -165,11 +185,14 @@ double draftProgress(Event event) {
     EventIssue.enrollmentAfterEvent,
   };
 
-  // The enrolment checks are one detail, everything else is its own.
-  final detailChecks = EventIssue.values.length - enrollment.length + 1;
   final failedDetails = <Object>{
     for (final issue in eventIssues(event)) enrollment.contains(issue) ? 'enrollment' : issue,
   };
+
+  // The enrolment checks are one detail, everything else is its own. Team sizes
+  // count only when they are wrong: a new draft has good ones without any work.
+  final sizesWrong = failedDetails.contains(EventIssue.teamSizeOrder);
+  final detailChecks = EventIssue.values.length - enrollment.length + (sizesWrong ? 1 : 0);
 
   final missions = event.missions;
   final failedMissions = missions.where((m) => !isMissionComplete(m)).length;
