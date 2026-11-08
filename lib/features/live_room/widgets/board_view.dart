@@ -116,7 +116,7 @@ class BoardView extends StatelessWidget {
         SafeArea(
           top: false,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+            padding: const EdgeInsets.fromLTRB(14, 6.5, 14, 8.5),
             child: Row(
               children: [
                 Expanded(

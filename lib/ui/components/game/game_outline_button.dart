@@ -24,32 +24,38 @@ class GameOutlineButton extends StatelessWidget {
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: onTap,
-          child: DecoratedBox(
-            key: const ValueKey('game-outline-button'),
-            decoration: BoxDecoration(
-              border: Border.all(color: palette.accent, width: 1.5),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              // The mockup's 10, plus the 1.5 px border drawn inside.
-              padding: const EdgeInsets.all(11.5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (glyph != null) ...[
-                    Icon(glyph, size: 15, color: palette.accent),
-                    const SizedBox(width: 4),
-                  ],
-                  Flexible(
-                    child: Text(
-                      label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 12, height: 1.45, fontWeight: FontWeight.w500, color: palette.accent),
+          // A finger-sized tap area around what the mockup draws.
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: DecoratedBox(
+              key: const ValueKey('game-outline-button'),
+              decoration: BoxDecoration(
+                border: Border.all(color: palette.accent, width: 1.5),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                // The mockup's 10, plus the 1.5 px border drawn inside.
+                padding: const EdgeInsets.all(11.5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (glyph != null) ...[Icon(glyph, size: 15, color: palette.accent), const SizedBox(width: 4)],
+                    Flexible(
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          height: 1.45,
+                          fontWeight: FontWeight.w500,
+                          color: palette.accent,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

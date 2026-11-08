@@ -91,7 +91,7 @@ class BoardRowTile extends StatelessWidget {
                       behavior: HitTestBehavior.opaque,
                       onTap: onCall,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Text(
                           'Sună căpitanul',
                           textAlign: TextAlign.right,

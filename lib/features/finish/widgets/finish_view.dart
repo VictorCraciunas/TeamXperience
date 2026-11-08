@@ -116,7 +116,7 @@ class FinishView extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
           child: Row(
             children: [
               Expanded(

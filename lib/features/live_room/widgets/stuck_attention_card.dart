@@ -25,7 +25,8 @@ class StuckAttentionCard extends StatelessWidget {
       onTap: onTeam,
       child: OutlineCard(
         borderColor: colors.amber,
-        padding: const EdgeInsets.all(8),
+        // The bubble's tap area takes up the rest of the mockup's 8.
+        padding: const EdgeInsets.fromLTRB(8, 1, 0, 1),
         child: Row(
           children: [
             DecoratedBox(

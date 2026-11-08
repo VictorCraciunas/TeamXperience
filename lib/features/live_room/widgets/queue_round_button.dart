@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/misc/tap_area.dart';
 
-/// A 30 px round button on a queue card, in a 36 px tap area. Faded and silent
+/// A 30 px round button on a queue card, in a 48 px tap area. Faded and silent
 /// without [onTap].
 class QueueRoundButton extends StatelessWidget {
   const QueueRoundButton({
@@ -20,24 +21,14 @@ class QueueRoundButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      enabled: onTap != null,
+    return TapArea(
+      onTap: onTap,
       label: label,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: Opacity(
-          opacity: onTap == null ? .45 : 1,
-          child: SizedBox.square(
-            dimension: 36,
-            child: Center(
-              child: DecoratedBox(
-                decoration: BoxDecoration(color: fill, shape: BoxShape.circle),
-                child: SizedBox.square(dimension: 30, child: Icon(icon, size: 15, color: ink)),
-              ),
-            ),
-          ),
+      child: Opacity(
+        opacity: onTap == null ? .45 : 1,
+        child: DecoratedBox(
+          decoration: BoxDecoration(color: fill, shape: BoxShape.circle),
+          child: SizedBox.square(dimension: 30, child: Icon(icon, size: 15, color: ink)),
         ),
       ),
     );

@@ -14,11 +14,12 @@ class PuzzleBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+      // The controls' tap areas take up the rest of the mockup's 12 and 14.
+      padding: const EdgeInsets.fromLTRB(14, 9, 11, 11),
       child: Row(
         children: [
           Expanded(child: GameOutlineButton(label: 'Indiciu', icon: TablerIcons.bulb, onTap: onHint)),
-          const SizedBox(width: 8),
+          const SizedBox(width: 5),
           GameIconButton(icon: TablerIcons.message_circle, label: 'Chat cu organizatorul', onTap: onChat),
         ],
       ),

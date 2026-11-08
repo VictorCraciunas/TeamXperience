@@ -25,33 +25,34 @@ class GameFilledButton extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
-        child: DecoratedBox(
-          key: const ValueKey('game-filled-button'),
-          decoration: BoxDecoration(
-            color: enabled ? palette.accent : palette.ink.withValues(alpha: .12),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            // The 10 px of the mockup plus the 1.5 px border of its neighbour,
-            // so both buttons of a bar are the same height.
-            padding: const EdgeInsets.all(11.5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (glyph != null) ...[
-                  Icon(glyph, size: 15, color: fg),
-                  const SizedBox(width: 4),
-                ],
-                Flexible(
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 12, height: 1.45, fontWeight: FontWeight.w500, color: fg),
+        // A finger-sized tap area around what the mockup draws.
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: DecoratedBox(
+            key: const ValueKey('game-filled-button'),
+            decoration: BoxDecoration(
+              color: enabled ? palette.accent : palette.ink.withValues(alpha: .12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              // The 10 px of the mockup plus the 1.5 px border of its neighbour,
+              // so both buttons of a bar are the same height.
+              padding: const EdgeInsets.all(11.5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (glyph != null) ...[Icon(glyph, size: 15, color: fg), const SizedBox(width: 4)],
+                  Flexible(
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 12, height: 1.45, fontWeight: FontWeight.w500, color: fg),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

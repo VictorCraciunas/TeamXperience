@@ -33,48 +33,49 @@ class RouteHeader extends StatelessWidget {
     final small = TextStyle(fontSize: 11, height: 1.45, color: palette.ink);
 
     Widget clock(IconData icon, String value, String word) => Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 13, color: palette.ink),
-            const SizedBox(width: 3),
-            Text.rich(
-              TextSpan(children: [
-                TextSpan(
-                  text: value,
-                  style: const TextStyle(fontFamily: 'Monospace', fontWeight: FontWeight.w500),
-                ),
-                TextSpan(text: ' $word'),
-              ]),
-              style: small,
-            ),
-          ],
-        );
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 13, color: palette.ink),
+        const SizedBox(width: 3),
+        Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(text: value, style: const TextStyle(fontFamily: 'Monospace', fontWeight: FontWeight.w500)),
+              TextSpan(text: ' $word'),
+            ],
+          ),
+          style: small,
+        ),
+      ],
+    );
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(14, 12, 14, 8),
+          // The buttons' 48 px tap areas take up 8 of the mockup's padding.
+          padding: const EdgeInsets.fromLTRB(6, 4, 6, 0),
           child: Row(
             children: [
               RoundIconButton(icon: TablerIcons.x, label: 'Închide', onTap: onClose),
-              const SizedBox(width: 8),
               Expanded(
-                child: Column(
-                  children: [
-                    Text(
-                      eventName,
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontFamily: palette.voiceFont, fontSize: 15, height: 1.45, color: palette.ink),
-                    ),
-                    if (place != null)
-                      Text(place, textAlign: TextAlign.center, style: small.copyWith(color: palette.muted)),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Column(
+                    children: [
+                      Text(
+                        eventName,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontFamily: palette.voiceFont, fontSize: 15, height: 1.45, color: palette.ink),
+                      ),
+                      if (place != null)
+                        Text(place, textAlign: TextAlign.center, style: small.copyWith(color: palette.muted)),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(width: 8),
               RoundIconButton(icon: TablerIcons.message_circle, label: 'Chat cu organizatorul', onTap: onChat),
             ],
           ),
@@ -84,10 +85,7 @@ class RouteHeader extends StatelessWidget {
           child: Wrap(
             alignment: WrapAlignment.center,
             spacing: 16,
-            children: [
-              clock(TablerIcons.clock, played, 'jucat'),
-              clock(TablerIcons.hourglass, left, 'rămas'),
-            ],
+            children: [clock(TablerIcons.clock, played, 'jucat'), clock(TablerIcons.hourglass, left, 'rămas')],
           ),
         ),
       ],

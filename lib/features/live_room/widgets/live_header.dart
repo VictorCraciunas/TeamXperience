@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:teamxperience/ui/components/misc/tap_area.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 /// The dark bar on top of the live room and its board (mockup 09): back, a
@@ -24,22 +25,15 @@ class LiveHeader extends StatelessWidget {
       child: ColoredBox(
         color: colors.liveCard,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(14, MediaQuery.paddingOf(context).top + 12, 14, 12),
+          // The controls' 48 px tap areas take up most of the mockup's padding.
+          padding: EdgeInsets.fromLTRB(0, MediaQuery.paddingOf(context).top + 5, 6, 5),
           child: Row(
             children: [
-              Semantics(
-                button: true,
+              TapArea(
+                onTap: () => Navigator.maybePop(context),
                 label: 'Înapoi',
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () => Navigator.maybePop(context),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Icon(TablerIcons.arrow_left, size: 18, color: colors.onNavy),
-                  ),
-                ),
+                child: Icon(TablerIcons.arrow_left, size: 18, color: colors.onNavy),
               ),
-              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,7 +62,7 @@ class LiveHeader extends StatelessWidget {
                   ],
                 ),
               ),
-              for (final action in actions) ...[const SizedBox(width: 8), action],
+              ...actions,
             ],
           ),
         ),
