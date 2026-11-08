@@ -26,7 +26,7 @@
 - `firebase.json`: FlutterFire platform config + one functions codebase (`functions/`, predeploy `npm run build`).
 - No Firestore rules/indexes, no Storage rules, no hosting in repo. The `query` in `TeamRepo.getUserTeamForEvent` (`array-contains`) and `UserRepo.findByEmail` rely on default single-field indexes only.
 - Functions and rules tests: `npm --prefix functions run test:unit` runs the pure tests; `npm --prefix functions test` runs everything on the Firestore and Auth emulators (project `demo-teamxperience`, nothing touches the live project). It uses the Firebase CLI on your PATH; 14.11.2 with Java 17 works.
-- Cloud Functions runtime Node 20; deps `firebase-admin ^11.11.1`, `firebase-functions ^4.3.1`, TS `^4.9`. A root `package-lock.json` also exists (unused).
+- Cloud Functions runtime Node 22 (Node 20 was retired on 2026-10-30; Node 22 stops being deployable on 2028-10-31); deps `firebase-admin ^11.11.1`, `firebase-functions ^4.3.1`, TS `^4.9`. A root `package-lock.json` also exists (unused).
 
 ## External services
 - Firebase Auth (email/password, Google), Firestore, Storage, FCM.

@@ -46,7 +46,7 @@ Registered in `main.dart`:
 ## utils/
 `auth_util.dart` (role redirect), `calendar_helper.dart` (Romanian date/time formatting + date-picker helper), `color_conversion.dart` (hex ↔ Color), `image_helper.dart` (gallery picker + `eventImageCache` CacheManager), `link_util.dart` (open URLs), `component_conversion/` (`Component` → runtime widgets, see `ui-and-theme.md`).
 
-## functions/ (Firebase Cloud Functions v2, Node 20, TypeScript, `functions/src/index.ts`)
+## functions/ (Firebase Cloud Functions v2, Node 22, TypeScript, `functions/src/index.ts`)
 - `sendNotification` (callable, `functions/src/notifications/`) — input `{title, description, eventId?}`. Refuses anyone whose `users/{uid}.role` is not `ADMIN` (`notOrganiser`), a blank title or text or a non-text event id (`notificationInvalid`), and nobody to reach (`noRecipients`). Reads `users` (filtered by `registeredEventIds array-contains eventId` when given), collects non-empty `fcmToken`s, sends via FCM multicast. Answers `{recipients, sent, failed}`.
 - `onChatMessage` (Firestore `onDocumentCreated` on `events/{eventId}/teams/{teamName}/messages/{messageId}`) — if `sender == "ADMIN"` notifies team members (tokens of `team.userIds`), otherwise notifies admin users.
 - Deploy: `firebase deploy --only functions` (predeploy runs `npm run build`). `functions/lib/` and `node_modules/` are build output.
