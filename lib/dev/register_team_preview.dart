@@ -92,7 +92,7 @@ class _RegisterTeamPreviewState extends State<RegisterTeamPreview> {
                       InviteResultSection(
                         code: 'VLP-482',
                         size: _size,
-                        captainInitials: 'VC',
+                        initials: const ['VC'],
                         onShare: () => _say('WhatsApp'),
                         onCopy: () => _say('copiază'),
                       ),

@@ -40,6 +40,8 @@ class _TeamsScreenState extends State<TeamsScreen> {
             myUid: controller.myUid,
             loading: controller.loading,
             failed: controller.error != null,
+            seasonName: controller.season.name,
+            standings: controller.standings,
             onRetry: controller.retry,
             onNewCrew: controller.openNewCrew,
             onJoin: controller.openJoin,

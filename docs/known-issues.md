@@ -37,3 +37,8 @@ Verify before fixing; none of these were reproduced. Roughly ordered by impact.
 - `sendNotification` HTTP function has no authentication (anyone with the URL can POST and push to all users).
 - `firebase_options.dart` / `google-services.json` are public client config by design, but the project's rules decide what they can access.
 
+## Rules (step 3b)
+- Everyone signed in can read `users` (emails, push tokens), because `findByEmail` queries by email, and `events` (drafts, answer codes, start codes), because the app lists them unfiltered. Moving answers out of the event document would close the second, and is the bigger part of stopping cheating.
+- Everyone signed in can read each team's captain phone and email, because the team documents are public to the event pages. Moving them to a private sub-document is a larger follow-up.
+- A hand-made client can lower its own team's `attempts` and `lockedUntil` (rules cannot walk a map to compare each value), add to its own `walked` freely (1000 km in one write), move +1 mission at a time to the end, skip the start code and skip hint marks. "A client cannot change points" holds for the sums, not for these inputs.
+- Storage rules are not in the repo; the console's stay as they are.

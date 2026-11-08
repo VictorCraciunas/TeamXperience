@@ -1,3 +1,6 @@
+import 'package:teamxperience/model/team_member.dart';
+import 'package:teamxperience/model/user.dart';
+import 'package:teamxperience/model/crew.dart';
 import 'dart:async';
 
 import 'package:cloud_functions/cloud_functions.dart';
@@ -20,6 +23,10 @@ class _FakeTeams extends Fake implements TeamService {
   Object? failure;
   Completer<void>? hold;
   final registered = <Map<String, Object?>>[];
+  List<Crew> crews = const [];
+
+  @override
+  Stream<List<Crew>> streamUserCrews(String uid) => Stream.value(crews);
 
   @override
   Future<bool?> isTeamNameFree(String eventId, String name) async => free;
@@ -41,6 +48,7 @@ class _FakeTeams extends Fake implements TeamService {
       'phone': phone,
       'rules': rulesAccepted,
       'photo': photoConsent,
+      if (crewId != null) 'crewId': crewId,
     });
     await hold?.future;
     final error = failure;
@@ -73,7 +81,23 @@ class _RecordingUser extends UserProvider {
 
   @override
   void addRegisteredEvent(String eventId) => added.add(eventId);
+
+  @override
+  AppUser? get currentUser =>
+      AppUser(email: 'a@b.ro', firstName: 'A', lastName: 'B', uid: 'u1', fcmToken: '');
 }
+
+Crew _crew(String id, {String captain = 'u1', int members = 2}) => Crew(
+  id: id,
+  name: 'Crew $id',
+  captainUid: captain,
+  memberUids: [for (var i = 0; i < members; i++) 'u$i'],
+  members: [
+    for (var i = 0; i < members; i++)
+      TeamMember(uid: 'u$i', displayName: 'P $i', initials: 'P'),
+  ],
+  inviteCode: 'VLP482',
+);
 
 Event _event({int min = 2, int max = 6}) => Event(
   eventId: 'e1',
@@ -259,6 +283,47 @@ void main() {
       expect(h.controller.displayInviteCode, 'VLP-482');
       expect(h.controller.sending, isFalse);
       expect(h.controller.canSubmit, isFalse);
+    });
+
+    testWidgets('a captain\'s crews that fit are offered', (tester) async {
+      final h = _Harness(tester);
+      h.teams.crews = [
+        _crew('mine'),
+        _crew('theirs', captain: 'someone'),
+        _crew('huge', members: 40),
+      ];
+      await h.pump();
+      await tester.pumpAndSettle();
+      expect(h.controller.crews.map((c) => c.id), ['mine']);
+      expect(h.controller.chosenCrew, isNull);
+    });
+
+    testWidgets('choosing a crew takes its name and room for everyone, and registers it', (tester) async {
+      final h = _Harness(tester);
+      h.teams.crews = [_crew('mine', members: 3)];
+      await h.pump(event: Event(eventId: 'e1', name: 'Harta', teamSizeMin: 2, teamSizeMax: 6));
+      await tester.pumpAndSettle();
+      await h.fillIn(name: 'Vulpile');
+      h.controller.setSize(2);
+      h.controller.chooseCrew(h.controller.crews.single);
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(h.controller.nameController.text, 'Crew mine');
+      expect(h.controller.sizeMin, 3);
+      expect(h.controller.size, greaterThanOrEqualTo(3));
+      await h.controller.submit();
+      expect(h.teams.registered.single['crewId'], 'mine');
+    });
+
+    testWidgets('going back to a new team sends no crew', (tester) async {
+      final h = _Harness(tester);
+      h.teams.crews = [_crew('mine')];
+      await h.pump();
+      await tester.pumpAndSettle();
+      h.controller.chooseCrew(h.controller.crews.single);
+      h.controller.chooseCrew(null);
+      await h.fillIn(name: 'Vulpile');
+      await h.controller.submit();
+      expect(h.teams.registered.single.containsKey('crewId'), isFalse);
     });
 
     testWidgets('does nothing while the blocker is set', (tester) async {

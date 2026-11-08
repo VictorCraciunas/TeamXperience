@@ -23,5 +23,9 @@ export function teamNameProblem(name: string): TeamNameProblem | null {
 
 /** The cleaned name lower-cased, for comparing names ignoring case. */
 export function nameKey(name: string): string {
-  return cleanTeamName(name).toLowerCase();
+  // The old cedilla letters and the right comma ones are the same letter.
+  return cleanTeamName(name)
+    .toLowerCase()
+    .replace(/\u015f/g, "\u0219")
+    .replace(/\u0163/g, "\u021b");
 }

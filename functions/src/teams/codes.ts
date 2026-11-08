@@ -4,7 +4,7 @@ const VOWELS = "AEIOU";
 export function codeLetters(teamName: string): string {
   const letters = teamName
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toUpperCase()
     .replace(/[^A-Z]/g, "");
 

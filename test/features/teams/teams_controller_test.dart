@@ -1,3 +1,4 @@
+import 'package:teamxperience/model/season_standing.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -22,6 +23,15 @@ class _FakeTeams extends Fake implements TeamService {
     streamedFor = uid;
     streams++;
     return crews.stream;
+  }
+
+  final standings = StreamController<List<SeasonStanding>>.broadcast();
+  String? seasonAsked;
+
+  @override
+  Stream<List<SeasonStanding>> streamStandings(String seasonId) {
+    seasonAsked = seasonId;
+    return standings.stream;
   }
 
   @override
@@ -101,6 +111,19 @@ void main() {
     await tester.pump();
     expect(controller.loading, isFalse);
     expect(controller.crews?.single.name, 'Vulpile');
+  });
+
+  testWidgets('follows this season\'s standings; a failed read leaves them empty', (tester) async {
+    final teams = _FakeTeams();
+    final controller = await _pump(tester, teams);
+    expect(teams.seasonAsked, seasonOf(DateTime.now()).id);
+    teams.standings.add(const [SeasonStanding(crewId: 'c1', crewName: 'Vulpile', points: 100)]);
+    await tester.pump();
+    expect(controller.standings.single.points, 100);
+    teams.standings.addError(Exception('offline'));
+    await tester.pump();
+    expect(controller.standings.single.points, 100);
+    expect(controller.error, isNull);
   });
 
   testWidgets('a stream error is kept for the screen', (tester) async {

@@ -204,7 +204,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                     if (controller.showsInviteCode) ...[
                       const SizedBox(height: 20),
                       InviteCodeCard(
-                        code: team.displayCode ?? '',
+                        code: controller.displayInviteCode ?? '',
                         caption: 'Codul echipei',
                         shareLabel: 'WhatsApp',
                         copyLabel: 'Copiază',

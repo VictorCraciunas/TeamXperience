@@ -1,3 +1,5 @@
+import 'package:teamxperience/backend/repo/season_repo.dart';
+import 'package:teamxperience/model/season_standing.dart';
 import 'package:teamxperience/backend/functions/team_functions.dart';
 import 'package:teamxperience/backend/repo/crew_repo.dart';
 import 'package:teamxperience/backend/repo/teamRepo.dart';
@@ -78,6 +80,12 @@ class TeamService {
   }
 
   Stream<List<Crew>> streamUserCrews(String uid) => _crews.streamUserCrews(uid);
+
+  /// The invite code of a crew the player is in.
+  Future<String?> crewInviteCode(String crewId) => _crews.inviteCode(crewId);
+
+  /// A season's top crews, most points first.
+  Stream<List<SeasonStanding>> streamStandings(String seasonId) => SeasonRepo().streamStandings(seasonId);
 
   Future<Team?> getUserTeamForEvent(String eventId, String userId) async {
     return teamRepo.getUserTeamForEvent(eventId, userId);

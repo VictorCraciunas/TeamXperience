@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/teams/widgets/new_crew_sheet.dart';
 import 'package:teamxperience/model/crew.dart';
+import 'package:teamxperience/model/season_standing.dart';
 import 'package:teamxperience/service/share_service.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
@@ -19,15 +20,25 @@ class TeamsController extends ChangeNotifier {
     required this.context,
     TeamService? teamService,
     ShareService? shareService,
+    DateTime? now,
   }) : _teams = teamService ?? TeamService(),
-       _share = shareService ?? ShareService() {
+       _share = shareService ?? ShareService(),
+       season = seasonOf(now ?? DateTime.now()) {
     _subscribe();
+    _subscribeSeason();
   }
 
   final BuildContext context;
   final TeamService _teams;
   final ShareService _share;
   StreamSubscription<List<Crew>>? _subscription;
+  StreamSubscription<List<SeasonStanding>>? _seasonSubscription;
+
+  /// The season now under way.
+  final ({String id, String name}) season;
+
+  /// Its top crews; empty until they arrive, or if they cannot be read.
+  List<SeasonStanding> standings = const [];
   bool _disposed = false;
 
   /// Null until the first answer.
@@ -47,6 +58,13 @@ class TeamsController extends ChangeNotifier {
           .streamUserCrews(uid)
           .listen(_onCrews, onError: _onError);
     }
+  }
+
+  void _subscribeSeason() {
+    _seasonSubscription = _teams.streamStandings(season.id).listen((value) {
+      standings = value;
+      if (!_disposed) notifyListeners();
+    }, onError: (Object _) {});
   }
 
   /// Follows the crews again after an error.
@@ -110,6 +128,7 @@ class TeamsController extends ChangeNotifier {
   void dispose() {
     _disposed = true;
     _subscription?.cancel();
+    _seasonSubscription?.cancel();
     super.dispose();
   }
 }

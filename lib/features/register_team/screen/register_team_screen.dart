@@ -1,3 +1,4 @@
+import 'package:teamxperience/features/register_team/widgets/crew_choice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:teamxperience/features/register_team/controller/register_team_controller.dart';
@@ -87,6 +88,12 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                           ScrollViewKeyboardDismissBehavior.onDrag,
                       child: Column(
                         children: [
+                          if (controller.crews.isNotEmpty && !controller.registered)
+                            CrewChoice(
+                              crews: controller.crews,
+                              chosen: controller.chosenCrew,
+                              onChoose: controller.chooseCrew,
+                            ),
                           RegisterForm(
                             nameController: controller.nameController,
                             phoneController: controller.phoneController,
@@ -94,7 +101,7 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                             onPhoneChanged: controller.onPhoneChanged,
                             nameStatus: controller.nameStatus,
                             nameStatusText: controller.nameStatusText,
-                            sizeMin: event.teamSizeMin,
+                            sizeMin: controller.sizeMin,
                             sizeMax: event.teamSizeMax,
                             size: controller.size,
                             onSizeChanged: controller.setSize,
@@ -112,7 +119,8 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                               key: _resultKey,
                               code: controller.displayInviteCode,
                               size: controller.size,
-                              captainInitials: controller.captainInitials,
+                              initials: controller.teamInitials,
+                              leftOut: controller.leftOutNames,
                               onShare: controller.shareInvite,
                               onCopy: controller.copyInvite,
                             ),

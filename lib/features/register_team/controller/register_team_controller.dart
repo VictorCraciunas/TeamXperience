@@ -1,3 +1,4 @@
+import 'package:teamxperience/model/crew.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +31,47 @@ class RegisterTeamController extends ChangeNotifier {
       isFree: (name) => _teams.isTeamNameFree(event.eventId, name),
     );
     nameCheck.state.addListener(notifyListeners);
+    _loadCrews();
+  }
+
+  /// The crews this captain can sign up again; none while loading or if they
+  /// cannot be read, which leaves just a new team.
+  List<Crew> crews = const [];
+
+  /// The crew being signed up; null for a new team.
+  Crew? chosenCrew;
+
+  Future<void> _loadCrews() async {
+    final uid = context.read<UserProvider>().currentUser?.uid;
+    if (uid == null || uid.isEmpty) return;
+    try {
+      final all = await _teams.streamUserCrews(uid).first;
+      if (_disposed) return;
+      crews = [
+        for (final crew in all)
+          if (crew.captainUid == uid && crew.members.length <= event.teamSizeMax) crew,
+      ];
+      notifyListeners();
+    } catch (_) {
+      // A new team still works.
+    }
+  }
+
+  /// The team must have room for everyone in the chosen crew.
+  int get sizeMin {
+    final members = chosenCrew?.members.length ?? 0;
+    return members > event.teamSizeMin ? members : event.teamSizeMin;
+  }
+
+  /// Signs up [crew] under its name, or goes back to a new team.
+  void chooseCrew(Crew? crew) {
+    chosenCrew = crew;
+    if (crew != null) {
+      nameController.text = crew.name;
+      onNameChanged(crew.name);
+      if (size < sizeMin) size = sizeMin;
+    }
+    notifyListeners();
   }
 
   final BuildContext context;
@@ -57,6 +99,22 @@ class RegisterTeamController extends ChangeNotifier {
 
   /// The invite code as shown, "VLP-482".
   String get displayInviteCode => displayCode(result?.inviteCode ?? '');
+
+  /// Who went into the team: the crew's who were free, or just the captain.
+  List<String> get teamInitials {
+    final crew = chosenCrew;
+    if (crew == null) return [captainInitials];
+    final skipped = result?.skippedUids ?? const <String>[];
+    return [for (final m in crew.members) if (!skipped.contains(m.uid)) m.initials];
+  }
+
+  /// The chosen crew's names left out of the team.
+  List<String> get leftOutNames {
+    final skipped = result?.skippedUids ?? const <String>[];
+    final crew = chosenCrew;
+    if (crew == null) return const [];
+    return [for (final m in crew.members) if (skipped.contains(m.uid)) m.displayName];
+  }
 
   /// The captain's initials, for the first place in the team.
   String get captainInitials {
@@ -122,6 +180,7 @@ class RegisterTeamController extends ChangeNotifier {
         phone: phoneController.text.trim(),
         rulesAccepted: rulesAccepted,
         photoConsent: photoConsent,
+        crewId: chosenCrew?.id,
       );
       userProvider.addRegisteredEvent(event.eventId);
       result = made;

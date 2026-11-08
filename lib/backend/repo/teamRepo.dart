@@ -80,6 +80,8 @@ class TeamRepo {
               if (url != null) 'url': url,
               'at': FieldValue.serverTimestamp(),
             },
+            // The security rules read which try a player is sending from this.
+            if (status == PhotoApprovalStatus.pending) 'lastPhotoKey': key,
           });
     } catch (e, stacktrace) {
       print('Error updating photo approval: $e');

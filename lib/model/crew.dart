@@ -1,3 +1,4 @@
+import 'crew_stats.dart';
 import 'package:teamxperience/model/team_member.dart';
 import 'package:teamxperience/utils/invite_code.dart' as invite_code;
 
@@ -12,6 +13,9 @@ class Crew {
   /// Stored without the dash, upper-case: "VLP482".
   final String inviteCode;
 
+  /// What the crew has done together; zeros until its first results.
+  final CrewStats stats;
+
   const Crew({
     required this.id,
     required this.name,
@@ -19,6 +23,7 @@ class Crew {
     required this.memberUids,
     required this.members,
     required this.inviteCode,
+    this.stats = const CrewStats(),
   });
 
   factory Crew.fromMap(String id, Map<String, dynamic> map) {
@@ -34,6 +39,7 @@ class Crew {
           .map((m) => TeamMember.fromMap(Map<String, dynamic>.from(m)))
           .toList(),
       inviteCode: map['inviteCode'] as String? ?? '',
+      stats: CrewStats.fromMap(map['stats']),
     );
   }
 

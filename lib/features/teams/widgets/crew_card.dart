@@ -1,3 +1,6 @@
+import 'package:teamxperience/features/home/logic/home_texts.dart';
+import 'package:teamxperience/features/teams/logic/season_rows.dart';
+import 'package:teamxperience/features/teams/widgets/crew_stat_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:teamxperience/features/teams/widgets/crew_code_row.dart';
@@ -103,6 +106,18 @@ class CrewCard extends StatelessWidget {
                   size: 28,
                   onDark: true,
                 ),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(child: CrewStatTile(value: '${crew.stats.games}', label: gamesLabel(crew.stats.games))),
+                  const SizedBox(width: 6),
+                  Expanded(child: CrewStatTile(value: '${crew.stats.wins}', label: winsLabel(crew.stats.wins))),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: CrewStatTile(value: kmStat(crew.stats.distanceMeters), label: 'împreună'),
+                  ),
+                ],
               ),
               const SizedBox(height: 10),
               CrewCodeRow(

@@ -450,6 +450,16 @@ finished route rather than a stopped game, and the finish screen.
 
 **Step 9 is done (2026-11-08):** organisers place the start, mission and location puzzle pins on a map (typing stays, for pasting from Google Maps); "Vezi Eveniment" walks through the event with a throwaway team and saves nothing; photo puzzles have no hint field; every screen reads theme colours (only the photo viewers and the Facebook button keep their own); failed reads say so (`LoadFailed`), also offline on first open; game and live room controls have 48 px tap areas (`TapArea`); countdown tick, route pulse, code box shake. **Left out on purpose:** golden tests (Victor, 2026-11-08: the look is judged in the gallery), `series` and the puzzle `badge` (they belong to the parked results function), `theme` (6b: an event's look comes only from its puzzles).
 
+**Steps 3b and 7c are done (2026-11-08), not deployed:** `firestore.rules`, the five team functions, `onEventStopped` and `closeExpiredEvents`, crew stats, the season leaderboard, signing up an existing crew. All tested on the emulator.
+
+**Deploy checklist (Victor's call, in this order):**
+1. The live rules leave the database open to everyone until **2026-12-31**, and refuse every request after it. The new rules must be live before then. Check the Storage rules' expiry in the console too: if they are date-limited as well, photo puzzles stop.
+2. Check that each organiser's document is `users/{their auth uid}` with `role: 'ADMIN'`. Login finds users by email but the rules read by uid, so a document made by hand under another id silently loses its admin rights. Check also that `uid` and `email` on documents are right; players can no longer change them.
+3. `firebase deploy --only functions`. It adds the five callables, `onEventStopped` and `closeExpiredEvents` (needs Cloud Scheduler, which the CLI offers to enable), and changes `onChatMessage`. From here on, `closeExpiredEvents` scores events that ran out in the past week.
+4. Release the new app and let people install it. The new rules refuse writes an older version makes (registering a team, for one), so this comes before the rules.
+5. `firebase deploy --only firestore:rules`, outside a live game. This replaces the live rules completely. Rolling back is one click in the console's history.
+6. Try it for real: register a team, join by code, play one mission, send a photo and a message, stop the event, check Profil and Echipe. **Stopping writes permanent XP and a season row, with no screen to undo it,** so use a test crew and clean up in the console.
+
 **Step 3b (parked by Victor on 2026-11-05, to do later).** Tasks 1 and 3 of
 `docs/superpowers/plans/2026-11-04-redesign-step-3-teams-and-invites.md`:
 `firestore.rules` with the emulator tests (start by comparing with the rules
