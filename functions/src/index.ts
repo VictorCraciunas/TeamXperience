@@ -4,6 +4,7 @@ import * as logger from "firebase-functions/logger";
 import {initializeApp, getApps} from "firebase-admin/app";
 import {getFirestore} from "firebase-admin/firestore";
 import {getMessaging} from "firebase-admin/messaging";
+import {sendsPush} from "./chat/sends_push";
 
 // Initialize Firebase Admin SDK (only once)
 if (getApps().length === 0) {
@@ -177,6 +178,7 @@ export const onChatMessage = onDocumentCreated(
       }
 
       const messageData = snapshot.data();
+      if (!sendsPush(messageData)) return;
       const {eventId, teamName} = event.params;
       const senderRole = messageData.sender; // "ADMIN" or "USER"
       const messageText = messageData.text;
