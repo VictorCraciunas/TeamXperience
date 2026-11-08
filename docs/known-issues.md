@@ -19,7 +19,6 @@ Verify before fixing; none of these were reproduced. Roughly ordered by impact.
 - `ChatController.sendMessage` doesn't await or validate (empty messages allowed); `MessageService.sendMessage` doesn't await the repo call.
 - `SignUpService.register/signInGoogle` don't await `saveUser`.
 - `TeamService.updateTeamLocation` doesn't await; `LocationService` swallows all errors; tracking only while the game screen is alive and app in foreground.
-- `MapScreen` plots never-started teams at (0, 0); `userAgentPackageName` is `com.example.flutter_map_test`.
 - `UserEventsProvider.loadActiveEvent` runs one Firestore query per past registered event on every `UserProvider`/`EventList` notification.
 - `EventList.liveEvents` / `Event.isOver` don't trigger rebuilds when the 3 h mark passes.
 - Facebook sign-in buttons are non-functional placeholders.

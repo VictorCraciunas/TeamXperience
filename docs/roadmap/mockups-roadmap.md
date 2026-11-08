@@ -285,7 +285,7 @@ that:
    - photos pending
    - a team with no mission solved in 20 min ("stau de 25 min")
    - 3 or more wrong attempts on the current puzzle
-   - unread team messages, using an `unreadByAdmin` flag set by `onChatMessage` and cleared when the admin opens the chat
+   - unread team messages, using `unreadByAdmin`, written by the player's send in one batch with the message (no function needed) and cleared when the organiser opens or leaves the chat
 4. Board: rank, team, missions done / total and status text, with filters Toate / Blocate / Neporniți.
 5. "Sună căpitanul": a `tel:` link to the team phone (`MyMapController.callTeam` already does this).
 6. "Anunț": calls `sendNotification` with `eventId`, which exists, and also posts the text into every team chat.
@@ -399,8 +399,8 @@ Each step needs the logic phase shown in brackets.
 9. **Finish and Profil (08)** [L7]: the new `features/finish` in the event theme. `features/profile` is rebuilt (level, stats, badges, memories, settings).
 10. **Organiser live room (09)** [L8]:
     - Map with markers, counts, attention queue, board with filters, announce / stop bar.
-    - Fix the white-on-accent avatars (`team_card_widget.dart:39`, `map_screen.dart:168`) with `onTick` while there.
-    - Move the hardcoded colours in `image_message_bubble.dart:87,172` to tokens.
+    - The map's avatars read on their colour (`TeamPin` uses `readableOn`); `team_card_widget.dart` already used `onTick`.
+    - The colours in `image_message_bubble.dart` are tokens.
 11. **Organiser authoring (L9 UI):** the new fields in the wizard, mission editor and puzzle rules, styled like the rest of the admin side.
 
 ## U4: Polish and checks
@@ -446,6 +446,8 @@ the organiser's `finishTitle`/`finishMessage`, the leaderboard counting a
 finished route rather than a stopped game, and the finish screen.
 **7b is done (2026-11-08):** the Profil tab reads `users/{uid}` (`xp`, `stats{games, distanceMeters, missions, podiums}`, `badges[]`) and `users/{uid}/memories/{eventId}` (`eventName`, `date`, `place`, `totalTime` in whole minutes, `photoUrls[]`). **7c must write exactly those, with these badge ids:** `km10`, `noHints`, `night`, `winner`, `firstGame`, `games5`, `km50`, `podium3`, `photo`, `fast`, `missions50`, `crew` (`lib/features/profile/logic/badge_catalog.dart`). A memory's `date` is required and a Timestamp (Profil orders by it, and a document without it is not shown). Also for 7c: `firestore.rules` must let a player read their own `memories`, and the user-document watch moves from Profil to the shell, so Home's numbers refresh for a player who never opens Profil.
 
+**Step 8 is done (2026-11-08):** the live room (mockup 09) replaces `EventManagementScreen` on `Routes.eventManagement`, with `Routes.liveBoard` and the big map on `Routes.map`. Pins are coloured by state, as the mockup draws them: navy in play, amber stuck, teal finished, grey silent for 5 minutes.
+
 **Step 3b (parked by Victor on 2026-11-05, to do later).** Tasks 1 and 3 of
 `docs/superpowers/plans/2026-11-04-redesign-step-3-teams-and-invites.md`:
 `firestore.rules` with the emulator tests (start by comparing with the rules
@@ -465,6 +467,7 @@ live in the Firebase console) and the five callables (`checkTeamName`,
 - from step 5: write `missionCompletedAt.{i}` only when absent (a transaction or the step 7 function), so a second phone or a replay does not move the tie-break;
 - from step 6b: the rules must let a team member increment `attempts.{key}`, set `lockedUntil.{key}` (with `attempts.{key}` back to 0) and set `hintsUsed.{key}` on their own team doc;
 - from step 7a: a team member may increment only `walked.{their uid}`, set `finishedAt` only once (server time) and write only `events/{id}/feedback/{their uid}`; 7c reads `finishedAt`, `walked` and the feedback;
+- from step 8: a team member may set `unreadByAdmin` to `{text, at}` (server time); only an organiser may delete it. `onChatMessage` must skip messages with `announcement: true`, because "Anunț" sends its own push (until then a player can get two). The results function fires when the live room's "Oprește" sets `isStopped`.
 - from step 6c: a team member may write `photoApprovals.{key}` only as `{status: 'pending', url, at}`; only an organiser may set `approved` / `denied` (with `reason`);
 - whether "Editează" on team details is for the captain only, decided with
   the rules.
