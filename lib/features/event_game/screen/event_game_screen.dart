@@ -30,7 +30,6 @@ class _EventGameScreenState extends State<EventGameScreen> {
   late EventGameController controller;
 
   bool _initialized = false;
-  bool _endedDialogShown = false;
   bool _finishShown = false;
 
   @override
@@ -58,19 +57,16 @@ class _EventGameScreenState extends State<EventGameScreen> {
   }
 
   /// The game is over for the team (last mission solved, or the event
-  /// ended): the finish screen takes the route's place. The organisers'
-  /// preview has no team and keeps the old dialog.
+  /// ended): the finish screen takes the route's place. An organiser's
+  /// walk-through has no real team and stays on the route.
   void _onControllerChanged() {
     final team = controller.team;
-    if (team != null) {
-      final onTop = ModalRoute.of(context)?.isCurrent ?? false;
-      if (!_finishShown &&
-          openFinishNow(controller.event, team, eventEnded: controller.eventEnded, routeOnTop: onTop)) {
-        _openFinish(team);
-      }
-      return;
+    if (team == null) return;
+    final onTop = ModalRoute.of(context)?.isCurrent ?? false;
+    if (!_finishShown &&
+        openFinishNow(controller.event, team, eventEnded: controller.eventEnded, routeOnTop: onTop)) {
+      _openFinish(team);
     }
-    if (controller.eventEnded && !_endedDialogShown) _showEventEndedDialog();
   }
 
   void _openFinish(Team team) {
@@ -79,35 +75,6 @@ class _EventGameScreenState extends State<EventGameScreen> {
       Navigator.of(context),
       ModalRoute.of(context),
       {'event': controller.event, 'team': team},
-    );
-  }
-
-  void _showEventEndedDialog() {
-    if (_endedDialogShown || !mounted) return;
-    _endedDialogShown = true;
-
-    Navigator.popUntil(
-      context,
-      (route) => route.settings.name == Routes.eventGame || route.isFirst,
-    );
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder:
-          (_) => AlertDialog(
-            title: const Text("Ne pare rău"),
-            content: const Text("S-a terminat evenimentul."),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.popUntil(context, (route) => route.isFirst);
-                },
-                child: const Text("OK"),
-              ),
-            ],
-          ),
     );
   }
 
@@ -126,8 +93,8 @@ class _EventGameScreenState extends State<EventGameScreen> {
   /// Opens the mission the team is on; the place line pauses meanwhile.
   Future<void> _openCurrentMission() async {
     final index = controller.currentMission;
-    // The organisers' preview has no team: the trail shows, nothing opens.
-    if (controller.team == null || index >= controller.event.missions.length) return;
+    final team = controller.team ?? controller.previewTeam;
+    if (team == null || index >= controller.event.missions.length) return;
     controller.watchRanking(false);
     final updated = await Navigator.pushNamed(
       context,
@@ -136,8 +103,9 @@ class _EventGameScreenState extends State<EventGameScreen> {
         'mission': controller.event.missions[index],
         'background': controller.background,
         'event': controller.event,
-        'team': controller.team,
+        'team': team,
         'missionIndex': index,
+        'preview': controller.isPreview,
       },
     );
     if (!mounted) return;
@@ -148,6 +116,7 @@ class _EventGameScreenState extends State<EventGameScreen> {
   }
 
   void _openChat() {
+    if (controller.isPreview) return;
     Navigator.pushNamed(
       context,
       Routes.chatScreen,
