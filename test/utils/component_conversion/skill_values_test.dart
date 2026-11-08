@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/enums/animation_type.dart';
 import 'package:teamxperience/enums/component-type.dart';
+import 'package:teamxperience/features/event_details/logic/route_preview.dart';
+import 'package:teamxperience/features/event_game/logic/style_hints.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/service/event_service/event_completeness.dart';
 import 'package:teamxperience/service/event_service/event_json_import.dart';
@@ -39,8 +41,62 @@ String _jsonAfter(String heading) {
   return text.substring(open, close);
 }
 
+/// A part of the skill file, from one heading up to the next one named.
+String _section(String from, String to) {
+  final text = File('docs/skills/event-json/SKILL.md').readAsStringSync().replaceAll('\r\n', '\n');
+  return text.substring(text.indexOf(from), text.indexOf(to));
+}
+
+/// Every key the import reads, taken from the import itself.
+Set<String> _importedKeys() {
+  final source = File('lib/service/event_service/event_json_import.dart').readAsStringSync();
+  return RegExp(r"reader\.\w+\('(\w+)'").allMatches(source).map((m) => m.group(1) ?? '').toSet();
+}
+
 void main() {
+  group('the skill keeps up with the app', () {
+    test('every key the import reads is in the shape and has a row', () {
+      final keys = _importedKeys();
+      expect(keys, isNotEmpty);
+      final shape = _section('## The whole shape', '## Small example');
+      final rows = _section('## Every field and what it can hold', '### Fonts');
+      for (final key in keys) {
+        expect(shape, matches(RegExp('^  $key\\??:', multiLine: true)), reason: '$key is not in the shape');
+        expect(rows, contains('`$key`'), reason: '$key has no row');
+      }
+    });
+
+    test('the shape has no key the import would ignore', () {
+      final keys = _importedKeys();
+      final shape = _section('## The whole shape', '## Small example');
+      final written = RegExp(r'^  (\w+)\??:', multiLine: true).allMatches(shape).map((m) => m.group(1) ?? '');
+      expect(written.where((key) => !keys.contains(key)), isEmpty);
+    });
+
+    test('every font of the app is listed', () {
+      final fonts = _section('### Fonts', '### Colours');
+      for (final name in eventFontNames) {
+        expect(fonts, contains('`"$name"`'));
+      }
+    });
+  });
+
   group('the example inside the skill', () {
+    test('shows the route map, and the line bends with its mission', () {
+      final event = importEventFromJson(_jsonAfter('## Small example')).event;
+      final preview = event == null ? null : routePreviewOf(event);
+      expect(preview?.line.length, greaterThan(2));
+    });
+
+    test('looks the same on a light and a dark phone: the page and the text colours are set', () {
+      final event = importEventFromJson(_jsonAfter('## Small example')).event;
+      final components = [...?event?.missions.expand((m) => m.puzzles).expand((p) => p.components)];
+      expect(styleHintsFrom(components, null).background, isNotNull);
+      final written = components.where((c) => c.type == ComponentType.text || c.type == ComponentType.code);
+      expect(written, isNotEmpty);
+      expect(written.map((c) => c.textColor), everyElement(isNotNull));
+    });
+
     test('is valid JSON the app imports without mistakes', () {
       final result = importEventFromJson(_jsonAfter('## Small example'));
       expect(result.errors, isEmpty);

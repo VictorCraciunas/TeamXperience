@@ -5,6 +5,8 @@
   "punctDeStart": "Piața Mare, lângă fântână",
   "startLatitude": 45.7971,
   "startLongitude": 24.152,
+  "finishLatitude": 45.797768,
+  "finishLongitude": 24.1500813,
   "finishPoint": "Catedrala Evanghelică",
   "area": "Orașul de Sus",
   "routeLengthKm": 1.5,
@@ -41,6 +43,7 @@
           "components": [
             {
               "type": "text",
+              "textColor": "#1B1B1B",
               "text": "În ce an a fost construită prima casă din piață?",
               "fontSize": 20,
               "fontWeight": "Bold (700)",
@@ -51,6 +54,9 @@
               "codeLength": 4,
               "inputType": "Separated",
               "capsLock": "Fără",
+              "textColor": "#1B1B1B",
+              "frameBackgroundColor": "#F4F1EA",
+              "inputBackgroundColor": "#FFFFFF",
               "colorBorderInput": "#2AA5A9",
               "inputCornerRadius": 8
             },
@@ -71,6 +77,7 @@
           "components": [
             {
               "type": "text",
+              "textColor": "#1B1B1B",
               "text": "Du-te la Podul Minciunilor.",
               "fontSize": 18,
               "textAlign": "center"
@@ -89,6 +96,7 @@
           "components": [
             {
               "type": "text",
+              "textColor": "#1B1B1B",
               "text": "Fă o poză de echipă în fața Catedralei. Un organizator o aprobă.",
               "fontSize": 18,
               "textAlign": "center"

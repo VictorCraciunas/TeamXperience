@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
+import 'package:teamxperience/features/event_details/logic/route_preview.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/service/event_service/event_completeness.dart';
@@ -40,6 +41,19 @@ void main() {
       test('imports without mistakes and could be published', () {
         final event = _load(file);
         expect(publishProblems(event).map((p) => p.text), isEmpty);
+      });
+
+      test('shows the route map on the event page', () {
+        expect(routePreviewOf(_load(file)), isNotNull);
+      });
+
+      test('looks the same on a light and a dark phone: the page and the text colours are set', () {
+        final event = _load(file);
+        final components = [...event.missions.expand((m) => m.puzzles).expand((p) => p.components)];
+        final hasPicture = (event.taskBackgroundImageUrl ?? '').isNotEmpty;
+        expect(hasPicture || components.any((c) => c.frameBackgroundColor != null), isTrue);
+        final written = components.where((c) => c.type == ComponentType.text || c.type == ComponentType.code);
+        expect(written.map((c) => c.textColor), everyElement(isNotNull));
       });
 
       test('every code puzzle can be solved', () {
