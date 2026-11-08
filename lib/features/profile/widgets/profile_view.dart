@@ -1,90 +1,74 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/ui/components/buttons/app_button.dart';
-import 'package:teamxperience/ui/components/layout/section_card.dart';
-import 'package:teamxperience/ui/components/misc/theme_mode_options.dart';
-import 'package:teamxperience/ui/theme/theme_context.dart';
+import 'package:teamxperience/features/home/logic/home_texts.dart';
+import 'package:teamxperience/model/memory.dart';
+import 'package:teamxperience/model/user_stats.dart';
 
+import 'badges_section.dart';
+import 'memories_section.dart';
+import 'profile_account_card.dart';
+import 'profile_settings_card.dart';
+import 'profile_stats_row.dart';
+
+/// Profil as mockup 08, from plain values. A [player] sees the level, stats,
+/// badges and memories; an organiser sees the account and the settings only.
 class ProfileView extends StatelessWidget {
   const ProfileView({
     super.key,
+    required this.player,
     required this.name,
     required this.email,
+    this.xp = 0,
+    this.stats = const UserStats(),
+    this.badges = const [],
+    this.memories = const [],
+    required this.themeLabel,
+    required this.notificationsLabel,
+    required this.onTheme,
+    required this.onNotifications,
     required this.onLogout,
+    required this.onOpenBadges,
+    required this.onOpenMemory,
+    this.settingsKey,
   });
 
+  final bool player;
   final String name;
   final String email;
+  final int xp;
+  final UserStats stats;
+  final List<String> badges;
+  final List<Memory> memories;
+  final String themeLabel;
+  final String notificationsLabel;
+  final VoidCallback onTheme;
+  final VoidCallback onNotifications;
   final VoidCallback onLogout;
+  final VoidCallback onOpenBadges;
+  final ValueChanged<Memory> onOpenMemory;
 
-  String get _initials {
-    final words = name.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty);
-    final letters = words.take(2).map((w) => w.substring(0, 1).toUpperCase());
-    return letters.join();
-  }
+  /// On the settings card, so the header's gear can scroll to it.
+  final Key? settingsKey;
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-
-    return Padding(
-      padding: const EdgeInsets.all(14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SectionCard(
-            title: 'Contul tău',
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 28,
-                  backgroundColor: colors.iconButtonBg,
-                  child: Text(
-                    _initials,
-                    style: TextStyle(
-                      color: colors.accent,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: colors.text,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        email,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: colors.muted, fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          const SectionCard(title: 'Aspect', child: ThemeModeOptions()),
-          const SizedBox(height: 16),
-          AppButton(
-            label: 'Deconectare',
-            variant: AppButtonVariant.secondary,
-            leading: const Icon(Icons.logout_rounded),
-            onPressed: onLogout,
-          ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ProfileAccountCard(name: name, email: email, level: player ? levelInfo(xp) : null),
+        if (player) ...[
+          ProfileStatsRow(stats: stats),
+          BadgesSection(earned: badges, onOpenAll: onOpenBadges),
+          MemoriesSection(memories: memories, onOpen: onOpenMemory),
         ],
-      ),
+        ProfileSettingsCard(
+          key: settingsKey,
+          themeLabel: themeLabel,
+          notificationsLabel: notificationsLabel,
+          onTheme: onTheme,
+          onNotifications: onNotifications,
+          onLogout: onLogout,
+        ),
+      ],
     );
   }
 }

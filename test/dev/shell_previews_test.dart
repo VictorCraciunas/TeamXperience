@@ -8,6 +8,7 @@ import 'package:teamxperience/dev/finish_preview.dart';
 import 'package:teamxperience/dev/location_puzzle_preview.dart';
 import 'package:teamxperience/dev/photo_puzzle_preview.dart';
 import 'package:teamxperience/dev/play_tab_preview.dart';
+import 'package:teamxperience/dev/profile_preview.dart';
 import 'package:teamxperience/dev/puzzle_frame_preview.dart';
 import 'package:teamxperience/dev/route_preview.dart';
 import 'package:teamxperience/dev/shell_previews_launcher.dart';
@@ -155,6 +156,25 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('the Profil preview renders new, mockup, top and admin in $name', (tester) async {
+      await _pump(tester, const ProfilePreview(), theme);
+      expect(find.text('Explorator · 640 / 1000 XP'), findsOneWidget);
+      expect(find.text('4 din 12'), findsOneWidget);
+      expect(find.text('Moștenirea Cartografului'), findsOneWidget);
+      await tester.tap(find.text('Nou'));
+      await tester.pump();
+      expect(find.text('Începător · 0 / 500 XP'), findsOneWidget);
+      expect(find.text('0 din 12'), findsOneWidget);
+      await tester.tap(find.text('Legendă'));
+      await tester.pump();
+      expect(find.text('Nivel maxim'), findsOneWidget);
+      await tester.tap(find.text('Admin'));
+      await tester.pump();
+      expect(find.text('Insigne'), findsNothing);
+      expect(find.text('Deconectare'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('the Joacă preview renders its four states in $name', (tester) async {
       await _pump(tester, const PlayTabPreview(), theme);
       expect(find.text('Continuă jocul'), findsOneWidget);
@@ -209,6 +229,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(FinishPreview), findsOneWidget);
     Navigator.of(tester.element(find.byType(FinishPreview))).pop();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Profil'));
+    await tester.pumpAndSettle();
+    expect(find.byType(ProfilePreview), findsOneWidget);
+    Navigator.of(tester.element(find.byType(ProfilePreview))).pop();
     await tester.pumpAndSettle();
     await tester.tap(find.text('Joacă'));
     await tester.pumpAndSettle();

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../model/memory.dart';
 import '../../model/user.dart';
 
 class UserRepo{
@@ -9,6 +10,27 @@ class UserRepo{
     await _firestore.collection('users').doc(user.uid).set(user.toJson());
   }
 
+
+  /// The user's own document, live (their XP, stats and badges change when a
+  /// game ends); null while it does not exist.
+  Stream<AppUser?> streamUser(String uid) {
+    return _firestore.collection('users').doc(uid).snapshots().map((snap) {
+      final data = snap.data();
+      return data == null ? null : AppUser.fromFirestore(data);
+    });
+  }
+
+  /// The user's latest finished games, newest first.
+  Stream<List<Memory>> streamMemories(String uid, {int limit = 3}) {
+    return _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('memories')
+        .orderBy('date', descending: true)
+        .limit(limit)
+        .snapshots()
+        .map((snap) => [for (final doc in snap.docs) Memory.fromMap(doc.id, doc.data())]);
+  }
 
   Future<AppUser?> findByEmail(String email) async {
     try {

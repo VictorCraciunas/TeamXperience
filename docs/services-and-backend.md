@@ -38,7 +38,7 @@ Repos (`lib/backend/`) are thin Firestore/Storage wrappers (throw generic `Excep
 Registered in `main.dart`:
 `UserProvider` (ChangeNotifier) → `UserRepo`, `AuthenticationRepository` (Provider) → `AuthUtil` (Provider) → `EventService`, `NewsService` → `EventList`, `NewsList` → `UserEventsProvider` (+ a second, duplicate `NewsList` registration at the end).
 
-- `UserProvider` — `currentUser`, `firebaseUser`, `isLoggedIn`, `setUser`, `clearUser`, `addRegisteredEvent`.
+- `UserProvider` — `currentUser`, `firebaseUser`, `isLoggedIn`, `setUser`, `clearUser`, `addRegisteredEvent`, `updateProfile` (takes a fresh copy's XP, stats and badges for the same uid; Profil calls it).
 - `EventList` — cached `events` (5-min staleness; `loadEvents({forceRefresh})`, `refresh()`), `upcomingEvents`, `liveEvents`, `pastEvents`, `createEvent/updateEvent/deleteEvent/getEventById`, `clear()` (called on logout).
 - `NewsList` — same for `Stire`: `getNewsByType`, `getNewsByCategory`, `allNewsSorted`, `getLatestNews(n)`, `getNewsFromPeriod`, `createStire/updateStire/getStireById`.
 - `UserEventsProvider` — listens to `UserProvider` + `EventList`; `registeredEvents`, `upcomingRegisteredEvents`, `pastRegisteredEvents`, `nextEventWithinHour`, `loadActiveEvent()` (async scan of started-and-not-finished teams — one Firestore query per past registered event on every change), `activeEvent`, `activeTeam`.

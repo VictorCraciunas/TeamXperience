@@ -14,6 +14,10 @@ class AppUser {
   final int xp;
   final UserStats stats;
 
+  /// The ids of the badges earned (see `badge_catalog.dart`), written by the
+  /// end-of-event function.
+  final List<String> badges;
+
   AppUser({
     required this.email,
     required this.firstName,
@@ -24,9 +28,16 @@ class AppUser {
     required this.fcmToken,
     this.xp = 0,
     this.stats = const UserStats(),
+    this.badges = const [],
   }) : registeredEventIds = registeredEventIds ?? [];
 
-  AppUser copyWith({List<String>? registeredEventIds, String? fcmToken}) {
+  AppUser copyWith({
+    List<String>? registeredEventIds,
+    String? fcmToken,
+    int? xp,
+    UserStats? stats,
+    List<String>? badges,
+  }) {
     return AppUser(
       email: email,
       firstName: firstName,
@@ -35,8 +46,9 @@ class AppUser {
       role: role,
       registeredEventIds: registeredEventIds ?? this.registeredEventIds,
       fcmToken: fcmToken ?? this.fcmToken,
-      xp: xp,
-      stats: stats,
+      xp: xp ?? this.xp,
+      stats: stats ?? this.stats,
+      badges: badges ?? this.badges,
     );
   }
 
@@ -54,10 +66,13 @@ class AppUser {
         role: role,
         registeredEventIds: eventIds,
         fcmToken: data["fcmToken"] as String? ?? "",
-        xp: (data['xp'] as num?)?.toInt() ?? 0,
+        xp: readCount(data['xp']),
         stats: UserStats.fromMap(data['stats']),
+        badges: _ids(data['badges']),
     );
   }
+
+  static List<String> _ids(Object? raw) => raw is List ? [for (final id in raw) if (id is String) id] : const [];
 
   Map<String, dynamic> toJson() {
     return {
