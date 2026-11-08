@@ -19,7 +19,7 @@ flutter test test/ui/components/app_button_test.dart --plain-name "<name>"   # s
 flutter build apk
 ```
 
-Cloud Functions (`functions/`, Node 20, TypeScript):
+Cloud Functions (`functions/`, Node 22, TypeScript):
 
 ```bash
 cd functions && npm run build        # tsc
