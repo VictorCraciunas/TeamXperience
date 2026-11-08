@@ -65,6 +65,14 @@ class Team {
   /// written by [toJson].
   final Map<String, DateTime> lockedUntil;
 
+  /// The team's latest message the organiser has not read, stored with
+  /// [unreadAt] under `unreadByAdmin`: the player's send sets it, opening the
+  /// chat as organiser clears it. Never written by [toJson].
+  final String? unreadText;
+
+  /// When [unreadText] was sent; null while the server time is on its way.
+  final DateTime? unreadAt;
+
   Team({
     required this.name,
     required this.teamMembers,
@@ -94,6 +102,8 @@ class Team {
     Map<String, int>? attempts,
     Map<String, bool>? hintsUsed,
     Map<String, DateTime>? lockedUntil,
+    this.unreadText,
+    this.unreadAt,
   })  : userIds = userIds ?? [],
         photoApprovals = photoApprovals ?? {},
         photoDetails = photoDetails ?? {},
@@ -237,6 +247,10 @@ class Team {
       });
     }
 
+    final rawUnread = map['unreadByAdmin'];
+    final unread = rawUnread is Map ? rawUnread : const {};
+    final unreadText = unread['text'];
+
     final rawMembers = map['members'] as List<dynamic>? ?? [];
     final membersList = rawMembers
         .whereType<Map>()
@@ -272,6 +286,8 @@ class Team {
       attempts: _counts(map['attempts']),
       hintsUsed: _flags(map['hintsUsed']),
       lockedUntil: _timesByKey(map['lockedUntil']),
+      unreadText: unreadText is String ? unreadText : null,
+      unreadAt: _time(unread['at']),
     );
   }
 
