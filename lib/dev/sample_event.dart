@@ -4,6 +4,7 @@ import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/model/component.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/event_defaults.dart';
+import 'package:teamxperience/model/memory.dart';
 import 'package:teamxperience/model/photo_detail.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
 import 'package:teamxperience/model/mission.dart';
@@ -225,6 +226,18 @@ Team sampleFinishedTeam({int solved = 6}) {
     },
   );
 }
+
+/// Mockup 08's "Amintiri".
+List<Memory> sampleMemories() => [
+      Memory(
+        eventId: 'sample',
+        eventName: 'Moștenirea Cartografului',
+        date: DateTime(2026, 11, 14),
+        place: 2,
+        totalMinutes: 108,
+        photoUrls: [for (var i = 0; i < 6; i++) 'https://example.com/poza$i.jpg'],
+      ),
+    ];
 
 /// Mockup 02's team before the game: four of four, registered.
 Team sampleTeam() => Team(

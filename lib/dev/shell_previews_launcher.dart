@@ -9,13 +9,14 @@ import 'finish_preview.dart';
 import 'location_puzzle_preview.dart';
 import 'photo_puzzle_preview.dart';
 import 'play_tab_preview.dart';
+import 'profile_preview.dart';
 import 'puzzle_frame_preview.dart';
 import 'route_preview.dart';
 import 'start_code_preview.dart';
 
 /// The gallery buttons that open the Acasă, Evenimente and Joacă tabs with the
 /// five-tab bar, the start code, the intro letter, the route, the puzzles and
-/// the finish recap.
+/// the finish recap, and Profil.
 class ShellPreviewsLauncher extends StatelessWidget {
   const ShellPreviewsLauncher({super.key});
 
@@ -50,6 +51,8 @@ class ShellPreviewsLauncher extends StatelessWidget {
             AppButton(label: 'Poză', onPressed: () => _open(context, const PhotoPuzzlePreview())),
             const SizedBox(height: AppSpacing.sm),
             AppButton(label: 'Final', onPressed: () => _open(context, const FinishPreview())),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(label: 'Profil', onPressed: () => _open(context, const ProfilePreview())),
           ],
         ),
       ),
