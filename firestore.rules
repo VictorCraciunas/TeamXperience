@@ -1,0 +1,204 @@
+rules_version = '2';
+
+// Every client write the app makes has a test in
+// functions/src/test/rules.emu.test.ts; add to both together. A write a rule
+// forgets fails silently on a phone in the middle of a game.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'ADMIN';
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn();
+      allow create: if request.auth.uid == uid
+        && request.resource.data.role == 'USER'
+        && !request.resource.data.keys().hasAny(['xp', 'level', 'stats', 'badges']);
+      allow update: if (request.auth.uid == uid
+          && !request.resource.data.diff(resource.data).affectedKeys()
+              .hasAny(['role', 'xp', 'level', 'stats', 'badges']))
+        || isAdmin();
+      allow delete: if isAdmin();
+
+      // Written only by the results function.
+      match /memories/{eventId} {
+        allow read: if request.auth.uid == uid || isAdmin();
+        allow write: if false;
+      }
+    }
+
+    match /events/{eventId} {
+      allow read: if signedIn();
+      // resultsComputedAt is the results function's; saving an event may drop
+      // it (the function is safe to run again), never set it.
+      allow create: if isAdmin() && !('resultsComputedAt' in request.resource.data);
+      allow update: if isAdmin()
+        && (!('resultsComputedAt' in request.resource.data)
+            || request.resource.data.resultsComputedAt == resource.data.get('resultsComputedAt', null));
+      allow delete: if isAdmin();
+
+      match /feedback/{uid} {
+        allow read: if request.auth.uid == uid || isAdmin();
+        allow create, update: if request.auth.uid == uid;
+      }
+
+      match /teams/{teamId} {
+        function isMember() {
+          return signedIn() && request.auth.uid in resource.data.userIds;
+        }
+
+        function changedKeys() {
+          return request.resource.data.diff(resource.data).affectedKeys();
+        }
+
+        function before(field) {
+          return resource.data.get(field, {});
+        }
+
+        function after(field) {
+          return request.resource.data.get(field, {});
+        }
+
+        function progressOk() {
+          return request.resource.data.missionProgress >= resource.data.missionProgress
+            && request.resource.data.missionProgress <= resource.data.missionProgress + 1;
+        }
+
+        // A mission's time is set once: only new keys.
+        function stampsOk() {
+          let d = after('missionCompletedAt').diff(before('missionCompletedAt'));
+          return d.changedKeys().size() == 0 && d.removedKeys().size() == 0;
+        }
+
+        function presenceOk() {
+          return after('presence').diff(before('presence')).affectedKeys().hasOnly([request.auth.uid])
+            && after('presence')[request.auth.uid] == request.time;
+        }
+
+        // Each phone adds to its own walk.
+        function walkedOk() {
+          return after('walked').diff(before('walked')).affectedKeys().hasOnly([request.auth.uid])
+            && after('walked')[request.auth.uid] >= before('walked').get(request.auth.uid, 0);
+        }
+
+        function photoOk() {
+          let key = request.resource.data.lastPhotoKey;
+          let was = before('photoApprovals');
+          let now = after('photoApprovals');
+          return now.diff(was).affectedKeys().hasOnly([key])
+            && now[key].status == 'pending'
+            && now[key].keys().hasOnly(['status', 'url', 'at'])
+            && (!(key in was) || was[key].status == 'pending');
+        }
+
+        function unreadOk() {
+          let unread = request.resource.data.unreadByAdmin;
+          return unread.keys().hasOnly(['text', 'at'])
+            && unread.text is string
+            && unread.at == request.time;
+        }
+
+        function captainOrOldTeam() {
+          return resource.data.get('captainUid', null) == null
+            || resource.data.captainUid == request.auth.uid;
+        }
+
+        function memberUpdateOk() {
+          let keys = changedKeys();
+          return keys.hasOnly([
+              'missionProgress', 'puzzleNumber', 'hasStarted', 'hasFinished',
+              'latitude', 'longitude', 'phoneNumber', 'presence', 'missionCompletedAt',
+              'attempts', 'lockedUntil', 'hintsUsed', 'walked', 'startedAt', 'finishedAt',
+              'photoApprovals', 'lastPhotoKey', 'unreadByAdmin',
+            ])
+            && (!keys.hasAny(['missionProgress']) || progressOk())
+            && (!keys.hasAny(['hasStarted']) || request.resource.data.hasStarted == true)
+            && (!keys.hasAny(['hasFinished']) || request.resource.data.hasFinished == true)
+            && (!keys.hasAny(['phoneNumber']) || captainOrOldTeam())
+            && (!keys.hasAny(['presence']) || presenceOk())
+            && (!keys.hasAny(['missionCompletedAt']) || stampsOk())
+            && (!keys.hasAny(['attempts'])
+                || after('attempts').diff(before('attempts')).removedKeys().size() == 0)
+            && (!keys.hasAny(['lockedUntil'])
+                || after('lockedUntil').diff(before('lockedUntil')).removedKeys().size() == 0)
+            && (!keys.hasAny(['hintsUsed'])
+                || after('hintsUsed').diff(before('hintsUsed')).affectedKeys()
+                    == after('hintsUsed').diff(before('hintsUsed')).addedKeys())
+            && (!keys.hasAny(['walked']) || walkedOk())
+            && (!keys.hasAny(['startedAt'])
+                || (!('startedAt' in resource.data) && request.resource.data.startedAt == request.time))
+            && (!keys.hasAny(['finishedAt'])
+                || (!('finishedAt' in resource.data) && request.resource.data.finishedAt == request.time))
+            && (!keys.hasAny(['photoApprovals']) || photoOk())
+            && (!keys.hasAny(['lastPhotoKey']) || keys.hasAny(['photoApprovals']))
+            && (!keys.hasAny(['unreadByAdmin'])
+                || ('unreadByAdmin' in request.resource.data && unreadOk()));
+        }
+
+        allow read: if signedIn();
+        // Teams are made by the registerTeam function.
+        allow create: if false;
+        allow update: if (isMember() && memberUpdateOk()) || isAdmin();
+        allow delete: if isAdmin();
+
+        match /messages/{messageId} {
+          function inThisTeam() {
+            return signedIn()
+              && request.auth.uid in get(/databases/$(database)/documents/events/$(eventId)/teams/$(teamId)).data.userIds;
+          }
+
+          allow read: if inThisTeam() || isAdmin();
+          allow create: if isAdmin()
+            || (inThisTeam()
+                && request.resource.data.sender == 'USER'
+                && !('announcement' in request.resource.data));
+          allow update, delete: if isAdmin();
+        }
+      }
+    }
+
+    match /stire/{id} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /categories/{id} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Written only by the functions.
+    match /crews/{crewId} {
+      allow read: if signedIn() && (request.auth.uid in resource.data.memberUids || isAdmin());
+      allow write: if false;
+
+      match /results/{eventId} {
+        allow read, write: if false;
+      }
+    }
+
+    match /inviteCodes/{code} {
+      allow read, write: if false;
+    }
+
+    match /seasons/{seasonId} {
+      allow read: if signedIn();
+      allow write: if false;
+
+      match /standings/{crewId} {
+        allow read: if signedIn();
+        allow write: if false;
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

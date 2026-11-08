@@ -55,3 +55,9 @@ Registered in `main.dart`:
 ## Config & platform
 - `lib/firebase_options.dart` (FlutterFire, Android + iOS), `android/app/google-services.json`, `.firebaserc`, `firebase.json`.
 - Permissions/plugins used: location (geolocator), image picker (gallery), notifications (FCM + flutter_local_notifications), url_launcher, share_plus, flutter_map/latlong2, cached_network_image, flutter_svg, lottie, flutter_colorpicker, intl.
+
+## Security rules
+
+`firestore.rules`, tested in `functions/src/test/rules.emu.test.ts`, one test per client write. Add to both together: a write a rule forgets fails silently on a phone in the middle of a game. In short: everyone signed in reads events, teams, news and seasons; a team member changes only the progress fields of their own team, and only as the app does (own `presence` and `walked`, a mission's time once, `hintsUsed` only added, photos only as `pending` with `lastPhotoKey` naming the try, the unread mark set but not cleared, `phoneNumber` for the captain); organisers change anything but create no teams; `crews`, `inviteCodes`, `seasons`, `memories`, `xp`, `stats`, `badges` and `resultsComputedAt` belong to the functions. Rules cannot walk a map, so the size of `attempts` is not checked. Storage rules are not in the repo.
+
+**The live rules open the whole database until 2026-12-31,** after which every request is refused. Deploy these before then.
