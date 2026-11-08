@@ -74,6 +74,20 @@ class PuzzleRulesController {
     return _radius == null ? 'Un număr întreg între 10 și 200' : null;
   }
 
+  /// The place in the two fields, or null when they cannot be read.
+  ({double lat, double lng})? get placeInFields {
+    final lat = double.tryParse(latitudeController.text.trim());
+    final lng = double.tryParse(longitudeController.text.trim());
+    if (lat == null || lng == null || lat.abs() > 90 || lng.abs() > 180) return null;
+    return (lat: lat, lng: lng);
+  }
+
+  /// Fills the two fields; a puzzle's circle is small, so six decimals.
+  void setPlace(({double lat, double lng}) place) {
+    latitudeController.text = place.lat.toStringAsFixed(6);
+    longitudeController.text = place.lng.toStringAsFixed(6);
+  }
+
   String? get latitudeError => _coordinateError(latitudeController, 90, 'Latitudinea');
   String? get longitudeError => _coordinateError(longitudeController, 180, 'Longitudinea');
 

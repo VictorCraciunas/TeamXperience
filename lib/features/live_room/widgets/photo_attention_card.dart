@@ -35,7 +35,8 @@ class PhotoAttentionCard extends StatelessWidget {
       child: Center(child: Icon(TablerIcons.photo, size: 18, color: colors.muted)),
     );
     return OutlineCard(
-      padding: const EdgeInsets.all(8),
+      // The round buttons' tap areas take up the rest of the mockup's 8.
+      padding: const EdgeInsets.fromLTRB(8, 6, 0, 6),
       child: Row(
         children: [
           GestureDetector(

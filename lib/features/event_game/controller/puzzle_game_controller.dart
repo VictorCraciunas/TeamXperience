@@ -5,6 +5,7 @@ import 'package:teamxperience/features/event_game/logic/answer_check.dart';
 import 'package:teamxperience/features/event_game/logic/mission_progress.dart';
 import 'package:teamxperience/features/event_game/logic/puzzle_rules.dart';
 import 'package:teamxperience/features/event_game/logic/puzzle_rules_keeper.dart';
+import 'package:teamxperience/features/event_game/logic/puzzle_writes.dart';
 import 'package:teamxperience/features/event_game/logic/spaced_components.dart';
 import 'package:teamxperience/utils/component_conversion/answer_feedback.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
@@ -13,7 +14,7 @@ import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/service/route_service.dart';
-import 'package:teamxperience/service/team_service/team_service.dart';
+
 import 'package:teamxperience/utils/component_conversion/component_to_widget.dart';
 import '../../../enums/component-type.dart';
 
@@ -35,7 +36,10 @@ class PuzzleGameController {
   bool _advancing = false;
   bool _disposed = false;
   late BuildContext context;
-  TeamService teamService = TeamService();
+  final PuzzleWrites _writes;
+
+  /// An organiser's walk-through: nothing is saved.
+  final bool preview;
   final RouteService routeService = RouteService();
   late Event event;
   late Team team;
@@ -60,16 +64,22 @@ class PuzzleGameController {
   /// Whether this mission was already completed before entering
   bool get isMissionCompleted => missionIndex < team.missionProgress;
 
-  PuzzleGameController(this.mission, this.background, this.event, this.team, this.missionIndex) {
+  PuzzleGameController(
+    this.mission,
+    this.background,
+    this.event,
+    this.team,
+    this.missionIndex, {
+    PuzzleWrites? writes,
+    this.preview = false,
+  }) : _writes = writes ?? puzzleWritesFor(event.eventId, team.name, preview: preview) {
     rules = PuzzleRulesKeeper(
       team: team,
-      addWrongAttempt: (key) => teamService.addWrongAttempt(event.eventId, team.name, key),
-      lockPuzzle: (key, until) => teamService.lockPuzzle(event.eventId, team.name, key, until),
-      markHintUsed: (key) => teamService.markHintUsed(event.eventId, team.name, key),
+      addWrongAttempt: _writes.addWrongAttempt,
+      lockPuzzle: _writes.lockPuzzle,
+      markHintUsed: _writes.markHintUsed,
     );
-    _teamWatch = teamService
-        .getStreamTeam(event.eventId, team.name)
-        .listen(_absorb, onError: (Object _) {});
+    _teamWatch = _writes.watchTeam().listen(_absorb, onError: (Object _) {});
     _tick = Timer.periodic(const Duration(seconds: 1), (_) => now.value = DateTime.now());
     loadPuzzles();
     // Resume from saved puzzle progress (only for the current unlocked mission)
@@ -218,7 +228,7 @@ class PuzzleGameController {
           sameMission: team.missionProgress == missionIndex,
         );
         try {
-          await teamService.updatePuzzleNumber(event.eventId, team.name, team.puzzleNumber);
+          await _writes.updatePuzzleNumber(team.puzzleNumber);
         } catch (e) {
           print("Error updating puzzle number: $e");
         }
@@ -241,17 +251,12 @@ class PuzzleGameController {
       team.missionProgress = solved.progress;
 
       try {
-        await teamService.updatePuzzleNumber(event.eventId, team.name, 0);
-        await teamService.updateMissionProgress(
-          event.eventId,
-          team.name,
-          team.missionProgress,
-          completedMission: stamp,
-        );
+        await _writes.updatePuzzleNumber(0);
+        await _writes.updateMissionProgress(team.missionProgress, completedMission: stamp);
         // The last mission: the team is done, and its time stops now.
         if (team.missionProgress >= event.missions.length) {
           team.hasFinished = true;
-          await teamService.finishTeam(event.eventId, team.name, completed: true);
+          await _writes.finishTeam();
         }
         _leave(team);
       } catch (e) {

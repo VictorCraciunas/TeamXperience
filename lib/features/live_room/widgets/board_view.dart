@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:teamxperience/model/team.dart';
+import 'package:teamxperience/ui/components/feedback/load_failed.dart';
 import 'package:teamxperience/ui/components/layout/outline_card.dart';
 import 'package:teamxperience/ui/components/misc/app_chip.dart';
 import 'package:teamxperience/ui/components/misc/app_chip_style.dart';
@@ -24,6 +25,7 @@ class BoardView extends StatelessWidget {
     required this.now,
     required this.canStop,
     this.announcing = false,
+    this.failed = false,
     required this.onFilter,
     required this.onTeam,
     required this.onCall,
@@ -43,6 +45,9 @@ class BoardView extends StatelessWidget {
 
   /// An announcement is on its way: its button rests and says so.
   final bool announcing;
+
+  /// The teams could not be read.
+  final bool failed;
   final ValueChanged<BoardFilter> onFilter;
   final ValueChanged<Team> onTeam;
   final ValueChanged<Team> onCall;
@@ -80,7 +85,9 @@ class BoardView extends StatelessWidget {
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
-            child: rows.isEmpty
+            child: rows.isEmpty && failed && teamCount == 0
+                ? const LoadFailed(message: 'Nu am putut încărca echipele.')
+                : rows.isEmpty
                 ? Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: Text(
@@ -109,7 +116,7 @@ class BoardView extends StatelessWidget {
         SafeArea(
           top: false,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+            padding: const EdgeInsets.fromLTRB(14, 6.5, 14, 8.5),
             child: Row(
               children: [
                 Expanded(

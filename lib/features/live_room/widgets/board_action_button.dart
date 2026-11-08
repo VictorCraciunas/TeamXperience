@@ -20,27 +20,31 @@ class BoardActionButton extends StatelessWidget {
         onTap: onTap,
         child: Opacity(
           opacity: onTap == null ? .45 : 1,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              border: Border.all(color: colour, width: 1.5),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(icon, size: 14, color: colour),
-                  const SizedBox(width: 4),
-                  Flexible(
-                    child: Text(
-                      label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 12, height: 1.45, fontWeight: FontWeight.w500, color: colour),
+          // A finger-sized tap area around what the mockup draws.
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5.5),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border.all(color: colour, width: 1.5),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(icon, size: 14, color: colour),
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 12, height: 1.45, fontWeight: FontWeight.w500, color: colour),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

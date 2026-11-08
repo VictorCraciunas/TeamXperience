@@ -1,3 +1,4 @@
+import 'package:teamxperience/ui/components/feedback/load_failed.dart';
 import 'package:flutter/material.dart';
 import 'package:teamxperience/features/events_tab/logic/event_filters.dart';
 import 'package:teamxperience/model/event.dart';
@@ -28,11 +29,19 @@ class EventsTabView extends StatelessWidget {
     required this.onShare,
     required this.onRefresh,
     required this.map,
+    this.failed = false,
+    this.loading = false,
   });
 
   final ({List<Event> registered, List<Event> open, List<Event> soon}) sections;
   final EventQuery query;
   final bool mapMode;
+
+  /// The events could not be read and there are none from before.
+  final bool failed;
+
+  /// The first read is running.
+  final bool loading;
   final bool searching;
   final Map<String, String> teamNames;
   final Map<String, int> teamCounts;
@@ -58,7 +67,11 @@ class EventsTabView extends StatelessWidget {
         if (searching) EventsSearchField(initial: query.search, onChanged: onSearch),
         FilterChipsRow(query: query, onToggle: onToggle, onAll: onAll),
         Expanded(
-          child: mapMode
+          child: loading
+              ? const Center(child: CircularProgressIndicator())
+              : failed
+              ? LoadFailed(message: 'Nu am putut încărca evenimentele.', onRetry: onRefresh)
+              : mapMode
               ? Padding(padding: const EdgeInsets.only(top: 10), child: map)
               : RefreshIndicator(
                   onRefresh: onRefresh,

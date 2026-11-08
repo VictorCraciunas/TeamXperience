@@ -18,6 +18,7 @@ import 'package:teamxperience/features/event_game/widgets/image_upload/image_upl
 import '../../../model/event.dart';
 import '../../../model/mission.dart';
 import '../../../model/team.dart';
+import '../widgets/preview_skip_view.dart';
 
 /// One mission's puzzles inside the game frame of mockup 06, in the event's
 /// colours: header, mission bars, the organiser's content (as built), the
@@ -45,7 +46,7 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
       final event = args['event'] as Event;
       final team = args['team'] as Team;
       final missionIndex = args['missionIndex'] as int;
-      controller = PuzzleGameController(mission, background, event, team, missionIndex);
+      controller = PuzzleGameController(mission, background, event, team, missionIndex, preview: args['preview'] == true);
       controller.onOutOfAttempts = () {
         if (mounted && controller.canUseHint) _openHint();
       };
@@ -92,6 +93,7 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
   }
 
   void _openChat() {
+    if (controller.preview) return;
     Navigator.pushNamed(
       context,
       Routes.chatScreen,
@@ -187,15 +189,20 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                                 ),
                               // Map + button
                               Expanded(
-                                child: GeolocationPuzzleWidget(
-                                  key: ValueKey('geo_$selectedPuzzle'),
-                                  puzzle: currentPuzzle,
-                                  onSolved: () => controller.navigate(),
-                                  isMissionCompleted: controller.isMissionCompleted,
-                                  routeService: controller.routeService,
-                                  onHint: controller.canUseHint ? _openHint : null,
-                                  onPicture: controller.background != null,
-                                ),
+                                child: controller.preview
+                                    ? PreviewSkipView(
+                                        text: 'Aici echipele trebuie să ajungă la locul de pe hartă.',
+                                        onSkip: controller.navigate,
+                                      )
+                                    : GeolocationPuzzleWidget(
+                                        key: ValueKey('geo_$selectedPuzzle'),
+                                        puzzle: currentPuzzle,
+                                        onSolved: () => controller.navigate(),
+                                        isMissionCompleted: controller.isMissionCompleted,
+                                        routeService: controller.routeService,
+                                        onHint: controller.canUseHint ? _openHint : null,
+                                        onPicture: controller.background != null,
+                                      ),
                               ),
                             ],
                           );
@@ -217,17 +224,22 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                                   ),
                                 ),
                               Expanded(
-                                child: ImageUploadPuzzleWidget(
-                                  key: ValueKey('img_$selectedPuzzle'),
-                                  eventId: controller.event.eventId,
-                                  teamName: controller.team.name,
-                                  missionIndex: controller.missionIndex,
-                                  puzzleIndex: selectedPuzzle,
-                                  onSolved: () => controller.navigate(),
-                                  onChat: _openChat,
-                                  isMissionCompleted: controller.isMissionCompleted,
-                                  onPicture: controller.background != null,
-                                ),
+                                child: controller.preview
+                                    ? PreviewSkipView(
+                                        text: 'Aici echipele trimit o fotografie, iar tu o aprobi din chat.',
+                                        onSkip: controller.navigate,
+                                      )
+                                    : ImageUploadPuzzleWidget(
+                                        key: ValueKey('img_$selectedPuzzle'),
+                                        eventId: controller.event.eventId,
+                                        teamName: controller.team.name,
+                                        missionIndex: controller.missionIndex,
+                                        puzzleIndex: selectedPuzzle,
+                                        onSolved: () => controller.navigate(),
+                                        onChat: _openChat,
+                                        isMissionCompleted: controller.isMissionCompleted,
+                                        onPicture: controller.background != null,
+                                      ),
                               ),
                             ],
                           );

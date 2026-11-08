@@ -3,6 +3,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:teamxperience/features/admin/home/logic/admin_event_stats.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
+import 'package:teamxperience/ui/components/feedback/load_failed.dart';
 import 'package:teamxperience/ui/components/misc/clock_builder.dart';
 import 'package:teamxperience/ui/ui.dart';
 
@@ -94,7 +95,7 @@ class LiveRoomView extends StatelessWidget {
                   decoration: BoxDecoration(border: Border(bottom: BorderSide(color: colors.border))),
                   child: SizedBox(height: 170, child: map),
                 ),
-                if (failed)
+                if (failed && stats.teams > 0)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
                     child: Text(
@@ -107,6 +108,8 @@ class LiveRoomView extends StatelessWidget {
                     padding: EdgeInsets.all(24),
                     child: Center(child: CircularProgressIndicator()),
                   )
+                else if (failed && stats.teams == 0)
+                  const LoadFailed(message: 'Nu am putut încărca echipele.')
                 else ...[
                   Padding(
                     padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),

@@ -37,8 +37,3 @@ Verify before fixing; none of these were reproduced. Roughly ordered by impact.
 - `sendNotification` HTTP function has no authentication (anyone with the URL can POST and push to all users).
 - `firebase_options.dart` / `google-services.json` are public client config by design, but the project's rules decide what they can access.
 
-## Dark mode gaps (deferred on purpose)
-- Splash screen and game screens (mission list, puzzle screen, geolocation and photo-upload widgets) are not polished for dark mode: they are redesigned later (UI plan, follow-up plans). The map keeps its light OpenStreetMap tiles.
-
-## UI polish backlog (owner, 2026-10-19)
-- Evenimente tab (user events dashboard): the unselected Evenimente/Înscrieri toggle has low contrast; fix when this screen is redesigned.

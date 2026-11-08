@@ -31,6 +31,20 @@ class AddMissionsController {
   /// True when the event was a draft: saving then publishes it.
   final bool isDraft;
 
+  /// The event's start pin, if it has one.
+  ({double lat, double lng})? get startPlace {
+    final lat = event.startLatitude;
+    final lng = event.startLongitude;
+    return lat == null || lng == null ? null : (lat: lat, lng: lng);
+  }
+
+  /// Where a puzzle's map opens: its mission's place, else the event's start.
+  ({double lat, double lng})? placeNearMission(int mission) {
+    final lat = event.missions[mission].latitude;
+    final lng = event.missions[mission].longitude;
+    return lat == null || lng == null ? startPlace : (lat: lat, lng: lng);
+  }
+
   AddMissionsController(this.event, this.mode, {this.onStateChanged, this.isDraft = false}) {
     if (mode == 'blueprint') _copyMissionsWithoutAnswers();
   }

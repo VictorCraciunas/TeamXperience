@@ -84,8 +84,8 @@ class LocationMap extends StatelessWidget {
           ],
         ),
         Positioned(
-          left: 8,
-          top: 8,
+          left: 0,
+          top: 0,
           child: RoundIconButton(icon: TablerIcons.current_location, label: 'Arată-mă pe hartă', onTap: onRecenter),
         ),
       ],

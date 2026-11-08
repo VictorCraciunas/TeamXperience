@@ -21,6 +21,11 @@ class StireRepo {
   Future<List<Stire>> getAllStire() async {
     try {
       QuerySnapshot snapshot = await _firestore.collection('stire').get();
+      // Offline with nothing cached the answer is empty, not an error, and it
+      // does not mean there is no news.
+      if (snapshot.docs.isEmpty && snapshot.metadata.isFromCache) {
+        throw Exception('News unavailable offline');
+      }
 
       List<Stire> stireList =
           snapshot.docs.map((doc) {

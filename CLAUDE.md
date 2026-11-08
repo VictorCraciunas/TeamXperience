@@ -62,7 +62,7 @@ backend/           Raw Firebase access: authentication/, repo/*_repo.dart (Fires
 service/           Business logic over repos: event_service/, team_service/, news_service/, message_service, FCMService, LocationService, RouteService, share_service
 state_management/  ChangeNotifier providers: UserProvider, EventList, NewsList, UserEventsProvider
 features/          One folder per screen/flow: controller/ + screen/ (+ widgets/, service/)
-ui/                Shared UI layer: theme/ (AppColors tokens, AppTheme, radius/spacing) and components/ (buttons, inputs, navigation, event, news, feedback, misc: AppButton, AppTextField, AppDropdown, SectionCard, EventHeroCard, MyAppBar, EventCard, StireCard, MySnackBars, showAppDialog, AsyncState, ...)
+ui/                Shared UI layer: theme/ (AppColors tokens, AppTheme, radius/spacing) and components/ (buttons, inputs, navigation, event, news, feedback, misc: AppButton, AppTextField, AppDropdown, SectionCard, EventHeroCard, MyAppBar, EventCard, StireCard, MySnackBars, showAppDialog, ...)
 utils/             AuthUtil, calendar_helper, image_helper, color_conversion, component_conversion/
 ```
 

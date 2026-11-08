@@ -1,3 +1,4 @@
+import 'package:teamxperience/ui/components/feedback/load_failed.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/features/play_tab/controller/play_tab_controller.dart';
@@ -46,13 +47,20 @@ class _PlayTabScreenState extends State<PlayTabScreen> {
         Expanded(
           child: ListenableBuilder(
             listenable: controller,
-            builder: (context, _) => PlayTabView(
-              state: controller.state,
-              onContinue: controller.continueGame,
-              onEnterCode: controller.enterCode,
-              onOpenEvent: controller.openEvent,
-              onBrowse: controller.onBrowse,
-            ),
+            builder: (context, _) => controller.eventList.firstLoading
+                ? const Center(child: CircularProgressIndicator())
+                : controller.eventList.loadFailed
+                ? LoadFailed(
+                    message: 'Nu am putut încărca evenimentele.',
+                    onRetry: () => controller.eventList.loadEvents(forceRefresh: true),
+                  )
+                : PlayTabView(
+                    state: controller.state,
+                    onContinue: controller.continueGame,
+                    onEnterCode: controller.enterCode,
+                    onOpenEvent: controller.openEvent,
+                    onBrowse: controller.onBrowse,
+                  ),
           ),
         ),
       ],

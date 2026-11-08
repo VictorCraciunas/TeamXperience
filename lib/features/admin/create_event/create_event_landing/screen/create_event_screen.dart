@@ -4,6 +4,8 @@ import 'package:teamxperience/enums/difficulty.dart';
 import 'package:teamxperience/enums/screen_animation.dart';
 import 'package:teamxperience/utils/event_formats.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/create_components/optional_slider.dart';
+import 'package:teamxperience/features/admin/create_event/common_widgets/pin_field_button.dart';
+import 'package:teamxperience/features/admin/create_event/logic/coordinates.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:intl/intl.dart';
 import 'package:teamxperience/features/admin/create_event/common_widgets/upload_image.dart';
@@ -181,6 +183,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     hint: '45.7971, 24.1520',
                     helper: 'Copiază din Google Maps, ex. 45.7971, 24.1520',
                     validator: (v) => CreateEventController.startPinProblem(v ?? ''),
+                  ),
+                  const SizedBox(height: 8),
+                  PinFieldButton(
+                    current: () => parseCoordinates(controller.startPinController.text),
+                    onPicked: (place) =>
+                        controller.startPinController.text = formatCoordinates(place.lat, place.lng),
                   ),
                   const SizedBox(height: 20),
                   AppTextField(

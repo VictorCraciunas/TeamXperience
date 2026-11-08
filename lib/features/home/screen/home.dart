@@ -1,3 +1,4 @@
+import 'package:teamxperience/ui/components/feedback/load_failed.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/features/events_tab/logic/event_sections.dart';
@@ -142,6 +143,8 @@ class _HomeState extends State<Home> {
               Expanded(
                 child: loading
                     ? const Center(child: CircularProgressIndicator())
+                    : eventList.loadFailed
+                    ? LoadFailed(message: 'Nu am putut încărca evenimentele.', onRetry: controller.refreshData)
                     : RefreshIndicator(
                         onRefresh: controller.refreshData,
                         child: SingleChildScrollView(

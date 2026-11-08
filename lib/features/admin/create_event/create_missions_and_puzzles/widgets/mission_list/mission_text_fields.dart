@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/features/admin/create_event/common_widgets/pin_field_button.dart';
+import 'package:teamxperience/features/admin/create_event/common_widgets/pin_picker_screen.dart';
 import 'package:teamxperience/features/admin/create_event/logic/coordinates.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
@@ -7,7 +9,7 @@ import 'package:teamxperience/ui/ui.dart';
 /// The mission's title, its line for the event page, whether the page shows
 /// it before the game, and where the mission is (optional).
 class MissionTextFields extends StatefulWidget {
-  const MissionTextFields({super.key, required this.mission, required this.onChanged, this.onPlaceChanged});
+  const MissionTextFields({super.key, required this.mission, required this.onChanged, this.onPlaceChanged, this.near});
 
   final Mission mission;
   final void Function({String? title, String? teaser, bool? isTeaserPublic}) onChanged;
@@ -15,6 +17,9 @@ class MissionTextFields extends StatefulWidget {
   /// A place that can be read, or null once the field is emptied. A half
   /// typed place reports nothing.
   final void Function(({double lat, double lng})? place)? onPlaceChanged;
+
+  /// Where the map opens when the mission has no place: the event's start.
+  final MapPlace? near;
 
   @override
   State<MissionTextFields> createState() => _MissionTextFieldsState();
@@ -88,6 +93,16 @@ class _MissionTextFieldsState extends State<MissionTextFields> {
             return value.trim().isEmpty || parseCoordinates(value) != null ? null : 'Coordonate greșite';
           },
           onChanged: _placeChanged,
+        ),
+        const SizedBox(height: 8),
+        PinFieldButton(
+          current: () => parseCoordinates(_place.text),
+          near: widget.near,
+          onPicked: (place) {
+            final text = formatCoordinates(place.lat, place.lng);
+            _place.text = text;
+            _placeChanged(text);
+          },
         ),
       ],
     );

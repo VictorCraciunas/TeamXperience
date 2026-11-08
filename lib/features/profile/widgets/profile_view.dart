@@ -21,6 +21,7 @@ class ProfileView extends StatelessWidget {
     this.stats = const UserStats(),
     this.badges = const [],
     this.memories = const [],
+    this.memoriesFailed = false,
     required this.themeLabel,
     required this.notificationsLabel,
     required this.onTheme,
@@ -38,6 +39,7 @@ class ProfileView extends StatelessWidget {
   final UserStats stats;
   final List<String> badges;
   final List<Memory> memories;
+  final bool memoriesFailed;
   final String themeLabel;
   final String notificationsLabel;
   final VoidCallback onTheme;
@@ -58,7 +60,7 @@ class ProfileView extends StatelessWidget {
         if (player) ...[
           ProfileStatsRow(stats: stats),
           BadgesSection(earned: badges, onOpenAll: onOpenBadges),
-          MemoriesSection(memories: memories, onOpen: onOpenMemory),
+          MemoriesSection(failed: memoriesFailed, memories: memories, onOpen: onOpenMemory),
         ],
         ProfileSettingsCard(
           key: settingsKey,

@@ -115,6 +115,7 @@ class LiveRoomController extends ChangeNotifier {
   bool _stopping = false;
   final Set<String> _deciding = {};
   bool _announcing = false;
+  bool _disposed = false;
 
   BoardFilter _filter = BoardFilter.all;
   BoardFilter get filter => _filter;
@@ -187,8 +188,10 @@ class LiveRoomController extends ChangeNotifier {
     }
   }
 
-  /// Stops the event for everyone. False when it could not be saved.
+  /// Stops the event for everyone. False when it could not be saved, or has
+  /// not started; an event already over counts as stopped.
   Future<bool> stop() async {
+    if (ended) return true;
     if (!canStop) return false;
     _stopping = true;
     notifyListeners();
@@ -212,11 +215,13 @@ class LiveRoomController extends ChangeNotifier {
     final message = text.trim();
     if (message.isEmpty) return AnnounceResult.nothing;
     if (_announcing) return AnnounceResult.busy;
-    if (_loading) return AnnounceResult.failed;
+    // Without the teams the chats cannot be reached.
+    if (_loading || (_error != null && _teams.isEmpty)) return AnnounceResult.failed;
+    final hasChats = _teams.isNotEmpty;
     _announcing = true;
     notifyListeners();
     try {
-      if (_teams.isNotEmpty) {
+      if (hasChats) {
         try {
           await _postToChats(_teams.map((t) => t.name).toList(), message).timeout(_sendTimeout);
         } on TimeoutException {
@@ -230,9 +235,10 @@ class LiveRoomController extends ChangeNotifier {
     }
     try {
       final pushed = await _push(_event.name ?? '', message).timeout(_sendTimeout);
-      return pushed ? AnnounceResult.sent : AnnounceResult.chatsOnly;
+      if (pushed) return AnnounceResult.sent;
+      return hasChats ? AnnounceResult.chatsOnly : AnnounceResult.failed;
     } catch (_) {
-      return AnnounceResult.chatsOnly;
+      return hasChats ? AnnounceResult.chatsOnly : AnnounceResult.failed;
     } finally {
       _announcing = false;
       notifyListeners();
@@ -250,8 +256,15 @@ class LiveRoomController extends ChangeNotifier {
     }
   }
 
+  /// A write can finish after the organiser left the room.
+  @override
+  void notifyListeners() {
+    if (!_disposed) super.notifyListeners();
+  }
+
   @override
   void dispose() {
+    _disposed = true;
     _eventSubscription.cancel();
     _teamSubscription.cancel();
     super.dispose();

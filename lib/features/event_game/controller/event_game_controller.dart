@@ -1,3 +1,4 @@
+import 'package:teamxperience/features/event_game/logic/preview_team.dart';
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
@@ -33,6 +34,12 @@ class EventGameController extends ChangeNotifier {
   /// The current time, ticking every second for the header's clocks.
   final ValueNotifier<DateTime> now = ValueNotifier(DateTime.now());
 
+  /// The organiser's throwaway team in a walk-through (the route opened with no
+  /// team): it lives on this phone and has no stream, location or finish.
+  late Team? previewTeam = team == null ? previewTeamOf() : null;
+
+  bool get isPreview => team == null;
+
   /// The team's place among every team; null until the first ranking.
   ({int place, int teams})? place;
   Timer? _deadlineTimer;
@@ -60,6 +67,11 @@ class EventGameController extends ChangeNotifier {
   /// A fresher copy of the team (from the stream or back from a puzzle).
   void takeTeam(Team fresh) {
     if (_disposed) return;
+    if (isPreview) {
+      previewTeam = fresh;
+      notifyListeners();
+      return;
+    }
     team = fresh;
     initMissionState();
     notifyListeners();
@@ -81,6 +93,7 @@ class EventGameController extends ChangeNotifier {
 
   /// "Vulpile · locul 2 din 12", or null before the ranking.
   String? get placeText {
+    if (isPreview) return previewLine;
     final p = place;
     final t = team;
     if (p == null || t == null) return null;
@@ -88,7 +101,7 @@ class EventGameController extends ChangeNotifier {
   }
 
   /// The mission the team is on, by index.
-  int get currentMission => team?.missionProgress ?? 0;
+  int get currentMission => (team ?? previewTeam)?.missionProgress ?? 0;
 
   /// The trail's stops, with the distance from the team's last position to
   /// the current mission.
@@ -122,7 +135,8 @@ class EventGameController extends ChangeNotifier {
 
   void _watchEventDeadline() {
     final start = event.dateEvent;
-    if (start == null) return;
+    // An organiser may walk through any event, also one that is over.
+    if (start == null || team == null) return;
 
     if (event.isOver) {
       _triggerEventEnded();

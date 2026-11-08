@@ -7,11 +7,14 @@ import 'memory_card.dart';
 
 /// "Amintiri": up to three past games, or a line saying where they will appear.
 class MemoriesSection extends StatelessWidget {
-  const MemoriesSection({super.key, required this.memories, required this.onOpen});
+  const MemoriesSection({super.key, required this.memories, this.failed = false, required this.onOpen});
 
   static const int shown = 3;
 
   final List<Memory> memories;
+
+  /// The memories could not be read.
+  final bool failed;
   final ValueChanged<Memory> onOpen;
 
   @override
@@ -26,7 +29,7 @@ class MemoriesSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: list.isEmpty
               ? Text(
-                  'Aici apar jocurile tale terminate.',
+                  failed ? 'Nu am putut încărca amintirile.' : 'Aici apar jocurile tale terminate.',
                   style: TextStyle(fontSize: 12, height: 1.45, color: context.colors.muted),
                 )
               : Column(

@@ -1,8 +1,8 @@
+import 'package:teamxperience/ui/components/feedback/load_failed.dart';
 import 'package:flutter/material.dart';
 import 'package:teamxperience/features/teams/widgets/crew_card.dart';
 import 'package:teamxperience/features/teams/widgets/join_link.dart';
 import 'package:teamxperience/features/teams/widgets/teams_header.dart';
-import 'package:teamxperience/features/teams/widgets/teams_load_error.dart';
 import 'package:teamxperience/model/crew.dart';
 import 'package:teamxperience/ui/theme/app_text_styles.dart';
 import 'package:teamxperience/ui/theme/theme_context.dart';
@@ -55,7 +55,7 @@ class TeamsView extends StatelessWidget {
                   child: Center(child: CircularProgressIndicator()),
                 )
               else if (failed)
-                TeamsLoadError(onRetry: onRetry)
+                LoadFailed(message: 'Nu am putut încărca echipele.', onRetry: onRetry)
               else if (crews.isEmpty)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(14, 28, 14, 6),

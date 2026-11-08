@@ -107,14 +107,14 @@ void main() {
   testWidgets('all of them fit 320 px at 1.3x text', (tester) async {
     await _pump(
       tester,
-      Column(
+      SingleChildScrollView(child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           const DistanceCompass(distance: '1,2 km', line: 'spre nord-vest · ~16 min pe jos', bearing: 300, trend: 'mai departe', closer: false),
           const PhotoStatusBanner(kind: PhotoBannerKind.rejected, text: 'Respinsă: „Nu se vede ceasul turnului, nici echipa”', trailing: 'acum 12 min'),
           Row(children: [Expanded(child: GameFilledButton(label: 'Fă altă poză', icon: TablerIcons.camera, onTap: () {}))]),
         ],
-      ),
+      )),
       width: 320,
       textScale: 1.3,
     );

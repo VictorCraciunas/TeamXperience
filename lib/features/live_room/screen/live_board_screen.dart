@@ -28,6 +28,7 @@ class LiveBoardScreen extends StatelessWidget {
             now: now,
             canStop: controller.canStop,
             announcing: controller.announcing,
+            failed: controller.error != null,
             onFilter: controller.setFilter,
             onTeam: (team) => actions.openTeam(team, now),
             onCall: actions.call,

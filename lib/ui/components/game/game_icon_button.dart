@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/event_theme_scope.dart';
+import '../misc/tap_area.dart';
 
 /// A square button of the puzzle bar (the chat): 42 px, the accent fill,
 /// radius 12, a 18 px icon in the colour that reads on the accent.
@@ -16,21 +17,13 @@ class GameIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.eventPalette;
-    return Semantics(
-      button: true,
+    return TapArea(
+      onTap: onTap,
       label: label,
-      excludeSemantics: true,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: DecoratedBox(
-          key: const ValueKey('game-icon-button'),
-          decoration: BoxDecoration(color: palette.accent, borderRadius: BorderRadius.circular(12)),
-          child: SizedBox.square(
-            dimension: 42,
-            child: Center(child: Icon(icon, size: 18, color: palette.onAccent)),
-          ),
-        ),
+      child: DecoratedBox(
+        key: const ValueKey('game-icon-button'),
+        decoration: BoxDecoration(color: palette.accent, borderRadius: BorderRadius.circular(12)),
+        child: SizedBox.square(dimension: 42, child: Center(child: Icon(icon, size: 18, color: palette.onAccent))),
       ),
     );
   }

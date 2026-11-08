@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -41,9 +43,26 @@ class CodeBoxesInput extends StatefulWidget {
   State<CodeBoxesInput> createState() => _CodeBoxesInputState();
 }
 
-class _CodeBoxesInputState extends State<CodeBoxesInput> {
+class _CodeBoxesInputState extends State<CodeBoxesInput> with SingleTickerProviderStateMixin {
   final _controller = TextEditingController();
   final _focus = FocusNode();
+
+  /// The shake when the code turns out wrong.
+  late final AnimationController _shake = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 420),
+  );
+
+  /// Across the boxes: three swings that die down, ending in place.
+  double _shakeOffset(double t) => math.sin(t * math.pi * 6) * 6 * (1 - t);
+
+  @override
+  void didUpdateWidget(CodeBoxesInput old) {
+    super.didUpdateWidget(old);
+    if (widget.error && !old.error && !MediaQuery.disableAnimationsOf(context)) {
+      _shake.forward(from: 0);
+    }
+  }
 
   @override
   void initState() {
@@ -54,6 +73,7 @@ class _CodeBoxesInputState extends State<CodeBoxesInput> {
 
   @override
   void dispose() {
+    _shake.dispose();
     _controller.dispose();
     _focus.dispose();
     super.dispose();
@@ -129,9 +149,16 @@ class _CodeBoxesInputState extends State<CodeBoxesInput> {
         alignment: Alignment.center,
         children: [
           // Narrow screens and large text scale the row down rather than overflow.
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Row(mainAxisSize: MainAxisSize.min, children: boxes),
+          AnimatedBuilder(
+            animation: _shake,
+            builder: (context, child) => Transform.translate(
+              offset: Offset(_shake.isAnimating ? _shakeOffset(_shake.value) : 0, 0),
+              child: child,
+            ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(mainAxisSize: MainAxisSize.min, children: boxes),
+            ),
           ),
           Positioned.fill(
             child: IgnorePointer(

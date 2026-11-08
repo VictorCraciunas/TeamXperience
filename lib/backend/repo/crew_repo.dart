@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../model/crew.dart';
+import 'confirmed_docs.dart';
 
 class CrewRepo {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -8,17 +9,11 @@ class CrewRepo {
   /// The crews the user belongs to, sorted by name. Crews are written by Cloud
   /// Functions; the app only reads them.
   Stream<List<Crew>> streamUserCrews(String uid) {
-    return _firestore
-        .collection('crews')
-        .where('memberUids', arrayContains: uid)
-        .snapshots()
-        .map(
-          (snapshot) => sortCrews(
-            snapshot.docs
-                .map((doc) => Crew.fromMap(doc.id, doc.data()))
-                .toList(),
-          ),
-        );
+    final query = _firestore.collection('crews').where('memberUids', arrayContains: uid);
+    return query.snapshots().asyncMap((snapshot) async {
+      final docs = await confirmedDocs(query, snapshot);
+      return sortCrews(docs.map((doc) => Crew.fromMap(doc.id, doc.data())).toList());
+    });
   }
 }
 

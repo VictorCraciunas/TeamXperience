@@ -25,26 +25,29 @@ class PuzzleHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = context.eventPalette;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 8),
+      // The back button's 48 px tap area takes up 8 of the mockup's padding.
+      padding: const EdgeInsets.fromLTRB(6, 4, 14, 0),
       child: Row(
         children: [
           RoundIconButton(icon: TablerIcons.arrow_left, label: 'Înapoi', onTap: onBack),
-          const SizedBox(width: 8),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Misiunea $mission din $missions',
-                  style: TextStyle(fontSize: 11, height: 1.45, color: palette.muted),
-                ),
-                Text(
-                  title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontFamily: palette.voiceFont, fontSize: 15, height: 1.45, color: palette.ink),
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Misiunea $mission din $missions',
+                    style: TextStyle(fontSize: 11, height: 1.45, color: palette.muted),
+                  ),
+                  Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontFamily: palette.voiceFont, fontSize: 15, height: 1.45, color: palette.ink),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(width: 8),

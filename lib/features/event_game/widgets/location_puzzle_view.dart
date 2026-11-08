@@ -162,7 +162,7 @@ class LocationPuzzleView extends StatelessWidget {
         FrameBand(
           onPicture: onPicture,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+            padding: const EdgeInsets.fromLTRB(14, 8, 14, 10),
             child: Row(
               children: [
                 Expanded(

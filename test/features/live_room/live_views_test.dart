@@ -186,6 +186,29 @@ void main() {
       expect(calls.list, isEmpty);
     });
 
+    testWidgets('a failed first read is not "nothing to do"', (tester) async {
+      _bigScreen(tester);
+      await tester.pumpWidget(_frame(LiveRoomView(
+        event: _event(),
+        stats: AdminEventStats.fromTeams(const []),
+        items: const [],
+        map: const SizedBox.shrink(),
+        failed: true,
+        clock: () => _now,
+        isDeciding: (_) => false,
+        onBoard: (_) {},
+        onAnnounce: () {},
+        onViewPhoto: (_) {},
+        onReject: (_) {},
+        onApprove: (_) {},
+        onTeam: (_) {},
+        onChat: (_) {},
+      )));
+      expect(find.text('Nu am putut încărca echipele.'), findsOneWidget);
+      expect(find.text('Nimic de rezolvat acum.'), findsNothing);
+      expect(find.text('în joc'), findsNothing);
+    });
+
     testWidgets('nothing to do says so', (tester) async {
       _bigScreen(tester);
       await tester.pumpWidget(_frame(_room(const [], _Calls())));
@@ -266,6 +289,25 @@ void main() {
       await tester.pumpWidget(_frame(_board(_mockupTeams(), _Calls(), canStop: false)));
       expect(find.text('Oprește'), findsNothing);
       expect(find.text('Anunț'), findsOneWidget);
+    });
+
+    testWidgets('a failed first read says so, not "no teams"', (tester) async {
+      await tester.pumpWidget(_frame(BoardView(
+        teamCount: 0,
+        missionCount: 6,
+        rows: const [],
+        filter: BoardFilter.all,
+        now: _now,
+        canStop: false,
+        failed: true,
+        onFilter: (_) {},
+        onTeam: (_) {},
+        onCall: (_) {},
+        onAnnounce: () {},
+        onStop: () {},
+      )));
+      expect(find.text('Nu am putut încărca echipele.'), findsOneWidget);
+      expect(find.text('Nu e nicio echipă înscrisă.'), findsNothing);
     });
 
     testWidgets('an empty filter and an empty event say so', (tester) async {
