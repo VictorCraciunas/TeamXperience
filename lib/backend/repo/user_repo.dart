@@ -3,6 +3,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../model/memory.dart';
 import '../../model/user.dart';
 
+/// The user could not be looked up (offline, a refused read, an unreadable
+/// document). It says nothing about whether the user exists.
+class UserLookupFailed implements Exception {
+  const UserLookupFailed();
+
+  @override
+  String toString() => 'Nu am putut verifica contul. Încearcă din nou.';
+}
+
 class UserRepo{
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -32,6 +41,9 @@ class UserRepo{
         .map((snap) => [for (final doc in snap.docs) Memory.fromMap(doc.id, doc.data())]);
   }
 
+  /// The user with this email, or null only when there truly is none. A
+  /// failed lookup throws [UserLookupFailed]: callers create a new user on
+  /// null, and `saveUser` replaces the whole document.
   Future<AppUser?> findByEmail(String email) async {
     try {
       QuerySnapshot snapshot = await _firestore
@@ -42,12 +54,14 @@ class UserRepo{
       if (snapshot.docs.isNotEmpty) {
         DocumentSnapshot doc = snapshot.docs.first;
         return AppUser.fromFirestore(doc.data() as Map<String, dynamic>);
-      } else {
-        return null;
       }
+      // Offline, an empty answer from the local cache does not throw, and it
+      // does not mean there is no such user.
+      if (snapshot.metadata.isFromCache) throw const UserLookupFailed();
+      return null;
     } catch (e) {
       print('Error finding user by email: $e');
-      return null;
+      throw const UserLookupFailed();
     }
   }
 
