@@ -9,6 +9,8 @@ import 'finish_preview.dart';
 import 'location_puzzle_preview.dart';
 import 'photo_puzzle_preview.dart';
 import 'play_tab_preview.dart';
+import 'package:teamxperience/features/admin/create_event/common_widgets/pin_picker_screen.dart';
+
 import 'live_room_preview.dart';
 import 'profile_preview.dart';
 import 'puzzle_frame_preview.dart';
@@ -54,8 +56,10 @@ class ShellPreviewsLauncher extends StatelessWidget {
             AppButton(label: 'Final', onPressed: () => _open(context, const FinishPreview())),
             const SizedBox(height: AppSpacing.sm),
             AppButton(label: 'Profil', onPressed: () => _open(context, const ProfilePreview())),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             AppButton(label: 'Camera organizatorului', onPressed: () => _open(context, const LiveRoomPreview())),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(label: 'Alege locul pe hartă', onPressed: () => showPinPicker(context)),
           ],
         ),
       ),

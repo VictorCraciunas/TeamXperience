@@ -71,3 +71,10 @@ Conventions in feature code: `Scaffold` per screen, `MyAppBar`, `AppSpacing.page
 The same converter is used both in the **admin builder preview** (`PuzzleController.buildComponent`) and the **player game screen** (`PuzzleGameController.loadPuzzles`), so what the admin designs is what the player sees. To add a component kind: add to `ComponentType`, fields to `Component`, a widget in this folder, a case in `convert`, an editor in `admin/.../create_components/`, and handle it in `AddComponentWidget`.
 
 `PuzzleGameScreen` animates components in sequence (fade-in `Opacity` per component via `buildComponentsWithSpacing`, 40 px gap).
+
+## Added in step 9
+
+- `TapArea` (`misc/`): a control's tap area, at least 48 px, with the drawing centred; its parent gives the extra room back in its own padding.
+- `LoadFailed` (`feedback/`): stands in for a list that could not be loaded, with "Încearcă din nou".
+- `PulseDot` (`misc/`): a dot that breathes for what is happening now; still under reduced motion. `CodeBoxesInput` shakes once when `error` turns on; `CountdownBox` slides its new value in.
+- `AppColors.amber`: the mockups' #F2A93B. `OutlineCard.borderColor`, `SectionHeader.trailingChild`.

@@ -448,6 +448,8 @@ finished route rather than a stopped game, and the finish screen.
 
 **Step 8 is done (2026-11-08):** the live room (mockup 09) replaces `EventManagementScreen` on `Routes.eventManagement`, with `Routes.liveBoard` and the big map on `Routes.map`. Pins are coloured by state, as the mockup draws them: navy in play, amber stuck, teal finished, grey silent for 5 minutes.
 
+**Step 9 is done (2026-11-08):** organisers place the start, mission and location puzzle pins on a map (typing stays, for pasting from Google Maps); "Vezi Eveniment" walks through the event with a throwaway team and saves nothing; photo puzzles have no hint field; every screen reads theme colours (only the photo viewers and the Facebook button keep their own); failed reads say so (`LoadFailed`), also offline on first open; game and live room controls have 48 px tap areas (`TapArea`); countdown tick, route pulse, code box shake. **Left out on purpose:** golden tests (Victor, 2026-11-08: the look is judged in the gallery), `series` and the puzzle `badge` (they belong to the parked results function), `theme` (6b: an event's look comes only from its puzzles).
+
 **Step 3b (parked by Victor on 2026-11-05, to do later).** Tasks 1 and 3 of
 `docs/superpowers/plans/2026-11-04-redesign-step-3-teams-and-invites.md`:
 `firestore.rules` with the emulator tests (start by comparing with the rules
