@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:teamxperience/model/user.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
 import 'package:teamxperience/ui/components/feedback/snackbars.dart';
+import 'package:teamxperience/utils/invite_code.dart';
 
 import '../../../model/event.dart';
 import '../../../model/team.dart';
@@ -31,12 +32,28 @@ class TeamControllerDetails {
     initializeTeam();
   }
 
+  /// Its crew's, stored there because anyone signed in can read a team.
+  String? _inviteCode;
+
+  /// As shown, "VLP-482"; null when there is none to show.
+  String? get displayInviteCode {
+    final code = _inviteCode;
+    return code == null ? null : displayCode(code);
+  }
+
   /// The invite code is for the captain to pass on.
-  bool get showsInviteCode {
+  bool get showsInviteCode => _inviteCode != null;
+
+  Future<void> _loadInviteCode() async {
     final current = team;
     final player = user;
-    if (current == null || player == null) return false;
-    return current.inviteCode != null && current.captainUid == player.uid;
+    final crewId = current?.crewId;
+    if (current == null || player == null || crewId == null || current.captainUid != player.uid) return;
+    try {
+      _inviteCode = await teamService.crewInviteCode(crewId);
+    } catch (_) {
+      // The rest of the page still works.
+    }
   }
 
   void populateControllers() {
@@ -69,6 +86,7 @@ class TeamControllerDetails {
 
   Future<void> initializeTeam() async {
     team = await _getTeam();
+    await _loadInviteCode();
     await loadTeams();
     isLoading = false;
   }
@@ -87,7 +105,7 @@ class TeamControllerDetails {
   /// Passes the invite code on through the share sheet.
   void shareInvite(BuildContext context) {
     final current = team;
-    final code = current?.displayCode;
+    final code = displayInviteCode;
     if (current == null || code == null) return;
     shareService.shareInvite(
       context,
@@ -98,7 +116,7 @@ class TeamControllerDetails {
   }
 
   Future<void> copyInvite(BuildContext context) async {
-    final code = team?.displayCode;
+    final code = displayInviteCode;
     if (code == null) return;
     await Clipboard.setData(ClipboardData(text: code));
     if (context.mounted) {

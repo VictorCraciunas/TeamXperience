@@ -81,6 +81,9 @@ class TeamService {
 
   Stream<List<Crew>> streamUserCrews(String uid) => _crews.streamUserCrews(uid);
 
+  /// The invite code of a crew the player is in.
+  Future<String?> crewInviteCode(String crewId) => _crews.inviteCode(crewId);
+
   /// A season's top crews, most points first.
   Stream<List<SeasonStanding>> streamStandings(String seasonId) => SeasonRepo().streamStandings(seasonId);
 

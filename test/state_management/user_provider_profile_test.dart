@@ -24,6 +24,12 @@ void main() {
     expect(notified, 1);
   });
 
+  test('takes the events the server signed them up to', () {
+    final provider = UserProvider()..setUser(_user('vc'), _FakeFirebaseUser());
+    provider.updateProfile(_user('vc').copyWith(registeredEventIds: ['e1']));
+    expect(provider.currentUser?.registeredEventIds, ['e1']);
+  });
+
   test('keeps everything else about the signed-in user', () {
     final provider = UserProvider()..setUser(_user('vc').copyWith(fcmToken: 'tok'), _FakeFirebaseUser());
     provider.updateProfile(_user('vc', xp: 10).copyWith(fcmToken: 'other'));

@@ -11,7 +11,8 @@ class InviteResultSection extends StatelessWidget {
     super.key,
     required this.code,
     required this.size,
-    required this.captainInitials,
+    required this.initials,
+    this.leftOut = const [],
     required this.onShare,
     required this.onCopy,
   });
@@ -20,7 +21,12 @@ class InviteResultSection extends StatelessWidget {
 
   /// How many places the team has, the captain's included.
   final int size;
-  final String captainInitials;
+
+  /// Who is in the team so far.
+  final List<String> initials;
+
+  /// The crew's names left out, because they are in another team of the event.
+  final List<String> leftOut;
   final VoidCallback onShare;
   final VoidCallback onCopy;
 
@@ -36,21 +42,31 @@ class InviteResultSection extends StatelessWidget {
         copyLabel: 'Copiază',
         onShare: onShare,
         onCopy: onCopy,
-        footer: Row(
+        footer: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            AvatarStack(initials: [captainInitials], total: size, onDark: true),
-            const SizedBox(width: 6),
-            Flexible(
-              child: Text(
-                '1 din $size în echipă',
-                style: TextStyle(
-                  fontSize: 11,
-                  height: 1.45,
-                  color: colors.onNavy.withValues(alpha: .8),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AvatarStack(initials: initials, total: size, onDark: true),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    '${initials.length} din $size în echipă',
+                    style: TextStyle(fontSize: 11, height: 1.45, color: colors.onNavy.withValues(alpha: .8)),
+                  ),
+                ),
+              ],
+            ),
+            if (leftOut.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Text(
+                  'Sunt deja în altă echipă la acest eveniment: ${leftOut.join(', ')}.',
+                  style: TextStyle(fontSize: 11, height: 1.45, color: colors.onNavy.withValues(alpha: .8)),
                 ),
               ),
-            ),
           ],
         ),
       ),

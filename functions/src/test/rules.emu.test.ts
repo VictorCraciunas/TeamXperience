@@ -18,7 +18,7 @@ const MESSAGE = `${TEAM}/messages/m1`;
 
 let env: RulesTestEnvironment;
 
-const as = (uid: string) => env.authenticatedContext(uid).firestore();
+const as = (uid: string) => env.authenticatedContext(uid, {email: `${uid}@x.ro`}).firestore();
 const signedOut = () => env.unauthenticatedContext().firestore();
 
 async function seed(): Promise<void> {
@@ -117,11 +117,26 @@ describe("firestore.rules", () => {
       });
     }
 
-    test("a new user is a USER with no xp", async () => {
-      await assertSucceeds(as("u9").doc("users/u9").set({role: "USER", email: "a@b.ro"}));
-      await assertFails(as("u8").doc("users/u8").set({role: "ADMIN"}));
-      await assertFails(as("u7").doc("users/u7").set({role: "USER", xp: 5000}));
-      await assertFails(as("u6").doc("users/u5").set({role: "USER"}));
+    const newUser = (uid: string, extra: Record<string, unknown> = {}) =>
+      ({uid, role: "USER", email: `${uid}@x.ro`, ...extra});
+
+    test("a new user is a USER with no xp, under their own uid and email", async () => {
+      await assertSucceeds(as("u9").doc("users/u9").set(newUser("u9")));
+      await assertSucceeds(as("u4").doc("users/u4").set(newUser("u4", {email: "U4@X.ro"})));
+      await assertFails(as("u8").doc("users/u8").set(newUser("u8", {role: "ADMIN"})));
+      await assertFails(as("u7").doc("users/u7").set(newUser("u7", {xp: 5000})));
+      await assertFails(as("u6").doc("users/u5").set(newUser("u5")));
+    });
+
+    test("nobody signs up under another's uid or email", async () => {
+      await assertFails(as("u8").doc("users/u8").set(newUser("u8", {uid: "u1"})));
+      await assertFails(as("u8").doc("users/u8").set({role: "USER", email: "u8@x.ro"}));
+      await assertFails(as("u8").doc("users/u8").set(newUser("u8", {email: "admin@x.ro"})));
+    });
+
+    test("your own uid and email cannot change", async () => {
+      await assertFails(as("u1").doc("users/u1").update({uid: "u2"}));
+      await assertFails(as("u1").doc("users/u1").update({email: "admin@x.ro"}));
     });
 
     test("an organiser may change a user (deleting a team removes its event)", async () => {
@@ -202,6 +217,15 @@ describe("firestore.rules", () => {
       await assertSucceeds(member().update({missionProgress: 2, "missionCompletedAt.1": now, puzzleNumber: 0}));
       await assertFails(member().update({"missionCompletedAt.1": now}));
       await assertFails(member().update({"missionCompletedAt.0": now}));
+    });
+
+    test("a mission's time is the server's, for the mission the team is on", async () => {
+      const now = FieldValue.serverTimestamp();
+      const old = Timestamp.fromDate(new Date("2020-01-01"));
+      await assertFails(member().update({missionProgress: 2, "missionCompletedAt.1": old}));
+      await assertFails(member().update({missionProgress: 2, "missionCompletedAt.99": now}));
+      await assertFails(member().update({missionProgress: 2, "missionCompletedAt.2": now}));
+      await assertFails(member().update({"missionCompletedAt.1": now, "missionCompletedAt.2": now}));
     });
 
     test("started and finished only go one way", async () => {

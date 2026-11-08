@@ -94,7 +94,6 @@ export async function registerTeam(
       name,
       nameKey: key,
       crewId,
-      inviteCode,
       captainUid: uid,
       captainName: captain.displayName,
       captainEmail: String(userDoc.data()?.email ?? ""),

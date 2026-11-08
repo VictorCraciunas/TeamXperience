@@ -22,12 +22,18 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Takes the XP, stats and badges of a fresh copy of the signed-in user's
+  /// Takes the XP, stats, badges and events of a fresh copy of the signed-in user's
   /// document; anyone else's, or nobody's, is ignored.
   void updateProfile(AppUser fresh) {
     final user = _currentUser;
     if (user == null || user.uid != fresh.uid) return;
-    _currentUser = user.copyWith(xp: fresh.xp, stats: fresh.stats, badges: fresh.badges);
+    _currentUser = user.copyWith(
+      xp: fresh.xp,
+      stats: fresh.stats,
+      badges: fresh.badges,
+      // A captain signing up the crew adds the event from the server.
+      registeredEventIds: fresh.registeredEventIds,
+    );
     notifyListeners();
   }
 

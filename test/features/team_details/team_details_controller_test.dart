@@ -18,7 +18,7 @@ class _FakeTeams extends Fake implements TeamService {
     phoneNumber: phone,
     captainEmail: 'v@example.com',
     captainUid: 'u1',
-    inviteCode: 'VLP482',
+    crewId: 'c1',
     members: const [
       TeamMember(uid: 'u1', displayName: 'Victor C', initials: 'VC'),
     ],
@@ -28,6 +28,14 @@ class _FakeTeams extends Fake implements TeamService {
   @override
   Future<Team?> getUserTeamForEvent(String eventId, String userId) async =>
       team;
+
+  final codesAsked = <String>[];
+
+  @override
+  Future<String?> crewInviteCode(String crewId) async {
+    codesAsked.add(crewId);
+    return 'VLP482';
+  }
 
   @override
   Future<List<Team>> getTeams(String eventId) async => [team];
@@ -103,8 +111,10 @@ void main() {
   test('only the captain gets the invite code', () async {
     final controller = await _controller(_FakeTeams());
     expect(controller.showsInviteCode, isTrue);
+    expect(controller.displayInviteCode, 'VLP-482');
     controller.disposeControllers();
 
+    final others = _FakeTeams();
     final other = TeamControllerDetails(
       AppUser(
         email: 'a@example.com',
@@ -114,10 +124,11 @@ void main() {
         fcmToken: '',
       ),
       Event(eventId: 'e1', name: 'Eveniment', dateEvent: DateTime(2030, 1, 1)),
-      teamService: _FakeTeams(),
+      teamService: others,
     );
     await other.initializeTeam();
     expect(other.showsInviteCode, isFalse);
+    expect(others.codesAsked, isEmpty, reason: 'only a captain reads it');
     other.disposeControllers();
   });
 }

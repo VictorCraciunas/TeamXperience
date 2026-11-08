@@ -1,6 +1,6 @@
 import {beforeEach, describe, test} from "node:test";
 import * as assert from "node:assert/strict";
-import {DocumentData, Firestore, Timestamp} from "firebase-admin/firestore";
+import {DocumentData, FieldValue, Firestore, Timestamp} from "firebase-admin/firestore";
 import {applyResults, expiredEventIds, teamFacts} from "../results/apply_results";
 import {clearDb, emulatorDb} from "./helpers";
 
@@ -194,6 +194,60 @@ describe("results", () => {
     assert.equal((await read("events/e1/teams/Vechi"))?.place, 1);
     assert.equal((await read("users/u1"))?.xp, 40);
     assert.equal((await db.collection(`${SEASON}/standings`).get()).size, 0);
+  });
+
+  test("an empty or odd uid on an old team is skipped", async () => {
+    await seedEvent();
+    await user("u1");
+    await teamDoc("Vechi", {userIds: ["", 7, "x/y", "u1"], missionProgress: 1});
+    await applyResults(db, "e1");
+    assert.equal((await read("users/u1"))?.xp, 20);
+    assert.ok((await read("events/e1"))?.resultsComputedAt);
+  });
+
+  test("one player failing holds nobody else back, and the next run finishes the job", async () => {
+    await seedGame();
+    let failing = true;
+    await applyResults(db, "e1", {
+      beforePlayer: (uid) => {
+        if (failing && uid === "u1") throw new Error("lost");
+      },
+    });
+    assert.equal((await read("users/u1"))?.xp, 400, "u1 failed");
+    assert.equal((await read("users/u2"))?.stats.games, 1);
+    assert.equal((await read("users/u3"))?.xp, 20, "ranked below u1, and still scored");
+    assert.equal((await read("crews/c2"))?.stats.games, 1);
+    assert.equal((await read("events/e1"))?.resultsComputedAt, undefined);
+
+    failing = false;
+    await applyResults(db, "e1");
+    assert.equal((await read("users/u1"))?.xp, 710);
+    assert.equal((await read("users/u2"))?.stats.games, 1);
+    assert.ok((await read("events/e1"))?.resultsComputedAt);
+  });
+
+  test("players counted before cost no transaction on a rerun", async () => {
+    await seedGame();
+    await applyResults(db, "e1");
+    await db.doc("events/e1").update({resultsComputedAt: FieldValue.delete()});
+    const seen: string[] = [];
+    await applyResults(db, "e1", {beforePlayer: (uid) => seen.push(uid)});
+    assert.deepEqual(seen, []);
+    assert.ok((await read("events/e1"))?.resultsComputedAt);
+  });
+
+  test("a big event finishes, everyone scored", async () => {
+    await seedEvent();
+    const write = db.bulkWriter();
+    for (let i = 0; i < 120; i++) {
+      const name = `T${String(i).padStart(3, "0")}`;
+      void write.set(db.doc(`users/p${i}`), {uid: `p${i}`, role: "USER"});
+      void write.set(db.doc(`events/e1/teams/${name}`), {name, hasStarted: true, userIds: [`p${i}`], missionProgress: 1});
+    }
+    await write.close();
+    await applyResults(db, "e1");
+    assert.equal((await read("users/p119"))?.xp, 20);
+    assert.ok((await read("events/e1"))?.resultsComputedAt);
   });
 
   test("a crew that is gone is skipped", async () => {

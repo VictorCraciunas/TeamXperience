@@ -17,12 +17,16 @@ service cloud.firestore {
 
     match /users/{uid} {
       allow read: if signedIn();
+      // Login finds a user by email and pushes find them by `uid`, so neither
+      // can be someone else's.
       allow create: if request.auth.uid == uid
+        && request.resource.data.uid == uid
+        && request.resource.data.email.lower() == request.auth.token.email.lower()
         && request.resource.data.role == 'USER'
         && !request.resource.data.keys().hasAny(['xp', 'level', 'stats', 'badges']);
       allow update: if (request.auth.uid == uid
           && !request.resource.data.diff(resource.data).affectedKeys()
-              .hasAny(['role', 'xp', 'level', 'stats', 'badges']))
+              .hasAny(['role', 'uid', 'email', 'xp', 'level', 'stats', 'badges']))
         || isAdmin();
       allow delete: if isAdmin();
 
@@ -70,10 +74,14 @@ service cloud.firestore {
             && request.resource.data.missionProgress <= resource.data.missionProgress + 1;
         }
 
-        // A mission's time is set once: only new keys.
+        // A mission's time is set once, by the server, for the mission the team
+        // is on: it decides places, so it cannot be backdated.
         function stampsOk() {
           let d = after('missionCompletedAt').diff(before('missionCompletedAt'));
-          return d.changedKeys().size() == 0 && d.removedKeys().size() == 0;
+          let key = string(resource.data.missionProgress);
+          return d.affectedKeys().hasOnly([key])
+            && d.addedKeys().hasOnly([key])
+            && after('missionCompletedAt')[key] == request.time;
         }
 
         function presenceOk() {

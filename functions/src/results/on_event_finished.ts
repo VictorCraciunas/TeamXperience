@@ -4,8 +4,11 @@ import {onDocumentUpdated} from "firebase-functions/v2/firestore";
 import {onSchedule} from "firebase-functions/v2/scheduler";
 import {applyResults, expiredEventIds} from "./apply_results";
 
+/** A big event takes a while, and a stop that is cut off has no retry of its own. */
+const TIMEOUT = 540;
+
 /** "Oprește": the results right away. */
-export const onEventStopped = onDocumentUpdated("events/{eventId}", async (event) => {
+export const onEventStopped = onDocumentUpdated({document: "events/{eventId}", timeoutSeconds: TIMEOUT}, async (event) => {
   const before = event.data?.before.data();
   const after = event.data?.after.data();
   if (before?.isStopped === true || after?.isStopped !== true) return;
@@ -13,7 +16,7 @@ export const onEventStopped = onDocumentUpdated("events/{eventId}", async (event
 });
 
 /** Events nobody stopped: the results once their three hours ran out. */
-export const closeExpiredEvents = onSchedule("every 15 minutes", async () => {
+export const closeExpiredEvents = onSchedule({schedule: "every 15 minutes", timeoutSeconds: TIMEOUT}, async () => {
   const db = getFirestore();
   for (const eventId of await expiredEventIds(db, new Date())) {
     try {

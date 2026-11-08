@@ -92,6 +92,7 @@ describe("team functions", () => {
       assert.equal(made.members[0].displayName, "Victor Crăciunaș");
       assert.equal(made.teamMembers, "Victor Crăciunaș");
       assert.equal(made.nameKey, "vulpile");
+      assert.equal(made.inviteCode, undefined, "anyone signed in can read a team");
       assert.equal(made.captainUid, "u1");
       assert.equal(made.captainName, "Victor Crăciunaș");
       assert.equal(made.captainEmail, "u1@x.ro");

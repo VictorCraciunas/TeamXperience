@@ -6,16 +6,26 @@ import 'package:teamxperience/ui/theme/app_colors.dart';
 
 import '../../ui/pump_ui.dart';
 
-Widget _section({VoidCallback? onShare, VoidCallback? onCopy, int size = 4}) =>
+Widget _section({
+  List<String> initials = const ['VC'],
+  List<String> leftOut = const [],
+VoidCallback? onShare, VoidCallback? onCopy, int size = 4}) =>
     InviteResultSection(
       code: 'VLP-482',
       size: size,
-      captainInitials: 'VC',
+      initials: initials,
+      leftOut: leftOut,
       onShare: onShare ?? () {},
       onCopy: onCopy ?? () {},
     );
 
 void main() {
+  testWidgets('a crew signed up: everyone who came, and who did not', (tester) async {
+    await pumpUi(tester, _section(initials: const ['VC', 'AP'], leftOut: const ['Dan Ion']));
+    expect(find.text('2 din 4 în echipă'), findsOneWidget);
+    expect(find.textContaining('Dan Ion'), findsOneWidget);
+  });
+
   testWidgets('shows the caption, the code and the two buttons', (
     tester,
   ) async {

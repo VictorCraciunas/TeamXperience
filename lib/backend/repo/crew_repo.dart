@@ -6,6 +6,12 @@ import 'confirmed_docs.dart';
 class CrewRepo {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  /// The crew's invite code: only its members can read a crew.
+  Future<String?> inviteCode(String crewId) async {
+    final crew = await _firestore.collection('crews').doc(crewId).get();
+    return crew.data()?['inviteCode'] as String?;
+  }
+
   /// The crews the user belongs to, sorted by name. Crews are written by Cloud
   /// Functions; the app only reads them.
   Stream<List<Crew>> streamUserCrews(String uid) {

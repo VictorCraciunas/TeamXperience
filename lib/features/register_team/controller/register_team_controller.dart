@@ -100,6 +100,22 @@ class RegisterTeamController extends ChangeNotifier {
   /// The invite code as shown, "VLP-482".
   String get displayInviteCode => displayCode(result?.inviteCode ?? '');
 
+  /// Who went into the team: the crew's who were free, or just the captain.
+  List<String> get teamInitials {
+    final crew = chosenCrew;
+    if (crew == null) return [captainInitials];
+    final skipped = result?.skippedUids ?? const <String>[];
+    return [for (final m in crew.members) if (!skipped.contains(m.uid)) m.initials];
+  }
+
+  /// The chosen crew's names left out of the team.
+  List<String> get leftOutNames {
+    final skipped = result?.skippedUids ?? const <String>[];
+    final crew = chosenCrew;
+    if (crew == null) return const [];
+    return [for (final m in crew.members) if (skipped.contains(m.uid)) m.displayName];
+  }
+
   /// The captain's initials, for the first place in the team.
   String get captainInitials {
     final user = context.read<UserProvider>().currentUser;

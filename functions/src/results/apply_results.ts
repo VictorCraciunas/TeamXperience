@@ -1,11 +1,18 @@
-import {DocumentData, FieldValue, Firestore, Timestamp, WriteBatch} from "firebase-admin/firestore";
+import {DocumentData, DocumentReference, FieldValue, Firestore, Timestamp, WriteBatch} from "firebase-admin/firestore";
+import * as logger from "firebase-functions/logger";
 import {teamsOf, toDate} from "../teams/shared";
 import {EventFacts, isCompleted, playerResult, Previous, TeamFacts} from "./player";
 import {rankTeams} from "./ranking";
 import {seasonOf, seasonPoints} from "./season";
 
 const BATCH_SIZE = 400;
+const READ_SIZE = 300;
+const PARALLEL = 10;
 const num = (value: unknown): number => (typeof value === "number" ? value : 0);
+
+/** Old teams can hold an empty uid; a document id cannot be empty or hold a slash. */
+const isDocId = (value: unknown): value is string =>
+  typeof value === "string" && value !== "" && !value.includes("/");
 
 /** A team document as plain facts, whatever old data it holds. */
 export function teamFacts(data: DocumentData, id: string): TeamFacts {
@@ -26,7 +33,7 @@ export function teamFacts(data: DocumentData, id: string): TeamFacts {
   return {
     name: typeof data.name === "string" && data.name !== "" ? data.name : id,
     crewId: typeof data.crewId === "string" ? data.crewId : undefined,
-    userIds: Array.isArray(data.userIds) ? data.userIds : [],
+    userIds: Array.isArray(data.userIds) ? data.userIds.filter(isDocId) : [],
     numberOfMembers: num(data.numberOfMembers),
     missionProgress: num(data.missionProgress),
     startedAt: toDate(data.startedAt),
@@ -72,8 +79,7 @@ async function applyCrew(db: Firestore, crewId: string, eventId: string, team: T
   const crewRef = db.collection("crews").doc(crewId);
   const markRef = crewRef.collection("results").doc(eventId);
   const season = seasonOf(event.date);
-  const seasonRef = db.collection("seasons").doc(season.id);
-  const standingRef = seasonRef.collection("standings").doc(crewId);
+  const standingRef = db.collection("seasons").doc(season.id).collection("standings").doc(crewId);
   const won = place === 1 && isCompleted(team, event.missionCount);
   await db.runTransaction(async (tx) => {
     const mark = await tx.get(markRef);
@@ -88,11 +94,6 @@ async function applyCrew(db: Firestore, crewId: string, eventId: string, team: T
         distanceMeters: FieldValue.increment(team.walkedMeters),
       },
     }, {merge: true});
-    tx.set(seasonRef, {
-      name: season.name,
-      startsAt: Timestamp.fromDate(season.startsAt),
-      endsAt: Timestamp.fromDate(season.endsAt),
-    }, {merge: true});
     tx.set(standingRef, {
       crewName: String(crew.name ?? team.name),
       points: FieldValue.increment(seasonPoints(place)),
@@ -101,12 +102,37 @@ async function applyCrew(db: Firestore, crewId: string, eventId: string, team: T
   });
 }
 
+/** Runs [work] for each item, a few at a time. */
+async function inParallel<T>(items: T[], work: (item: T) => Promise<void>): Promise<void> {
+  let next = 0;
+  const worker = async () => {
+    while (next < items.length) await work(items[next++]);
+  };
+  await Promise.all(Array.from({length: Math.min(PARALLEL, items.length)}, worker));
+}
+
+/** Which of these documents exist. */
+async function existing(db: Firestore, refs: DocumentReference[]): Promise<Set<string>> {
+  const found = new Set<string>();
+  for (let i = 0; i < refs.length; i += READ_SIZE) {
+    const docs = await db.getAll(...refs.slice(i, i + READ_SIZE));
+    for (const doc of docs) if (doc.exists) found.add(doc.ref.path);
+  }
+  return found;
+}
+
+export interface ApplyOptions {
+  /** Called before each player's transaction (for tests). */
+  beforePlayer?: (uid: string) => void;
+}
+
 /**
  * Works out an event's results. Safe to run again, and to resume after a crash:
- * each player and crew is counted once on their own, and `resultsComputedAt` is
- * written last.
+ * each player and crew is counted once on their own. One failing holds nobody
+ * else back; `resultsComputedAt` is written only when all went through, so the
+ * schedule tries the rest again.
  */
-export async function applyResults(db: Firestore, eventId: string): Promise<void> {
+export async function applyResults(db: Firestore, eventId: string, options: ApplyOptions = {}): Promise<void> {
   const eventRef = db.collection("events").doc(eventId);
   const data = (await eventRef.get()).data();
   if (data === undefined || data.resultsComputedAt !== undefined || data.status === "draft") return;
@@ -138,14 +164,46 @@ export async function applyResults(db: Firestore, eventId: string): Promise<void
   }
   if (pending > 0) await batch.commit();
 
-  for (let i = 0; i < ranked.length; i++) {
-    const team = ranked[i];
-    const place = i + 1;
-    for (const uid of team.userIds) await applyPlayer(db, uid, eventId, team, place, event);
-    if (team.crewId !== undefined) await applyCrew(db, team.crewId, eventId, team, place, event);
+  // Who is left: a rerun skips those counted before without a transaction each.
+  const players = ranked.flatMap((team, i) => team.userIds.map((uid) => ({uid, team, place: i + 1})));
+  const memoryOf = (uid: string) => db.collection("users").doc(uid).collection("memories").doc(eventId);
+  const counted = await existing(db, players.map((p) => memoryOf(p.uid)));
+  const crews = ranked.flatMap((team, i) => (team.crewId === undefined ? [] : [{crewId: team.crewId, team, place: i + 1}]));
+  const markOf = (crewId: string) => db.collection("crews").doc(crewId).collection("results").doc(eventId);
+  const marked = await existing(db, crews.map((c) => markOf(c.crewId)));
+
+  // Written once here: in each crew's transaction it would make them queue.
+  if (crews.length > 0) {
+    const season = seasonOf(event.date);
+    await db.collection("seasons").doc(season.id).set({
+      name: season.name,
+      startsAt: Timestamp.fromDate(season.startsAt),
+      endsAt: Timestamp.fromDate(season.endsAt),
+    }, {merge: true});
   }
 
-  await eventRef.update({resultsComputedAt: FieldValue.serverTimestamp()});
+  let failures = 0;
+  const failed = (what: string, error: unknown) => {
+    failures++;
+    logger.error("Could not count a result", {eventId, what, error: String(error)});
+  };
+  await inParallel(players.filter((p) => !counted.has(memoryOf(p.uid).path)), async ({uid, team, place}) => {
+    try {
+      options.beforePlayer?.(uid);
+      await applyPlayer(db, uid, eventId, team, place, event);
+    } catch (error) {
+      failed(uid, error);
+    }
+  });
+  await inParallel(crews.filter((c) => !marked.has(markOf(c.crewId).path)), async ({crewId, team, place}) => {
+    try {
+      await applyCrew(db, crewId, eventId, team, place, event);
+    } catch (error) {
+      failed(crewId, error);
+    }
+  });
+
+  if (failures === 0) await eventRef.update({resultsComputedAt: FieldValue.serverTimestamp()});
 }
 
 const LOOK_BACK_MS = 7 * 24 * 60 * 60 * 1000;
