@@ -27,6 +27,7 @@ Verify before fixing; none of these were reproduced. Roughly ordered by impact.
 - Stray debug `print`s remain in files this redesign did not touch (`avoid_print` lint, e.g. `AuthUtil`, `EventGameController`, `AddMissionsController`).
 
 ## Platform
+- **A failed lookup during Google sign-in can wipe a user (found in step 7b's review, older than it).** `UserRepo.findByEmail` returns null on any error, and `LogInService.logInGoogle` treats null as "new user" and calls `saveUser`, whose `set()` replaces the whole document: `role`, `registeredEventIds`, and later XP, stats and badges. Fix before 7c starts writing XP: let `findByEmail` rethrow, and treat only an empty result as new.
 - Release builds signed with the debug key; missing Android `POST_NOTIFICATIONS`; missing iOS `NSPhotoLibraryUsageDescription`; no iOS push setup visible. (`assets/images/default_background.png` is no longer referenced since step 6b.)
 - `test/widget_test.dart` is the Flutter template and fails.
 - Hardcoded Cloud Run URL (`NetworkAPI`), public OSRM server, placeholder OSM user agent.

@@ -24,12 +24,16 @@ class ProfileController extends ChangeNotifier {
     required NotificationAccess notifications,
     required void Function(AppUser fresh) onFreshUser,
     Event? Function(String eventId)? findEvent,
+    Future<void> Function()? saveToken,
   })  : _user = user,
         _access = notifications,
         _onFreshUser = onFreshUser,
-        _findEvent = findEvent {
+        _findEvent = findEvent,
+        _saveToken = saveToken {
     _userWatch = userStream.listen(_onUser, onError: (Object _) {});
     _memoriesWatch = memoriesStream.listen(_onMemories, onError: (Object _) {});
+    // The phone's settings may have changed while the player was away.
+    _lifecycle = AppLifecycleListener(onResume: _readNotifications);
     _readNotifications();
   }
 
@@ -37,6 +41,9 @@ class ProfileController extends ChangeNotifier {
   final NotificationAccess _access;
   final void Function(AppUser fresh) _onFreshUser;
   final Event? Function(String eventId)? _findEvent;
+  final Future<void> Function()? _saveToken;
+  late final AppLifecycleListener _lifecycle;
+  bool _tokenSent = false;
   late final AuthenticationRepository _authRepo = AuthenticationRepository();
   StreamSubscription<AppUser?>? _userWatch;
   StreamSubscription<List<Memory>>? _memoriesWatch;
@@ -73,14 +80,31 @@ class ProfileController extends ChangeNotifier {
   }
 
   Future<void> _readNotifications() async {
-    _notifications = await _access.status();
-    _changed();
+    _setNotifications(await _access.status());
   }
 
   /// The row's tap: ask for permission, or open the phone's settings.
   Future<void> onNotificationsTap() async {
-    _notifications = await _access.askOrOpenSettings();
+    _setNotifications(await _access.askOrOpenSettings());
+  }
+
+  void _setNotifications(NotifStatus status) {
+    if (_disposed) return;
+    _notifications = status;
     _changed();
+    if (status == NotifStatus.allowed) _sendToken();
+  }
+
+  /// The token is only fetched at sign-in, and only if notifications were
+  /// allowed then: a player who allows them later must get one now, or no push
+  /// ever reaches them. Sent at most once; a failure is tried at the next sign-in.
+  Future<void> _sendToken() async {
+    final save = _saveToken;
+    if (save == null || _tokenSent || _user.fcmToken.isNotEmpty) return;
+    _tokenSent = true;
+    try {
+      await save();
+    } catch (_) {}
   }
 
   /// Opens the page of a past game's event, when that event is loaded.
@@ -112,6 +136,7 @@ class ProfileController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _lifecycle.dispose();
     _userWatch?.cancel();
     _memoriesWatch?.cancel();
     super.dispose();

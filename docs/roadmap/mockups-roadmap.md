@@ -444,7 +444,7 @@ then Profil shows starter values. **7a is done (2026-11-07):** `finishedAt`,
 each phone's walk (`walked.{uid}`), the rating (`events/{id}/feedback/{uid}`),
 the organiser's `finishTitle`/`finishMessage`, the leaderboard counting a
 finished route rather than a stopped game, and the finish screen.
-**7b is done (2026-11-08):** the Profil tab reads `users/{uid}` (`xp`, `stats{games, distanceMeters, missions, podiums}`, `badges[]`) and `users/{uid}/memories/{eventId}` (`eventName`, `date`, `place`, `totalTime` in whole minutes, `photoUrls[]`). **7c must write exactly those, with these badge ids:** `km10`, `noHints`, `night`, `winner`, `firstGame`, `games5`, `km50`, `podium3`, `photo`, `fast`, `missions50`, `crew` (`lib/features/profile/logic/badge_catalog.dart`).
+**7b is done (2026-11-08):** the Profil tab reads `users/{uid}` (`xp`, `stats{games, distanceMeters, missions, podiums}`, `badges[]`) and `users/{uid}/memories/{eventId}` (`eventName`, `date`, `place`, `totalTime` in whole minutes, `photoUrls[]`). **7c must write exactly those, with these badge ids:** `km10`, `noHints`, `night`, `winner`, `firstGame`, `games5`, `km50`, `podium3`, `photo`, `fast`, `missions50`, `crew` (`lib/features/profile/logic/badge_catalog.dart`). A memory's `date` is required and a Timestamp (Profil orders by it, and a document without it is not shown). Also for 7c: `firestore.rules` must let a player read their own `memories`, and the user-document watch moves from Profil to the shell, so Home's numbers refresh for a player who never opens Profil.
 
 **Step 3b (parked by Victor on 2026-11-05, to do later).** Tasks 1 and 3 of
 `docs/superpowers/plans/2026-11-04-redesign-step-3-teams-and-invites.md`:

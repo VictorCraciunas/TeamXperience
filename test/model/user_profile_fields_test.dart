@@ -11,6 +11,11 @@ void main() {
       expect((stats.games, stats.distanceMeters, stats.missions, stats.podiums), (3, 12400.0, 17, 1));
     });
 
+    test('numbers that are not finite are zero', () {
+      final stats = UserStats.fromMap({'games': double.nan, 'distanceMeters': double.infinity, 'missions': double.infinity});
+      expect((stats.games, stats.distanceMeters, stats.missions), (0, 0.0, 0));
+    });
+
     test('anything unreadable is zero', () {
       for (final raw in [null, 'x', 7, <String, dynamic>{}, {'games': 'trei', 'podiums': null}]) {
         final stats = UserStats.fromMap(raw);
@@ -20,6 +25,13 @@ void main() {
   });
 
   group('AppUser', () {
+    test('an unreadable xp is zero, it does not lock the player out', () {
+      for (final xp in ['640', double.nan, double.infinity, null, true]) {
+        expect(AppUser.fromFirestore({..._base(), 'xp': xp}).xp, 0, reason: '$xp');
+      }
+      expect(AppUser.fromFirestore({..._base(), 'xp': 640}).xp, 640);
+    });
+
     test('reads the earned badges', () {
       final user = AppUser.fromFirestore({..._base(), 'badges': ['km10', 'noHints']});
       expect(user.badges, ['km10', 'noHints']);

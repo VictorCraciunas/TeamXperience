@@ -72,6 +72,14 @@ void main() {
     });
   });
 
+  test('which user document to follow: the signed-in account first, never an empty id', () {
+    expect(profileDocId('abc', 'xyz'), 'abc');
+    expect(profileDocId(null, 'xyz'), 'xyz');
+    expect(profileDocId('', 'xyz'), 'xyz');
+    expect(profileDocId(null, ''), isNull);
+    expect(profileDocId('', ''), isNull);
+  });
+
   test('the theme\'s name', () {
     expect(themeLabel(ThemeMode.system), 'Sistem');
     expect(themeLabel(ThemeMode.light), 'Luminos');
@@ -83,6 +91,7 @@ void main() {
     expect(initialsOf('Ana'), 'A');
     expect(initialsOf('  '), '');
     expect(initialsOf('ana maria popescu'), 'AM');
+    expect(initialsOf('😀 Ion'), '😀I', reason: 'an emoji is not cut in half');
   });
 
   test('stat labels agree with their number', () {

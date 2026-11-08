@@ -66,7 +66,7 @@ class AppUser {
         role: role,
         registeredEventIds: eventIds,
         fcmToken: data["fcmToken"] as String? ?? "",
-        xp: (data['xp'] as num?)?.toInt() ?? 0,
+        xp: readCount(data['xp']),
         stats: UserStats.fromMap(data['stats']),
         badges: _ids(data['badges']),
     );

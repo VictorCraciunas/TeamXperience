@@ -4,8 +4,9 @@ import 'package:geolocator/geolocator.dart';
 enum NotifStatus { allowed, notAsked, refused }
 
 /// Whether the phone lets the app show notifications, and the one action the
-/// Profil row offers: ask when the question was never put, or open the phone's
-/// settings page for the app when it was refused. The three calls can be
+/// Profil row offers: ask when the question was never put, else open the
+/// phone's settings page for the app (to turn them on or off; the change is
+/// read when the player comes back to the app). The three calls can be
 /// replaced (tests); by default they use Firebase Messaging and geolocator's
 /// `openAppSettings` (which opens the app's page in the phone's settings).
 class NotificationAccess {
@@ -46,20 +47,14 @@ class NotificationAccess {
     }
   }
 
-  /// Asks when not asked yet, opens the phone's settings when refused, and
-  /// returns the status afterwards (refused if anything throws).
+  /// Asks when not asked yet, otherwise opens the phone's settings, and
+  /// returns the status as it stands now (refused if anything throws).
   Future<NotifStatus> askOrOpenSettings() async {
     try {
       final current = await _read();
-      switch (current) {
-        case NotifStatus.allowed:
-          return current;
-        case NotifStatus.notAsked:
-          return await _ask();
-        case NotifStatus.refused:
-          await _openSettings();
-          return await _read();
-      }
+      if (current == NotifStatus.notAsked) return await _ask();
+      await _openSettings();
+      return current;
     } catch (_) {
       return NotifStatus.refused;
     }

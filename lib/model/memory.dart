@@ -23,7 +23,8 @@ class Memory {
   final int? totalMinutes;
   final List<String> photoUrls;
 
-  static int? _whole(Object? value) => value is num && value == value.roundToDouble() ? value.toInt() : null;
+  static int? _whole(Object? value) =>
+      value is num && value.isFinite && value == value.roundToDouble() ? value.toInt() : null;
 
   factory Memory.fromMap(String eventId, Map<String, dynamic> map) {
     final date = map['date'];

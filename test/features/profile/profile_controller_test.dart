@@ -13,15 +13,21 @@ AppUser _user({int xp = 0}) => AppUser(email: 'v@x.ro', firstName: 'Victor', las
 
 void main() {
   group('NotificationAccess', () {
-    test('allowed stays allowed and asks nothing', () async {
+    test('allowed: nothing to ask, the settings open (where they can be turned off)', () async {
       var asked = 0;
-      final access = NotificationAccess(read: () async => NotifStatus.allowed, ask: () async {
-        asked++;
-        return NotifStatus.allowed;
-      });
+      var opened = 0;
+      final access = NotificationAccess(
+        read: () async => NotifStatus.allowed,
+        ask: () async {
+          asked++;
+          return NotifStatus.allowed;
+        },
+        openSettings: () async => opened++,
+      );
       expect(await access.status(), NotifStatus.allowed);
       expect(await access.askOrOpenSettings(), NotifStatus.allowed);
       expect(asked, 0);
+      expect(opened, 1);
     });
 
     test('not asked yet: it asks', () async {
@@ -29,17 +35,13 @@ void main() {
       expect(await access.askOrOpenSettings(), NotifStatus.allowed);
     });
 
-    test('refused: it opens the phone\'s settings and reads again', () async {
+    test('refused: it opens the phone\'s settings; the change only shows on coming back', () async {
       var opened = 0;
-      var status = NotifStatus.refused;
       final access = NotificationAccess(
-        read: () async => status,
-        openSettings: () async {
-          opened++;
-          status = NotifStatus.allowed;
-        },
+        read: () async => NotifStatus.refused,
+        openSettings: () async => opened++,
       );
-      expect(await access.askOrOpenSettings(), NotifStatus.allowed);
+      expect(await access.askOrOpenSettings(), NotifStatus.refused);
       expect(opened, 1);
     });
 
@@ -130,6 +132,93 @@ void main() {
         status = NotifStatus.refused;
         await c.onNotificationsTap();
         expect(opened, 1);
+      });
+    });
+
+    testWidgets('coming back to the app reads the status again', (tester) async {
+      await withContext(tester, (c) async {
+        expect(c.notificationsLabel, 'Oprite');
+        status = NotifStatus.allowed;
+        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+        await tester.pump();
+        expect(c.notificationsLabel, 'Activate');
+      });
+    });
+
+    group('the push token', () {
+      Future<(ProfileController, List<String>)> withToken(
+        WidgetTester tester, {
+        required NotifStatus start,
+        String token = '',
+        bool failing = false,
+      }) async {
+        await tester.pumpWidget(const SizedBox());
+        status = start;
+        final saved = <String>[];
+        final c = ProfileController(
+          tester.element(find.byType(SizedBox)),
+          user: _user().copyWith(fcmToken: token),
+          userStream: const Stream.empty(),
+          memoriesStream: const Stream.empty(),
+          notifications: NotificationAccess(
+            read: () async => status,
+            ask: () async => status = NotifStatus.allowed,
+            openSettings: () async {},
+          ),
+          onFreshUser: (_) {},
+          saveToken: () async {
+            saved.add('saved');
+            if (failing) throw Exception('offline');
+          },
+        );
+        await tester.pump();
+        return (c, saved);
+      }
+
+      testWidgets('allowed with no token saved: it is saved, once', (tester) async {
+        final (c, saved) = await withToken(tester, start: NotifStatus.allowed);
+        expect(saved, ['saved']);
+        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+        await tester.pump();
+        expect(saved, ['saved']);
+        c.dispose();
+      });
+
+      testWidgets('allowed from the row: the token is saved then', (tester) async {
+        final (c, saved) = await withToken(tester, start: NotifStatus.notAsked);
+        expect(saved, isEmpty);
+        await c.onNotificationsTap();
+        expect(saved, ['saved']);
+        c.dispose();
+      });
+
+      testWidgets('allowed in the phone\'s settings: saved on coming back', (tester) async {
+        final (c, saved) = await withToken(tester, start: NotifStatus.refused);
+        status = NotifStatus.allowed;
+        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+        await tester.pump();
+        expect(saved, ['saved']);
+        c.dispose();
+      });
+
+      testWidgets('a token already there, or refused: nothing is saved', (tester) async {
+        final (a, savedA) = await withToken(tester, start: NotifStatus.allowed, token: 'tok');
+        expect(savedA, isEmpty);
+        a.dispose();
+        final (b, savedB) = await withToken(tester, start: NotifStatus.refused);
+        expect(savedB, isEmpty);
+        b.dispose();
+      });
+
+      testWidgets('a save that fails does no harm', (tester) async {
+        final (c, saved) = await withToken(tester, start: NotifStatus.allowed, failing: true);
+        expect(saved, ['saved']);
+        expect(tester.takeException(), isNull);
+        expect(c.notificationsLabel, 'Activate');
+        c.dispose();
       });
     });
 

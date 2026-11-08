@@ -47,6 +47,7 @@ All models live in `lib/model/`. Pattern: plain mutable classes, `fromMap`/`from
 
 ```
 users/{uid}                                  AppUser
+users/{uid}/memories/{eventId}               Memory (written by 7c; `date` is required: the query orders by it)
 events/{eventId}                             Event (missions→puzzles→components embedded)
 events/{eventId}/teams/{teamName}            Team (+ crewId, captainUid, members, inviteCode, photoConsent, presence, missionCompletedAt, attempts, lockedUntil, hintsUsed; server-only nameKey, rulesAcceptedAt)
 events/{eventId}/teams/{teamName}/messages/{autoId}   Message  (ordered by timestamp asc)

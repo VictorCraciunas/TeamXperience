@@ -39,6 +39,11 @@ void main() {
     expect(memory.photoUrls, ['https://x/1.jpg']);
   });
 
+  test('numbers that are not finite are left out', () {
+    final memory = Memory.fromMap('e1', {'place': double.infinity, 'totalTime': double.nan});
+    expect((memory.place, memory.totalMinutes), (null, null));
+  });
+
   test('a photo list that is not a list is empty', () {
     expect(Memory.fromMap('e1', {'photoUrls': 'x'}).photoUrls, isEmpty);
   });

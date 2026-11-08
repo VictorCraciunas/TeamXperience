@@ -8,10 +8,11 @@ import 'package:teamxperience/features/profile/logic/notification_access.dart';
 import 'package:teamxperience/features/profile/logic/profile_texts.dart';
 import 'package:teamxperience/features/profile/widgets/badge_sheet.dart';
 import 'package:teamxperience/features/profile/widgets/profile_view.dart';
+import 'package:teamxperience/service/FCMService.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/ui/components/misc/theme_mode_sheet.dart';
 import 'package:teamxperience/ui/components/navigation/tab_header.dart';
-import 'package:teamxperience/ui/theme/theme_controller.dart';
+
 import 'package:teamxperience/ui/ui.dart';
 
 /// The Profil tab (mockup 08), in both the player's and the organiser's shell:
@@ -35,13 +36,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final user = users.currentUser;
     if (user == null) return;
     final repo = UserRepo();
+    final uid = profileDocId(users.firebaseUser?.uid, user.uid);
     _controller = ProfileController(
       context,
       user: user,
-      userStream: repo.streamUser(user.uid),
-      memoriesStream: repo.streamMemories(user.uid),
+      userStream: uid == null ? const Stream.empty() : repo.streamUser(uid),
+      memoriesStream: uid == null || user.role == Role.ADMIN ? const Stream.empty() : repo.streamMemories(uid),
       notifications: NotificationAccess(),
       onFreshUser: users.updateProfile,
+      saveToken: uid == null
+          ? null
+          : () async {
+              final token = await FCMService.getFCMToken();
+              if (token != null) await repo.updateFCMToken(uid, token);
+            },
     );
   }
 

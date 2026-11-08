@@ -14,6 +14,14 @@ String nextLevelLine(LevelInfo info) {
   return next == null ? 'Nivel maxim' : 'Următorul: $next';
 }
 
+/// The user document Profil follows: the signed-in account's id, else the id
+/// stored on the user; null when neither is known (never an empty id, which
+/// Firestore refuses).
+String? profileDocId(String? accountUid, String userUid) {
+  if (accountUid != null && accountUid.isNotEmpty) return accountUid;
+  return userUid.isEmpty ? null : userUid;
+}
+
 /// "Sistem", "Luminos" or "Întunecat".
 String themeLabel(ThemeMode mode) => switch (mode) {
       ThemeMode.system => 'Sistem',
@@ -24,7 +32,8 @@ String themeLabel(ThemeMode mode) => switch (mode) {
 /// The first letters of the first two words, upper-case; "" for a blank name.
 String initialsOf(String name) {
   final words = name.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty);
-  return words.take(2).map((w) => w.substring(0, 1).toUpperCase()).join();
+  // By rune, not code unit: a name may start with an emoji.
+  return words.take(2).map((w) => String.fromCharCode(w.runes.first).toUpperCase()).join();
 }
 
 /// The label under a stat, singular for 1: [kind] is `games`, `missions` or `podiums`.
