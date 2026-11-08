@@ -143,6 +143,19 @@ void main() {
       expect(room.original.isStopped, isTrue);
     });
 
+    test('already stopped by someone else, or run out: that is not a failure', () async {
+      final room = _Room(stopped: true);
+      expect(await room.controller.stop(), isTrue);
+      expect(room.stops, isEmpty);
+      final late = _Room(start: _now.subtract(const Duration(hours: 4)));
+      expect(await late.controller.stop(), isTrue);
+    });
+
+    test('before the start it cannot be stopped', () async {
+      final room = _Room(start: _now.add(const Duration(hours: 1)));
+      expect(await room.controller.stop(), isFalse);
+    });
+
     test('a failure says so and leaves it running', () async {
       final room = _Room()..stopFails = true;
       expect(await room.controller.stop(), isFalse);
@@ -280,6 +293,20 @@ void main() {
       expect(room.posts, isEmpty);
       expect(room.pushes, hasLength(1));
     });
+
+    test('no teams and a refused push went nowhere', () async {
+      final room = _Room()..pushWorks = false;
+      await room.give([]);
+      expect(await room.controller.announce('Pauză'), AnnounceResult.failed);
+    });
+
+    test('the first read failed: the chats cannot be reached, so nothing is sent', () async {
+      final room = _Room();
+      room.teams.addError(Exception('refused'));
+      await Future<void>.delayed(Duration.zero);
+      expect(await room.controller.announce('Pauză'), AnnounceResult.failed);
+      expect(room.pushes, isEmpty);
+    });
   });
 
   group('calling the captain', () {
@@ -304,6 +331,16 @@ void main() {
     await room.give([_team('A', started: true), _team('B')]);
     room.controller.setFilter(BoardFilter.notStarted);
     expect(room.controller.rows(_now).map((r) => r.team.name), ['B']);
+  });
+
+  test('a write that finishes after the room closed is harmless', () async {
+    final room = _Room()..approvalGate = Completer<void>();
+    final team = _waiting('A');
+    await room.give([team]);
+    final decision = room.controller.decidePhoto(_photo(team), approve: true);
+    room.controller.dispose();
+    room.approvalGate?.complete();
+    expect(await decision, PhotoDecision.saved);
   });
 
   test('dispose stops listening', () async {

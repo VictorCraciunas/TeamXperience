@@ -162,6 +162,12 @@ void main() {
       expect(find.text('Aici apar jocurile tale terminate.'), findsOneWidget);
     });
 
+    testWidgets('a failed read says so, not "none yet"', (tester) async {
+      await pumpUi(tester, MemoriesSection(memories: const [], failed: true, onOpen: (_) {}));
+      expect(find.text('Nu am putut încărca amintirile.'), findsOneWidget);
+      expect(find.text('Aici apar jocurile tale terminate.'), findsNothing);
+    });
+
     testWidgets('at most three', (tester) async {
       await pumpUi(tester, MemoriesSection(memories: const [_memory, _memory, _memory, _memory], onOpen: (_) {}));
       expect(find.byKey(const ValueKey('memory-thumb')), findsNWidgets(3));

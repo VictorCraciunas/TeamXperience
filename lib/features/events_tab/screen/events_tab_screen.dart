@@ -57,6 +57,7 @@ class _EventsTabScreenState extends State<EventsTabScreen> {
     return ListenableBuilder(
       listenable: controller,
       builder: (context, _) => EventsTabView(
+        failed: context.watch<EventList>().loadFailed,
         sections: controller.sections,
         query: controller.query,
         mapMode: controller.mapMode,

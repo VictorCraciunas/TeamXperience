@@ -113,7 +113,7 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      "Membri: ${team.memberList.map((member) => member.name).join(', ')}",
+                      "Membri: ${team.memberList.map((member) => member.displayName).join(', ')}",
                       style: TextStyle(
                         color: context.colors.muted,
                         fontSize: 12,

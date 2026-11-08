@@ -109,6 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           stats: user.stats,
                           badges: user.badges,
                           memories: controller.memories,
+                          memoriesFailed: controller.memoriesFailed,
                           themeLabel: themeLabel(mode),
                           notificationsLabel: controller.notificationsLabel,
                           onTheme: () => showModalBottomSheet<void>(

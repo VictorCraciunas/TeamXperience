@@ -1,3 +1,4 @@
+import 'package:teamxperience/ui/components/feedback/load_failed.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -75,6 +76,9 @@ class _AdminHomeState extends State<AdminHome> {
           builder: (context, eventList, child) {
             if (eventList.isLoading && !eventList.hasData) {
               return const Center(child: CircularProgressIndicator());
+            }
+            if (eventList.loadFailed) {
+              return LoadFailed(message: 'Nu am putut încărca evenimentele.', onRetry: controller.refreshData);
             }
 
             return RefreshIndicator(

@@ -28,6 +28,11 @@ class EventRepo{
   Future<List<Event>> getAllEvents() async {
     try {
       QuerySnapshot snapshot = await _firestore.collection('events').get();
+      // Offline with nothing cached the answer is empty, not an error, and it
+      // does not mean there are no events.
+      if (snapshot.docs.isEmpty && snapshot.metadata.isFromCache) {
+        throw Exception('Events unavailable offline');
+      }
 
       List<Event> events = snapshot.docs.map((doc) {
         return Event.fromMap(doc.data() as Map<String, dynamic>);

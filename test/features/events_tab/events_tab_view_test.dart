@@ -1,3 +1,4 @@
+import 'package:teamxperience/ui/components/feedback/load_failed.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/dev/sample_event.dart';
@@ -54,6 +55,18 @@ Future<void> _pump(
 }
 
 void main() {
+  testWidgets('a failed read says so and retries', (tester) async {
+    var refreshed = 0;
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: LoadFailed(message: 'Nu am putut încărca evenimentele.', onRetry: () => refreshed++),
+      ),
+    ));
+    expect(find.text('Nu am putut încărca evenimentele.'), findsOneWidget);
+    await tester.tap(find.text('Încearcă din nou'));
+    expect(refreshed, 1);
+  });
+
   testWidgets('shows the mockup copy', (tester) async {
     await _pump(tester);
     for (final text in [

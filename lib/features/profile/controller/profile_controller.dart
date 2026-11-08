@@ -31,7 +31,10 @@ class ProfileController extends ChangeNotifier {
         _findEvent = findEvent,
         _saveToken = saveToken {
     _userWatch = userStream.listen(_onUser, onError: (Object _) {});
-    _memoriesWatch = memoriesStream.listen(_onMemories, onError: (Object _) {});
+    _memoriesWatch = memoriesStream.listen(_onMemories, onError: (Object _) {
+      _memoriesFailed = true;
+      _changed();
+    });
     // The phone's settings may have changed while the player was away.
     _lifecycle = AppLifecycleListener(onResume: _readNotifications);
     _readNotifications();
@@ -55,6 +58,11 @@ class ProfileController extends ChangeNotifier {
   List<Memory> _memories = const [];
   List<Memory> get memories => _memories;
 
+  bool _memoriesFailed = false;
+
+  /// The memories could not be read; the list may just be empty for that.
+  bool get memoriesFailed => _memoriesFailed;
+
   NotifStatus? _notifications;
 
   /// Null until read.
@@ -76,6 +84,7 @@ class ProfileController extends ChangeNotifier {
 
   void _onMemories(List<Memory> memories) {
     _memories = memories;
+    _memoriesFailed = false;
     _changed();
   }
 

@@ -1,3 +1,4 @@
+import 'package:teamxperience/ui/components/feedback/load_failed.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/constants/routes.dart';
@@ -371,6 +372,12 @@ class _StiriDashboardState extends State<StiriDashboard> {
                       controller.hasActiveFilters ||
                       controller.searchQuery.isNotEmpty;
 
+                  if (newsList.error != null && newsList.stireList.isEmpty) {
+                    return LoadFailed(
+                      message: 'Nu am putut încărca știrile.',
+                      onRetry: () => newsList.loadStire(forceRefresh: true),
+                    );
+                  }
                   return NewsFeed(
                     header: _header(hasFilter),
                     news: controller.getDisplayedStiri(newsList),
