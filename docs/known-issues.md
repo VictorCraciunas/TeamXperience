@@ -33,8 +33,8 @@ Verify before fixing; none of these were reproduced. Roughly ordered by impact.
 
 ## Security (client-visible)
 - **Drafts are hidden only in the app.** `EventRepo.getAllEvents` reads every event document, drafts included, for every signed-in user, and the filtering is done in `EventList`. Real protection needs Firestore rules (or a query that excludes drafts); the rules are not in the repo, so check them in the Firebase console.
-- Admin = `users/{uid}.role == "ADMIN"`, checked only client-side at login. Without Firestore rules (none in repo) any signed-in user could write that field or any event/team data. Rules must be reviewed in the Firebase console.
-- ~~`sendNotification` had no authentication~~ — fixed: it is a callable only organisers may use. Until that is deployed, the live HTTP version stays open to anyone with the URL.
+- Admin = `users/{uid}.role == "ADMIN"`. `firestore.rules` in the repo stops players writing that field and is tested, but **it is not deployed**: while the live rules stay open, a hand-made client can write any data, including its own `role`, and every server check that trusts `role` (`sendNotification`) can be got round that way. Keep the time between the functions deploy and the rules deploy short.
+- ~~`sendNotification` had no authentication~~ — fixed: it is a callable only organisers may use. Until that is deployed, the live HTTP version stays open to anyone with the URL; after it, see the note above on the live rules.
 - `sendNotification` sends one FCM multicast, and FCM takes at most 500 tokens per call, so a broadcast to more than 500 phones fails. It also keeps tokens FCM has rejected.
 - `firebase_options.dart` / `google-services.json` are public client config by design, but the project's rules decide what they can access.
 

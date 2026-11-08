@@ -63,11 +63,13 @@ describe("sendNotification", () => {
     assert.equal(sent.length, 0);
   });
 
-  test("an event id that is not text is refused rather than reaching everyone", async () => {
-    await assert.rejects(
-      sendNotification(db, "boss", {...NEWS, eventId: 7}, send),
-      (e) => reasonOf(e) === "notificationInvalid",
-    );
+  test("an empty or non-text event id is refused rather than reaching everyone", async () => {
+    for (const eventId of ["", 0, false, 7]) {
+      await assert.rejects(
+        sendNotification(db, "boss", {...NEWS, eventId}, send),
+        (e) => reasonOf(e) === "notificationInvalid",
+      );
+    }
     assert.equal(sent.length, 0);
   });
 
