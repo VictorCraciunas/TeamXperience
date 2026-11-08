@@ -69,6 +69,10 @@ class Event {
   double? startLatitude;
   double? startLongitude;
 
+  /// Where the route ends, on the map. Optional; [finishPoint] is its name.
+  double? finishLatitude;
+  double? finishLongitude;
+
   /// Where exactly teams meet ("Piața Mare, lângă fântână").
   String? meetingPointNote;
 
@@ -163,6 +167,8 @@ class Event {
 
   bool get hasStartPin => startLatitude != null && startLongitude != null;
 
+  bool get hasFinishPin => finishLatitude != null && finishLongitude != null;
+
   static String _plain(String text) => text
       .toLowerCase()
       .replaceAll(RegExp('[ăâ]'), 'a')
@@ -206,6 +212,8 @@ class Event {
     this.maxTeams,
     this.startLatitude,
     this.startLongitude,
+    this.finishLatitude,
+    this.finishLongitude,
     this.meetingPointNote,
     this.arriveMinutesBefore = 15,
     List<String>? whatToBring,
@@ -270,6 +278,8 @@ class Event {
       maxTeams: (map['maxTeams'] as num?)?.toInt(),
       startLatitude: (map['startLatitude'] as num?)?.toDouble(),
       startLongitude: (map['startLongitude'] as num?)?.toDouble(),
+      finishLatitude: (map['finishLatitude'] as num?)?.toDouble(),
+      finishLongitude: (map['finishLongitude'] as num?)?.toDouble(),
       meetingPointNote: map['meetingPointNote'] as String?,
       arriveMinutesBefore: (map['arriveMinutesBefore'] as num?)?.toInt() ?? 15,
       whatToBring: [for (final item in map['whatToBring'] as List<dynamic>? ?? []) item.toString()],
@@ -321,6 +331,8 @@ class Event {
       'maxTeams': maxTeams,
       'startLatitude': startLatitude,
       'startLongitude': startLongitude,
+      'finishLatitude': finishLatitude,
+      'finishLongitude': finishLongitude,
       'meetingPointNote': meetingPointNote,
       'arriveMinutesBefore': arriveMinutesBefore,
       'whatToBring': whatToBring,

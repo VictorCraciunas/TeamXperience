@@ -56,7 +56,9 @@ class _EventPagePreviewState extends State<EventPagePreview> {
         ),
       ),
       body: EventPageView(
-        event: sampleEvent(),
+        event: sampleEvent()
+          ..finishLatitude = 45.7975
+          ..finishLongitude = 24.1513,
         data: EventPageData(team: registered ? _team : null, teamsCount: 12, organiserEventsCount: 14),
         now: now,
         onBack: () => Navigator.maybePop(context),
