@@ -6,6 +6,13 @@ import 'package:teamxperience/features/profile/logic/profile_texts.dart';
 import 'package:teamxperience/model/memory.dart';
 
 void main() {
+  test('memoryLine uses the album count when given', () {
+    const memory = Memory(eventId: 'e', eventName: 'Joc', place: 2, totalMinutes: 108, photoUrls: ['a']);
+    expect(memoryLine(memory, photoCount: 3), 'Locul 2 · 1:48 · 3 poze');
+    expect(memoryLine(memory, photoCount: 0), 'Locul 2 · 1:48');
+    expect(memoryLine(memory), 'Locul 2 · 1:48 · 1 poză');
+  });
+
   group('levelInfo', () {
     test('the start', () {
       final info = levelInfo(0);

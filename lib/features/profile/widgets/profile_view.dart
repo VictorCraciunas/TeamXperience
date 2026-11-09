@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/features/home/logic/home_texts.dart';
+import 'package:teamxperience/features/team_photo/logic/team_album.dart';
 import 'package:teamxperience/model/memory.dart';
 import 'package:teamxperience/model/user_stats.dart';
 
@@ -29,6 +30,9 @@ class ProfileView extends StatelessWidget {
     required this.onLogout,
     required this.onOpenBadges,
     required this.onOpenMemory,
+    this.onAllMemories,
+    this.albumOf,
+    this.pictureOf,
     this.settingsKey,
   });
 
@@ -47,6 +51,9 @@ class ProfileView extends StatelessWidget {
   final VoidCallback onLogout;
   final VoidCallback onOpenBadges;
   final ValueChanged<Memory> onOpenMemory;
+  final VoidCallback? onAllMemories;
+  final List<AlbumPhoto> Function(String eventId)? albumOf;
+  final String? Function(String eventId)? pictureOf;
 
   /// On the settings card, so the header's gear can scroll to it.
   final Key? settingsKey;
@@ -60,7 +67,14 @@ class ProfileView extends StatelessWidget {
         if (player) ...[
           ProfileStatsRow(stats: stats),
           BadgesSection(earned: badges, onOpenAll: onOpenBadges),
-          MemoriesSection(failed: memoriesFailed, memories: memories, onOpen: onOpenMemory),
+          MemoriesSection(
+            failed: memoriesFailed,
+            memories: memories,
+            onOpen: onOpenMemory,
+            onAll: onAllMemories,
+            albumOf: albumOf,
+            pictureOf: pictureOf,
+          ),
         ],
         ProfileSettingsCard(
           key: settingsKey,

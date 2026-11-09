@@ -1,5 +1,7 @@
 import 'package:teamxperience/features/game_intro/screen/game_intro_screen.dart';
 import 'package:teamxperience/features/finish/screen/finish_screen.dart';
+import 'package:teamxperience/features/memories/screen/memories_screen.dart';
+import 'package:teamxperience/features/memories/screen/memory_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -155,6 +157,8 @@ class MyApp extends StatelessWidget {
                 Routes.eventGame: (_) => const EventGameScreen(),
                 Routes.gameIntro: (_) => const GameIntroScreen(),
                 Routes.finish: (_) => const FinishScreen(),
+                Routes.memory: (_) => const MemoryScreen(),
+                Routes.memories: (_) => const MemoriesScreen(),
                 Routes.puzzleGame: (_) => const PuzzleGameScreen(),
                 Routes.eventDashboard: (_) => const EventsDashboard(),
                 Routes.filter: (_) => const FilterEventsScreen(),

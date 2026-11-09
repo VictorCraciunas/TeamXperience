@@ -6,7 +6,9 @@ import 'package:teamxperience/backend/authentication/AuthenticationRepository.da
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/profile/logic/notification_access.dart';
 import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/features/team_photo/logic/team_album.dart';
 import 'package:teamxperience/model/memory.dart';
+import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/model/user.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/state_management/news_state_management.dart';
@@ -24,11 +26,13 @@ class ProfileController extends ChangeNotifier {
     required NotificationAccess notifications,
     required void Function(AppUser fresh) onFreshUser,
     Event? Function(String eventId)? findEvent,
+    Future<Team?> Function(String eventId)? findTeam,
     Future<void> Function()? saveToken,
   })  : _user = user,
         _access = notifications,
         _onFreshUser = onFreshUser,
         _findEvent = findEvent,
+        _findTeam = findTeam,
         _saveToken = saveToken {
     _userWatch = userStream.listen(_onUser, onError: (Object _) {});
     _memoriesWatch = memoriesStream.listen(_onMemories, onError: (Object _) {
@@ -44,6 +48,8 @@ class ProfileController extends ChangeNotifier {
   final NotificationAccess _access;
   final void Function(AppUser fresh) _onFreshUser;
   final Event? Function(String eventId)? _findEvent;
+  final Future<Team?> Function(String eventId)? _findTeam;
+  final Map<String, List<AlbumPhoto>> _albums = {};
   final Future<void> Function()? _saveToken;
   late final AppLifecycleListener _lifecycle;
   bool _tokenSent = false;
@@ -86,6 +92,25 @@ class ProfileController extends ChangeNotifier {
     _memories = memories;
     _memoriesFailed = false;
     _changed();
+    final find = _findTeam;
+    if (find == null) return;
+    for (final memory in memories) {
+      memoryAlbum(memory, find).then((album) {
+        _albums[memory.eventId] = album;
+        _changed();
+      });
+    }
+  }
+
+  /// A game's photos, empty until read.
+  List<AlbumPhoto> albumOf(String eventId) => _albums[eventId] ?? const [];
+
+  /// The event's main picture, when the event is loaded.
+  String? pictureOf(String eventId) => _event(eventId)?.landingImageUrl;
+
+  Event? _event(String eventId) {
+    final find = _findEvent;
+    return find != null ? find(eventId) : _loadedEvent(eventId);
   }
 
   Future<void> _readNotifications() async {
@@ -116,12 +141,14 @@ class ProfileController extends ChangeNotifier {
     } catch (_) {}
   }
 
-  /// Opens the page of a past game's event, when that event is loaded.
+  /// Opens a past game's page.
   void openMemory(Memory memory) {
-    final find = _findEvent;
-    final event = find != null ? find(memory.eventId) : _loadedEvent(memory.eventId);
-    if (event == null) return;
-    Navigator.pushNamed(context, Routes.eventDetails, arguments: {'event': event, 'isAdmin': false});
+    Navigator.pushNamed(context, Routes.memory, arguments: {'memory': memory});
+  }
+
+  /// Opens the list of all the player's past games.
+  void openAllMemories() {
+    Navigator.pushNamed(context, Routes.memories);
   }
 
   Event? _loadedEvent(String eventId) {
