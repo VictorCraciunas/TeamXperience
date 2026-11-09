@@ -7,9 +7,11 @@ import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/utils/event_formats.dart';
 
 import 'event_map_pin.dart';
+import 'events_here_list.dart';
 
 /// The Hartă mode of the Evenimente tab: the start pins of the filtered
-/// events; tapping one shows its card at the bottom. Not drawn in the mockups,
+/// events, one pin per spot with a count when several share it; tapping one
+/// shows its card, or the list of its events, at the bottom. Not drawn in the mockups,
 /// so it follows the admin map's tiles and the list's tile style.
 class EventsMap extends StatefulWidget {
   const EventsMap({
@@ -32,11 +34,12 @@ class EventsMap extends StatefulWidget {
 }
 
 class _EventsMapState extends State<EventsMap> {
-  Event? _selected;
+  List<Event>? _selected;
 
   @override
   Widget build(BuildContext context) {
     final points = mapPoints(widget.events);
+    final groups = groupMapPoints(points);
     final bounds = pointsBounds([for (final p in points) p.$2]);
     if (bounds == null) {
       return Center(
@@ -74,15 +77,16 @@ class _EventsMapState extends State<EventsMap> {
               ),
             MarkerLayer(
               markers: [
-                for (final (event, point) in points)
+                for (final group in groups)
                   Marker(
-                    point: point,
+                    point: group.at,
                     width: 32,
                     height: 32,
                     child: EventMapPin(
-                      key: ValueKey('pin-${event.eventId}'),
-                      registered: widget.registeredIds.contains(event.eventId),
-                      onTap: () => setState(() => _selected = event),
+                      key: ValueKey('pin-${group.events.first.eventId}'),
+                      count: group.events.length,
+                      registered: group.events.any((e) => widget.registeredIds.contains(e.eventId)),
+                      onTap: () => setState(() => _selected = group.events),
                     ),
                   ),
               ],
@@ -94,7 +98,7 @@ class _EventsMapState extends State<EventsMap> {
             left: 14,
             right: 14,
             bottom: 14,
-            child: _card(selected),
+            child: selected.length == 1 ? _card(selected.first) : EventsHereList(count: selected.length, children: [for (final e in selected) _card(e)]),
           ),
       ],
     );

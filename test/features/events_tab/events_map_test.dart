@@ -58,8 +58,32 @@ void main() {
       startLatitude: a.startLatitude,
       startLongitude: a.startLongitude,
     );
-    await _pump(tester, [a, b]);
+    Event? opened;
+    await _pump(tester, [a, b], onOpen: (e) => opened = e);
     expect(tester.takeException(), isNull);
-    expect(find.byType(EventMapPin), findsNWidgets(2));
+    // One pin that says how many are there, not two stacked on each other.
+    expect(find.byType(EventMapPin), findsOneWidget);
+    expect(find.descendant(of: find.byType(EventMapPin), matching: find.text('2')), findsOneWidget);
+
+    await tester.tap(find.byType(EventMapPin));
+    await tester.pump();
+    expect(find.text('2 evenimente aici'), findsOneWidget);
+    expect(find.text(a.name ?? ''), findsOneWidget);
+    expect(find.text('Geamăn'), findsOneWidget);
+    await tester.tap(find.text('Geamăn'));
+    expect(opened?.eventId, 'twin');
+  });
+
+  testWidgets('many events on one spot: the list scrolls and fits', (tester) async {
+    final a = sampleEvent();
+    final many = [
+      for (var i = 0; i < 8; i++)
+        Event(eventId: 'e$i', name: 'Eveniment $i', startLatitude: a.startLatitude, startLongitude: a.startLongitude),
+    ];
+    await _pump(tester, many);
+    await tester.tap(find.byType(EventMapPin));
+    await tester.pump();
+    expect(find.text('8 evenimente aici'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }
