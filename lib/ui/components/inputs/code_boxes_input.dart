@@ -86,6 +86,16 @@ class _CodeBoxesInputState extends State<CodeBoxesInput> with SingleTickerProvid
     if (value.length == widget.length) widget.onCompleted?.call(value);
   }
 
+  /// Focuses the boxes, or, when they have focus already (the keyboard was
+  /// closed with the back button), brings the keyboard back.
+  void _openKeyboard() {
+    if (_focus.hasFocus) {
+      SystemChannels.textInput.invokeMethod<void>('TextInput.show');
+    } else {
+      _focus.requestFocus();
+    }
+  }
+
   /// A long press pastes the clipboard: the same cleaning as typing.
   Future<void> _paste() async {
     final data = await Clipboard.getData(Clipboard.kTextPlain);
@@ -143,7 +153,7 @@ class _CodeBoxesInputState extends State<CodeBoxesInput> with SingleTickerProvid
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: _focus.requestFocus,
+      onTap: _openKeyboard,
       onLongPress: _paste,
       child: Stack(
         alignment: Alignment.center,
