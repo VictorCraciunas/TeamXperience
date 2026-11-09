@@ -30,6 +30,15 @@ service cloud.firestore {
         || isAdmin();
       allow delete: if isAdmin();
 
+      // Written only by the functions; a player can only mark their own as read.
+      match /notifications/{id} {
+        allow read: if request.auth.uid == uid;
+        allow update: if request.auth.uid == uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read'])
+          && request.resource.data.read == true;
+        allow create, delete: if false;
+      }
+
       // Written only by the results function.
       match /memories/{eventId} {
         allow read: if request.auth.uid == uid || isAdmin();

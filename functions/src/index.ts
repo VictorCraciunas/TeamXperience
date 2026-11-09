@@ -4,6 +4,7 @@ import {initializeApp, getApps} from "firebase-admin/app";
 import {getFirestore} from "firebase-admin/firestore";
 import {getMessaging} from "firebase-admin/messaging";
 import {sendsPush} from "./chat/sends_push";
+import {addToInboxes, chatInboxItem} from "./notifications/inbox";
 
 // Initialize Firebase Admin SDK (only once)
 if (getApps().length === 0) {
@@ -57,6 +58,8 @@ export const onChatMessage = onDocumentCreated(
 
         const teamData = teamDoc.data();
         const userIds: string[] = teamData?.userIds ?? [];
+        // Kept in each player's list, whether or not their phone gets the push.
+        await addToInboxes(db, userIds, chatInboxItem(eventId, teamName, messageText));
 
         if (userIds.length === 0) {
           logger.info("No users in team, skipping notification");
@@ -100,10 +103,11 @@ export const onChatMessage = onDocumentCreated(
       }
 
       // Send the notification
+      const words = typeof messageText === "string" ? messageText : "";
       const truncatedText =
-        messageText.length > 100
-          ? messageText.substring(0, 100) + "..."
-          : messageText;
+        words.length > 100
+          ? words.substring(0, 100) + "..."
+          : words;
 
       const notificationTitle =
         senderRole === "ADMIN"

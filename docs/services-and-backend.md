@@ -20,6 +20,7 @@ Repos (`lib/backend/`) are thin Firestore/Storage wrappers (throw generic `Excep
 - `repo/crew_repo.dart` — `CrewRepo.streamUserCrews(uid)`: `crews` where `memberUids` array-contains `uid`, ordered by name (read-only; crews are written by functions).
 - `storage/storage_images.dart` — `ImageRepo.uploadImage` / `uploadStireImage` (see `data-model.md`).
 - `functions/notification_functions.dart` — `NotificationFunctions.send(title, description, eventId?)`, the `sendNotification` callable; failures surface as `FirebaseFunctionsException`.
+- `functions/src/notifications/inbox.ts`: each player's notification list (`users/{uid}/notifications`). `addToInboxes` (batched, never throws), `pushToUser` (one push, never throws), `chatInboxItem`. `sendNotification`, `onChatMessage` (organiser messages), `notifyCaptain`, `registerTeam` and the results all add to it.
 
 ## service/
 - `event_service/event_service.dart` — CRUD wrappers; `publishEvent` refuses an event with `publishProblems`, generates an id if empty, then uploads images and saves it (the only way a new event goes live); `updateEvent` uploads images then `set`s the whole doc, and its caller first runs `checkLiveEdit`; `registeredEventsFromUser(allEvents, user)` maps ids → events.

@@ -30,6 +30,7 @@ async function seed(): Promise<void> {
     await db.doc("users/u3").set({role: "USER", firstName: "Ion"});
     await db.doc("users/admin").set({role: "ADMIN", firstName: "Org"});
     await db.doc("users/u1/memories/e0").set({eventName: "Vechi"});
+    await db.doc("users/u1/notifications/n1").set({kind: "chat", title: "Salut", body: "B", read: false, createdAt: stamp});
     await db.doc("events/e1").set({name: "Harta", isStopped: false});
     await db.doc(TEAM).set({
       name: "Vulpile",
@@ -116,6 +117,20 @@ describe("firestore.rules", () => {
         await assertFails(as("u1").doc("users/u1").update({[field]: field === "role" ? "ADMIN" : 9999}));
       });
     }
+
+    test("notifications: your own, and only read may change, to true", async () => {
+      const note = "users/u1/notifications/n1";
+      await assertSucceeds(as("u1").doc(note).get());
+      await assertSucceeds(as("u1").collection("users/u1/notifications").where("read", "==", false).get());
+      await assertFails(as("u2").doc(note).get());
+      await assertFails(as("admin").doc(note).update({read: true}));
+      await assertFails(as("u1").doc(note).update({read: false}));
+      await assertFails(as("u1").doc(note).update({title: "x"}));
+      await assertFails(as("u1").doc(note).update({read: true, title: "x"}));
+      await assertFails(as("u1").doc("users/u1/notifications/n2").set({title: "x", read: false}));
+      await assertFails(as("u1").doc(note).delete());
+      await assertSucceeds(as("u1").doc(note).update({read: true}));
+    });
 
     const newUser = (uid: string, extra: Record<string, unknown> = {}) =>
       ({uid, role: "USER", email: `${uid}@x.ro`, ...extra});
