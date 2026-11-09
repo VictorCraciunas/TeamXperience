@@ -7,6 +7,7 @@ import 'package:teamxperience/model/season_standing.dart';
 import 'package:teamxperience/model/stire.dart';
 
 const int _maxEvents = 4;
+const int _maxNews = 5;
 const Duration _memoryFirstFor = Duration(days: 3);
 
 /// Nothing played yet: Home explains the game instead of showing zeros.
@@ -32,16 +33,20 @@ List<Event> newEventsToShow(List<Event> open, HomeHero hero) {
 List<Event> pastGamesToShow(List<Event> past, DateTime now) =>
     past.where((e) => e.type == EventType.PUBLIC && isOverAt(e, now)).take(_maxEvents).toList();
 
-/// The newest news item already out; one with no date counts as the oldest.
-Stire? latestNews(List<Stire> news, DateTime now) {
-  Stire? latest;
-  for (final stire in news) {
+/// The news for the carousel: the newest already out, at most [_maxNews]. One
+/// with no date counts as the oldest.
+List<Stire> latestNews(List<Stire> news, DateTime now) {
+  final out = news.where((stire) {
     final date = stire.publicationDate;
-    if (date != null && date.isAfter(now)) continue;
-    final best = latest?.publicationDate;
-    if (latest == null || (date != null && (best == null || date.isAfter(best)))) latest = stire;
-  }
-  return latest;
+    return date == null || !date.isAfter(now);
+  }).toList();
+  out.sort((a, b) {
+    final first = a.publicationDate;
+    final second = b.publicationDate;
+    if (first == null || second == null) return first == null ? (second == null ? 0 : 1) : -1;
+    return second.compareTo(first);
+  });
+  return out.take(_maxNews).toList();
 }
 
 /// The player's best-placed crew in the season's list; null when none is in it.
