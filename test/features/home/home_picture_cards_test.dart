@@ -6,7 +6,6 @@ import 'package:teamxperience/features/home/widgets/events_grid_section.dart';
 import 'package:teamxperience/features/home/widgets/finished_card.dart';
 import 'package:teamxperience/features/home/widgets/greeting_stats.dart';
 import 'package:teamxperience/features/home/widgets/home_memory_card.dart';
-import 'package:teamxperience/features/home/widgets/home_news_card.dart';
 import 'package:teamxperience/features/home/widgets/home_season_card.dart';
 import 'package:teamxperience/features/home/widgets/how_it_works_sheet.dart';
 import 'package:teamxperience/features/home/widgets/new_player_greeting.dart';
@@ -17,7 +16,6 @@ import 'package:teamxperience/features/team_photo/logic/team_album.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/memory.dart';
 import 'package:teamxperience/model/season_standing.dart';
-import 'package:teamxperience/model/stire.dart';
 import 'package:teamxperience/ui/components/event/event_grid_card.dart';
 import 'package:teamxperience/ui/components/event/event_picture.dart';
 import 'package:teamxperience/ui/theme/app_theme.dart';
@@ -152,23 +150,6 @@ void main() {
     expect(taps, 1);
   });
 
-  testWidgets('HomeNewsCard: title, and opening', (tester) async {
-    var opens = 0;
-    var all = 0;
-    await pumpUi(
-      tester,
-      HomeNewsCard(
-        stire: Stire(id: 's', title: 'Sezonul de iarnă', publicationDate: DateTime(2026, 11, 3)),
-        onOpen: () => opens++,
-        onAll: () => all++,
-      ),
-    );
-    expect(find.text('3 nov'), findsOneWidget);
-    await tester.tap(find.text('Sezonul de iarnă'));
-    await tester.tap(find.text('Toate'));
-    expect((opens, all), (1, 1));
-  });
-
   testWidgets('a new player gets the line and the link, which opens the steps', (tester) async {
     await pumpUi(
       tester,
@@ -216,7 +197,6 @@ void main() {
               ),
               HomeMemoryCard(memory: longMemory, album: const [], large: false, onOpen: () {}, onAll: () {}),
               HomeSeasonCard(seasonName: 'Primăvara 2027', place: 10, standing: const SeasonStanding(crewId: 'c', crewName: 'Cei Mai Rapizi Exploratori Din Tot Orașul', points: 1350, games: 12), onOpen: () {}),
-              HomeNewsCard(stire: Stire(id: 's', title: long.name, publicationDate: DateTime(2026, 11, 3)), onOpen: () {}, onAll: () {}),
             ],
           ),
         ),

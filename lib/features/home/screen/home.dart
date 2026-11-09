@@ -10,7 +10,7 @@ import 'package:teamxperience/features/home/logic/hero_from_providers.dart';
 import 'package:teamxperience/features/home/logic/home_content.dart';
 import 'package:teamxperience/features/home/widgets/home_layout.dart';
 import 'package:teamxperience/features/home/widgets/home_memory_card.dart';
-import 'package:teamxperience/features/home/widgets/home_news_card.dart';
+import 'package:teamxperience/features/home/widgets/home_news_carousel.dart';
 import 'package:teamxperience/features/home/widgets/home_season_card.dart';
 import 'package:teamxperience/features/home/widgets/how_it_works_sheet.dart';
 import 'package:teamxperience/features/home/widgets/new_player_greeting.dart';
@@ -290,11 +290,11 @@ class _HomeState extends State<Home> {
               standing: spot.standing,
               onOpen: controller.openTeamsTab,
             ),
-      news: latest == null
+      news: latest.isEmpty
           ? null
-          : HomeNewsCard(
-              stire: latest,
-              onOpen: () => controller.navigateToStireDetails(latest),
+          : HomeNewsCarousel(
+              items: latest,
+              onOpen: controller.navigateToStireDetails,
               onAll: controller.navigateToNewsTab,
             ),
     );

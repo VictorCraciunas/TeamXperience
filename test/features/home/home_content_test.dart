@@ -84,23 +84,24 @@ void main() {
   group('latest news', () {
     Stire stire(String id, DateTime? at) => Stire(id: id, title: id, publicationDate: at);
 
-    test('the newest that is already out', () {
+    test('newest first, without the future, undated last', () {
       final latest = latestNews([
         stire('old', _now.subtract(const Duration(days: 9))),
+        stire('undated', null),
         stire('new', _now.subtract(const Duration(days: 1))),
         stire('future', _now.add(const Duration(days: 1))),
-        stire('undated', null),
       ], _now);
-      expect(latest?.id, 'new');
+      expect(latest.map((s) => s.id), ['new', 'old', 'undated']);
     });
 
-    test('undated when nothing else', () {
-      expect(latestNews([stire('undated', null)], _now)?.id, 'undated');
+    test('at most 5', () {
+      final many = [for (var i = 0; i < 8; i++) stire('$i', _now.subtract(Duration(days: i)))];
+      expect(latestNews(many, _now).map((s) => s.id), ['0', '1', '2', '3', '4']);
     });
 
     test('none', () {
-      expect(latestNews(const [], _now), isNull);
-      expect(latestNews([stire('future', _now.add(const Duration(days: 1)))], _now), isNull);
+      expect(latestNews(const [], _now), isEmpty);
+      expect(latestNews([stire('future', _now.add(const Duration(days: 1)))], _now), isEmpty);
     });
   });
 
