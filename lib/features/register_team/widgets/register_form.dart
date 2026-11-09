@@ -15,6 +15,11 @@ import 'team_name_field.dart';
 /// null greys the button out. [locked] makes the form read-only and hides the
 /// button, for after the team is registered; while [sending] it is read-only
 /// too, with the button shown as busy.
+/// The organiser's consent texts. The first two are needed to sign up.
+const rulesConsentText = 'Sunt de acord cu Regulamentul Specific al activității.';
+const dataConsentText = 'Sunt de acord cu folosirea datelor cu caracter personal.';
+const photoConsentText = 'Sunt de acord ca imaginile și video-urile care sunt realizate de organizatori sau de membrii echipei mele în timpul activității să îmi fie trimise după eveniment. În același timp ASOCIAȚIA VBE SIBIU poate folosi aceste resurse pentru promovare.';
+
 class RegisterForm extends StatelessWidget {
   const RegisterForm({
     super.key,
@@ -30,6 +35,8 @@ class RegisterForm extends StatelessWidget {
     required this.onSizeChanged,
     required this.rulesAccepted,
     required this.onRulesChanged,
+    required this.dataAccepted,
+    required this.onDataChanged,
     required this.photoConsent,
     required this.onPhotoChanged,
     required this.onSubmit,
@@ -49,6 +56,8 @@ class RegisterForm extends StatelessWidget {
   final ValueChanged<int> onSizeChanged;
   final bool rulesAccepted;
   final ValueChanged<bool> onRulesChanged;
+  final bool dataAccepted;
+  final ValueChanged<bool> onDataChanged;
   final bool photoConsent;
   final ValueChanged<bool> onPhotoChanged;
   final VoidCallback? onSubmit;
@@ -104,18 +113,24 @@ class RegisterForm extends StatelessWidget {
           ),
           const SizedBox(height: _gap),
           OutlineCard(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ConsentRow(
-                  label: 'Accept regulamentul',
+                  label: rulesConsentText,
                   value: rulesAccepted,
                   onChanged: readOnly ? null : onRulesChanged,
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 10),
                 ConsentRow(
-                  label: 'Sunt de acord cu foto și video',
+                  label: dataConsentText,
+                  value: dataAccepted,
+                  onChanged: readOnly ? null : onDataChanged,
+                ),
+                const SizedBox(height: 10),
+                ConsentRow(
+                  label: photoConsentText,
                   value: photoConsent,
                   onChanged: readOnly ? null : onPhotoChanged,
                 ),

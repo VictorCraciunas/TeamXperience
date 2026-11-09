@@ -279,6 +279,13 @@ describe("team functions", () => {
   });
 
   describe("createCrew", () => {
+    test("the data consent is kept when given", async () => {
+      await register("u1", {dataAccepted: true});
+      assert.ok((await team())?.dataAcceptedAt);
+      await register("u2", {name: "Lupii"});
+      assert.equal((await team("Lupii"))?.dataAcceptedAt, undefined);
+    });
+
     test("a captain alone tells nobody", async () => {
       let calls = 0;
       await registerTeam(db, "u1", input(), NOW, async () => {

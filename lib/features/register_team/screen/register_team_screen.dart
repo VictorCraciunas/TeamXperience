@@ -107,6 +107,8 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                             onSizeChanged: controller.setSize,
                             rulesAccepted: controller.rulesAccepted,
                             onRulesChanged: controller.setRulesAccepted,
+                            dataAccepted: controller.dataAccepted,
+                            onDataChanged: controller.setDataAccepted,
                             photoConsent: controller.photoConsent,
                             onPhotoChanged: controller.setPhotoConsent,
                             onSubmit:

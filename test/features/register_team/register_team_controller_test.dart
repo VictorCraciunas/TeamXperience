@@ -38,6 +38,7 @@ class _FakeTeams extends Fake implements TeamService {
     required int size,
     required String phone,
     required bool rulesAccepted,
+    required bool dataAccepted,
     required bool photoConsent,
     String? crewId,
   }) async {
@@ -47,6 +48,7 @@ class _FakeTeams extends Fake implements TeamService {
       'size': size,
       'phone': phone,
       'rules': rulesAccepted,
+      'data': dataAccepted,
       'photo': photoConsent,
       if (crewId != null) 'crewId': crewId,
     });
@@ -160,6 +162,7 @@ class _Harness {
     controller.phoneController.text = phone;
     controller.onPhoneChanged(phone);
     controller.setRulesAccepted(rules);
+    controller.setDataAccepted(rules);
   }
 }
 
@@ -223,6 +226,9 @@ void main() {
       expect(c.blocker, 'Acceptă regulamentul');
 
       c.setRulesAccepted(true);
+      expect(c.blocker, 'Acceptă folosirea datelor personale');
+
+      c.setDataAccepted(true);
       expect(c.blocker, isNull);
       expect(c.canSubmit, isTrue);
     });
@@ -275,6 +281,7 @@ void main() {
           'size': 5,
           'phone': '0722 123 456',
           'rules': true,
+          'data': true,
           'photo': true,
         },
       ]);

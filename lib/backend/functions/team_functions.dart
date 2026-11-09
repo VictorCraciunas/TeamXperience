@@ -25,6 +25,7 @@ class TeamFunctions {
     required int size,
     required String phone,
     required bool rulesAccepted,
+    required bool dataAccepted,
     required bool photoConsent,
     String? crewId,
   }) {
@@ -34,6 +35,7 @@ class TeamFunctions {
       'size': size,
       'phone': phone,
       'rulesAccepted': rulesAccepted,
+      'dataAccepted': dataAccepted,
       'photoConsent': photoConsent,
       if (crewId != null) 'crewId': crewId,
     });

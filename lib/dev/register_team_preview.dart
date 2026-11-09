@@ -22,6 +22,7 @@ class _RegisterTeamPreviewState extends State<RegisterTeamPreview> {
   final _phone = TextEditingController(text: '0722 123 456');
   int _size = 4;
   bool _rules = true;
+  bool _data = false;
   bool _photo = true;
   int _state = 0;
 
@@ -83,6 +84,8 @@ class _RegisterTeamPreviewState extends State<RegisterTeamPreview> {
                       onSizeChanged: (n) => setState(() => _size = n),
                       rulesAccepted: _rules,
                       onRulesChanged: (v) => setState(() => _rules = v),
+                      dataAccepted: _data,
+                      onDataChanged: (v) => setState(() => _data = v),
                       photoConsent: _photo,
                       onPhotoChanged: (v) => setState(() => _photo = v),
                       onSubmit: () => _say('înscrie echipa'),
