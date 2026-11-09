@@ -105,8 +105,8 @@ class MemoryAlbumView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(memory.eventName, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, height: 1.45, color: colors.text)),
-              if (subtitle.isNotEmpty) Text(subtitle, style: TextStyle(fontSize: 12, height: 1.45, color: colors.muted)),
+              Text(memory.eventName, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, height: 1.45, color: colors.text)),
+              if (subtitle.isNotEmpty) Text(subtitle, style: TextStyle(fontSize: 14, height: 1.45, color: colors.muted)),
             ],
           ),
         ),
@@ -151,7 +151,7 @@ class MemoryAlbumView extends StatelessWidget {
                 Text(
                   'Nicio poză la acest joc.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 12, height: 1.45, color: colors.muted),
+                  style: TextStyle(fontSize: 14, height: 1.45, color: colors.muted),
                 ),
               ],
             ),

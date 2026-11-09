@@ -118,7 +118,7 @@ class ImageMessageBubble extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(8, 6, 8, 4),
                     child: Text(
                       (rejectReason ?? '').trim(),
-                      style: TextStyle(fontSize: 12, height: 1.4, color: context.colors.danger),
+                      style: TextStyle(fontSize: 14, height: 1.4, color: context.colors.danger),
                     ),
                   ),
                 if (showApprovalActions) ...[
@@ -161,7 +161,7 @@ class ImageMessageBubble extends StatelessWidget {
               child: Text(
                 time!,
                 style: TextStyle(
-                  fontSize: 10.5,
+                  fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: context.colors.muted,
                 ),
@@ -220,7 +220,7 @@ class _StatusChip extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: fg,
               letterSpacing: 0.3,
@@ -276,7 +276,7 @@ class _ActionButton extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                fontSize: 13.5,
+                fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: filled ? context.colors.onNavy : context.colors.text,
               ),

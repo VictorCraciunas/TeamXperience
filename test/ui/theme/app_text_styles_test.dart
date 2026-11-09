@@ -53,8 +53,8 @@ void main() {
 
   testWidgets('the theme text theme carries the same section title and body', (tester) async {
     final theme = AppTheme.light;
-    expect(theme.textTheme.titleMedium!.fontSize, 15);
-    expect(theme.textTheme.bodyMedium!.fontSize, 13);
+    expect(theme.textTheme.titleMedium!.fontSize, 17);
+    expect(theme.textTheme.bodyMedium!.fontSize, 15);
   });
 }
 

@@ -40,7 +40,7 @@ class CrewCodeRow extends StatelessWidget {
                 'Cod invitație',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 11, height: 1.45, color: faded),
+                style: TextStyle(fontSize: 13, height: 1.45, color: faded),
               ),
             ),
             const SizedBox(width: 8),
@@ -55,7 +55,7 @@ class CrewCodeRow extends StatelessWidget {
                     maxLines: 1,
                     style: TextStyle(
                       fontFamily: 'Monospace',
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.w500,
                       letterSpacing: 2,
                       height: 1.45,
@@ -101,9 +101,9 @@ class _CodeIcon extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-          child: Icon(icon, size: 16, color: context.colors.onNavy),
+        child: SizedBox.square(
+          dimension: 44,
+          child: Icon(icon, size: 18, color: context.colors.onNavy),
         ),
       ),
     );

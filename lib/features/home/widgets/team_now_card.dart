@@ -40,11 +40,11 @@ class TeamNowCard extends StatelessWidget {
                     children: [
                       Text(
                         activeLine(active.length),
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
                       ),
                       Text(
                         lastMissionLine(team.lastMissionAt, now),
-                        style: TextStyle(fontSize: 11, height: 1.45, color: colors.muted),
+                        style: TextStyle(fontSize: 13, height: 1.45, color: colors.muted),
                       ),
                     ],
                   ),

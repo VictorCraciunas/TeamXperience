@@ -47,7 +47,7 @@ class GameOutlineButton extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 14,
                           height: 1.45,
                           fontWeight: FontWeight.w500,
                           color: palette.accent,

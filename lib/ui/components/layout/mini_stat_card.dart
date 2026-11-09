@@ -33,7 +33,7 @@ class MiniStatCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.w500,
               height: 1.45,
               color: accent ? colors.accent : colors.text,
@@ -65,7 +65,7 @@ class MiniStatCard extends StatelessWidget {
               caption,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 11, height: 1.45, color: colors.muted),
+              style: TextStyle(fontSize: 13, height: 1.45, color: colors.muted),
             ),
         ],
       ),

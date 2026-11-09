@@ -54,7 +54,7 @@ class BadgeTile extends StatelessWidget {
             Text(
               badge.title,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 11, height: 1.45, color: colors.text),
+              style: TextStyle(fontSize: 13, height: 1.45, color: colors.text),
             ),
           ],
         ),

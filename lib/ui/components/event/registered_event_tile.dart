@@ -42,8 +42,8 @@ class RegisteredEventTile extends StatelessWidget {
               decoration: BoxDecoration(color: colors.navy, borderRadius: BorderRadius.circular(10)),
               child: Column(
                 children: [
-                  Text(day, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, height: 1.1, color: colors.onNavy)),
-                  Text(month, style: TextStyle(fontSize: 11, height: 1.45, color: colors.onNavy)),
+                  Text(day, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, height: 1.1, color: colors.onNavy)),
+                  Text(month, style: TextStyle(fontSize: 13, height: 1.45, color: colors.onNavy)),
                 ],
               ),
             ),
@@ -64,7 +64,7 @@ class RegisteredEventTile extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 child: Text(
                   badge,
-                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, height: 1.45, color: colors.success),
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, height: 1.45, color: colors.success),
                 ),
               ),
             ),

@@ -30,7 +30,7 @@ class RouteHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = context.eventPalette;
     final place = placeLine;
-    final small = TextStyle(fontSize: 11, height: 1.45, color: palette.ink);
+    final small = TextStyle(fontSize: 13, height: 1.45, color: palette.ink);
 
     Widget clock(IconData icon, String value, String word) => Row(
       mainAxisSize: MainAxisSize.min,
@@ -68,7 +68,7 @@ class RouteHeader extends StatelessWidget {
                         textAlign: TextAlign.center,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontFamily: palette.voiceFont, fontSize: 15, height: 1.45, color: palette.ink),
+                        style: TextStyle(fontFamily: palette.voiceFont, fontSize: 17, height: 1.45, color: palette.ink),
                       ),
                       if (place != null)
                         Text(place, textAlign: TextAlign.center, style: small.copyWith(color: palette.muted)),

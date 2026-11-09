@@ -87,21 +87,21 @@ class EventPostCard extends StatelessWidget {
                             title,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: colors.text, fontSize: 16, fontWeight: FontWeight.w600),
+                            style: TextStyle(color: colors.text, fontSize: 18, fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             place,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: colors.muted, fontSize: 13),
+                            style: TextStyle(color: colors.muted, fontSize: 15),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             details,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: colors.muted, fontSize: 12),
+                            style: TextStyle(color: colors.muted, fontSize: 14),
                           ),
                         ],
                       ),
@@ -156,7 +156,7 @@ class _Chip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         child: Text(
           text,
-          style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+          style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
         ),
       ),
     );

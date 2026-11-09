@@ -42,7 +42,7 @@ class LeaderboardSheet extends StatelessWidget {
             children: [
               Text(
                 'Clasament live',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
               ),
               const SizedBox(height: 10),
               LeaderboardCard(rows: leaderboardRows(ranked, ownName: ownName, missionCount: missionCount)),

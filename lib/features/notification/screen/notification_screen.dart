@@ -56,7 +56,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ),
                   child: Text(
                     "Această notificare va fi trimisă doar participanților înscriși la acest eveniment.",
-                    style: TextStyle(fontSize: 13, color: context.colors.text),
+                    style: TextStyle(fontSize: 15, color: context.colors.text),
                   ),
                 ),
                 const SizedBox(height: 15),

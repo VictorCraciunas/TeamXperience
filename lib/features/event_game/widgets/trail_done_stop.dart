@@ -29,7 +29,7 @@ class TrailDoneStop extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         textAlign: labelOnLeft ? TextAlign.right : TextAlign.left,
-        style: TextStyle(fontSize: 11, height: 1.45, color: palette.ink),
+        style: TextStyle(fontSize: 13, height: 1.45, color: palette.ink),
       ),
     );
     return Row(

@@ -54,7 +54,7 @@ class ChecklistRow extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: colors.text,
-                      fontSize: 12,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -62,7 +62,7 @@ class ChecklistRow extends StatelessWidget {
                     subtitle,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: colors.muted, fontSize: 11),
+                    style: TextStyle(color: colors.muted, fontSize: 13),
                   ),
                 ],
               ),

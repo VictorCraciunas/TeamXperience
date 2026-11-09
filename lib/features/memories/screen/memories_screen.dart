@@ -72,7 +72,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
                       child: Text(
                         controller.failed ? 'Nu am putut încărca amintirile.' : 'Aici apar jocurile tale terminate.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12, height: 1.45, color: colors.muted),
+                        style: TextStyle(fontSize: 14, height: 1.45, color: colors.muted),
                       ),
                     ),
                   );

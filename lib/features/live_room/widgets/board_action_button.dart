@@ -40,7 +40,7 @@ class BoardActionButton extends StatelessWidget {
                         label,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 12, height: 1.45, fontWeight: FontWeight.w500, color: colour),
+                        style: TextStyle(fontSize: 14, height: 1.45, fontWeight: FontWeight.w500, color: colour),
                       ),
                     ),
                   ],

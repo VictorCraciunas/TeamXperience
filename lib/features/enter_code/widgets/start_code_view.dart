@@ -70,7 +70,7 @@ class StartCodeView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
               child: Row(
                 children: [
                   Semantics(
@@ -79,12 +79,14 @@ class StartCodeView extends StatelessWidget {
                     child: GestureDetector(
                       onTap: onClose,
                       behavior: HitTestBehavior.opaque,
-                      child: Icon(TablerIcons.x, size: 18, color: onNavy),
+                      child: SizedBox.square(dimension: 44, child: Icon(TablerIcons.x, size: 20, color: onNavy)),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Align(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Align(
                       alignment: Alignment.centerRight,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
@@ -101,13 +103,14 @@ class StartCodeView extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 13,
                               fontWeight: FontWeight.w500,
                               height: 1.45,
                               color: colors.onTick,
                             ),
                           ),
                         ),
+                      ),
                       ),
                     ),
                   ),
@@ -127,7 +130,7 @@ class StartCodeView extends StatelessWidget {
                             event.name ?? '',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 13,
                               height: 1.45,
                               color: onNavy.withValues(alpha: .75),
                             ),
@@ -137,7 +140,7 @@ class StartCodeView extends StatelessWidget {
                             'Introdu codul de start',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 20,
                               fontWeight: FontWeight.w500,
                               height: 1.45,
                               color: onNavy,
@@ -148,7 +151,7 @@ class StartCodeView extends StatelessWidget {
                             codeHint(event),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 14,
                               height: 1.45,
                               color: onNavy.withValues(alpha: .75),
                             ),
@@ -181,7 +184,7 @@ class StartCodeView extends StatelessWidget {
                         'Nu contează literele mari sau mici.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 13,
                           height: 1.45,
                           color: onNavy.withValues(alpha: .7),
                         ),

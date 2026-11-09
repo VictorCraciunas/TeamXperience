@@ -58,10 +58,10 @@ class HomeNewsCard extends StatelessWidget {
                           stire.title ?? '',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 12, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
+                          style: TextStyle(fontSize: 14, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
                         ),
                         if (date != null)
-                          Text(dayAndMonth(date), style: TextStyle(fontSize: 11, height: 1.45, color: colors.muted)),
+                          Text(dayAndMonth(date), style: TextStyle(fontSize: 13, height: 1.45, color: colors.muted)),
                       ],
                     ),
                   ),

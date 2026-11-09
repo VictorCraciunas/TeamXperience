@@ -91,7 +91,7 @@ class AppButton extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: foreground,
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
           ),

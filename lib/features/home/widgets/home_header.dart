@@ -23,10 +23,10 @@ class HomeHeader extends StatelessWidget {
         bottom: false,
         child: Padding(
           // The mockup's 12 / 14, plus the 1 px bottom border drawn inside.
-          padding: const EdgeInsets.fromLTRB(14, 12, 14, 13),
+          padding: const EdgeInsets.fromLTRB(14, 8, 14, 9),
           child: Row(
             children: [
-              Icon(TablerIcons.route, size: 20, color: colors.accent),
+              Icon(TablerIcons.route, size: 22, color: colors.accent),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -34,7 +34,7 @@ class HomeHeader extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: 17,
                     fontWeight: FontWeight.w500,
                     height: 1.45,
                     color: colors.text,
@@ -49,8 +49,8 @@ class HomeHeader extends StatelessWidget {
                   onTap: onBell,
                   behavior: HitTestBehavior.opaque,
                   child: Container(
-                    width: 32,
-                    height: 32,
+                    width: 44,
+                    height: 44,
                     decoration: BoxDecoration(
                       color: colors.iconButtonBg,
                       shape: BoxShape.circle,
@@ -58,11 +58,11 @@ class HomeHeader extends StatelessWidget {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        Icon(TablerIcons.bell, size: 17, color: colors.text),
+                        Icon(TablerIcons.bell, size: 20, color: colors.text),
                         if (unread)
                           Positioned(
-                            top: 6,
-                            right: 7,
+                            top: 10,
+                            right: 11,
                             child: Container(
                               key: const ValueKey('bell-dot'),
                               width: 7,

@@ -32,7 +32,7 @@ class MissionProgressLine extends StatelessWidget {
           fill: colors.soon,
           child: Text(
             '${walked + 1}',
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, height: 1.45, color: colors.onTick),
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, height: 1.45, color: colors.onTick),
           ),
         ),
       for (var i = 0; i < open; i++)

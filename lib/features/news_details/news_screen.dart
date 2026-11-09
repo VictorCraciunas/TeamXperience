@@ -286,14 +286,14 @@ class _NewsScreenState extends State<NewsScreen> {
                       children: [
                         // Category and date container
                         Container(
-                          width: 205,
-                          height: 24,
+                          height: 28,
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
                           decoration: BoxDecoration(
                             color: context.colors.iconButtonBg,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               SvgPicture.asset(
                                 'assets/images/folder-search.svg',
@@ -305,12 +305,16 @@ class _NewsScreenState extends State<NewsScreen> {
                                 ),
                               ),
                               const SizedBox(width: 5),
-                              Text(
-                                stire.category?.name ?? 'No Category',
-                                // Now using NewsCategory name
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: context.colors.text,
+                              Flexible(
+                                child: Text(
+                                  stire.category?.name ?? 'No Category',
+                                  // Now using NewsCategory name
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: context.colors.text,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 4),
@@ -330,7 +334,7 @@ class _NewsScreenState extends State<NewsScreen> {
                                 ),
                                 // Now using NewsCategory name
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 14,
                                   color: context.colors.text,
                                 ),
                               ),
@@ -342,7 +346,7 @@ class _NewsScreenState extends State<NewsScreen> {
                           stire.title ?? 'Fara titlu',
                           textAlign: TextAlign.left,
                           style: TextStyle(
-                            fontSize: 19,
+                            fontSize: 21,
                             color: context.colors.text,
                             fontWeight: FontWeight.w600,
                           ),
@@ -352,7 +356,7 @@ class _NewsScreenState extends State<NewsScreen> {
                           stire.description ?? "No description",
                           textAlign: TextAlign.left,
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 15,
                             fontWeight: FontWeight.w300,
                             color: context.colors.text,
                           ),

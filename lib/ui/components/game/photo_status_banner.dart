@@ -34,11 +34,11 @@ class PhotoStatusBanner extends StatelessWidget {
             Icon(icon, size: 16, color: fg),
             const SizedBox(width: 8),
             Expanded(
-              child: Text(text, style: TextStyle(fontSize: 12, height: 1.45, fontWeight: FontWeight.w500, color: fg)),
+              child: Text(text, style: TextStyle(fontSize: 14, height: 1.45, fontWeight: FontWeight.w500, color: fg)),
             ),
             if (note != null && note.isNotEmpty) ...[
               const SizedBox(width: 8),
-              Text(note, style: TextStyle(fontSize: 11, height: 1.45, color: fg)),
+              Text(note, style: TextStyle(fontSize: 13, height: 1.45, color: fg)),
             ],
           ],
         ),

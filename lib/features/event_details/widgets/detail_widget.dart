@@ -40,7 +40,7 @@ class DetailWidget extends StatelessWidget {
               Text(
                 text1,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: context.colors.text,
                 ),
@@ -49,7 +49,7 @@ class DetailWidget extends StatelessWidget {
               Text(
                 text2,
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 15,
                   fontWeight: FontWeight.w300,
                   color: context.colors.text
                 ),

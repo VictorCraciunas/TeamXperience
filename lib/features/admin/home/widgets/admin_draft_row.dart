@@ -37,7 +37,7 @@ class AdminDraftRow extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: colors.text,
-                  fontSize: 13,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -46,7 +46,7 @@ class AdminDraftRow extends StatelessWidget {
                 draftSummary(draft, withCount: true),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: colors.muted, fontSize: 11),
+                style: TextStyle(color: colors.muted, fontSize: 13),
               ),
               const SizedBox(height: 8),
               ClipRRect(

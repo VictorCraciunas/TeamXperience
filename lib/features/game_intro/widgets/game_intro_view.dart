@@ -56,7 +56,7 @@ class GameIntroView extends StatelessWidget {
                               date,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 11,
+                                fontSize: 13,
                                 height: 1.45,
                                 letterSpacing: 1,
                                 color: palette.ink.withValues(alpha: .75),
@@ -67,7 +67,7 @@ class GameIntroView extends StatelessWidget {
                           Text(
                             event.name ?? '',
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontFamily: palette.voiceFont, fontSize: 22, height: 1.25, color: palette.ink),
+                            style: TextStyle(fontFamily: palette.voiceFont, fontSize: 24, height: 1.25, color: palette.ink),
                           ),
                         ],
                       ),
@@ -111,7 +111,7 @@ class GameIntroView extends StatelessWidget {
                         child: Text(
                           'Spre prima misiune',
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, height: 1.45, color: palette.surface),
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.45, color: palette.surface),
                         ),
                       ),
                     ),
@@ -120,7 +120,7 @@ class GameIntroView extends StatelessWidget {
                   Text(
                     'Cronometrul pornește acum pentru toată echipa.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 11, height: 1.45, color: palette.ink.withValues(alpha: .75)),
+                    style: TextStyle(fontSize: 13, height: 1.45, color: palette.ink.withValues(alpha: .75)),
                   ),
                 ],
               ),

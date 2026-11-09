@@ -45,7 +45,7 @@ class _EventsMapState extends State<EventsMap> {
           child: Text(
             'Niciun eveniment nu are încă locul pe hartă.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 13, height: 1.45, color: context.colors.muted),
+            style: TextStyle(fontSize: 15, height: 1.45, color: context.colors.muted),
           ),
         ),
       );

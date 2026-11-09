@@ -60,7 +60,7 @@ class RaisedNavButton extends StatelessWidget {
               child: Text(
                 item.label,
                 maxLines: 1,
-                style: TextStyle(color: fill, fontSize: 11, height: 1.45, fontWeight: FontWeight.w500),
+                style: TextStyle(color: fill, fontSize: 12, height: 1.45, fontWeight: FontWeight.w500),
               ),
             ),
           ],

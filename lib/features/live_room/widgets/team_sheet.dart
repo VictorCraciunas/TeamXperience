@@ -69,12 +69,12 @@ class TeamSheet extends StatelessWidget {
             Text(
               team.name,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
+              style: TextStyle(fontSize: 16, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
             ),
             Text(
               captain.isEmpty ? status : '$captain · $status',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 11, height: 1.45, color: colors.muted),
+              style: TextStyle(fontSize: 13, height: 1.45, color: colors.muted),
             ),
             const SizedBox(height: 14),
             Row(

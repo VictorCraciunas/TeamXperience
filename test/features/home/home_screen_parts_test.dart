@@ -42,7 +42,7 @@ void main() {
       await pumpUi(tester, HomeHeader(unread: true, onBell: () => bells++));
       expect(find.text('TeamXperience'), findsOneWidget);
       expect(find.byKey(const ValueKey('bell-dot')), findsOneWidget);
-      expect(tester.getSize(find.byKey(const ValueKey('bell'))), const Size(32, 32));
+      expect(tester.getSize(find.byKey(const ValueKey('bell'))), const Size(44, 44));
       await tester.tap(find.byKey(const ValueKey('bell')));
       expect(bells, 1);
 

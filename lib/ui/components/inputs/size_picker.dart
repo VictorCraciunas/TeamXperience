@@ -86,7 +86,7 @@ class _SizeBox extends StatelessWidget {
               '$number',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 14,
                 height: 1.45,
                 fontWeight: selected ? FontWeight.w500 : FontWeight.w400,
                 color: selected ? colors.onNavy : colors.text,

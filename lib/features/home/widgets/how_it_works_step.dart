@@ -22,7 +22,7 @@ class HowItWorksStep extends StatelessWidget {
             child: Center(
               child: Text(
                 '$number',
-                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: colors.onNavy),
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: colors.onNavy),
               ),
             ),
           ),
@@ -32,8 +32,8 @@ class HowItWorksStep extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, height: 1.45, color: colors.text)),
-              Text(line, style: TextStyle(fontSize: 11, height: 1.45, color: colors.muted)),
+              Text(title, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, height: 1.45, color: colors.text)),
+              Text(line, style: TextStyle(fontSize: 13, height: 1.45, color: colors.muted)),
             ],
           ),
         ),

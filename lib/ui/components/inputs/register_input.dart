@@ -34,7 +34,7 @@ class RegisterInput extends StatelessWidget {
   final Widget? trailing;
   final double verticalPadding;
 
-  static const double _textSize = 12;
+  static const double _textSize = 14;
 
   OutlineInputBorder _border(Color color) => OutlineInputBorder(
     borderRadius: BorderRadius.circular(AppRadius.button),

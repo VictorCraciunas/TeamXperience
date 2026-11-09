@@ -12,7 +12,7 @@ class IntroLetterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.eventPalette;
-    final style = TextStyle(fontFamily: palette.voiceFont, fontSize: 14, height: 1.55, color: palette.ink);
+    final style = TextStyle(fontFamily: palette.voiceFont, fontSize: 16, height: 1.55, color: palette.ink);
     final name = signature?.trim() ?? '';
     return DecoratedBox(
       decoration: BoxDecoration(

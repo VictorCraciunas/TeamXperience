@@ -26,7 +26,7 @@ class IntroFactChip extends StatelessWidget {
           children: [
             Icon(icon, size: 12, color: palette.ink),
             const SizedBox(width: 4),
-            Flexible(child: Text(label, style: TextStyle(fontSize: 11, height: 1.45, color: palette.ink))),
+            Flexible(child: Text(label, style: TextStyle(fontSize: 13, height: 1.45, color: palette.ink))),
           ],
         ),
       ),

@@ -8,7 +8,7 @@ class TermsText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseStyle = TextStyle(color: context.colors.muted, fontSize: 14);
+    final baseStyle = TextStyle(color: context.colors.muted, fontSize: 16);
     final linkStyle = baseStyle.copyWith(color: context.colors.text);
 
     return Padding(

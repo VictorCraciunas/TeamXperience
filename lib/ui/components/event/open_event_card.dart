@@ -36,7 +36,7 @@ class OpenEventCard extends StatelessWidget {
     final colors = context.colors;
     final url = imageUrl ?? '';
     final pill = badge;
-    final small = TextStyle(fontSize: 11, height: 1.45, color: colors.muted);
+    final small = TextStyle(fontSize: 13, height: 1.45, color: colors.muted);
 
     return GestureDetector(
       onTap: onTap,
@@ -64,7 +64,7 @@ class OpenEventCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
                           child: Text(
                             pill,
-                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, height: 1.45, color: colors.onTick),
+                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, height: 1.45, color: colors.onTick),
                           ),
                         ),
                       ),
@@ -77,10 +77,10 @@ class OpenEventCard extends StatelessWidget {
                       onTap: onShare,
                       behavior: HitTestBehavior.opaque,
                       child: Container(
-                        width: 28,
-                        height: 28,
+                        width: 40,
+                        height: 40,
                         decoration: BoxDecoration(color: colors.heroButton, shape: BoxShape.circle),
-                        child: Icon(TablerIcons.share, size: 14, color: colors.text),
+                        child: Icon(TablerIcons.share, size: 18, color: colors.text),
                       ),
                     ),
                   ),

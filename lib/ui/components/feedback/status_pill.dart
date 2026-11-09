@@ -55,7 +55,7 @@ class StatusPill extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: foreground,
-                  fontSize: 11,
+                  fontSize: 13,
                   fontWeight: FontWeight.w700,
                 ),
               ),

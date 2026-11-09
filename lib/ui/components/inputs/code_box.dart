@@ -54,7 +54,7 @@ class CodeBox extends StatelessWidget {
             maxLines: 1,
             style: TextStyle(
               fontFamily: 'Monospace',
-              fontSize: 20,
+              fontSize: 22,
               height: 1.45,
               color: colors.text,
             ),
@@ -86,7 +86,7 @@ class CodeBox extends StatelessWidget {
             maxLines: 1,
             style: TextStyle(
               fontFamily: 'Monospace',
-              fontSize: 20,
+              fontSize: 22,
               fontWeight: FontWeight.w500,
               height: 1.45,
               color: colors.onNavy,

@@ -58,7 +58,7 @@ class MemoriesSection extends StatelessWidget {
           child: list.isEmpty
               ? Text(
                   failed ? 'Nu am putut încărca amintirile.' : 'Aici apar jocurile tale terminate.',
-                  style: TextStyle(fontSize: 12, height: 1.45, color: context.colors.muted),
+                  style: TextStyle(fontSize: 14, height: 1.45, color: context.colors.muted),
                 )
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,

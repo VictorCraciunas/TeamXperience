@@ -25,7 +25,7 @@ class HeroBadgePill extends StatelessWidget {
           badge.label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, height: 1.45, color: ink),
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, height: 1.45, color: ink),
         ),
       ),
     );

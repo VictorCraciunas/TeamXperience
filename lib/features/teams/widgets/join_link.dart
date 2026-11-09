@@ -36,7 +36,7 @@ class JoinLink extends StatelessWidget {
               Text(
                 'Intră',
                 style: TextStyle(
-                  fontSize: 11,
+                  fontSize: 13,
                   fontWeight: FontWeight.w500,
                   height: 1.45,
                   color: colors.accent,

@@ -40,7 +40,7 @@ void main() {
       expect(_box(tester, 'game-filled-button').color, _p.accent);
       expect(_box(tester, 'game-filled-button').borderRadius, BorderRadius.circular(12));
       final label = tester.widget<Text>(find.text('Fă altă poză')).style;
-      expect((label?.color, label?.fontWeight, label?.fontSize), (_p.onAccent, FontWeight.w500, 12));
+      expect((label?.color, label?.fontWeight, label?.fontSize), (_p.onAccent, FontWeight.w500, 14));
       expect(tester.widget<Icon>(find.byIcon(TablerIcons.camera)).size, 15);
       await tester.tap(find.text('Fă altă poză'));
       expect(taps, 1);
@@ -69,7 +69,7 @@ void main() {
         expect(turn.transform.storage[i], closeTo(expected.storage[i], 1e-9));
       }
       final distance = tester.widget<Text>(find.text('140 m')).style;
-      expect((distance?.fontSize, distance?.fontWeight), (22, FontWeight.w500));
+      expect((distance?.fontSize, distance?.fontWeight), (24, FontWeight.w500));
       expect(find.text('spre nord-est · ~2 min pe jos'), findsOneWidget);
       expect(tester.widget<Text>(find.text('mai aproape')).style?.color, _app.success);
       expect(_box(tester, 'distance-compass').color, _p.surface);

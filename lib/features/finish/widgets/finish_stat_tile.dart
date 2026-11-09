@@ -33,7 +33,7 @@ class FinishStatTile extends StatelessWidget {
               value,
               maxLines: 1,
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 22,
                 height: 1.45,
                 fontWeight: FontWeight.w500,
                 fontFamily: mono ? 'Monospace' : null,
@@ -43,7 +43,7 @@ class FinishStatTile extends StatelessWidget {
             Text(
               label,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 11, height: 1.45, color: palette.ink.withValues(alpha: .8)),
+              style: TextStyle(fontSize: 13, height: 1.45, color: palette.ink.withValues(alpha: .8)),
             ),
           ],
         ),

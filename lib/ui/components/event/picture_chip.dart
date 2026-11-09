@@ -19,7 +19,7 @@ class PictureChip extends StatelessWidget {
           text,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: 11, height: 1.45, color: colors.onNavy),
+          style: TextStyle(fontSize: 13, height: 1.45, color: colors.onNavy),
         ),
       ),
     );

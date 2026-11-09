@@ -26,13 +26,13 @@ class ImportErrorsCard extends StatelessWidget {
         children: [
           Text(
             errors.length == 1 ? 'Ceva nu e în regulă' : 'Sunt ${errors.length} probleme',
-            style: TextStyle(color: colors.danger, fontSize: 13, fontWeight: FontWeight.w600),
+            style: TextStyle(color: colors.danger, fontSize: 15, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           for (final error in errors)
             Padding(
               padding: const EdgeInsets.only(top: 4),
-              child: Text(error, style: TextStyle(color: colors.text, fontSize: 12)),
+              child: Text(error, style: TextStyle(color: colors.text, fontSize: 14)),
             ),
         ],
       ),

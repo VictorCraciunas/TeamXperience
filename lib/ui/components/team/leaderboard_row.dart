@@ -29,7 +29,7 @@ class LeaderboardRowView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    const base = TextStyle(fontSize: 12, height: 1.45);
+    const base = TextStyle(fontSize: 14, height: 1.45);
     return Container(
       key: ValueKey('leader-row-${row.place}'),
       color: row.own ? colors.navActivePill : null,

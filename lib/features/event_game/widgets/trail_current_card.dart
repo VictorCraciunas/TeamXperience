@@ -53,16 +53,16 @@ class TrailCurrentCard extends StatelessWidget {
                     Flexible(
                       child: Text(
                         'Misiunea $number · acum',
-                        style: TextStyle(fontSize: 11, height: 1.45, fontWeight: FontWeight.w500, color: palette.accent),
+                        style: TextStyle(fontSize: 13, height: 1.45, fontWeight: FontWeight.w500, color: palette.accent),
                       ),
                     ),
                   ],
                 ),
                 Text(
                   title,
-                  style: TextStyle(fontFamily: palette.voiceFont, fontSize: 14, height: 1.45, color: palette.ink),
+                  style: TextStyle(fontFamily: palette.voiceFont, fontSize: 16, height: 1.45, color: palette.ink),
                 ),
-                if (far != null) Text(far, style: TextStyle(fontSize: 11, height: 1.45, color: palette.muted)),
+                if (far != null) Text(far, style: TextStyle(fontSize: 13, height: 1.45, color: palette.muted)),
                 const SizedBox(height: 6),
                 Semantics(
                   button: true,
@@ -78,7 +78,7 @@ class TrailCurrentCard extends StatelessWidget {
                           'Continuă',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 14,
                             height: 1.45,
                             fontWeight: FontWeight.w500,
                             color: palette.onAccent,

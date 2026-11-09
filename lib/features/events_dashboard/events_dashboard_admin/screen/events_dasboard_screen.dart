@@ -263,7 +263,7 @@ class _EventsDashboardState extends State<EventsDashboard> {
                                     : 'Nu există evenimente',
                                 style: TextStyle(
                                   color: context.colors.muted,
-                                  fontSize: 15,
+                                  fontSize: 17,
                                 ),
                               ),
                             ),

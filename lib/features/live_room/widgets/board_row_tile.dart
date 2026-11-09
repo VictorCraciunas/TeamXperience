@@ -36,7 +36,7 @@ class BoardRowTile extends StatelessWidget {
     final notStarted = row.state == LiveState.notStarted;
     final stuck = row.state == LiveState.stuck;
     final place = row.place;
-    final status = TextStyle(fontSize: 11, height: 1.45, color: stuck ? colors.warning : colors.muted);
+    final status = TextStyle(fontSize: 13, height: 1.45, color: stuck ? colors.warning : colors.muted);
     final content = Row(
       children: [
         SizedBox(
@@ -46,7 +46,7 @@ class BoardRowTile extends StatelessWidget {
             maxLines: 1,
             softWrap: false,
             overflow: TextOverflow.visible,
-            style: TextStyle(fontSize: 12, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
+            style: TextStyle(fontSize: 14, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
           ),
         ),
         const SizedBox(width: 8),
@@ -59,7 +59,7 @@ class BoardRowTile extends StatelessWidget {
                 row.team.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 12, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
+                style: TextStyle(fontSize: 14, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
               ),
               Text.rich(
                 TextSpan(children: [
@@ -95,7 +95,7 @@ class BoardRowTile extends StatelessWidget {
                         child: Text(
                           'Sună căpitanul',
                           textAlign: TextAlign.right,
-                          style: TextStyle(fontSize: 11, height: 1.45, fontWeight: FontWeight.w500, color: colors.accent),
+                          style: TextStyle(fontSize: 13, height: 1.45, fontWeight: FontWeight.w500, color: colors.accent),
                         ),
                       ),
                     ),

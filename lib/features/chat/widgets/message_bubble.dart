@@ -56,7 +56,7 @@ class MessageBubble extends StatelessWidget {
             child: Text(
               text,
               style: TextStyle(
-                fontSize: 14.5,
+                fontSize: 16,
                 fontWeight: FontWeight.w400,
                 color: isMe ? context.colors.onNavy : context.colors.text,
                 height: 1.45,
@@ -73,7 +73,7 @@ class MessageBubble extends StatelessWidget {
               child: Text(
                 time!,
                 style: TextStyle(
-                  fontSize: 10.5,
+                  fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: context.colors.muted,
                 ),

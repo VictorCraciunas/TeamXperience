@@ -132,7 +132,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                       child: Text(
                         controller.event.name ?? "Nu avem nume eveniment",
                         style: TextStyle(
-                          fontSize: 19,
+                          fontSize: 21,
                           fontWeight: FontWeight.w600,
                           color: context.colors.text,
                         ),
@@ -158,7 +158,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                         Text(
                           "Detalii înscriere",
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 22,
                             fontWeight: FontWeight.w500,
                             color: context.colors.text,
                           ),
@@ -168,7 +168,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                           child: Text(
                             controller.isEditing ? "Anulează" : "Editează",
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: FontWeight.w500,
                               color: context.colors.accent,
                             ),

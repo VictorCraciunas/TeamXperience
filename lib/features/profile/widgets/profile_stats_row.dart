@@ -27,12 +27,12 @@ class ProfileStatsRow extends StatelessWidget {
                   child: Text(
                     value,
                     maxLines: 1,
-                    style: TextStyle(fontSize: 15, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
+                    style: TextStyle(fontSize: 17, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
                   ),
                 ),
                 FittedBox(
                   fit: BoxFit.scaleDown,
-                  child: Text(label, maxLines: 1, style: TextStyle(fontSize: 11, height: 1.45, color: colors.muted)),
+                  child: Text(label, maxLines: 1, style: TextStyle(fontSize: 13, height: 1.45, color: colors.muted)),
                 ),
               ],
             ),

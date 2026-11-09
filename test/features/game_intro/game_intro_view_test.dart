@@ -85,7 +85,7 @@ void main() {
     final page = tester.widget<ColoredBox>(find.byKey(const ValueKey('intro-page')));
     expect(page.color, EventPalette.parchment.background);
     final title = tester.widget<Text>(find.text('Moștenirea Cartografului')).style;
-    expect((title?.fontFamily, title?.fontSize, title?.height), (AppFonts.voice, 22, 1.25));
+    expect((title?.fontFamily, title?.fontSize, title?.height), (AppFonts.voice, 24, 1.25));
   });
 
   testWidgets('no letter: no letter card', (tester) async {

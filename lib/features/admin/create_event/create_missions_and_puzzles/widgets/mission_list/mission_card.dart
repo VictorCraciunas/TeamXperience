@@ -59,7 +59,7 @@ class MissionCard extends StatelessWidget {
                       _heading,
                       style: TextStyle(
                         color: colors.text,
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -70,7 +70,7 @@ class MissionCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: done ? colors.success : colors.muted,
-                        fontSize: 12,
+                        fontSize: 14,
                       ),
                     ),
                   ],
@@ -120,7 +120,7 @@ class _NumberBadge extends StatelessWidget {
                 '$number',
                 style: TextStyle(
                   color: colors.text,
-                  fontSize: 13,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),
               ),

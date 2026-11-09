@@ -70,7 +70,7 @@ class EventRouteMap extends StatelessWidget {
               color: colors.panel.withValues(alpha: .8),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                child: Text('© OpenStreetMap', style: TextStyle(fontSize: 9, color: colors.muted)),
+                child: Text('© OpenStreetMap', style: TextStyle(fontSize: 12, color: colors.muted)),
               ),
             ),
           ),

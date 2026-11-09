@@ -24,7 +24,7 @@ class ProfileSettingsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final style = TextStyle(fontSize: 12, height: 1.45, color: colors.text);
+    final style = TextStyle(fontSize: 14, height: 1.45, color: colors.text);
 
     Widget row(IconData icon, String label, VoidCallback onTap, {String? value, bool chevron = false, Color? tint}) {
       final note = value;

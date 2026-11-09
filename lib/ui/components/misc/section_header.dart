@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../theme/theme_context.dart';
 
-/// A heading over a group of cards, as the mockups' `.hd`: a 14 px title
-/// and, at the right, a muted count or an accent link. 14 px above and to
-/// the sides ([top]), 8 below.
+/// A heading over a group of cards: a title and, at the right, a muted count
+/// or an accent link with a 44 px tap area, which the space above and below
+/// the title is part of.
 class SectionHeader extends StatelessWidget {
   const SectionHeader({super.key, required this.title, this.trailing, this.trailingChild, this.link, this.onLink, this.top = 14});
 
@@ -23,6 +23,8 @@ class SectionHeader extends StatelessWidget {
   /// The space above: 14 on the Evenimente tab, 16 on Home (mockup 02).
   final double top;
 
+  static const double _tap = 44;
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -30,15 +32,17 @@ class SectionHeader extends StatelessWidget {
     final action = link;
     final child = trailingChild;
     return Padding(
-      padding: EdgeInsets.fromLTRB(14, top, 14, 8),
-      child: Row(
+      padding: EdgeInsets.fromLTRB(14, top > 8 ? top - 8 : 0, 14, 0),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: _tap),
+        child: Row(
         children: [
           Expanded(
             child: Text(
               title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
             ),
           ),
           if (child != null)
@@ -47,14 +51,21 @@ class SectionHeader extends StatelessWidget {
             GestureDetector(
               onTap: onLink,
               behavior: HitTestBehavior.opaque,
-              child: Text(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: _tap, minWidth: _tap),
+                child: Center(
+                  widthFactor: 1,
+                  child: Text(
                 action,
-                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, height: 1.45, color: colors.accent),
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, height: 1.45, color: colors.accent),
+                  ),
+                ),
               ),
             )
           else if (note != null)
-            Text(note, style: TextStyle(fontSize: 11, height: 1.45, color: colors.muted)),
+            Text(note, style: TextStyle(fontSize: 13, height: 1.45, color: colors.muted)),
         ],
+        ),
       ),
     );
   }

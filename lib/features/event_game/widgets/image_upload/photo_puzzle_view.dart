@@ -66,7 +66,7 @@ class PhotoPuzzleView extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(2, 6, 2, 0),
           child: Text(
             'Poza a ajuns și în chat. Mergeți mai departe după ce e aprobată.',
-            style: TextStyle(fontSize: 11, height: 1.45, color: palette.muted),
+            style: TextStyle(fontSize: 13, height: 1.45, color: palette.muted),
           ),
         ),
       ],

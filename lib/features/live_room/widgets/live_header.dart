@@ -19,7 +19,7 @@ class LiveHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final quiet = TextStyle(fontSize: 11, height: 1.45, color: colors.onNavy.withValues(alpha: .75));
+    final quiet = TextStyle(fontSize: 13, height: 1.45, color: colors.onNavy.withValues(alpha: .75));
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: ColoredBox(
@@ -43,7 +43,7 @@ class LiveHeader extends StatelessWidget {
                       title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 12, height: 1.45, fontWeight: FontWeight.w500, color: colors.onNavy),
+                      style: TextStyle(fontSize: 14, height: 1.45, fontWeight: FontWeight.w500, color: colors.onNavy),
                     ),
                     Text.rich(
                       TextSpan(

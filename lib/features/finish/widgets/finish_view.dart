@@ -65,7 +65,7 @@ class FinishView extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = context.eventPalette;
     final card = photoCard;
-    final label = TextStyle(fontSize: 11, height: 1.45, color: palette.ink.withValues(alpha: .8));
+    final label = TextStyle(fontSize: 13, height: 1.45, color: palette.ink.withValues(alpha: .8));
 
     Widget section(String text) => Padding(
           padding: const EdgeInsets.fromLTRB(14, 12, 14, 6),
@@ -88,12 +88,12 @@ class FinishView extends StatelessWidget {
                       Text(
                         title,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontFamily: palette.voiceFont, fontSize: 21, height: 1.3, color: palette.ink),
+                        style: TextStyle(fontFamily: palette.voiceFont, fontSize: 23, height: 1.3, color: palette.ink),
                       ),
                       Text(
                         message,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12, height: 1.45, color: palette.ink.withValues(alpha: .8)),
+                        style: TextStyle(fontSize: 14, height: 1.45, color: palette.ink.withValues(alpha: .8)),
                       ),
                     ],
                   ),

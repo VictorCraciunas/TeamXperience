@@ -32,7 +32,7 @@ class TrailLockedStop extends StatelessWidget {
           label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: 11, height: 1.45, color: palette.ink),
+          style: TextStyle(fontSize: 13, height: 1.45, color: palette.ink),
         ),
       ),
       const SizedBox(width: 6),

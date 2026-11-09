@@ -21,7 +21,7 @@ class StartRefusalLine extends StatelessWidget {
           child: Text(
             message,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, height: 1.45, color: color),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.45, color: color),
           ),
         ),
       ],

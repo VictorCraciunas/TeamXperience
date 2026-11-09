@@ -38,13 +38,13 @@ class PuzzleHeader extends StatelessWidget {
                 children: [
                   Text(
                     'Misiunea $mission din $missions',
-                    style: TextStyle(fontSize: 11, height: 1.45, color: palette.muted),
+                    style: TextStyle(fontSize: 13, height: 1.45, color: palette.muted),
                   ),
                   Text(
                     title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontFamily: palette.voiceFont, fontSize: 15, height: 1.45, color: palette.ink),
+                    style: TextStyle(fontFamily: palette.voiceFont, fontSize: 17, height: 1.45, color: palette.ink),
                   ),
                 ],
               ),
@@ -56,7 +56,7 @@ class PuzzleHeader extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Monospace',
               fontWeight: FontWeight.w500,
-              fontSize: 12,
+              fontSize: 14,
               height: 1.45,
               color: palette.ink,
             ),

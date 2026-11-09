@@ -234,7 +234,7 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
 
                         if (components.isEmpty) {
                           return const Center(
-                            child: Text('No puzzle components found', style: TextStyle(fontSize: 18)),
+                            child: Text('No puzzle components found', style: TextStyle(fontSize: 20)),
                           );
                         }
 

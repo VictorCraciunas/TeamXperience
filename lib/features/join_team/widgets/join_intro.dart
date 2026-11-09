@@ -27,7 +27,7 @@ class JoinIntro extends StatelessWidget {
           textAlign: TextAlign.center,
           style: AppTextStyles.pageBody(
             context,
-          ).copyWith(fontSize: 15, fontWeight: FontWeight.w500),
+          ).copyWith(fontSize: 17, fontWeight: FontWeight.w500),
         ),
         Text(
           'Îl găsești în mesajul de la căpitan.',

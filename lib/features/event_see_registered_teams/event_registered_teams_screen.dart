@@ -93,7 +93,7 @@ class _EventRegisteredTeamsState extends State<EventRegisteredTeams> {
               ? Center(
                   child: Text(
                     "Nicio echipă înscrisă",
-                    style: TextStyle(fontSize: 16, color: context.colors.muted),
+                    style: TextStyle(fontSize: 18, color: context.colors.muted),
                   ),
                 )
               : ListView.separated(

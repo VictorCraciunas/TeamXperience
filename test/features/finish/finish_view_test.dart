@@ -107,6 +107,8 @@ void main() {
 
   testWidgets('rating: a tap rates, and the rating shows with a thank-you', (tester) async {
     final calls = await _pump(tester);
+    await tester.ensureVisible(find.byIcon(TablerIcons.star).at(3));
+    await tester.pump();
     await tester.tap(find.byIcon(TablerIcons.star).at(3));
     expect(calls, ['rate 4']);
     await _pump(tester, rating: 4);

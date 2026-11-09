@@ -18,7 +18,7 @@ class TeamHereCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final soft = TextStyle(fontSize: 11, height: 1.45, color: colors.onNavy.withValues(alpha: .8));
+    final soft = TextStyle(fontSize: 13, height: 1.45, color: colors.onNavy.withValues(alpha: .8));
     return DecoratedBox(
       decoration: BoxDecoration(
         color: colors.onNavy.withValues(alpha: .08),
@@ -42,7 +42,7 @@ class TeamHereCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Text(hereLine(hereInitials.length, size), style: soft),
+                Expanded(child: Text(hereLine(hereInitials.length, size), style: soft)),
               ],
             ),
           ],

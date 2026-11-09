@@ -45,7 +45,7 @@ class HomeSeasonCard extends StatelessWidget {
                       child: Center(
                         child: Text(
                           '$place',
-                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
+                          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
                         ),
                       ),
                     ),
@@ -59,13 +59,13 @@ class HomeSeasonCard extends StatelessWidget {
                           standing.crewName,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 12, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
+                          style: TextStyle(fontSize: 14, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
                         ),
                         Text(
                           '$seasonName · ${standing.points} p · ${standing.games} ${gamesLabel(standing.games)}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 11, height: 1.45, color: colors.muted),
+                          style: TextStyle(fontSize: 13, height: 1.45, color: colors.muted),
                         ),
                       ],
                     ),

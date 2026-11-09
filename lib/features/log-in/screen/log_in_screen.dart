@@ -65,7 +65,7 @@ class LogInScreen extends StatelessWidget {
                         'SAU',
                         style: TextStyle(
                           color: context.colors.muted,
-                          fontSize: 16,
+                          fontSize: 18,
                         ),
                       ),
                     ),
@@ -137,7 +137,7 @@ class LogInScreen extends StatelessWidget {
                   child: Text(
                     "Ai uitat parola?",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.w500,
                       color: context.colors.accent,
                     ),

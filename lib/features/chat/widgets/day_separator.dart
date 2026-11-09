@@ -20,7 +20,7 @@ class DaySeparator extends StatelessWidget {
           child: Text(
             label.toUpperCase(),
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: context.colors.accent,
               letterSpacing: 0.4,

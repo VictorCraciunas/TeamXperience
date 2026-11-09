@@ -30,10 +30,10 @@ class EventsHeader extends StatelessWidget {
           onTap: onToggleSearch,
           behavior: HitTestBehavior.opaque,
           child: Container(
-            width: 32,
-            height: 32,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(color: colors.iconButtonBg, shape: BoxShape.circle),
-            child: Icon(TablerIcons.search, size: 17, color: colors.text),
+            child: Icon(TablerIcons.search, size: 20, color: colors.text),
           ),
         ),
       ),

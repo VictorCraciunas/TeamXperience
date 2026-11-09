@@ -33,11 +33,11 @@ class StartingSoonCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               event.name ?? '',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, height: 1.45, color: colors.onNavy),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, height: 1.45, color: colors.onNavy),
             ),
             Text(
               'Mai ai $minutesLeft min să intri',
-              style: TextStyle(fontSize: 11, height: 1.45, color: colors.onNavy.withValues(alpha: .8)),
+              style: TextStyle(fontSize: 13, height: 1.45, color: colors.onNavy.withValues(alpha: .8)),
             ),
             const SizedBox(height: 12),
             GameCardButton(label: 'Introdu codul de start', onTap: onEnterCode),

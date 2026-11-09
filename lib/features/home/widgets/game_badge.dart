@@ -19,7 +19,7 @@ class GameBadge extends StatelessWidget {
           label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, height: 1.45, color: text),
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, height: 1.45, color: text),
         ),
       ),
     );

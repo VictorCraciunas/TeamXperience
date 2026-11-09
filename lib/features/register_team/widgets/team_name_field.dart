@@ -58,8 +58,8 @@ class TeamNameField extends StatelessWidget {
                 textCapitalization: TextCapitalization.words,
                 textInputAction: TextInputAction.next,
                 borderColor: ok ? colors.tick : null,
-                // As tall as the badge: its 42 less one text line of 12 x 1.45.
-                verticalPadding: (_badge - 12 * 1.45) / 2,
+                // As tall as the badge: its 42 less one text line of 14 x 1.45.
+                verticalPadding: (_badge - 14 * 1.45) / 2,
                 trailing:
                     ok
                         ? Icon(
