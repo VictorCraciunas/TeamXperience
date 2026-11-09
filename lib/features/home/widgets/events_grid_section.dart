@@ -5,7 +5,8 @@ import 'package:teamxperience/ui/components/event/event_grid_card.dart';
 import 'package:teamxperience/ui/components/misc/section_header.dart';
 import 'package:teamxperience/utils/event_formats.dart';
 
-/// A titled two-column grid of events ("Evenimente noi", "Jocuri trecute").
+/// A titled two-column grid of events ("Evenimente noi", "Jocuri trecute");
+/// a lone card in the last row is centred.
 /// Nothing when there are none.
 class EventsGridSection extends StatelessWidget {
   const EventsGridSection({
@@ -52,16 +53,24 @@ class EventsGridSection extends StatelessWidget {
             children: [
               for (var i = 0; i < events.length; i += 2) ...[
                 if (i > 0) const SizedBox(height: _gap),
-                IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(child: _card(events[i])),
-                      const SizedBox(width: _gap),
-                      Expanded(child: i + 1 < events.length ? _card(events[i + 1]) : const SizedBox.shrink()),
-                    ],
+                if (i + 1 < events.length)
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(child: _card(events[i])),
+                        const SizedBox(width: _gap),
+                        Expanded(child: _card(events[i + 1])),
+                      ],
+                    ),
+                  )
+                else
+                  // A lone card in the last row: as wide as the others, in the middle.
+                  LayoutBuilder(
+                    builder: (context, box) => Center(
+                      child: SizedBox(width: (box.maxWidth - _gap) / 2, child: _card(events[i])),
+                    ),
                   ),
-                ),
               ],
             ],
           ),
