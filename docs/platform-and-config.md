@@ -20,7 +20,7 @@
 - Default FCM channel meta-data = `chat_notifications` (matches `FCMService._chatChannel`).
 
 ## iOS (`ios/`)
-- `Info.plist`: only `NSLocationWhenInUseUsageDescription` (English text) and `LSApplicationQueriesSchemes` (https, http, whatsapp, mailto, tel, sms). **Missing** `NSPhotoLibraryUsageDescription` (needed by `image_picker` gallery → crash on iOS when picking), and no push-notification capability/background modes visible; `AppDelegate.swift` is the plain Flutter one. `FCMService` initialises local notifications for Android only.
+- `Info.plist`: `NSLocationWhenInUseUsageDescription` (English text), `NSCameraUsageDescription` and `NSPhotoLibraryUsageDescription` (Romanian, needed by `image_picker`) and `LSApplicationQueriesSchemes` (https, http, whatsapp, mailto, tel, sms). No push-notification capability/background modes visible; `AppDelegate.swift` is the plain Flutter one. `FCMService` initialises local notifications for Android only.
 
 ## Firebase / backend config
 - `firebase.json`: FlutterFire platform config + one functions codebase (`functions/`, predeploy `npm run build`).
