@@ -60,6 +60,14 @@ export function eventIsOver(event: DocumentData, now: Date): boolean {
 }
 
 /** Hour, minute and second of [date] in Romania, whatever the server's zone. */
+const MONTHS = ["ian", "feb", "mar", "apr", "mai", "iun", "iul", "aug", "sep", "oct", "nov", "dec"];
+
+/** "14 nov": the day in Romania. */
+export function shortDate(date: Date): string {
+  const {day, month} = bucharestTime(date);
+  return `${day} ${MONTHS[month - 1]}`;
+}
+
 export function bucharestTime(date: Date): {year: number; month: number; day: number; hour: number; minute: number; second: number} {
   const parts = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Europe/Bucharest",

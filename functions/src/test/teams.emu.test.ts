@@ -7,6 +7,8 @@ import {createCrew} from "../teams/create_crew";
 import {joinTeam} from "../teams/join_team";
 import {previewInvite} from "../teams/preview_invite";
 import {registerTeam, RegisterInput} from "../teams/register_team";
+import {InboxItem} from "../notifications/inbox";
+import {shortDate} from "../teams/shared";
 import {clearDb, emulatorDb, reasonOf, retryLostRace} from "./helpers";
 
 const NOW = new Date("2026-11-08T10:00:00Z");
@@ -57,6 +59,11 @@ async function refused(call: Promise<unknown>, reason: string): Promise<void> {
     return true;
   });
 }
+
+test("shortDate is the day in Romania", () => {
+  assert.equal(shortDate(new Date("2026-11-14T22:30:00Z")), "15 nov");
+  assert.equal(shortDate(new Date("2027-01-03T10:00:00Z")), "3 ian");
+});
 
 describe("team functions", () => {
   beforeEach(async () => {
@@ -204,6 +211,34 @@ describe("team functions", () => {
         assert.deepEqual(after?.teams, [{eventId: "e1", teamName: "Vulpile"}]);
       });
 
+      test("signing a crew up tells the other players, not the captain", async () => {
+        const crewId = await crewOfTwo();
+        const told: Array<{uids: string[]; item: InboxItem}> = [];
+        await registerTeam(db, "u1", input({crewId}), NOW, async (uids, item) => {
+          told.push({uids, item});
+        });
+        assert.deepEqual(told, [{
+          uids: ["u2"],
+          item: {kind: "team", title: "Echipa ta s-a înscris", body: "Vulpile merge la Harta, pe 18 nov", eventId: "e1"},
+        }]);
+      });
+
+      test("by default the others get it in their list", async () => {
+        const crewId = await crewOfTwo();
+        await register("u1", {crewId});
+        const list = (uid: string) => db.collection("users").doc(uid).collection("notifications").get();
+        assert.equal((await list("u2")).size, 1);
+        assert.equal((await list("u1")).size, 0);
+      });
+
+      test("a failure telling them does not undo the sign-up", async () => {
+        const crewId = await crewOfTwo();
+        await registerTeam(db, "u1", input({crewId}), NOW, async () => {
+          throw new Error("offline");
+        });
+        assert.deepEqual((await team())?.userIds, ["u1", "u2"]);
+      });
+
       test("not twice in one event; only the captain; only if they fit", async () => {
         const crewId = await crewOfTwo();
         await refused(register("u2", {crewId, name: "Alt nume"}), "notCaptain");
@@ -244,6 +279,14 @@ describe("team functions", () => {
   });
 
   describe("createCrew", () => {
+    test("a captain alone tells nobody", async () => {
+      let calls = 0;
+      await registerTeam(db, "u1", input(), NOW, async () => {
+        calls++;
+      });
+      assert.equal(calls, 0);
+    });
+
     test("a crew of one, with a code", async () => {
       const {crewId, inviteCode} = await createCrew(db, "u1", {name: " Bufnițele "});
       assert.match(inviteCode, /^[A-Z]{3}\d{3}$/);

@@ -2,6 +2,7 @@ import {DocumentData, DocumentReference, FieldValue, Firestore, Timestamp, Write
 import * as logger from "firebase-functions/logger";
 import {teamsOf, toDate} from "../teams/shared";
 import {EventFacts, isCompleted, playerResult, Previous, TeamFacts} from "./player";
+import {inboxEntry, InboxItem, pushToUser} from "../notifications/inbox";
 import {rankTeams} from "./ranking";
 import {seasonOf, seasonPoints} from "./season";
 
@@ -59,18 +60,34 @@ function previousOf(user: DocumentData): Previous {
   };
 }
 
-/** One player, once: the memory is the mark that this game was counted. */
-async function applyPlayer(db: Firestore, uid: string, eventId: string, team: TeamFacts, place: number, event: EventFacts): Promise<void> {
+/** What a player's list says when the results are in. */
+export function resultsItem(eventId: string, team: TeamFacts, place: number, event: EventFacts): InboxItem {
+  return {
+    kind: "results",
+    title: "Rezultatele sunt gata",
+    body: `Echipa ${team.name} a ieșit pe locul ${place} la ${event.name}.`,
+    eventId,
+  };
+}
+
+/**
+ * One player, once: the memory is the mark that this game was counted. The
+ * list entry is written with it, so it is there exactly once. True when this
+ * run counted the player.
+ */
+async function applyPlayer(db: Firestore, uid: string, eventId: string, team: TeamFacts, place: number, event: EventFacts): Promise<boolean> {
   const userRef = db.collection("users").doc(uid);
   const memoryRef = userRef.collection("memories").doc(eventId);
-  await db.runTransaction(async (tx) => {
+  return db.runTransaction(async (tx) => {
     const memory = await tx.get(memoryRef);
-    if (memory.exists) return;
+    if (memory.exists) return false;
     const user = (await tx.get(userRef)).data();
-    if (user === undefined) return;
+    if (user === undefined) return false;
     const result = playerResult(team, place, event, previousOf(user));
     tx.update(userRef, {xp: result.xp, level: result.level, stats: result.stats, badges: result.badges});
     tx.set(memoryRef, {...result.memory, date: Timestamp.fromDate(result.memory.date)});
+    tx.set(userRef.collection("notifications").doc(`results_${eventId}`), inboxEntry(resultsItem(eventId, team, place, event)));
+    return true;
   });
 }
 
@@ -124,6 +141,8 @@ async function existing(db: Firestore, refs: DocumentReference[]): Promise<Set<s
 export interface ApplyOptions {
   /** Called before each player's transaction (for tests). */
   beforePlayer?: (uid: string) => void;
+  /** Sends a player's results push; by default to their phone. */
+  push?: (uid: string, title: string, body: string) => Promise<void>;
 }
 
 /**
@@ -182,6 +201,16 @@ export async function applyResults(db: Firestore, eventId: string, options: Appl
     }, {merge: true});
   }
 
+  const push = options.push ?? ((uid: string, title: string, body: string) => pushToUser(db, uid, title, body));
+  // A push that fails is only logged: the player is counted already.
+  const sendResultsPush = async (uid: string, item: InboxItem) => {
+    try {
+      await push(uid, item.title, item.body);
+    } catch (error) {
+      logger.warn("Could not send the results push", {eventId, uid, error: String(error)});
+    }
+  };
+
   let failures = 0;
   const failed = (what: string, error: unknown) => {
     failures++;
@@ -190,7 +219,8 @@ export async function applyResults(db: Firestore, eventId: string, options: Appl
   await inParallel(players.filter((p) => !counted.has(memoryOf(p.uid).path)), async ({uid, team, place}) => {
     try {
       options.beforePlayer?.(uid);
-      await applyPlayer(db, uid, eventId, team, place, event);
+      const counted = await applyPlayer(db, uid, eventId, team, place, event);
+      if (counted) await sendResultsPush(uid, resultsItem(eventId, team, place, event));
     } catch (error) {
       failed(uid, error);
     }
