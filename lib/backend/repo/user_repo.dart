@@ -30,6 +30,13 @@ class UserRepo{
     });
   }
 
+  /// One finished game; null when there is none or it cannot be read.
+  Future<Memory?> getMemory(String uid, String eventId) async {
+    final doc = await _firestore.collection('users').doc(uid).collection('memories').doc(eventId).get();
+    final data = doc.data();
+    return data == null ? null : Memory.fromMap(doc.id, data);
+  }
+
   /// The user's latest finished games, newest first.
   Stream<List<Memory>> streamMemories(String uid, {int limit = 3}) {
     final query = _firestore
