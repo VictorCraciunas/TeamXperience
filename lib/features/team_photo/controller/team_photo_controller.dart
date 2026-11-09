@@ -8,8 +8,9 @@ import 'package:teamxperience/utils/image_helper.dart';
 
 /// Takes and sends a team's optional start or final photo. Nothing here can
 /// stop a game: a cancelled camera changes nothing and a failure only shows a
-/// line. A retake replaces the file. The writes can be passed in (tests); by
-/// default they go to Firebase.
+/// line. Each photo gets its own file, so a retake never shows a cached old
+/// picture and a failed save leaves the old link working. The writes can be
+/// passed in (tests); by default they go to Firebase.
 class TeamPhotoController extends ChangeNotifier {
   TeamPhotoController({
     required this.eventId,
@@ -19,7 +20,9 @@ class TeamPhotoController extends ChangeNotifier {
     Future<File?> Function()? take,
     Future<String?> Function(File file, String path)? upload,
     Future<void> Function(String url)? save,
+    DateTime Function()? clock,
   })  : _take = take ?? ImageHelper.takePhoto,
+        _clock = clock ?? DateTime.now,
         _upload = upload ?? ((file, path) => ImageRepo().uploadImage(file, eventId, path)),
         _save = save ?? ((url) => TeamService().setTeamPhoto(eventId, teamName, slot, url, uid));
 
@@ -33,6 +36,7 @@ class TeamPhotoController extends ChangeNotifier {
   final Future<File?> Function() _take;
   final Future<String?> Function(File file, String path) _upload;
   final Future<void> Function(String url) _save;
+  final DateTime Function() _clock;
 
   bool _busy = false;
   String? _error;
@@ -56,7 +60,8 @@ class TeamPhotoController extends ChangeNotifier {
     try {
       final file = await _take();
       if (file == null || _disposed) return;
-      final url = await _upload(file, 'team_photos/${teamName}_${slot.name}');
+      final time = _clock().millisecondsSinceEpoch;
+      final url = await _upload(file, 'team_photos/${teamName}_${slot.name}_$time');
       if (url == null) {
         _error = failedLine;
         return;

@@ -60,7 +60,8 @@ class UserEventsProvider extends ChangeNotifier {
   }
 
   /// A registered event whose start code can still be entered.
-  Event? get recentlyStartedEvent => hero.recentlyStartedEvent(registeredEvents, DateTime.now());
+  Event? get recentlyStartedEvent =>
+      hero.recentlyStartedEvent(registeredEvents, DateTime.now(), except: _finishedEvent?.eventId);
 
   Event? get nextEventWithinHour {
     if (_activeEvent != null) return _activeEvent;

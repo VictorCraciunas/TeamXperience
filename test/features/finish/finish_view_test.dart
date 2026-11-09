@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -112,6 +113,13 @@ void main() {
     expect(find.byIcon(TablerIcons.star_filled), findsNWidgets(4));
     expect(find.byIcon(TablerIcons.star), findsOneWidget);
     expect(find.text('Mulțumim!'), findsOneWidget);
+  });
+
+  testWidgets('photos are decoded at tile size, and cached', (tester) async {
+    await _pump(tester, photos: const [AlbumPhoto('a', label: 'Start')]);
+    final image = tester.widget<CachedNetworkImage>(find.byType(CachedNetworkImage));
+    expect(image.memCacheWidth, isNotNull);
+    expect(image.memCacheWidth, lessThan(800));
   });
 
   testWidgets('the strip shows when each photo was taken', (tester) async {

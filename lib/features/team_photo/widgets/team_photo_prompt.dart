@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 
@@ -58,7 +59,12 @@ class TeamPhotoPrompt extends StatelessWidget {
                 dimension: _size,
                 child: url == null
                     ? camera
-                    : Image.network(url, fit: BoxFit.cover, errorBuilder: (_, __, ___) => camera),
+                    : CachedNetworkImage(
+                        imageUrl: url,
+                        fit: BoxFit.cover,
+                        memCacheWidth: (_size * 1.5 * MediaQuery.devicePixelRatioOf(context)).round(),
+                        errorWidget: (_, _, _) => camera,
+                      ),
               ),
             ),
             const SizedBox(width: 10),

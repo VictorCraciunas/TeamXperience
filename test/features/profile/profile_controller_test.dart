@@ -258,6 +258,33 @@ void main() {
         c.dispose();
       });
 
+      testWidgets('coming back reads the albums again, so a late photo shows', (tester) async {
+        await tester.pumpWidget(const MaterialApp(home: SizedBox()));
+        var photo = false;
+        final c = ProfileController(
+          tester.element(find.byType(SizedBox)),
+          user: _user(),
+          userStream: const Stream.empty(),
+          memoriesStream: Stream.value(const [memory]),
+          notifications: NotificationAccess(read: () async => NotifStatus.allowed),
+          onFreshUser: (_) {},
+          findEvent: (_) => null,
+          findTeam: (_) async => Team.fromMap({
+            'name': 'V',
+            if (photo) 'teamPhotos': {'finish': {'url': 'late'}},
+          }),
+        );
+        await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+        expect(c.albumOf('e1'), isEmpty);
+
+        photo = true;
+        c.setVisible(false);
+        c.setVisible(true);
+        await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+        expect(c.albumOf('e1').single.url, 'late');
+        c.dispose();
+      });
+
       testWidgets('loads an album per memory, and the event picture', (tester) async {
         await tester.pumpWidget(const MaterialApp(home: SizedBox()));
         final asked = <String>[];

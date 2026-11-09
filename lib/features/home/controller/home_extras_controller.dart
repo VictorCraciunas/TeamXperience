@@ -42,6 +42,7 @@ class HomeExtrasController extends ChangeNotifier {
   StreamSubscription<List<Crew>>? _crewsWatch;
   String? _uid;
   bool _disposed = false;
+  bool _visible = true;
 
   List<SeasonStanding> _standings = const [];
   Set<String> _crewIds = const {};
@@ -89,6 +90,13 @@ class HomeExtrasController extends ChangeNotifier {
       _crewIds = const {};
       _changed();
     });
+  }
+
+  /// Home came back on screen: a photo may have been added meanwhile.
+  void setVisible(bool visible) {
+    final back = visible && !_visible;
+    _visible = visible;
+    if (back) reloadAlbum();
   }
 
   /// Reads the newest memory's photos again from the team.

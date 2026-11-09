@@ -76,6 +76,21 @@ void main() {
       expect(hero.signature, 'finished:run');
     });
 
+    test('another event\'s start code wins, so the player does not miss it', () {
+      final other = _event('other', start: _now.subtract(const Duration(minutes: 5)));
+      final hero = _resolve(finishedEvent: running, finishedTeam: _team(started: true, finished: true), startedRecently: other);
+      expect(hero, isA<StartingSoonHero>());
+      expect(hero.signature, 'soon:other');
+    });
+
+    test('the finished event is skipped when looking for a start code', () {
+      final first = _event('first', start: _now.subtract(const Duration(minutes: 40)));
+      final second = _event('second', start: _now.subtract(const Duration(minutes: 5)));
+      expect(recentlyStartedEvent([first, second], _now)?.eventId, 'first');
+      expect(recentlyStartedEvent([first, second], _now, except: 'first')?.eventId, 'second');
+      expect(recentlyStartedEvent([first], _now, except: 'first'), isNull);
+    });
+
     test('a game in play wins over a finished one', () {
       final hero = _resolve(
         activeEvent: _event('live', start: _now.subtract(const Duration(minutes: 10))),

@@ -50,6 +50,7 @@ class ProfileController extends ChangeNotifier {
   final Event? Function(String eventId)? _findEvent;
   final Future<Team?> Function(String eventId)? _findTeam;
   final Map<String, List<AlbumPhoto>> _albums = {};
+  bool _visible = true;
   final Future<void> Function()? _saveToken;
   late final AppLifecycleListener _lifecycle;
   bool _tokenSent = false;
@@ -92,9 +93,20 @@ class ProfileController extends ChangeNotifier {
     _memories = memories;
     _memoriesFailed = false;
     _changed();
+    _loadAlbums();
+  }
+
+  /// Profil came back on screen: a photo may have been added meanwhile.
+  void setVisible(bool visible) {
+    final back = visible && !_visible;
+    _visible = visible;
+    if (back) _loadAlbums();
+  }
+
+  void _loadAlbums() {
     final find = _findTeam;
     if (find == null) return;
-    for (final memory in memories) {
+    for (final memory in _memories) {
       memoryAlbum(memory, find).then((album) {
         _albums[memory.eventId] = album;
         _changed();

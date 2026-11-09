@@ -19,6 +19,9 @@ bool memoryGoesFirst(Memory? newest, DateTime now) {
   return now.difference(date) <= _memoryFirstFor;
 }
 
+/// The banner saying no game is open: not above events that are open.
+bool showNothingOpen(HomeHero hero, List<Event> newEvents) => hero is NoHero && newEvents.isEmpty;
+
 /// The open events for "Evenimente noi", without the one already recommended.
 List<Event> newEventsToShow(List<Event> open, HomeHero hero) {
   final recommended = hero is RecommendedHero ? hero.event.eventId : null;

@@ -153,8 +153,13 @@ class _HomeState extends State<Home> {
     final user = users.currentUser;
     // After the frame, so the controller never notifies while this page builds.
     final uid = profileDocId(users.firebaseUser?.uid, user?.uid ?? '');
+    final onScreen =
+        context.watch<ShellController>().index == PlayerTab.home && (ModalRoute.of(context)?.isCurrent ?? true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _extras.watch(uid);
+      if (!mounted) return;
+      _extras
+        ..watch(uid)
+        ..setVisible(onScreen);
     });
     final games = user?.stats.games ?? 0;
     final xp = user?.xp ?? 0;
@@ -252,7 +257,7 @@ class _HomeState extends State<Home> {
       greeting: greeting,
       memoryFirst: newest != null && first ? memoryCard(newest, large: true) : null,
       mainCard: hero is NoHero
-          ? const NothingOpenBanner()
+          ? (showNothingOpen(hero, newEvents) ? const NothingOpenBanner() : null)
           : HomeHeroTicker(
               resolve: resolve,
               shown: hero,

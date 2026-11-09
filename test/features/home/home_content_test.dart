@@ -30,6 +30,21 @@ void main() {
     expect(memoryGoesFirst(null, _now), isFalse);
   });
 
+  group('the "nothing open" banner', () {
+    test('shows when there is truly nothing', () {
+      expect(showNothingOpen(const NoHero(), const []), isTrue);
+    });
+
+    test('not above events that are open', () {
+      expect(showNothingOpen(const NoHero(), [_event('a')]), isFalse);
+    });
+
+    test('not with a main card', () {
+      final event = _event('a');
+      expect(showNothingOpen(RecommendedHero(event), const []), isFalse);
+    });
+  });
+
   group('new events', () {
     final a = _event('a');
     final b = _event('b');

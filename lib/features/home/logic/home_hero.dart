@@ -68,7 +68,7 @@ class NoHero extends HomeHero {
 }
 
 /// Picks what the top card of the player Home shows, in priority order:
-/// live game, team finished, start code still open, next registered event,
+/// live game, start code still open, team finished, next registered event,
 /// recommendation.
 HomeHero resolveHomeHero({
   required DateTime now,
@@ -85,11 +85,12 @@ HomeHero resolveHomeHero({
   final live = _live(now, activeEvent, activeTeam);
   if (live != null) return live;
 
+  // Another event's start code comes first, so the player does not miss it.
   final finished = _finished(now, finishedEvent, finishedTeam);
-  if (finished != null) return finished;
-
-  final soon = _startingSoon(now, startedRecently, startedRecentlyTeam);
+  final sameEvent = finished != null && startedRecently?.eventId == finishedEvent?.eventId;
+  final soon = sameEvent ? null : _startingSoon(now, startedRecently, startedRecentlyTeam);
   if (soon != null) return soon;
+  if (finished != null) return finished;
 
   final upcoming = _upcoming(now, registeredUpcoming);
   if (upcoming != null) return upcoming;
@@ -164,10 +165,12 @@ HomeHero? _recommended(DateTime now, List<Event> allEvents, Set<String> register
 }
 
 /// The registered event that started within its [Event.enterWindow] and is not over,
-/// oldest first, so the player can still enter its start code.
-Event? recentlyStartedEvent(List<Event> registered, DateTime now) {
+/// oldest first, so the player can still enter its start code. [except] is an
+/// event the player's team has already finished.
+Event? recentlyStartedEvent(List<Event> registered, DateTime now, {String? except}) {
   Event? chosen;
   for (final event in registered) {
+    if (event.eventId == except) continue;
     final start = event.dateEvent;
     if (start == null || _isOver(event, now)) continue;
     final since = now.difference(start);

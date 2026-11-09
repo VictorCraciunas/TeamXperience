@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:teamxperience/features/profile/logic/profile_texts.dart';
@@ -43,7 +44,12 @@ class MemoryCard extends StatelessWidget {
                 dimension: 40,
                 child: picture == null
                     ? stand
-                    : Image.network(picture, fit: BoxFit.cover, errorBuilder: (_, __, ___) => stand),
+                    : CachedNetworkImage(
+                        imageUrl: picture,
+                        fit: BoxFit.cover,
+                        memCacheWidth: (60 * MediaQuery.devicePixelRatioOf(context)).round(),
+                        errorWidget: (_, _, _) => stand,
+                      ),
               ),
             ),
             const SizedBox(width: 10),

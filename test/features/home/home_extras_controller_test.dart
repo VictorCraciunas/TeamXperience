@@ -42,6 +42,28 @@ void main() {
     expect(h.controller.album.single.url, 's');
   });
 
+  test('coming back to Home reads the photos again, so a late one shows', () async {
+    final h = _Harness()..team = Team.fromMap(const {'name': 'Vulpile'});
+    h.controller.watch('u1');
+    await _settle();
+    h.memories.add(const [Memory(eventId: 'e', eventName: 'Harta')]);
+    await _settle();
+    expect(h.controller.album, isEmpty);
+
+    h.team = Team.fromMap(const {'name': 'Vulpile', 'teamPhotos': {'finish': {'url': 'late'}}});
+    h.controller.setVisible(true);
+    await _settle();
+    expect(h.controller.album, isEmpty, reason: 'still on screen: no extra read');
+
+    h.controller.setVisible(false);
+    await _settle();
+    expect(h.controller.album, isEmpty, reason: 'leaving reads nothing');
+
+    h.controller.setVisible(true);
+    await _settle();
+    expect(h.controller.album.single.url, 'late');
+  });
+
   test('no memories: nothing to show', () async {
     final h = _Harness();
     h.controller.watch('u1');

@@ -1,3 +1,6 @@
+import 'dart:math' as math;
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:teamxperience/features/team_photo/logic/team_album.dart';
 import 'package:teamxperience/ui/theme/event_theme_scope.dart';
@@ -15,11 +18,18 @@ class AlbumTile extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Image.network(
-          photo.url,
-          key: const ValueKey('photo-tile'),
-          fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => ColoredBox(color: palette.ink.withValues(alpha: .15)),
+        LayoutBuilder(
+          builder: (context, box) {
+            // Originals can be many megapixels; decode only what the tile shows.
+            final side = math.max(box.maxWidth, box.maxHeight) * 1.5 * MediaQuery.devicePixelRatioOf(context);
+            return CachedNetworkImage(
+              key: const ValueKey('photo-tile'),
+              imageUrl: photo.url,
+              fit: BoxFit.cover,
+              memCacheWidth: side.isFinite ? side.round() : null,
+              errorWidget: (_, _, _) => ColoredBox(color: palette.ink.withValues(alpha: .15)),
+            );
+          },
         ),
         if (label != null)
           Positioned(

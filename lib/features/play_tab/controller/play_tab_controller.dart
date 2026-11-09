@@ -36,7 +36,7 @@ class PlayTabController extends ChangeNotifier {
   late final Timer _timer;
 
   PlayTabState get state =>
-      playTabState(heroFromProviders(userEvents: userEvents, eventList: eventList, now: _clock()));
+      playTabState(heroFromProviders(includeFinished: false, userEvents: userEvents, eventList: eventList, now: _clock()));
 
   void _changed() => notifyListeners();
 

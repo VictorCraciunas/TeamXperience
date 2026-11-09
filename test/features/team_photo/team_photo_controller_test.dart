@@ -22,6 +22,7 @@ void main() {
         take: take ?? () async => file,
         upload: upload ?? (_, __) async => 'link',
         save: save ?? (_) async {},
+        clock: () => DateTime.fromMillisecondsSinceEpoch(1234),
       );
 
   test('uploads under the team and slot, then saves the link', () async {
@@ -36,7 +37,9 @@ void main() {
       save: (url) async => saved = url,
     );
     await c.takeAndSend();
-    expect(path, 'team_photos/Vulpile_finish');
+    // Each photo has its own file: a cached old picture can never stand in
+    // for a retake, and a failed save leaves the old link working.
+    expect(path, 'team_photos/Vulpile_finish_1234');
     expect(saved, 'link');
     expect(c.error, isNull);
     expect(c.busy, isFalse);

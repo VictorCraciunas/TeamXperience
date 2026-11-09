@@ -33,8 +33,8 @@ Otherwise, showing only the parts that have content:
 1. **Greeting.** A player with no games and no XP sees a tagline and "Cum funcționează" instead of three boxes of zeros. Everyone else sees the stats. "1 joc", not "1 jocuri".
 2. **Newest memory first**, if its event was in the last 3 days (photos and "Vezi pozele").
 3. **Main card**, in this order of priority:
+   - "A început" (start code), for an event the team hasn't finished
    - "Ați terminat" while the team has finished and the event still runs
-   - "A început" (start code)
    - "Următorul tău joc"
    - "Recomandat pentru tine"
    - otherwise the "Niciun joc deschis acum" banner
