@@ -11,6 +11,7 @@ import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 
 import '../../../constants/routes.dart';
 import '../../../model/event.dart';
+import '../../../model/memory.dart';
 import '../../../model/stire.dart';
 import '../../../state_management/events_state_management.dart';
 import '../../../state_management/news_state_management.dart';
@@ -34,6 +35,19 @@ class HomeController {
 
   void navigateToEventDashboard() {
     context.read<ShellController>().select(PlayerTab.events);
+  }
+
+  /// "Clasament": the season's standings are on the Echipe tab.
+  void openTeamsTab() {
+    context.read<ShellController>().select(PlayerTab.teams);
+  }
+
+  void openMemory(Memory memory) {
+    Navigator.pushNamed(context, Routes.memory, arguments: {'memory': memory});
+  }
+
+  void openAllMemories() {
+    Navigator.pushNamed(context, Routes.memories);
   }
 
   /// The bell: remembers the visit (for the bell's dot), then opens Știri.

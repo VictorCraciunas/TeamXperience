@@ -4,7 +4,20 @@ import 'package:provider/provider.dart';
 import 'package:teamxperience/features/events_tab/logic/event_sections.dart';
 import 'package:teamxperience/features/home/controller/home_controller.dart';
 import 'package:teamxperience/features/home/controller/home_live_controller.dart';
+import 'package:teamxperience/backend/repo/user_repo.dart';
+import 'package:teamxperience/features/home/controller/home_extras_controller.dart';
 import 'package:teamxperience/features/home/logic/hero_from_providers.dart';
+import 'package:teamxperience/features/home/logic/home_content.dart';
+import 'package:teamxperience/features/home/widgets/home_layout.dart';
+import 'package:teamxperience/features/home/widgets/home_memory_card.dart';
+import 'package:teamxperience/features/home/widgets/home_news_card.dart';
+import 'package:teamxperience/features/home/widgets/home_season_card.dart';
+import 'package:teamxperience/features/home/widgets/how_it_works_sheet.dart';
+import 'package:teamxperience/features/home/widgets/new_player_greeting.dart';
+import 'package:teamxperience/features/home/widgets/nothing_open_banner.dart';
+import 'package:teamxperience/features/profile/logic/profile_texts.dart';
+import 'package:teamxperience/model/memory.dart';
+import 'package:teamxperience/model/season_standing.dart';
 import 'package:teamxperience/features/home/logic/home_hero.dart';
 import 'package:teamxperience/features/home/logic/live_watch.dart';
 import 'package:teamxperience/features/home/logic/news_seen.dart';
@@ -25,12 +38,11 @@ import 'package:teamxperience/state_management/news_state_management.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
 import 'package:teamxperience/ui/components/misc/clock_builder.dart';
-import 'package:teamxperience/ui/components/misc/fade_in_section.dart';
 import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 import 'package:teamxperience/ui/ui.dart';
 
-/// The player's Acasă tab, as mockup 02: before a game the greeting, the next
-/// game and new events; during one the live card, the live leaderboard and
+/// The player's Acasă tab: pictures lead, and there is always something to see
+/// (see [HomeLayout]). During a game the live card, the live leaderboard and
 /// who of the team is playing.
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -42,6 +54,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   late final HomeController controller;
   late final HomeLiveController _live;
+  late final HomeExtrasController _extras;
   final NewsSeenStore _newsSeen = NewsSeenStore();
   DateTime? _lastSeenNews;
 
@@ -54,6 +67,13 @@ class _HomeState extends State<Home> {
     super.initState();
     controller = HomeController(context);
     _live = HomeLiveController(teams: controller.teamService.getStreamTeams)..addListener(_onLiveTeams);
+    _extras = HomeExtrasController(
+      memories: (uid) => UserRepo().streamMemories(uid, limit: 1),
+      crews: controller.teamService.streamUserCrews,
+      standings: controller.teamService.streamStandings(seasonOf(DateTime.now()).id),
+      seasonName: seasonOf(DateTime.now()).name,
+      findTeam: controller.teamService.getUserTeamForEvent,
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.loadInitialData();
       context.read<UserEventsProvider>().loadActiveEvent();
@@ -68,6 +88,7 @@ class _HomeState extends State<Home> {
     _live
       ..removeListener(_onLiveTeams)
       ..dispose();
+    _extras.dispose();
     super.dispose();
   }
 
@@ -128,7 +149,15 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<UserProvider>().currentUser;
+    final users = context.watch<UserProvider>();
+    final user = users.currentUser;
+    // After the frame, so the controller never notifies while this page builds.
+    final uid = profileDocId(users.firebaseUser?.uid, user?.uid ?? '');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _extras.watch(uid);
+    });
+    final games = user?.stats.games ?? 0;
+    final xp = user?.xp ?? 0;
     // On screen: Acasă is the current tab and no page is pushed over the shell.
     final visible =
         context.watch<ShellController>().index == PlayerTab.home && (ModalRoute.of(context)?.isCurrent ?? true);
@@ -147,18 +176,30 @@ class _HomeState extends State<Home> {
                     : eventList.loadFailed
                     ? LoadFailed(message: 'Nu am putut încărca evenimentele.', onRetry: controller.refreshData)
                     : RefreshIndicator(
-                        onRefresh: controller.refreshData,
+                        onRefresh: () async {
+                          await controller.refreshData();
+                          await _extras.reloadAlbum();
+                        },
                         child: SingleChildScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
-                          child: _content(
-                            eventList,
-                            userEvents,
-                            visible,
-                            GreetingStats(
-                              firstName: user?.firstName ?? '',
-                              games: user?.stats.games ?? 0,
-                              distanceMeters: user?.stats.distanceMeters ?? 0,
-                              xp: user?.xp ?? 0,
+                          child: ListenableBuilder(
+                            listenable: _extras,
+                            builder: (context, _) => _content(
+                              eventList,
+                              newsList,
+                              userEvents,
+                              visible,
+                              isNewPlayer(games, xp)
+                                  ? NewPlayerGreeting(
+                                      firstName: user?.firstName ?? '',
+                                      onHow: () => showHowItWorksSheet(context),
+                                    )
+                                  : GreetingStats(
+                                      firstName: user?.firstName ?? '',
+                                      games: games,
+                                      distanceMeters: user?.stats.distanceMeters ?? 0,
+                                      xp: xp,
+                                    ),
                             ),
                           ),
                         ),
@@ -171,63 +212,86 @@ class _HomeState extends State<Home> {
     );
   }
 
+  /// The event's main picture, when the event is loaded.
+  String? _pictureOf(EventList eventList, String eventId) {
+    for (final event in eventList.events) {
+      if (event.eventId == eventId) return event.landingImageUrl;
+    }
+    return null;
+  }
+
   /// Built once per data change. Only the hero card ticks each second (see
   /// [HomeHeroTicker]); the live sections refresh every 30 s for "acum 6 min".
-  Widget _content(EventList eventList, UserEventsProvider userEvents, bool visible, Widget greeting) {
+  Widget _content(EventList eventList, NewsList newsList, UserEventsProvider userEvents, bool visible, Widget greeting) {
     final now = DateTime.now();
     HomeHero resolve(DateTime at) => heroFromProviders(userEvents: userEvents, eventList: eventList, now: at);
     final hero = resolve(now);
     _loadExtras(hero);
     _watchLive(hero, visible: visible);
 
-    // Sections fade in one after the other from the top, once. The keys keep
-    // each section's animation state while the page is rebuilt.
-    var order = 0;
-    Widget section(String key, Widget child) => FadeInSection(key: ValueKey(key), order: order++, child: child);
-
     final registeredIds = {for (final e in userEvents.registeredEvents) e.eventId};
-    final openEvents = sectionEvents(eventList.events, registeredIds, now).open;
+    final open = sectionEvents(eventList.events, registeredIds, now).open;
+    final newEvents = newEventsToShow(open, hero);
+    final pastGames = hero is NoHero ? pastGamesToShow(eventList.pastEvents, now) : const <Event>[];
+    final newest = _extras.memory;
+    final first = memoryGoesFirst(newest, now);
+    final spot = _extras.seasonSpot;
+    final latest = latestNews(newsList.stireList, now);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // During a game the live card follows the header directly (mockup 02).
-        if (hero is! LiveHero) section('greeting', greeting),
-        if (hero is! NoHero) ...[
-          const SizedBox(height: 12),
-          section(
-            'hero',
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: HomeHeroTicker(
-                resolve: resolve,
-                shown: hero,
-                actions: _actions(),
-                upcomingTeam: _heroTeam,
-                liveTeam: _live.own,
-                onLayoutChange: () {
-                  if (mounted) setState(() {});
-                },
-              ),
+    Widget memoryCard(Memory memory, {required bool large}) => HomeMemoryCard(
+          memory: memory,
+          album: _extras.album,
+          eventPicture: _pictureOf(eventList, memory.eventId),
+          large: large,
+          onOpen: () => controller.openMemory(memory),
+          onAll: controller.openAllMemories,
+        );
+
+    return HomeLayout(
+      hero: hero,
+      greeting: greeting,
+      memoryFirst: newest != null && first ? memoryCard(newest, large: true) : null,
+      mainCard: hero is NoHero
+          ? const NothingOpenBanner()
+          : HomeHeroTicker(
+              resolve: resolve,
+              shown: hero,
+              actions: _actions(),
+              upcomingTeam: _heroTeam,
+              liveTeam: _live.own,
+              onLayoutChange: () {
+                if (mounted) setState(() {});
+              },
             ),
-          ),
-        ],
-        if (hero is LiveHero)
-          section('live', _liveSections(hero.event, hero.team))
-        else ...[
-          section(
-            'events',
-            EventsGridSection(
+      live: hero is LiveHero ? _liveSections(hero.event, hero.team) : null,
+      newEvents: newEvents.isEmpty
+          ? null
+          : EventsGridSection(
               title: 'Evenimente noi',
               link: 'Vezi toate',
               onLink: controller.navigateToEventDashboard,
-              events: openEvents,
+              events: newEvents,
               onTap: controller.navigateToEventDetails,
             ),
-          ),
-          const SizedBox(height: 12),
-        ],
-      ],
+      memory: newest != null && !first ? memoryCard(newest, large: false) : null,
+      pastGames: pastGames.isEmpty
+          ? null
+          : EventsGridSection(title: 'Jocuri trecute', events: pastGames, onTap: controller.navigateToEventDetails),
+      season: spot == null
+          ? null
+          : HomeSeasonCard(
+              seasonName: _extras.seasonName,
+              place: spot.place,
+              standing: spot.standing,
+              onOpen: controller.openTeamsTab,
+            ),
+      news: latest == null
+          ? null
+          : HomeNewsCard(
+              stire: latest,
+              onOpen: () => controller.navigateToStireDetails(latest),
+              onAll: controller.navigateToNewsTab,
+            ),
     );
   }
 
