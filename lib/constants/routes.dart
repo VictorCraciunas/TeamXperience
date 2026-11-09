@@ -15,6 +15,8 @@ abstract class Routes {
   static const eventGame = '/event_game';
   static const gameIntro = '/game_intro';
   static const finish = '/finish';
+  static const memory = '/memory';
+  static const memories = '/memories';
   static const eventDashboard = '/events_dashboard';
   static const filter = '/filter';
   static const createNews = '/create_news';

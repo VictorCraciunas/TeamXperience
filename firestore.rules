@@ -105,6 +105,26 @@ service cloud.firestore {
             && (!(key in was) || was[key].status == 'pending');
         }
 
+        function teamPhotoOk(photo) {
+          return photo.keys().hasOnly(['url', 'by', 'at'])
+            && photo.url is string
+            && photo.by == request.auth.uid
+            && photo.at == request.time;
+        }
+
+        // Any member sets or retakes one optional team photo at a time, in
+        // their own name.
+        function teamPhotosOk() {
+          let d = after('teamPhotos').diff(before('teamPhotos'));
+          let slot = d.affectedKeys();
+          return slot.size() == 1
+            && slot.hasOnly(['start', 'finish'])
+            && d.removedKeys().size() == 0
+            && (slot.hasAny(['start'])
+                ? teamPhotoOk(after('teamPhotos').start)
+                : teamPhotoOk(after('teamPhotos').finish));
+        }
+
         function unreadOk() {
           let unread = request.resource.data.unreadByAdmin;
           return unread.keys().hasOnly(['text', 'at'])
@@ -123,7 +143,7 @@ service cloud.firestore {
               'missionProgress', 'puzzleNumber', 'hasStarted', 'hasFinished',
               'latitude', 'longitude', 'phoneNumber', 'presence', 'missionCompletedAt',
               'attempts', 'lockedUntil', 'hintsUsed', 'walked', 'startedAt', 'finishedAt',
-              'photoApprovals', 'lastPhotoKey', 'unreadByAdmin',
+              'photoApprovals', 'lastPhotoKey', 'unreadByAdmin', 'teamPhotos',
             ])
             && (!keys.hasAny(['missionProgress']) || progressOk())
             && (!keys.hasAny(['hasStarted']) || request.resource.data.hasStarted == true)
@@ -145,6 +165,7 @@ service cloud.firestore {
                 || (!('finishedAt' in resource.data) && request.resource.data.finishedAt == request.time))
             && (!keys.hasAny(['photoApprovals']) || photoOk())
             && (!keys.hasAny(['lastPhotoKey']) || keys.hasAny(['photoApprovals']))
+            && (!keys.hasAny(['teamPhotos']) || teamPhotosOk())
             && (!keys.hasAny(['unreadByAdmin'])
                 || ('unreadByAdmin' in request.resource.data && unreadOk()));
         }

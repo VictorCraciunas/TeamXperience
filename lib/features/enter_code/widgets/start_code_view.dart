@@ -31,6 +31,7 @@ class StartCodeView extends StatelessWidget {
     required this.onSubmit,
     required this.onClose,
     this.onChat,
+    this.photoCard,
   });
 
   final Event event;
@@ -50,6 +51,9 @@ class StartCodeView extends StatelessWidget {
   /// Opens the team chat; null hides the link.
   final VoidCallback? onChat;
 
+  /// The optional team photo; never in the way of the start button.
+  final Widget? photoCard;
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -57,6 +61,7 @@ class StartCodeView extends StatelessWidget {
     final error = startError(result);
     final current = team;
     final chat = onChat;
+    final photo = photoCard;
 
     return ColoredBox(
       color: colors.navy,
@@ -196,6 +201,11 @@ class StartCodeView extends StatelessWidget {
                                   ? current.numberOfMembers
                                   : current.memberList.length,
                         ),
+                      ),
+                    if (photo != null)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
+                        child: photo,
                       ),
                     const SizedBox(height: 14),
                   ],

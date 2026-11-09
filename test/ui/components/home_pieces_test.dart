@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/ui/components/event/countdown_boxes.dart';
-import 'package:teamxperience/ui/components/event/event_mini_card.dart';
 import 'package:teamxperience/ui/components/layout/mini_stat_card.dart';
 import 'package:teamxperience/ui/components/route/checkpoint_line.dart';
 import 'package:teamxperience/ui/components/route/mission_progress_line.dart';
@@ -90,27 +89,6 @@ void main() {
     });
   });
 
-  group('EventMiniCard', () {
-    testWidgets('the date, the title and facts, and a tap', (tester) async {
-      var taps = 0;
-      await pumpUi(
-        tester,
-        Align(
-          alignment: Alignment.topLeft,
-          child: EventMiniCard(
-            title: 'Protocolul Cerber',
-            date: '21 nov',
-            facts: '3,2 km · 1 h 30',
-            onTap: () => taps++,
-          ),
-        ),
-      );
-      expect(find.text('21 nov'), findsOneWidget);
-      expect(find.text('3,2 km · 1 h 30'), findsOneWidget);
-      await tester.tap(find.text('Protocolul Cerber'));
-      expect(taps, 1);
-    });
-  });
 
   for (final theme in [AppTheme.light, AppTheme.dark]) {
     testWidgets('everything fits 320 px at 1.3x text (${theme.brightness.name})', (tester) async {
@@ -128,10 +106,6 @@ void main() {
           _onNavy(const CheckpointLine(labels: ['Înscriși', 'Echipă completă', 'Cod de start'], done: 2)),
           _onNavy(const MissionProgressLine(total: 6, done: 3)),
           const LeaderboardCard(rows: _rows),
-          SizedBox(
-            height: 160,
-            child: EventMiniCard(title: 'Protocolul Cerber', date: '21 nov', facts: '3,2 km · 1 h 30', onTap: () {}),
-          ),
         ]),
         width: 320,
         textScale: 1.3,

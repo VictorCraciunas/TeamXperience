@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:teamxperience/enums/team_photo_slot.dart';
+import 'package:teamxperience/features/chat/widgets/full_screen_image.dart';
 import 'package:teamxperience/features/event_game/logic/style_hints.dart';
 import 'package:teamxperience/features/event_game/widgets/game_backdrop.dart';
 import 'package:teamxperience/features/finish/controller/finish_controller.dart';
 import 'package:teamxperience/features/finish/logic/finish_recap.dart';
+import 'package:teamxperience/features/finish/widgets/finish_photo_card.dart';
 import 'package:teamxperience/features/finish/widgets/finish_view.dart';
 import 'package:teamxperience/features/home/widgets/leaderboard_sheet.dart';
+import 'package:teamxperience/features/team_photo/controller/team_photo_controller.dart';
+import 'package:teamxperience/features/team_photo/logic/team_album.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/service/share_service.dart';
@@ -25,6 +30,7 @@ class FinishScreen extends StatefulWidget {
 
 class _FinishScreenState extends State<FinishScreen> {
   FinishController? _controller;
+  TeamPhotoController? _photo;
 
   @override
   void didChangeDependencies() {
@@ -37,6 +43,9 @@ class _FinishScreenState extends State<FinishScreen> {
     if (event is! Event || team is! Team) return;
     final uid = context.read<UserProvider>().currentUser?.uid;
     final service = TeamService();
+    if (uid != null) {
+      _photo = TeamPhotoController(eventId: event.eventId, teamName: team.name, slot: TeamPhotoSlot.finish, uid: uid);
+    }
     _controller = FinishController(
       event: event,
       team: team,
@@ -51,6 +60,7 @@ class _FinishScreenState extends State<FinishScreen> {
   @override
   void dispose() {
     _controller?.dispose();
+    _photo?.dispose();
     super.dispose();
   }
 
@@ -58,6 +68,7 @@ class _FinishScreenState extends State<FinishScreen> {
   Widget build(BuildContext context) {
     final controller = _controller;
     if (controller == null) return Scaffold(backgroundColor: context.colors.page);
+    final photo = _photo;
     final palette = eventPaletteOf(controller.event, context.colors);
     return EventThemeScope(
       palette: palette,
@@ -84,7 +95,21 @@ class _FinishScreenState extends State<FinishScreen> {
                   solved: team.missionProgress.clamp(0, event.missions.length),
                   fastest: fastest == null ? null : fastestLine(fastest),
                   hints: hintsLabel(team),
-                  photos: approvedPhotos(team),
+                  photos: teamAlbum(team),
+                  onPhoto: (shown) => Navigator.of(context).push(
+                    MaterialPageRoute<void>(builder: (_) => FullScreenImage(imageUrl: shown.url)),
+                  ),
+                  photoCard: photo == null
+                      ? null
+                      : ListenableBuilder(
+                          listenable: photo,
+                          builder: (context, _) => FinishPhotoCard(
+                            photoUrl: team.finishPhotoUrl,
+                            busy: photo.busy,
+                            error: photo.error,
+                            onTake: photo.takeAndSend,
+                          ),
+                        ),
                   rating: controller.rating,
                   onRate: controller.rate,
                   onShare: () => ShareService().shareText(

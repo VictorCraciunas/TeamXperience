@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/features/event_game/logic/style_hints.dart';
 import 'package:teamxperience/features/event_game/widgets/game_backdrop.dart';
+import 'package:teamxperience/features/team_photo/logic/team_album.dart';
 import 'package:teamxperience/features/finish/logic/finish_recap.dart';
 import 'package:teamxperience/features/finish/widgets/finish_view.dart';
 import 'package:teamxperience/ui/components/misc/segmented_switch.dart';
@@ -51,7 +52,7 @@ class _FinishPreviewState extends State<FinishPreview> {
                     solved: team.missionProgress,
                     fastest: fastest == null ? null : fastestLine(fastest),
                     hints: hintsLabel(team),
-                    photos: approvedPhotos(team),
+                    photos: teamAlbum(team),
                     rating: _rating,
                     onRate: (stars) => setState(() => _rating = stars),
                     onShare: () {},

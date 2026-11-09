@@ -147,6 +147,13 @@ void main() {
   });
 
   group('MemoriesSection', () {
+    testWidgets('Toate shows with a handler and opens the list', (tester) async {
+      var all = 0;
+      await pumpUi(tester, MemoriesSection(memories: const [_memory], onOpen: (_) {}, onAll: () => all++));
+      await tester.tap(find.text('Toate'));
+      expect(all, 1);
+    });
+
     testWidgets('the mockup\'s card; a tap gives the memory', (tester) async {
       Memory? tapped;
       await pumpUi(tester, MemoriesSection(memories: const [_memory], onOpen: (m) => tapped = m));

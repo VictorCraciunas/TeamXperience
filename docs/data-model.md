@@ -50,7 +50,7 @@ All models live in `lib/model/`. Pattern: plain mutable classes, `fromMap`/`from
 users/{uid}                                  AppUser
 users/{uid}/memories/{eventId}               Memory (written by 7c; `date` is required: the query orders by it)
 events/{eventId}                             Event (missions→puzzles→components embedded)
-events/{eventId}/teams/{teamName}            Team (+ crewId, captainUid, members, inviteCode, photoConsent, presence, missionCompletedAt, attempts, lockedUntil, hintsUsed; server-only nameKey, rulesAcceptedAt)
+events/{eventId}/teams/{teamName}            Team (+ crewId, captainUid, members, inviteCode, photoConsent, presence, missionCompletedAt, attempts, lockedUntil, hintsUsed, teamPhotos.{start|finish} = {url, by, at}, the optional team photos, set by any member, each its own file under `events/{id}/team_photos/`; server-only nameKey, rulesAcceptedAt)
 events/{eventId}/teams/{teamName}/messages/{autoId}   Message  (ordered by timestamp asc)
 crews/{crewId}                               Crew (written by Cloud Functions)
 inviteCodes/{code}                           { crewId }  (code without dash, e.g. VLP482)

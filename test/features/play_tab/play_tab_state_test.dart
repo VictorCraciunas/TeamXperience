@@ -31,6 +31,7 @@ void main() {
   test('a recommendation or nothing shows the empty state', () {
     expect(playTabState(RecommendedHero(_event)), isA<PlayNone>());
     expect(playTabState(const NoHero()), isA<PlayNone>());
+    expect(playTabState(FinishedHero(_event, Team.fromMap(const {'name': 'Vulpile'}))), isA<PlayNone>());
     expect(isLive(const PlayNone()), isFalse);
   });
 }

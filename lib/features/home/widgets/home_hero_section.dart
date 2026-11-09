@@ -4,6 +4,7 @@ import 'package:teamxperience/features/home/widgets/home_hero_actions.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 
+import 'finished_card.dart';
 import 'live_game_card.dart';
 import 'next_game_card.dart';
 import 'recommended_card.dart';
@@ -37,6 +38,7 @@ class HomeHeroSection extends StatelessWidget {
     final current = hero;
     return switch (current) {
       LiveHero(:final event, :final team) => _live(event, liveTeam?.call(team.name) ?? team),
+      FinishedHero(:final event, :final team) => FinishedCard(event: event, onOpen: () => actions.onContinue(event, team)),
       StartingSoonHero(:final event, :final minutesLeftToEnter) => StartingSoonCard(
           event: event,
           minutesLeft: minutesLeftToEnter,

@@ -7,6 +7,7 @@ import 'package:teamxperience/features/profile/controller/profile_controller.dar
 import 'package:teamxperience/features/profile/logic/notification_access.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/memory.dart';
+import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/model/user.dart';
 
 AppUser _user({int xp = 0}) => AppUser(email: 'v@x.ro', firstName: 'Victor', lastName: 'C', uid: 'vc', fcmToken: '', xp: xp);
@@ -225,7 +226,7 @@ void main() {
     group('opening a memory', () {
       Future<ProfileController> inApp(WidgetTester tester, Event? Function(String id) find_) async {
         await tester.pumpWidget(MaterialApp(
-          routes: {Routes.eventDetails: (_) => const Text('pagina evenimentului')},
+          routes: {Routes.memory: (_) => const Text('pagina amintirii')},
           home: const SizedBox(),
         ));
         return ProfileController(
@@ -241,20 +242,71 @@ void main() {
 
       const memory = Memory(eventId: 'e1', eventName: 'Joc');
 
-      testWidgets('opens the event\'s page', (tester) async {
+      testWidgets('goes to the memory page', (tester) async {
         final c = await inApp(tester, (id) => Event(eventId: id));
         c.openMemory(memory);
         await tester.pumpAndSettle();
-        expect(find.text('pagina evenimentului'), findsOneWidget);
+        expect(find.text('pagina amintirii'), findsOneWidget);
         c.dispose();
       });
 
-      testWidgets('an event that is not loaded: nothing happens', (tester) async {
+      testWidgets('even when its event is not loaded', (tester) async {
         final c = await inApp(tester, (_) => null);
         c.openMemory(memory);
         await tester.pumpAndSettle();
-        expect(find.text('pagina evenimentului'), findsNothing);
-        expect(tester.takeException(), isNull);
+        expect(find.text('pagina amintirii'), findsOneWidget);
+        c.dispose();
+      });
+
+      testWidgets('coming back reads the albums again, so a late photo shows', (tester) async {
+        await tester.pumpWidget(const MaterialApp(home: SizedBox()));
+        var photo = false;
+        final c = ProfileController(
+          tester.element(find.byType(SizedBox)),
+          user: _user(),
+          userStream: const Stream.empty(),
+          memoriesStream: Stream.value(const [memory]),
+          notifications: NotificationAccess(read: () async => NotifStatus.allowed),
+          onFreshUser: (_) {},
+          findEvent: (_) => null,
+          findTeam: (_) async => Team.fromMap({
+            'name': 'V',
+            if (photo) 'teamPhotos': {'finish': {'url': 'late'}},
+          }),
+        );
+        await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+        expect(c.albumOf('e1'), isEmpty);
+
+        photo = true;
+        c.setVisible(false);
+        c.setVisible(true);
+        await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+        expect(c.albumOf('e1').single.url, 'late');
+        c.dispose();
+      });
+
+      testWidgets('loads an album per memory, and the event picture', (tester) async {
+        await tester.pumpWidget(const MaterialApp(home: SizedBox()));
+        final asked = <String>[];
+        final c = ProfileController(
+          tester.element(find.byType(SizedBox)),
+          user: _user(),
+          userStream: const Stream.empty(),
+          memoriesStream: Stream.value(const [memory, Memory(eventId: 'e2', eventName: 'Alt joc')]),
+          notifications: NotificationAccess(read: () async => NotifStatus.allowed),
+          onFreshUser: (_) {},
+          findEvent: (id) => Event(eventId: id, landingImageUrl: 'poza-$id'),
+          findTeam: (id) async {
+            asked.add(id);
+            return id == 'e1' ? Team.fromMap({'name': 'V', 'teamPhotos': {'start': {'url': 's'}}}) : null;
+          },
+        );
+        await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+        await tester.pump();
+        expect(asked, ['e1', 'e2']);
+        expect(c.albumOf('e1').single.url, 's');
+        expect(c.albumOf('e2'), isEmpty);
+        expect(c.pictureOf('e2'), 'poza-e2');
         c.dispose();
       });
     });

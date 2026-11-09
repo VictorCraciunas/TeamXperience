@@ -13,6 +13,9 @@ import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/ui/components/misc/theme_mode_sheet.dart';
 import 'package:teamxperience/ui/components/navigation/tab_header.dart';
 
+import 'package:teamxperience/service/team_service/team_service.dart';
+import 'package:teamxperience/features/shell/logic/player_tabs.dart';
+import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 /// The Profil tab (mockup 08), in both the player's and the organiser's shell:
@@ -44,6 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       memoriesStream: uid == null || user.role == Role.ADMIN ? const Stream.empty() : repo.streamMemories(uid),
       notifications: NotificationAccess(),
       onFreshUser: users.updateProfile,
+      findTeam: uid == null ? null : (eventId) => TeamService().getUserTeamForEvent(eventId, uid),
       saveToken: uid == null
           ? null
           : () async {
@@ -69,6 +73,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final controller = _controller;
+    final onScreen =
+        context.watch<ShellController?>()?.index == PlayerTab.profile && (ModalRoute.of(context)?.isCurrent ?? true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) controller?.setVisible(onScreen);
+    });
     final mode = context.watch<ThemeController>().mode;
     return Scaffold(
       backgroundColor: colors.page,
@@ -120,6 +129,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onLogout: controller.logout,
                           onOpenBadges: () => showBadgeSheet(context, earned: user.badges),
                           onOpenMemory: controller.openMemory,
+                          onAllMemories: controller.openAllMemories,
+                          albumOf: controller.albumOf,
+                          pictureOf: controller.pictureOf,
                         ),
                       );
                     },

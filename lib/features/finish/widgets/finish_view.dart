@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:teamxperience/features/team_photo/logic/team_album.dart';
+import 'package:teamxperience/features/team_photo/widgets/album_strip.dart';
 import 'package:teamxperience/ui/components/game/game_filled_button.dart';
 import 'package:teamxperience/ui/components/game/game_outline_button.dart';
 import 'package:teamxperience/ui/theme/event_theme_scope.dart';
@@ -7,7 +9,6 @@ import 'package:teamxperience/ui/theme/event_theme_scope.dart';
 import 'finish_seal.dart';
 import 'finish_stat_tile.dart';
 import 'mission_dots_card.dart';
-import 'photo_strip.dart';
 import 'rating_stars.dart';
 
 /// The finish recap of mockup 08, from plain values: the seal and the texts,
@@ -28,6 +29,8 @@ class FinishView extends StatelessWidget {
     this.fastest,
     required this.hints,
     required this.photos,
+    this.onPhoto,
+    this.photoCard,
     this.rating,
     required this.onRate,
     required this.onShare,
@@ -46,7 +49,13 @@ class FinishView extends StatelessWidget {
   final int solved;
   final String? fastest;
   final String hints;
-  final List<String> photos;
+  final List<AlbumPhoto> photos;
+
+  /// Opens a photo.
+  final ValueChanged<AlbumPhoto>? onPhoto;
+
+  /// The optional final team photo.
+  final Widget? photoCard;
   final int? rating;
   final ValueChanged<int> onRate;
   final VoidCallback onShare;
@@ -55,6 +64,7 @@ class FinishView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.eventPalette;
+    final card = photoCard;
     final label = TextStyle(fontSize: 11, height: 1.45, color: palette.ink.withValues(alpha: .8));
 
     Widget section(String text) => Padding(
@@ -105,9 +115,10 @@ class FinishView extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
                     child: MissionDotsCard(missions: missions, solved: solved, fastest: fastest, hints: hints),
                   ),
+                if (card != null) Padding(padding: const EdgeInsets.fromLTRB(14, 12, 14, 0), child: card),
                 if (photos.isNotEmpty) ...[
                   section('Pozele voastre'),
-                  Padding(padding: const EdgeInsets.symmetric(horizontal: 14), child: PhotoStrip(urls: photos)),
+                  Padding(padding: const EdgeInsets.symmetric(horizontal: 14), child: AlbumStrip(photos: photos, onTap: onPhoto)),
                 ],
                 section('Cum ți s-a părut?'),
                 RatingStars(rating: rating, onRate: onRate),

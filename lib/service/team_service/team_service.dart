@@ -6,6 +6,7 @@ import 'package:teamxperience/backend/repo/teamRepo.dart';
 import 'package:teamxperience/backend/repo/user_repo.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
 import 'package:teamxperience/model/crew.dart';
+import 'package:teamxperience/enums/team_photo_slot.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/service/team_service/invite_preview.dart';
 import 'package:teamxperience/service/team_service/register_result.dart';
@@ -186,6 +187,11 @@ class TeamService {
     String? url,
   }) async {
     return teamRepo.setPhotoApproval(eventId, teamName, key, status, reason: reason, url: url);
+  }
+
+  /// Saves the team's start or final photo; a retake replaces it.
+  Future<void> setTeamPhoto(String eventId, String teamName, TeamPhotoSlot slot, String url, String uid) {
+    return teamRepo.setTeamPhoto(eventId, teamName, slot, url, uid);
   }
 
   /// Changes the captain's phone on the team, and nothing else.

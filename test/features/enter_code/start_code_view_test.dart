@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/dev/sample_event.dart';
 import 'package:teamxperience/features/enter_code/logic/start_code_check.dart';
 import 'package:teamxperience/features/enter_code/widgets/start_code_view.dart';
+import 'package:teamxperience/features/enter_code/widgets/start_photo_card.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/ui/components/misc/avatar_stack.dart';
@@ -41,6 +42,7 @@ Future<_Log> _pump(
   double textScale = 1,
   double keyboard = 0,
   ThemeData? theme,
+  Widget? photoCard,
 }) async {
   final log = _Log();
   tester.view.physicalSize = Size(width * 3, 760 * 3);
@@ -67,6 +69,7 @@ Future<_Log> _pump(
         onSubmit: () => log.calls.add('submit'),
         onClose: () => log.calls.add('close'),
         onChat: noTeam ? null : () => log.calls.add('chat'),
+        photoCard: photoCard,
       ),
     ),
   ));
@@ -91,6 +94,46 @@ void main() {
     expect((stack.total, stack.gap), (4, 6.0));
     expect(find.text('Pornește jocul'), findsOneWidget);
     expect(find.text('Nu ai codul? Scrie-i organizatorului'), findsOneWidget);
+  });
+
+  group('the optional team photo', () {
+    testWidgets('sits above the start button, which still works', (tester) async {
+      final log = await _pump(tester, photoCard: StartPhotoCard(busy: true, onTake: () {}));
+      expect(find.text('Poza echipei'), findsOneWidget);
+      expect(find.text('Opțional. O găsiți la Amintiri.'), findsOneWidget);
+      expect(
+        tester.getBottomLeft(find.text('Poza echipei')).dy,
+        lessThan(tester.getTopLeft(find.text('Pornește jocul')).dy),
+      );
+      await tester.tap(find.text('Pornește jocul'));
+      expect(log.calls, ['submit']);
+    });
+
+    testWidgets('tapping asks for a photo', (tester) async {
+      var taps = 0;
+      await _pump(tester, photoCard: StartPhotoCard(busy: false, onTake: () => taps++));
+      await tester.tap(find.text('Fă poza'));
+      expect(taps, 1);
+    });
+
+    testWidgets('with a photo it offers a retake, and shows a failure', (tester) async {
+      await _pump(
+        tester,
+        photoCard: StartPhotoCard(photoUrl: 'a', busy: false, error: 'Poza nu s-a trimis. Încearcă din nou.', onTake: () {}),
+      );
+      expect(find.text('Refă poza'), findsOneWidget);
+      expect(find.text('Poza nu s-a trimis. Încearcă din nou.'), findsOneWidget);
+    });
+
+    testWidgets('fits 320 px at 1.3x text with the card', (tester) async {
+      await _pump(
+        tester,
+        width: 320,
+        textScale: 1.3,
+        photoCard: StartPhotoCard(error: 'Poza nu s-a trimis. Încearcă din nou.', busy: false, onTake: () {}),
+      );
+      expect(tester.takeException(), isNull);
+    });
   });
 
   testWidgets('a wrong code: the red line and red boxes', (tester) async {

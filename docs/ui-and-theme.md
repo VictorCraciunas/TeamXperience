@@ -32,7 +32,7 @@ Moved from `lib/widgets/` (and `utils/snackbars.dart`) in UI redesign phase 1: `
 | `CountdownBoxes` (+ `CountdownBox`) | Days / hours / minutes on a navy card: three `onNavyFaint` boxes, radius 10, value 17 w500, label 11 at 80 % |
 | `CheckpointLine`, `MissionProgressLine` (+ `TrailDot`, `TrailSegment`) | Small progress lines on dark cards: 18 px checkpoints (filled `tickOnNavy` with a check, or a 2 px ring) with labels below; a game's missions as 14 px dots, the current one a 22 px `soon` circle with its number, rings, and the flag; solid lines behind, dashed ahead |
 | `LeaderboardCard` + `LeaderboardRow` (`LeaderboardRowView`) | A `.card` with no padding: place (18 wide), name, score; the own row in `navActivePill` with an accent score; 1 px `insetBorder` lines |
-| `EventMiniCard` | Mockup 02's "Evenimente noi" card: 176 wide (the CSS's 150 content box + padding + border), a 70 px picture strip inset 6 px with a `panel` date pill, the name and the route facts |
+| `EventPicture`, `PictureChip`, `EventGridCard` | An event's main picture at a fixed height with room for pills, a flat colour and dashed route line when there is none or it fails; the small dark pill on it; a card for a two-column grid (picture 96 with a `panel` date pill, the name in up to two lines, the route facts) |
 | `RegisteredEventTile`, `OpenEventCard` | "Înscrierile tale" tile (navy date block, green badge) and the open-event card (92 px strip, amber badge, share, route row) |
 | `SectionTitle` | Heading with a tick bar above a group of items |
 | `AppChip` (+ `AppChipStyle` plain / outlined / selected) | Small pill with an optional icon: puzzle kinds, filters, the map link |

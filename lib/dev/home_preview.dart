@@ -5,7 +5,7 @@ import 'package:teamxperience/features/home/widgets/home_header.dart';
 import 'package:teamxperience/features/home/widgets/home_hero_actions.dart';
 import 'package:teamxperience/features/home/widgets/home_hero_section.dart';
 import 'package:teamxperience/features/home/widgets/live_leaderboard_section.dart';
-import 'package:teamxperience/features/home/widgets/new_events_row.dart';
+import 'package:teamxperience/features/home/widgets/events_grid_section.dart';
 import 'package:teamxperience/features/home/widgets/team_now_card.dart';
 import 'package:teamxperience/features/shell/logic/player_tabs.dart';
 import 'package:teamxperience/service/leaderboard.dart';
@@ -61,7 +61,13 @@ class _HomePreviewState extends State<HomePreview> {
           upcomingTeam: sampleTeam(),
         ),
       ),
-      NewEventsRow(events: sampleOpenEvents(), onTap: (e) => _say('open ${e.name}'), onAll: () => _say('all')),
+      EventsGridSection(
+        title: 'Evenimente noi',
+        link: 'Vezi toate',
+        onLink: () => _say('all'),
+        events: sampleOpenEvents(),
+        onTap: (e) => _say('open ${e.name}'),
+      ),
       const SizedBox(height: 12),
     ];
   }

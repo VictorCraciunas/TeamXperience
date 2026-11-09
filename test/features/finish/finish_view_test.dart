@@ -1,7 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:teamxperience/features/finish/widgets/finish_photo_card.dart';
 import 'package:teamxperience/features/finish/widgets/finish_view.dart';
+import 'package:teamxperience/features/team_photo/logic/team_album.dart';
 import 'package:teamxperience/ui/theme/app_colors.dart';
 import 'package:teamxperience/ui/theme/app_theme.dart';
 import 'package:teamxperience/ui/theme/event_palette.dart';
@@ -23,7 +26,8 @@ Future<List<String>> _pump(
   WidgetTester tester, {
   String? place = '2',
   String? fastest = 'Cea mai rapidă: misiunea 2 (6 min)',
-  List<String> photos = const ['a', 'b', 'c', 'd', 'e', 'f'],
+  List<AlbumPhoto> photos = const [AlbumPhoto('a'), AlbumPhoto('b'), AlbumPhoto('c'), AlbumPhoto('d'), AlbumPhoto('e'), AlbumPhoto('f')],
+  Widget? photoCard,
   int? rating,
   EventPalette palette = EventPalette.parchment,
   double width = 316,
@@ -54,6 +58,7 @@ Future<List<String>> _pump(
           fastest: fastest,
           hints: '2 indicii',
           photos: photos,
+          photoCard: photoCard,
           rating: rating,
           onRate: (stars) => calls.add('rate $stars'),
           onShare: () => calls.add('share'),
@@ -110,6 +115,43 @@ void main() {
     expect(find.text('Mulțumim!'), findsOneWidget);
   });
 
+  testWidgets('photos are decoded at tile size, and cached', (tester) async {
+    await _pump(tester, photos: const [AlbumPhoto('a', label: 'Start')]);
+    final image = tester.widget<CachedNetworkImage>(find.byType(CachedNetworkImage));
+    expect(image.memCacheWidth, isNotNull);
+    expect(image.memCacheWidth, lessThan(800));
+  });
+
+  testWidgets('the strip shows when each photo was taken', (tester) async {
+    await _pump(tester, photos: const [AlbumPhoto('a', label: 'Start'), AlbumPhoto('b', label: 'Misiunea 3')]);
+    expect(find.text('Start'), findsOneWidget);
+    expect(find.text('Misiunea 3'), findsOneWidget);
+  });
+
+  testWidgets('the card offers a final photo, then a retake', (tester) async {
+    var taps = 0;
+    await _pump(tester, photoCard: FinishPhotoCard(busy: false, onTake: () => taps++));
+    expect(find.text('O poză de final?'), findsOneWidget);
+    expect(find.text('Opțional. Rămâne la Amintiri.'), findsOneWidget);
+    await tester.tap(find.text('Fă poza'));
+    expect(taps, 1);
+
+    await _pump(tester, photoCard: FinishPhotoCard(photoUrl: 'a', busy: false, onTake: () {}));
+    expect(find.text('Poza de final'), findsOneWidget);
+    expect(find.text('Refă poza'), findsOneWidget);
+  });
+
+  testWidgets('fits 320 px at 1.3x text with the card and long labels', (tester) async {
+    await _pump(
+      tester,
+      width: 320,
+      textScale: 1.3,
+      photos: const [AlbumPhoto('a', label: 'Start'), AlbumPhoto('b', label: 'Misiunea 12'), AlbumPhoto('c', label: 'Misiunea 13')],
+      photoCard: FinishPhotoCard(error: 'Poza nu s-a trimis. Încearcă din nou.', busy: false, onTake: () {}),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('no photos, no fastest mission, no place yet', (tester) async {
     await _pump(tester, photos: const [], fastest: null, place: null);
     expect(find.text('Pozele voastre'), findsNothing);
@@ -119,7 +161,7 @@ void main() {
   });
 
   testWidgets('three photos or fewer: no "+N"', (tester) async {
-    await _pump(tester, photos: const ['a', 'b', 'c']);
+    await _pump(tester, photos: const [AlbumPhoto('a'), AlbumPhoto('b'), AlbumPhoto('c')]);
     expect(find.textContaining('+'), findsNothing);
     expect(find.byKey(const ValueKey('photo-tile')), findsNWidgets(3));
   });

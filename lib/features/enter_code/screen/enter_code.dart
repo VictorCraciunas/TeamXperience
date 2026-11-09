@@ -5,7 +5,10 @@ import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/enter_code/controller/start_code_controller.dart';
 import 'package:teamxperience/features/enter_code/logic/start_texts.dart';
 import 'package:teamxperience/features/enter_code/widgets/start_code_view.dart';
+import 'package:teamxperience/features/enter_code/widgets/start_photo_card.dart';
 import 'package:teamxperience/features/event_game/widgets/keeps_presence.dart';
+import 'package:teamxperience/features/team_photo/controller/team_photo_controller.dart';
+import 'package:teamxperience/enums/team_photo_slot.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
@@ -24,6 +27,7 @@ class EnterCode extends StatefulWidget {
 class _EnterCodeState extends State<EnterCode> {
   final TeamService _teams = TeamService();
   StartCodeController? _controller;
+  TeamPhotoController? _photo;
   String? _uid;
 
   @override
@@ -50,6 +54,27 @@ class _EnterCodeState extends State<EnterCode> {
     await GameDoor().open(Navigator.of(context), event, team, replace: true);
   }
 
+  /// The team photo's card, once the team and the player are known.
+  Widget? _photoCard(Event event, Team? team) {
+    final uid = _uid;
+    if (team == null || uid == null) return null;
+    final photo = _photo ??= TeamPhotoController(
+      eventId: event.eventId,
+      teamName: team.name,
+      slot: TeamPhotoSlot.start,
+      uid: uid,
+    );
+    return ListenableBuilder(
+      listenable: photo,
+      builder: (context, _) => StartPhotoCard(
+        photoUrl: team.startPhotoUrl,
+        busy: photo.busy,
+        error: photo.error,
+        onTake: photo.takeAndSend,
+      ),
+    );
+  }
+
   void _openChat(Event event, Team team) {
     Navigator.pushNamed(context, Routes.chatScreen, arguments: {'eventId': event.eventId, 'team': team});
   }
@@ -57,6 +82,7 @@ class _EnterCodeState extends State<EnterCode> {
   @override
   void dispose() {
     _controller?.dispose();
+    _photo?.dispose();
     super.dispose();
   }
 
@@ -87,6 +113,7 @@ class _EnterCodeState extends State<EnterCode> {
               onSubmit: controller.submit,
               onClose: () => Navigator.of(context).maybePop(),
               onChat: team == null ? null : () => _openChat(event, team),
+              photoCard: _photoCard(event, team),
             ),
           );
           // Always wrapped, so the boxes keep their typing when the team arrives.

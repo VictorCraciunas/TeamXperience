@@ -92,7 +92,10 @@ String hintsLabel(Team team) {
 
 /// The team's approved photos that have a picture, one per puzzle, in
 /// mission and puzzle order.
-List<String> approvedPhotos(Team team) {
+List<String> approvedPhotos(Team team) => [for (final photo in approvedPuzzlePhotos(team)) photo.url];
+
+/// The same photos with the (zero-based) mission each belongs to.
+List<({int mission, String url})> approvedPuzzlePhotos(Team team) {
   final best = <(int, int), (int, String)>{};
   team.photoDetails.forEach((key, detail) {
     final url = detail.url;
@@ -107,7 +110,7 @@ List<String> approvedPhotos(Team team) {
     if (current == null || attempt > current.$1) best[(mission, puzzle)] = (attempt, url);
   });
   final order = best.keys.toList()..sort((a, b) => a.$1 != b.$1 ? a.$1.compareTo(b.$1) : a.$2.compareTo(b.$2));
-  return [for (final k in order) best[k]?.$2 ?? ''];
+  return [for (final k in order) (mission: k.$1, url: best[k]?.$2 ?? '')];
 }
 
 /// What "Distribuie" shares.
