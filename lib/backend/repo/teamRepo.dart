@@ -2,6 +2,7 @@ import 'confirmed_docs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../enums/photo_approval_status.dart';
+import '../../enums/team_photo_slot.dart';
 import '../../model/team.dart';
 
 class TeamRepo {
@@ -57,6 +58,13 @@ class TeamRepo {
         .doc(teamName)
         .snapshots()
         .map((doc) => Team.fromMap(doc.data() as Map<String, dynamic>));
+  }
+
+  /// Saves the team's start or final photo; a retake replaces it.
+  Future<void> setTeamPhoto(String eventId, String teamName, TeamPhotoSlot slot, String url, String uid) {
+    return _team(eventId, teamName).update({
+      'teamPhotos.${slot.name}': {'url': url, 'by': uid, 'at': FieldValue.serverTimestamp()},
+    });
   }
 
   Future<void> setPhotoApproval(

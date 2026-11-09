@@ -257,6 +257,22 @@ describe("firestore.rules", () => {
       await assertFails(member().update({"walked.u2": FieldValue.increment(-10)}));
     });
 
+    test("team photos: any member, one at a time, in their own name", async () => {
+      const at = FieldValue.serverTimestamp();
+      const photo = (by: string) => ({url: "a", by, at});
+      await assertSucceeds(member().update({"teamPhotos.start": photo("u2")}));
+      await assertSucceeds(member().update({"teamPhotos.start": photo("u2")}));
+      await assertSucceeds(member().update({"teamPhotos.finish": photo("u2")}));
+      await assertFails(member().update({"teamPhotos.middle": photo("u2")}));
+      await assertFails(member().update({"teamPhotos.start": photo("u1")}));
+      await assertFails(member().update({"teamPhotos.start": {url: "a", by: "u2", at, extra: 1}}));
+      await assertFails(member().update({"teamPhotos.start": {url: 7, by: "u2", at}}));
+      await assertFails(member().update({"teamPhotos.start": {url: "a", by: "u2", at: Timestamp.fromDate(new Date("2020-01-01"))}}));
+      await assertFails(member().update({"teamPhotos.start": FieldValue.delete()}));
+      await assertFails(member().update({"teamPhotos.start": photo("u2"), "teamPhotos.finish": photo("u2")}));
+      await assertFails(as("stranger").doc(TEAM).update({"teamPhotos.start": photo("stranger")}));
+    });
+
     test("attempts, locks and hints", async () => {
       await assertSucceeds(member().update({"attempts.1_0": FieldValue.increment(1)}));
       const until = Timestamp.fromDate(new Date("2026-11-08T12:00:00Z"));

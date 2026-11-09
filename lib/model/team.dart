@@ -30,6 +30,11 @@ class Team {
   final String? inviteCode;
   final bool photoConsent;
 
+  /// The team's optional photo from before the game, and from after it.
+  /// Set one at a time by `TeamRepo.setTeamPhoto`; never written by [toJson].
+  final String? startPhotoUrl;
+  final String? finishPhotoUrl;
+
   /// When each member was last seen playing (uid → time), written by the game
   /// screen every minute. Never written by [toJson].
   final Map<String, DateTime> presence;
@@ -94,6 +99,8 @@ class Team {
     this.members = const [],
     this.inviteCode,
     this.photoConsent = false,
+    this.startPhotoUrl,
+    this.finishPhotoUrl,
     Map<String, DateTime>? presence,
     Map<int, DateTime>? missionCompletedAt,
     this.startedAt,
@@ -231,6 +238,15 @@ class Team {
     return null;
   }
 
+  /// One slot's picture from `teamPhotos`, whatever old or bad data it holds.
+  static String? _teamPhotoUrl(Object? photos, String slot) {
+    if (photos is! Map) return null;
+    final photo = photos[slot];
+    if (photo is! Map) return null;
+    final url = photo['url'];
+    return url is String ? url : null;
+  }
+
   factory Team.fromMap(Map<String, dynamic> map) {
     final rawUserIds = map['userIds'] as List<dynamic>? ?? [];
     final userIdsList = rawUserIds.map((id) => id.toString()).toList();
@@ -278,6 +294,8 @@ class Team {
       members: membersList,
       inviteCode: map['inviteCode'] as String?,
       photoConsent: map['photoConsent'] as bool? ?? false,
+      startPhotoUrl: _teamPhotoUrl(map['teamPhotos'], 'start'),
+      finishPhotoUrl: _teamPhotoUrl(map['teamPhotos'], 'finish'),
       presence: _timesByKey(map['presence']),
       missionCompletedAt: _missionTimes(map['missionCompletedAt']),
       startedAt: _time(map['startedAt']),
