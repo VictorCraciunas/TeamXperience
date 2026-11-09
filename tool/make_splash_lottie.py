@@ -122,7 +122,8 @@ for i, ch in enumerate(TEXT):
         ks = transform(
             [centre[0], BASELINE - EM * 0.36], [centre[0], BASELINE - EM * 0.36],
             scale=anim(ease(start, [0, 0, 100], out=(0.3, 1.45)), ease(start + 16, [118, 118, 100]), {'t': start + 26, 's': [100, 100, 100]}),
-            opacity=anim({'t': start, 's': [0], 'h': 1}, {'t': start + 1, 's': [100]}),
+            # A short fade, not a hold keyframe: Flutter's player keeps a held 0 for good.
+            opacity=anim(ease(start, [0]), {'t': start + 4, 's': [100]}),
             rotation=anim(ease(start, [-25]), {'t': start + 22, 's': [0]}),
         )
     else:
