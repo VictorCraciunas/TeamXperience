@@ -16,12 +16,22 @@ class AuthUtil {
   AuthUtil(this.userRepo, this.authenticationRepository, this.userProvider);
 
   // -------- role based redirect -----------
-  Future<void> checkUserAndRedirect(BuildContext context) async {
+  /// Loads the user and opens their home, or the start when signed out.
+  /// The page changes only once [after] is done (the start-up logo), while
+  /// the user loads in the meantime.
+  Future<void> checkUserAndRedirect(BuildContext context, {Future<void>? after}) async {
+    final route = await _startRoute();
+    await after;
+    if (!context.mounted) return;
+    Navigator.pushNamedAndRemoveUntil(context, route, (Route<dynamic> route) => false);
+  }
 
+  /// Where the app opens: the role's home, or the start without a user.
+  Future<String> _startRoute() async {
     User? currentUser = authenticationRepository.authUser;
     if (currentUser == null) {
       userProvider.clearUser();
-      Navigator.pushNamedAndRemoveUntil(context, Routes.splash,(Route<dynamic> route) => false);
+      return Routes.splash;
     } else {
       // User is logged in, fetch their data
       String email = currentUser.email!;
@@ -35,22 +45,13 @@ class AuthUtil {
       if(appUser != null){
         userProvider.setUser(appUser, currentUser);
 
-        print("a merssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
-        if (appUser.role == Role.ADMIN) {
-          if (!context.mounted) return;
-          Navigator.pushNamedAndRemoveUntil(context, Routes.adminHome,(Route<dynamic> route) => false);
-        }
-        else {
-          if (!context.mounted) return;
-          Navigator.pushNamedAndRemoveUntil(context, Routes.home,(Route<dynamic> route) => false);
-        }
+        return appUser.role == Role.ADMIN ? Routes.adminHome : Routes.home;
       }
       else{
         // No user to show (the lookup failed, or there is no document): back
         // to the start rather than staying on the loader for ever.
         userProvider.clearUser();
-        if (!context.mounted) return;
-        Navigator.pushNamedAndRemoveUntil(context, Routes.splash, (Route<dynamic> route) => false);
+        return Routes.splash;
       }
     }
   }
