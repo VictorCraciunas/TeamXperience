@@ -48,10 +48,10 @@ String statLabel(String kind, int n) {
 }
 
 /// "Locul 2 · 1:48 · 6 poze"; what is not known is left out.
-String memoryLine(Memory memory) {
+String memoryLine(Memory memory, {int? photoCount}) {
   final place = memory.place;
   final minutes = memory.totalMinutes;
-  final photos = memory.photoUrls.length;
+  final photos = photoCount ?? memory.photoUrls.length;
   return [
     if (place != null) 'Locul $place',
     if (minutes != null) '${minutes ~/ 60}:${(minutes % 60).toString().padLeft(2, '0')}',

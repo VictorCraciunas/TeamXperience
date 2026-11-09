@@ -8,15 +8,23 @@ import 'package:teamxperience/ui/ui.dart';
 /// One past game in "Amintiri" (mockup 08): a 40 px picture, the event's name,
 /// "Locul 2 · 1:48 · 6 poze" and a chevron.
 class MemoryCard extends StatelessWidget {
-  const MemoryCard({super.key, required this.memory, required this.onTap});
+  const MemoryCard({super.key, required this.memory, this.imageUrl, this.photoCount, required this.onTap});
 
   final Memory memory;
+
+  /// The picture to show; by default the memory's first stored photo.
+  final String? imageUrl;
+
+  /// How many photos the game has; by default the stored ones.
+  final int? photoCount;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final line = memoryLine(memory);
+    final line = memoryLine(memory, photoCount: photoCount);
+    final stored = memory.photoUrls;
+    final picture = imageUrl ?? (stored.isEmpty ? null : stored.first);
     final stand = ColoredBox(
       color: colors.inset,
       child: Center(child: Icon(TablerIcons.map_2, size: 18, color: colors.muted)),
@@ -33,9 +41,9 @@ class MemoryCard extends StatelessWidget {
               child: SizedBox.square(
                 key: const ValueKey('memory-thumb'),
                 dimension: 40,
-                child: memory.photoUrls.isEmpty
+                child: picture == null
                     ? stand
-                    : Image.network(memory.photoUrls.first, fit: BoxFit.cover, errorBuilder: (_, __, ___) => stand),
+                    : Image.network(picture, fit: BoxFit.cover, errorBuilder: (_, __, ___) => stand),
               ),
             ),
             const SizedBox(width: 10),

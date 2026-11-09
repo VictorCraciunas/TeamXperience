@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/dev/sample_event.dart';
+import 'package:teamxperience/features/home/widgets/events_grid_section.dart';
 import 'package:teamxperience/features/home/widgets/greeting_stats.dart';
 import 'package:teamxperience/features/home/widgets/home_header.dart';
 import 'package:teamxperience/features/home/widgets/live_game_card.dart';
 import 'package:teamxperience/features/home/widgets/live_leaderboard_section.dart';
-import 'package:teamxperience/features/home/widgets/new_events_row.dart';
 import 'package:teamxperience/features/home/widgets/next_game_card.dart';
 import 'package:teamxperience/features/home/widgets/team_now_card.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/model/team_member.dart';
 import 'package:teamxperience/service/leaderboard.dart';
-import 'package:teamxperience/ui/components/event/event_mini_card.dart';
 import 'package:teamxperience/ui/theme/app_theme.dart';
 
 import '../../ui/pump_ui.dart';
@@ -59,30 +58,6 @@ void main() {
     }
   });
 
-  group('NewEventsRow', () {
-    testWidgets('a card per event with its date and facts, and Vezi toate', (tester) async {
-      var all = 0;
-      String? opened;
-      await pumpUi(
-        tester,
-        NewEventsRow(events: sampleOpenEvents(), onTap: (e) => opened = e.eventId, onAll: () => all++),
-      );
-      expect(find.text('Evenimente noi'), findsOneWidget);
-      expect(find.byType(EventMiniCard), findsNWidgets(2));
-      expect(find.text('21 nov'), findsOneWidget);
-      expect(find.text('Protocolul Cerber'), findsOneWidget);
-      expect(find.text('3,2 km · 1 h 30'), findsOneWidget);
-      await tester.tap(find.text('Protocolul Cerber'));
-      await tester.tap(find.text('Vezi toate'));
-      expect((opened, all), ('cerber', 1));
-    });
-
-    testWidgets('nothing without events', (tester) async {
-      await pumpUi(tester, NewEventsRow(events: const [], onTap: (_) {}, onAll: () {}));
-      expect(find.text('Evenimente noi'), findsNothing);
-    });
-  });
-
   for (final theme in [AppTheme.light, AppTheme.dark]) {
     testWidgets('both Home layouts fit 320 px at 1.3x text (${theme.brightness.name})', (tester) async {
       final event = sampleEvent();
@@ -104,7 +79,7 @@ void main() {
             team: _team(),
             onTap: () {},
           ),
-          NewEventsRow(events: sampleOpenEvents(), onTap: (_) {}, onAll: () {}),
+          EventsGridSection(title: 'Evenimente noi', link: 'Vezi toate', onLink: () {}, events: sampleOpenEvents(), onTap: (_) {}),
         ]),
         width: 320,
         textScale: 1.3,

@@ -8,13 +8,14 @@ import 'package:teamxperience/features/home/logic/hero_from_providers.dart';
 import 'package:teamxperience/features/home/logic/home_hero.dart';
 import 'package:teamxperience/features/home/logic/live_watch.dart';
 import 'package:teamxperience/features/home/logic/news_seen.dart';
+import 'package:teamxperience/features/home/widgets/events_grid_section.dart';
 import 'package:teamxperience/features/home/widgets/greeting_stats.dart';
 import 'package:teamxperience/features/home/widgets/home_header.dart';
 import 'package:teamxperience/features/home/widgets/home_hero_actions.dart';
 import 'package:teamxperience/features/home/widgets/home_hero_ticker.dart';
 import 'package:teamxperience/features/home/widgets/leaderboard_sheet.dart';
 import 'package:teamxperience/features/home/widgets/live_leaderboard_section.dart';
-import 'package:teamxperience/features/home/widgets/new_events_row.dart';
+
 import 'package:teamxperience/features/home/widgets/team_now_card.dart';
 import 'package:teamxperience/features/shell/logic/player_tabs.dart';
 import 'package:teamxperience/model/event.dart';
@@ -216,10 +217,12 @@ class _HomeState extends State<Home> {
         else ...[
           section(
             'events',
-            NewEventsRow(
+            EventsGridSection(
+              title: 'Evenimente noi',
+              link: 'Vezi toate',
+              onLink: controller.navigateToEventDashboard,
               events: openEvents,
               onTap: controller.navigateToEventDetails,
-              onAll: controller.navigateToEventDashboard,
             ),
           ),
           const SizedBox(height: 12),

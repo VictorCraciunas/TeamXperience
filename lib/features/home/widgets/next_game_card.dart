@@ -3,15 +3,18 @@ import 'package:teamxperience/features/home/logic/home_texts.dart';
 import 'package:teamxperience/features/home/logic/preparation_steps.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
+import 'package:teamxperience/features/events_tab/logic/event_card_texts.dart';
 import 'package:teamxperience/ui/components/event/countdown_boxes.dart';
+import 'package:teamxperience/ui/components/event/event_picture.dart';
+import 'package:teamxperience/ui/components/event/picture_chip.dart';
 import 'package:teamxperience/ui/components/route/checkpoint_line.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 import 'game_badge.dart';
 import 'navy_game_card.dart';
 
-/// The player's next registered game, as mockup 02's first card: badge,
-/// name, day line, countdown, then (once the team is known) its preparation.
+/// The player's next registered game: its picture with the badge, then the
+/// name, day line, countdown and (once the team is known) its preparation.
 class NextGameCard extends StatelessWidget {
   const NextGameCard({
     super.key,
@@ -34,6 +37,7 @@ class NextGameCard extends StatelessWidget {
     final start = event.dateEvent;
     final soft = TextStyle(fontSize: 11, height: 1.45, color: colors.onNavy.withValues(alpha: .8));
     final current = team;
+    final facts = cardRouteFacts(event);
 
     return NavyGameCard(
       fill: NavyFill.navy,
@@ -42,14 +46,19 @@ class NextGameCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
+          EventPicture(
+            url: event.landingImageUrl,
+            height: 130,
+            fill: colors.accent,
+            topLeft: GameBadge(label: 'Următorul tău joc', fill: colors.tickOnNavy, text: colors.onTick),
+            topRight: facts.isEmpty ? null : PictureChip(text: facts),
+          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                GameBadge(label: 'Următorul tău joc', fill: colors.tickOnNavy, text: colors.onTick),
-                const SizedBox(height: 8),
                 Text(
                   event.name ?? '',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, height: 1.45, color: colors.onNavy),
