@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:teamxperience/ui/theme/app_colors.dart';
 import 'package:teamxperience/dev/sample_event.dart';
 import 'package:teamxperience/features/home/widgets/events_grid_section.dart';
 import 'package:teamxperience/features/home/widgets/greeting_stats.dart';
@@ -37,10 +39,19 @@ Team _team({int progress = 3, Map<String, DateTime>? presence}) => Team(
 
 void main() {
   group('HomeHeader', () {
+    testWidgets('the brand as on the website: bold, a yellow X, no icon before it', (tester) async {
+      await pumpUi(tester, HomeHeader(unread: false, onBell: () {}));
+      expect(find.byIcon(TablerIcons.route), findsNothing);
+      final title = tester.widget<Text>(find.text('TeamXperience')).textSpan as TextSpan;
+      expect(title.style?.fontWeight, FontWeight.w700);
+      final x = (title.children ?? const []).whereType<TextSpan>().firstWhere((s) => s.text == 'X');
+      expect(x.style?.color, AppColors.light.brandX);
+    });
+
     testWidgets('the brand, and the bell with its dot only when there is unread news', (tester) async {
       var bells = 0;
       await pumpUi(tester, HomeHeader(unread: true, onBell: () => bells++));
-      expect(find.text('TeamXperience'), findsOneWidget);
+      expect(find.text('TeamXperience', findRichText: true), findsOneWidget);
       expect(find.byKey(const ValueKey('bell-dot')), findsOneWidget);
       expect(tester.getSize(find.byKey(const ValueKey('bell'))), const Size(44, 44));
       await tester.tap(find.byKey(const ValueKey('bell')));
