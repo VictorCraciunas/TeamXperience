@@ -11,6 +11,7 @@ export interface RegisterInput {
   size?: number;
   phone?: string;
   rulesAccepted?: boolean;
+  dataAccepted?: boolean;
   photoConsent?: boolean;
   crewId?: string;
 }
@@ -106,6 +107,7 @@ export async function registerTeam(
       members: players,
       teamMembers: players.map((p) => p.displayName).join(", "),
       rulesAcceptedAt: FieldValue.serverTimestamp(),
+      ...(data.dataAccepted === true ? {dataAcceptedAt: FieldValue.serverTimestamp()} : {}),
       photoConsent: data.photoConsent === true,
       missionProgress: 0,
       puzzleNumber: 0,

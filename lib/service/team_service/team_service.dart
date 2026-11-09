@@ -32,6 +32,7 @@ class TeamService {
     required int size,
     required String phone,
     required bool rulesAccepted,
+    required bool dataAccepted,
     required bool photoConsent,
     String? crewId,
   }) async {
@@ -41,6 +42,7 @@ class TeamService {
       size: size,
       phone: phone,
       rulesAccepted: rulesAccepted,
+      dataAccepted: dataAccepted,
       photoConsent: photoConsent,
       crewId: crewId,
     );

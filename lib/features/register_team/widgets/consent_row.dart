@@ -32,34 +32,44 @@ class ConsentRow extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: toggle,
-        child: Row(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 44),
+          child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DecoratedBox(
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: DecoratedBox(
               key: const ValueKey('consent-box'),
               decoration: BoxDecoration(
                 color: value ? colors.accent : colors.panel,
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: BorderRadius.circular(6),
                 border:
                     value ? null : Border.all(color: colors.border, width: 1.5),
               ),
               child: SizedBox(
-                width: 18,
-                height: 18,
+                width: 24,
+                height: 24,
                 child:
                     value
                         ? Icon(
                           TablerIcons.check,
-                          size: 12,
+                          size: 16,
                           color: colors.onNavy,
                         )
                         : null,
               ),
             ),
-            const SizedBox(width: 8),
+            ),
+            const SizedBox(width: 12),
             Expanded(
-              child: Text(label, style: AppTextStyles.pageBody(context)),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text(label, style: AppTextStyles.pageBody(context).copyWith(fontSize: 15)),
+              ),
             ),
           ],
+        ),
         ),
       ),
     );

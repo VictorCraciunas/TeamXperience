@@ -24,7 +24,7 @@ class ProfileSettingsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final style = TextStyle(fontSize: 14, height: 1.45, color: colors.text);
+    final style = TextStyle(fontSize: 15, height: 1.45, color: colors.text);
 
     Widget row(IconData icon, String label, VoidCallback onTap, {String? value, bool chevron = false, Color? tint}) {
       final note = value;
@@ -32,11 +32,11 @@ class ProfileSettingsCard extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
           child: Row(
             children: [
-              Icon(icon, size: 16, color: tint ?? colors.accent),
-              const SizedBox(width: 10),
+              Icon(icon, size: 20, color: tint ?? colors.accent),
+              const SizedBox(width: 12),
               Expanded(child: Text(label, style: style.copyWith(color: tint ?? colors.text))),
               if (note != null) Text(note, style: style.copyWith(color: colors.muted)),
               if (chevron) ...[

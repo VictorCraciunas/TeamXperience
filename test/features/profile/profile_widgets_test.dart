@@ -182,6 +182,17 @@ void main() {
   });
 
   group('ProfileSettingsCard', () {
+    testWidgets('each row is easy to tap', (tester) async {
+      await pumpUi(
+        tester,
+        ProfileSettingsCard(themeLabel: 'Luminos', notificationsLabel: 'Activate', onTheme: () {}, onNotifications: () {}, onLogout: () {}),
+      );
+      for (final label in ['Temă', 'Notificări', 'Deconectare']) {
+        final row = find.ancestor(of: find.text(label), matching: find.byType(GestureDetector)).first;
+        expect(tester.getSize(row).height, greaterThanOrEqualTo(52), reason: label);
+      }
+    });
+
     testWidgets('the three rows and what they say', (tester) async {
       final calls = <String>[];
       await pumpUi(

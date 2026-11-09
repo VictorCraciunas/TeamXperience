@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:teamxperience/features/register_team/widgets/consent_row.dart';
 import 'package:teamxperience/features/register_team/widgets/register_form.dart';
 import 'package:teamxperience/ui/components/buttons/navy_button.dart';
 import 'package:teamxperience/ui/components/feedback/field_status_line.dart';
@@ -18,8 +19,10 @@ Widget _form({
   int size = 4,
   ValueChanged<int>? onSize,
   bool rules = false,
+  bool data = false,
   bool photo = false,
   ValueChanged<bool>? onRules,
+  ValueChanged<bool>? onData,
   ValueChanged<bool>? onPhoto,
   VoidCallback? onSubmit,
   bool sending = false,
@@ -39,6 +42,8 @@ Widget _form({
       onSizeChanged: onSize ?? (_) {},
       rulesAccepted: rules,
       onRulesChanged: onRules ?? (_) {},
+      dataAccepted: data,
+      onDataChanged: onData ?? (_) {},
       photoConsent: photo,
       onPhotoChanged: onPhoto ?? (_) {},
       onSubmit: onSubmit,
@@ -48,10 +53,37 @@ Widget _form({
   );
 }
 
+const _rules = 'Sunt de acord cu Regulamentul Specific al activității.';
+const _data = 'Sunt de acord cu folosirea datelor cu caracter personal.';
+const _photo = 'Sunt de acord ca imaginile și video-urile care sunt realizate de organizatori sau de membrii echipei mele în timpul activității să îmi fie trimise după eveniment. În același timp ASOCIAȚIA VBE SIBIU poate folosi aceste resurse pentru promovare.';
+
 NavyButton _button(WidgetTester tester) =>
     tester.widget<NavyButton>(find.byType(NavyButton));
 
 void main() {
+  testWidgets('three consents, with the organiser\'s texts', (tester) async {
+    bool? data;
+    await pumpUi(tester, _form(onData: (v) => data = v));
+    for (final text in [_rules, _data, _photo]) {
+      expect(find.text(text), findsOneWidget, reason: text);
+    }
+    await tester.tap(find.text(_data));
+    expect(data, isTrue);
+  });
+
+  testWidgets('each consent is easy to tap, with room between them', (tester) async {
+    await pumpUi(tester, _form());
+    final rows = find.byType(ConsentRow);
+    expect(rows, findsNWidgets(3));
+    for (var i = 0; i < 3; i++) {
+      expect(tester.getSize(rows.at(i)).height, greaterThanOrEqualTo(44));
+    }
+    for (var i = 1; i < 3; i++) {
+      expect(tester.getRect(rows.at(i)).top - tester.getRect(rows.at(i - 1)).bottom, greaterThanOrEqualTo(8));
+    }
+    expect(tester.getSize(find.byKey(const ValueKey('consent-box')).first).width, greaterThanOrEqualTo(22));
+  });
+
   testWidgets('shows the copy of mockup 04', (tester) async {
     await pumpUi(
       tester,
@@ -66,8 +98,8 @@ void main() {
       find.text('Numele și emailul le luăm din contul tău.'),
       findsOneWidget,
     );
-    expect(find.text('Accept regulamentul'), findsOneWidget);
-    expect(find.text('Sunt de acord cu foto și video'), findsOneWidget);
+    expect(find.text(_rules), findsOneWidget);
+    expect(find.text(_photo), findsOneWidget);
     expect(find.text('Înscrie echipa'), findsOneWidget);
     expect(find.byIcon(TablerIcons.paw), findsOneWidget);
   });
@@ -115,6 +147,8 @@ void main() {
   testWidgets('the button calls onSubmit when it is given', (tester) async {
     var submitted = 0;
     await pumpUi(tester, _form(onSubmit: () => submitted++));
+    await tester.ensureVisible(find.text('Înscrie echipa'));
+    await tester.pump();
     await tester.tap(find.text('Înscrie echipa'));
     expect(submitted, 1);
   });
@@ -138,9 +172,11 @@ void main() {
       tester,
       _form(onRules: (v) => rules = v, onPhoto: (v) => photo = v, photo: true),
     );
-    await tester.tap(find.text('Accept regulamentul'));
+    await tester.tap(find.text(_rules));
     expect(rules, isTrue);
-    await tester.tap(find.text('Sunt de acord cu foto și video'));
+    await tester.ensureVisible(find.text(_photo));
+    await tester.pump();
+    await tester.tap(find.text(_photo));
     expect(photo, isFalse);
   });
 
@@ -186,7 +222,7 @@ void main() {
       tester.widget<TextField>(find.byType(TextField).at(1)).readOnly,
       isTrue,
     );
-    await tester.tap(find.text('Accept regulamentul'));
+    await tester.tap(find.text(_rules));
     expect(rules, isNull);
   });
 
@@ -225,8 +261,8 @@ void main() {
     await tester.enterText(find.byType(EditableText).first, 'Vulpile');
     expect(name.text, isEmpty);
     await tester.tap(find.text('5'));
-    await tester.tap(find.text('Accept regulamentul'));
-    await tester.tap(find.text('Sunt de acord cu foto și video'));
+    await tester.tap(find.text(_rules));
+    await tester.tap(find.text(_photo));
     expect((picked, rules, photo), (null, 0, 0));
   });
 }

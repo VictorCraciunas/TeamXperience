@@ -85,6 +85,7 @@ class RegisterTeamController extends ChangeNotifier {
 
   late int size;
   bool rulesAccepted = false;
+  bool dataAccepted = false;
   bool photoConsent = false;
   bool sending = false;
 
@@ -139,6 +140,7 @@ class RegisterTeamController extends ChangeNotifier {
       return 'Scrie telefonul căpitanului';
     }
     if (!rulesAccepted) return 'Acceptă regulamentul';
+    if (!dataAccepted) return 'Acceptă folosirea datelor personale';
     return null;
   }
 
@@ -161,6 +163,11 @@ class RegisterTeamController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setDataAccepted(bool value) {
+    dataAccepted = value;
+    notifyListeners();
+  }
+
   void setPhotoConsent(bool value) {
     photoConsent = value;
     notifyListeners();
@@ -179,6 +186,7 @@ class RegisterTeamController extends ChangeNotifier {
         size: size,
         phone: phoneController.text.trim(),
         rulesAccepted: rulesAccepted,
+        dataAccepted: dataAccepted,
         photoConsent: photoConsent,
         crewId: chosenCrew?.id,
       );
