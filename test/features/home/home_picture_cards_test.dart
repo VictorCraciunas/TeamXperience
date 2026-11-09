@@ -70,6 +70,29 @@ void main() {
   });
 
   group('EventsGridSection', () {
+    Event event(String id) => Event(eventId: id, name: 'Eveniment $id');
+
+    testWidgets('a lone card in the last row sits in the middle, as wide as the others', (tester) async {
+      await pumpUi(tester, EventsGridSection(title: 'Evenimente noi', events: [event('a'), event('b'), event('c')], onTap: (_) {}));
+      final cards = find.byType(EventGridCard);
+      final first = tester.getRect(cards.at(0));
+      final last = tester.getRect(cards.at(2));
+      expect(last.center.dx, closeTo(360 / 2, 0.5));
+      expect(last.width, closeTo(first.width, 0.5));
+    });
+
+    testWidgets('a single event is centred too', (tester) async {
+      await pumpUi(tester, EventsGridSection(title: 'Evenimente noi', events: [event('a')], onTap: (_) {}));
+      expect(tester.getRect(find.byType(EventGridCard)).center.dx, closeTo(360 / 2, 0.5));
+    });
+
+    testWidgets('a full row is unchanged: two cards side by side', (tester) async {
+      await pumpUi(tester, EventsGridSection(title: 'Evenimente noi', events: [event('a'), event('b')], onTap: (_) {}));
+      final cards = find.byType(EventGridCard);
+      expect(tester.getRect(cards.at(0)).top, tester.getRect(cards.at(1)).top);
+      expect(tester.getRect(cards.at(0)).center.dx, lessThan(180));
+    });
+
     testWidgets('a card per event, the link and a tap', (tester) async {
       Event? opened;
       var all = 0;
