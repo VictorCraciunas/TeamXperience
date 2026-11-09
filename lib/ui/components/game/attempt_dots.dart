@@ -45,7 +45,7 @@ class AttemptDots extends StatelessWidget {
         Flexible(
           child: Text(
             attemptsLeftLabel(left),
-            style: TextStyle(fontSize: 11, height: 1.45, color: palette.ink.withValues(alpha: .8)),
+            style: TextStyle(fontSize: 13, height: 1.45, color: palette.ink.withValues(alpha: .8)),
           ),
         ),
       ],

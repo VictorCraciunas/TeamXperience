@@ -19,7 +19,7 @@ class ThemeModeSheet extends StatelessWidget {
               'Aspect',
               style: TextStyle(
                 color: context.colors.text,
-                fontSize: 16,
+                fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
             ),

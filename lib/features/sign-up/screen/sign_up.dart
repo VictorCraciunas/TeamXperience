@@ -144,7 +144,7 @@ class RegisterScreen extends StatelessWidget {
                     Text(
                       "Ai deja un cont?",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 16,
                         color: context.colors.muted,
                       ),
                     ),
@@ -156,7 +156,7 @@ class RegisterScreen extends StatelessWidget {
                       child: Text(
                         "Loghează-te",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           color: context.colors.accent,
                           fontWeight: FontWeight.w600,
                         ),

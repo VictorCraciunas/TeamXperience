@@ -64,7 +64,7 @@ class PuzzleRow extends StatelessWidget {
                       'Puzzle ${index + 1} · ${info.label}',
                       style: TextStyle(
                         color: colors.text,
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -75,7 +75,7 @@ class PuzzleRow extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: done ? colors.success : colors.muted,
-                        fontSize: 12,
+                        fontSize: 14,
                       ),
                     ),
                   ],

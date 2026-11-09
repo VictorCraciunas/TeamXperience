@@ -63,7 +63,7 @@ class SectionCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: colors.text,
-                      fontSize: 15,
+                      fontSize: 17,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -82,7 +82,7 @@ class SectionCard extends StatelessWidget {
                         badgeText,
                         style: TextStyle(
                           color: colors.muted,
-                          fontSize: 11,
+                          fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -91,14 +91,18 @@ class SectionCard extends StatelessWidget {
                 ],
                 if (action != null) ...[
                   const Spacer(),
-                  InkWell(
-                    onTap: action,
-                    child: Text(
-                      '$actionLabel ›',
-                      style: TextStyle(
-                        color: colors.accent,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                  Flexible(
+                    child: InkWell(
+                      onTap: action,
+                      child: Text(
+                        '$actionLabel ›',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: colors.accent,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),

@@ -38,12 +38,12 @@ class BadgeSheet extends StatelessWidget {
                   Expanded(
                     child: Text(
                       'Insigne',
-                      style: TextStyle(fontSize: 17, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
+                      style: TextStyle(fontSize: 19, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
                     ),
                   ),
                   Text(
                     '${earnedCount(earned)} din ${badgeCatalog.length}',
-                    style: TextStyle(fontSize: 12, height: 1.45, color: colors.muted),
+                    style: TextStyle(fontSize: 14, height: 1.45, color: colors.muted),
                   ),
                 ],
               ),
@@ -83,8 +83,8 @@ class BadgeSheet extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(badge.title, style: TextStyle(fontSize: 13, height: 1.45, fontWeight: FontWeight.w500, color: colors.text)),
-                if (!has) Text(badge.rule, style: TextStyle(fontSize: 11, height: 1.45, color: colors.muted)),
+                Text(badge.title, style: TextStyle(fontSize: 15, height: 1.45, fontWeight: FontWeight.w500, color: colors.text)),
+                if (!has) Text(badge.rule, style: TextStyle(fontSize: 13, height: 1.45, color: colors.muted)),
               ],
             ),
           ),

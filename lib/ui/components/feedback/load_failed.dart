@@ -38,7 +38,7 @@ class LoadFailed extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
                     child: Text(
                       'Încearcă din nou',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: colors.accent),
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colors.accent),
                     ),
                   ),
                 ),

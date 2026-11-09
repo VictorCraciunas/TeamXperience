@@ -43,7 +43,7 @@ class FieldStatusLine extends StatelessWidget {
           ),
           const SizedBox(width: 4),
         ],
-        Expanded(child: Text(text, style: TextStyle(fontSize: 11, color: color, height: 1.45))),
+        Expanded(child: Text(text, style: TextStyle(fontSize: 13, color: color, height: 1.45))),
       ],
     );
   }

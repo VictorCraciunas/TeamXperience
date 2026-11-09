@@ -61,10 +61,10 @@ class MemoryCard extends StatelessWidget {
                     memory.eventName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 12, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
+                    style: TextStyle(fontSize: 14, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
                   ),
                   if (line.isNotEmpty)
-                    Text(line, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, height: 1.45, color: colors.muted)),
+                    Text(line, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, height: 1.45, color: colors.muted)),
                 ],
               ),
             ),

@@ -61,7 +61,7 @@ class LiveGameCard extends StatelessWidget {
                             liveClock(left),
                             style: TextStyle(
                               fontFamily: 'Monospace',
-                              fontSize: 15,
+                              fontSize: 17,
                               fontWeight: FontWeight.w500,
                               height: 1.45,
                               color: onNavy,
@@ -70,7 +70,7 @@ class LiveGameCard extends StatelessWidget {
                           const SizedBox(width: 6),
                           Text(
                             'rămase',
-                            style: TextStyle(fontSize: 11, height: 1.45, color: onNavy.withValues(alpha: .7)),
+                            style: TextStyle(fontSize: 13, height: 1.45, color: onNavy.withValues(alpha: .7)),
                           ),
                         ],
                       ),
@@ -82,11 +82,11 @@ class LiveGameCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               event.name ?? '',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, height: 1.45, color: onNavy),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, height: 1.45, color: onNavy),
             ),
             Text(
               missionLine(team, event.nrMissions),
-              style: TextStyle(fontSize: 11, height: 1.45, color: onNavy.withValues(alpha: .8)),
+              style: TextStyle(fontSize: 13, height: 1.45, color: onNavy.withValues(alpha: .8)),
             ),
             MissionProgressLine(total: event.nrMissions, done: team.missionProgress),
             const SizedBox(height: 12),

@@ -75,7 +75,7 @@ class NavButton extends StatelessWidget {
                 maxLines: 1,
                 style: TextStyle(
                   color: color,
-                  fontSize: 11,
+                  fontSize: 12,
                   height: 1.45,
                   fontWeight: active ? FontWeight.w500 : FontWeight.w400,
                 ),

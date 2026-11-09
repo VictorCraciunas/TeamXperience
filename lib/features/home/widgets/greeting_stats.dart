@@ -33,7 +33,7 @@ class GreetingStats extends StatelessWidget {
             'Salut, $firstName',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
           ),
           const SizedBox(height: 8),
           IntrinsicHeight(

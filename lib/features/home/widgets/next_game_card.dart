@@ -35,7 +35,7 @@ class NextGameCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final start = event.dateEvent;
-    final soft = TextStyle(fontSize: 11, height: 1.45, color: colors.onNavy.withValues(alpha: .8));
+    final soft = TextStyle(fontSize: 13, height: 1.45, color: colors.onNavy.withValues(alpha: .8));
     final current = team;
     final facts = cardRouteFacts(event);
 
@@ -61,7 +61,7 @@ class NextGameCard extends StatelessWidget {
               children: [
                 Text(
                   event.name ?? '',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, height: 1.45, color: colors.onNavy),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, height: 1.45, color: colors.onNavy),
                 ),
                 if (start != null) Text(heroDateLine(start, event.punctDeStart), style: soft),
                 const SizedBox(height: 10),

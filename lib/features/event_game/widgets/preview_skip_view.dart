@@ -32,7 +32,7 @@ class PreviewSkipView extends StatelessWidget {
                   child: Text(
                     text,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, height: 1.45, color: palette.ink),
+                    style: TextStyle(fontSize: 14, height: 1.45, color: palette.ink),
                   ),
                 ),
               ],

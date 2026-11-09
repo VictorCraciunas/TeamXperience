@@ -39,13 +39,13 @@ class PuzzleTypeTile extends StatelessWidget {
                     children: [
                       Text(
                         'Tip puzzle',
-                        style: TextStyle(color: colors.muted, fontSize: 11),
+                        style: TextStyle(color: colors.muted, fontSize: 13),
                       ),
                       Text(
                         info.label,
                         style: TextStyle(
                           color: colors.text,
-                          fontSize: 14,
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

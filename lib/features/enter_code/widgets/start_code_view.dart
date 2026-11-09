@@ -101,7 +101,7 @@ class StartCodeView extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 13,
                               fontWeight: FontWeight.w500,
                               height: 1.45,
                               color: colors.onTick,
@@ -127,7 +127,7 @@ class StartCodeView extends StatelessWidget {
                             event.name ?? '',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 13,
                               height: 1.45,
                               color: onNavy.withValues(alpha: .75),
                             ),
@@ -137,7 +137,7 @@ class StartCodeView extends StatelessWidget {
                             'Introdu codul de start',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 20,
                               fontWeight: FontWeight.w500,
                               height: 1.45,
                               color: onNavy,
@@ -148,7 +148,7 @@ class StartCodeView extends StatelessWidget {
                             codeHint(event),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 14,
                               height: 1.45,
                               color: onNavy.withValues(alpha: .75),
                             ),
@@ -181,7 +181,7 @@ class StartCodeView extends StatelessWidget {
                         'Nu contează literele mari sau mici.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 13,
                           height: 1.45,
                           color: onNavy.withValues(alpha: .7),
                         ),

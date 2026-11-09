@@ -25,7 +25,7 @@ class ForgotPasswordScreen extends StatelessWidget {
             children: [
               Text(
                 'Introdu email-ul și noi îți vom trimite un link pentru resetarea parolei',
-                style: TextStyle(fontSize: 16, color: context.colors.muted),
+                style: TextStyle(fontSize: 18, color: context.colors.muted),
               ),
               const SizedBox(height: 20),
               AppTextField(

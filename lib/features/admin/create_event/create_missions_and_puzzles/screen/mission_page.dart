@@ -113,7 +113,7 @@ class _MissionPageState extends State<MissionPage> {
                   child: Text(
                     'Misiunea nu are încă puzzle-uri.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: context.colors.muted, fontSize: 13),
+                    style: TextStyle(color: context.colors.muted, fontSize: 15),
                   ),
                 ),
               AppButton(

@@ -13,7 +13,7 @@ class StartButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final style = TextStyle(fontSize: 12, fontWeight: FontWeight.w500, height: 1.45, color: colors.onTick);
+    final style = TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.45, color: colors.onTick);
     return Material(
       color: colors.tickOnNavy,
       borderRadius: BorderRadius.circular(12),

@@ -191,10 +191,10 @@ class _SearchField extends StatelessWidget {
                         focusNode: focusNode,
                         decoration: InputDecoration(
                           hintText: hint,
-                          hintStyle: TextStyle(fontSize: 14, color: colors.muted),
+                          hintStyle: TextStyle(fontSize: 16, color: colors.muted),
                           border: InputBorder.none,
                         ),
-                        style: TextStyle(fontSize: 14, color: colors.text),
+                        style: TextStyle(fontSize: 16, color: colors.text),
                       ),
                     ),
                   ),

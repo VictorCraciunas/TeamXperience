@@ -26,7 +26,7 @@ class StartChatLink extends StatelessWidget {
               child: Text(
                 'Nu ai codul? Scrie-i organizatorului',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 11, height: 1.45, color: color),
+                style: TextStyle(fontSize: 13, height: 1.45, color: color),
               ),
             ),
           ],

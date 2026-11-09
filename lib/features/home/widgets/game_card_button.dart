@@ -25,7 +25,7 @@ class GameCardButton extends StatelessWidget {
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, height: 1.45, color: colors.onTick),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.45, color: colors.onTick),
           ),
         ),
       ),

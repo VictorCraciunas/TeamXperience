@@ -40,7 +40,7 @@ class EventsList extends StatelessWidget {
             Text(
               'Niciun eveniment nu se potrivește.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 13, height: 1.45, color: context.colors.muted),
+              style: TextStyle(fontSize: 15, height: 1.45, color: context.colors.muted),
             ),
             const SizedBox(height: 6),
             GestureDetector(
@@ -48,7 +48,7 @@ class EventsList extends StatelessWidget {
               behavior: HitTestBehavior.opaque,
               child: Text(
                 'Arată toate',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, height: 1.45, color: context.colors.accent),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.45, color: context.colors.accent),
               ),
             ),
           ],

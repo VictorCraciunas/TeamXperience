@@ -14,7 +14,7 @@ class DifficultyDots extends StatelessWidget {
     final filled = level.clamp(0, max);
     return Text(
       '●' * filled + '○' * (max - filled),
-      style: TextStyle(fontSize: 13, letterSpacing: 2, color: context.colors.accent, height: 1.45),
+      style: TextStyle(fontSize: 15, letterSpacing: 2, color: context.colors.accent, height: 1.45),
     );
   }
 }

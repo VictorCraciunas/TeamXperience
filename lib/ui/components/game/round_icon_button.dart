@@ -23,7 +23,7 @@ class RoundIconButton extends StatelessWidget {
       child: DecoratedBox(
         key: const ValueKey('round-icon-button'),
         decoration: BoxDecoration(color: palette.ink.withValues(alpha: .1), shape: BoxShape.circle),
-        child: SizedBox.square(dimension: 32, child: Center(child: Icon(icon, size: 16, color: palette.ink))),
+        child: SizedBox.square(dimension: 40, child: Center(child: Icon(icon, size: 18, color: palette.ink))),
       ),
     );
   }

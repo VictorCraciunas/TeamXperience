@@ -40,7 +40,7 @@ class RatingStars extends StatelessWidget {
         if (given > 0)
           Padding(
             padding: const EdgeInsets.only(top: 4),
-            child: Text('Mulțumim!', style: TextStyle(fontSize: 11, height: 1.45, color: palette.muted)),
+            child: Text('Mulțumim!', style: TextStyle(fontSize: 13, height: 1.45, color: palette.muted)),
           ),
       ],
     );

@@ -92,7 +92,7 @@ class BoardView extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: Text(
                       filter == BoardFilter.all ? 'Nu e nicio echipă înscrisă.' : 'Nicio echipă aici.',
-                      style: TextStyle(fontSize: 12, height: 1.45, color: colors.muted),
+                      style: TextStyle(fontSize: 14, height: 1.45, color: colors.muted),
                     ),
                   )
                 : OutlineCard(

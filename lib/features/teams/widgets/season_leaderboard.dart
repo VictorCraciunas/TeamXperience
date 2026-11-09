@@ -30,7 +30,7 @@ class SeasonLeaderboard extends StatelessWidget {
           child: standings.isEmpty
               ? Text(
                   'Clasamentul începe după primul joc.',
-                  style: TextStyle(fontSize: 12, height: 1.45, color: context.colors.muted),
+                  style: TextStyle(fontSize: 14, height: 1.45, color: context.colors.muted),
                 )
               : LeaderboardCard(rows: seasonRows(standings, myCrewIds)),
         ),

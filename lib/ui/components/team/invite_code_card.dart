@@ -54,7 +54,7 @@ class InviteCodeCard extends StatelessWidget {
                 text,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 11,
+                  fontSize: 13,
                   color: colors.onNavy.withValues(alpha: .8),
                   height: 1.45,
                 ),

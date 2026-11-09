@@ -31,13 +31,13 @@ const _rows = [
 
 void main() {
   group('CountdownBoxes', () {
-    testWidgets('days, hours and minutes, unpadded, 17 w500', (tester) async {
+    testWidgets('days, hours and minutes, unpadded, 19 w500', (tester) async {
       await pumpUi(tester, _onNavy(const CountdownBoxes(left: Duration(days: 3, hours: 14, minutes: 22))));
       for (final t in ['3', '14', '22', 'zile', 'ore', 'min']) {
         expect(find.text(t), findsOneWidget);
       }
       final style = tester.widget<Text>(find.text('14')).style;
-      expect((style?.fontSize, style?.fontWeight), (17, FontWeight.w500));
+      expect((style?.fontSize, style?.fontWeight), (19, FontWeight.w500));
     });
 
     testWidgets('a past time shows zeros', (tester) async {

@@ -32,12 +32,12 @@ class CountdownBox extends StatelessWidget {
               child: Text(
                 '$value',
                 key: ValueKey(value),
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500, height: 1.45, color: colors.onNavy),
+                style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500, height: 1.45, color: colors.onNavy),
               ),
             ),
             Text(
               label,
-              style: TextStyle(fontSize: 11, height: 1.45, color: colors.onNavy.withValues(alpha: .8)),
+              style: TextStyle(fontSize: 13, height: 1.45, color: colors.onNavy.withValues(alpha: .8)),
             ),
           ],
         ),

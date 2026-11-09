@@ -76,19 +76,19 @@ class NewsPostCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: colors.accent,
-                              fontSize: 12,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
                         Text(
                           '  ·  ',
-                          style: TextStyle(color: colors.muted, fontSize: 12),
+                          style: TextStyle(color: colors.muted, fontSize: 14),
                         ),
                         Text(
                           dateLabel,
                           maxLines: 1,
-                          style: TextStyle(color: colors.muted, fontSize: 12),
+                          style: TextStyle(color: colors.muted, fontSize: 14),
                         ),
                       ],
                     ),
@@ -158,7 +158,7 @@ class NewsPostCard extends StatelessWidget {
                             label,
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 11,
+                              fontSize: 13,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -183,7 +183,7 @@ class NewsPostCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: colors.text,
-                            fontSize: 16,
+                            fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -194,7 +194,7 @@ class NewsPostCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: colors.muted,
-                            fontSize: 13,
+                            fontSize: 15,
                             height: 1.35,
                           ),
                         ),

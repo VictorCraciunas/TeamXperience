@@ -65,7 +65,7 @@ class Register extends StatelessWidget {
                     Text(
                       "Ai deja un cont?",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 16,
                         color: context.colors.muted,
                       ),
                     ),
@@ -77,7 +77,7 @@ class Register extends StatelessWidget {
                       child: Text(
                         "Logheaza-te",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           color: context.colors.accent,
                           fontWeight: FontWeight.w600,
                         ),

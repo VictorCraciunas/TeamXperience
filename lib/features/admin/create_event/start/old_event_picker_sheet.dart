@@ -49,14 +49,14 @@ class OldEventPickerSheet extends StatelessWidget {
               'Alege un eveniment',
               style: TextStyle(
                 color: colors.text,
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 4),
             Text(
               'Se copiază misiunile și puzzle-urile, fără coduri și răspunsuri.',
-              style: TextStyle(color: colors.muted, fontSize: 12),
+              style: TextStyle(color: colors.muted, fontSize: 14),
             ),
             const SizedBox(height: 12),
             for (final event in sorted) ...[

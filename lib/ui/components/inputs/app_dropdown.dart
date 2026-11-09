@@ -49,7 +49,7 @@ class AppDropdown<T> extends StatelessWidget {
         if (title != null) ...[
           Text(
             title,
-            style: TextStyle(color: colors.text, fontSize: 14, fontWeight: FontWeight.w600),
+            style: TextStyle(color: colors.text, fontSize: 16, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
         ],
@@ -62,8 +62,8 @@ class AppDropdown<T> extends StatelessWidget {
           icon: Icon(Icons.keyboard_arrow_down, color: colors.text),
           dropdownColor: colors.panel,
           borderRadius: BorderRadius.circular(AppRadius.card),
-          style: TextStyle(color: colors.text, fontSize: 14),
-          hint: Text(hint, style: TextStyle(color: colors.muted, fontSize: 14)),
+          style: TextStyle(color: colors.text, fontSize: 16),
+          hint: Text(hint, style: TextStyle(color: colors.muted, fontSize: 16)),
           items: [
             for (final item in items)
               DropdownMenuItem<T>(
@@ -75,7 +75,7 @@ class AppDropdown<T> extends StatelessWidget {
             filled: true,
             fillColor: colors.panel,
             prefixIcon: leading,
-            errorStyle: TextStyle(color: colors.live, fontSize: 11),
+            errorStyle: TextStyle(color: colors.live, fontSize: 13),
             contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             border: _border(colors.border, 1.5),
             enabledBorder: _border(colors.border, 1.5),

@@ -146,7 +146,7 @@ class _PuzzleRulesFormState extends State<PuzzleRulesForm> {
         if (type == PuzzleType.imageToUpload) ...[
           Text(
             'Echipa trimite o fotografie, iar tu o aprobi din conversație.',
-            style: TextStyle(color: context.colors.muted, fontSize: 13),
+            style: TextStyle(color: context.colors.muted, fontSize: 15),
           ),
           gap,
         ],

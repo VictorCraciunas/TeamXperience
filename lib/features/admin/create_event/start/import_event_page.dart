@@ -64,7 +64,7 @@ class _ImportEventPageState extends State<ImportEventPage> {
                   children: [
                     Text(
                       'Lipește JSON-ul evenimentului. Se salvează ca ciornă, pe care o verifici și o publici din aplicație.',
-                      style: TextStyle(color: context.colors.muted, fontSize: 13),
+                      style: TextStyle(color: context.colors.muted, fontSize: 15),
                     ),
                     const SizedBox(height: 16),
                     AppButton(

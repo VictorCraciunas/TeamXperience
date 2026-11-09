@@ -46,7 +46,7 @@ class _StorySectionState extends State<StorySection> {
                   child: Text(
                     _open ? 'Mai puțin' : 'Citește tot',
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: 13,
                       height: 1.45,
                       fontWeight: FontWeight.w500,
                       color: context.colors.accent,

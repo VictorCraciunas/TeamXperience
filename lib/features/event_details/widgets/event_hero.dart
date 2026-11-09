@@ -94,7 +94,7 @@ class EventHero extends StatelessWidget {
                   place,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 11, height: 1.45, color: colors.onNavy.withValues(alpha: 0.85)),
+                  style: TextStyle(fontSize: 13, height: 1.45, color: colors.onNavy.withValues(alpha: 0.85)),
                 ),
               ],
             ),

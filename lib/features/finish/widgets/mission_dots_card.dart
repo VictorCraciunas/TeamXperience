@@ -16,7 +16,7 @@ class MissionDotsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = context.eventPalette;
     final quick = fastest;
-    final small = TextStyle(fontSize: 11, height: 1.45, color: palette.ink.withValues(alpha: .8));
+    final small = TextStyle(fontSize: 13, height: 1.45, color: palette.ink.withValues(alpha: .8));
 
     Widget dot(int i) {
       final done = i < solved;

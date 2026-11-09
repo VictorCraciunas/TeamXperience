@@ -47,7 +47,7 @@ class AlbumStrip extends StatelessWidget {
               child: Center(
                 child: Text(
                   '+$extra',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: palette.onAccent),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: palette.onAccent),
                 ),
               ),
             ),

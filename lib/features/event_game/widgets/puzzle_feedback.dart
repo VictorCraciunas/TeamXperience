@@ -31,7 +31,7 @@ class PuzzleFeedback extends StatelessWidget {
               child: Text(
                 lockLine(lock),
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, height: 1.45, fontWeight: FontWeight.w500, color: palette.muted),
+                style: TextStyle(fontSize: 14, height: 1.45, fontWeight: FontWeight.w500, color: palette.muted),
               ),
             ),
           ],
@@ -61,7 +61,7 @@ class PuzzleFeedback extends StatelessWidget {
                   child: Text(
                     line,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, height: 1.45, fontWeight: FontWeight.w500, color: palette.danger),
+                    style: TextStyle(fontSize: 14, height: 1.45, fontWeight: FontWeight.w500, color: palette.danger),
                   ),
                 ),
               ],

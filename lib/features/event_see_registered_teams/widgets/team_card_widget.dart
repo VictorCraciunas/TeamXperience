@@ -40,7 +40,7 @@ class TeamCardWidget extends StatelessWidget {
                   style: TextStyle(
                     color: context.colors.onTick,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 18,
                   ),
                 ),
               ),
@@ -49,7 +49,7 @@ class TeamCardWidget extends StatelessWidget {
                 child: Text(
                   team.name,
                   style: TextStyle(
-                    fontSize: 17,
+                    fontSize: 19,
                     fontWeight: FontWeight.w600,
                     color: context.colors.text,
                   ),
@@ -98,7 +98,7 @@ class TeamCardWidget extends StatelessWidget {
             alignment: Alignment.bottomRight,
             child: Text(
               "${team.userIds.length} din ${team.numberOfMembers}",
-              style: TextStyle(fontSize: 12, color: context.colors.muted),
+              style: TextStyle(fontSize: 14, color: context.colors.muted),
             ),
           ),
         ],

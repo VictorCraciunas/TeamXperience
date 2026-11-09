@@ -31,7 +31,7 @@ class PuzzleTypeSheet extends StatelessWidget {
               'Ce fel de puzzle?',
               style: TextStyle(
                 color: colors.text,
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -81,13 +81,13 @@ class _Choice extends StatelessWidget {
                       info.label,
                       style: TextStyle(
                         color: colors.text,
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
                       info.description,
-                      style: TextStyle(color: colors.muted, fontSize: 12),
+                      style: TextStyle(color: colors.muted, fontSize: 14),
                     ),
                   ],
                 ),

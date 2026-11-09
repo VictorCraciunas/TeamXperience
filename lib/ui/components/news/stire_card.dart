@@ -110,7 +110,7 @@ class StireCard extends StatelessWidget {
                           (stire.type?.displayName ?? "PUBLICA").toUpperCase(),
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 12,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -133,7 +133,7 @@ class StireCard extends StatelessWidget {
                     '${stire.title ?? 'Untitled'}',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 15,
+                      fontSize: 17,
                       fontWeight: FontWeight.w600,
                       height: 1.2,
                     ),
@@ -160,7 +160,7 @@ class StireCard extends StatelessWidget {
                         stire.category?.name ?? 'Necategorizat',
                         style: const TextStyle(
                           color: Colors.white70,
-                          fontSize: 10,
+                          fontSize: 12,
                         ),
                       ),
                       const SizedBox(width: 4),
@@ -174,7 +174,7 @@ class StireCard extends StatelessWidget {
                         CalendarHelper.formatDate(stire.publicationDate),
                         style: const TextStyle(
                           color: Colors.white70,
-                          fontSize: 10,
+                          fontSize: 12,
                         ),
                       ),
                     ],

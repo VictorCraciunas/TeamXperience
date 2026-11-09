@@ -61,8 +61,8 @@ class DistanceCompass extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(distance, style: TextStyle(fontSize: 22, height: 1.1, fontWeight: FontWeight.w500, color: palette.ink)),
-                  Text(line, style: TextStyle(fontSize: 11, height: 1.45, color: palette.ink.withValues(alpha: .8))),
+                  Text(distance, style: TextStyle(fontSize: 24, height: 1.1, fontWeight: FontWeight.w500, color: palette.ink)),
+                  Text(line, style: TextStyle(fontSize: 13, height: 1.45, color: palette.ink.withValues(alpha: .8))),
                 ],
               ),
             ),
@@ -71,7 +71,7 @@ class DistanceCompass extends StatelessWidget {
               Text(
                 word,
                 style: TextStyle(
-                  fontSize: 11,
+                  fontSize: 13,
                   height: 1.45,
                   fontWeight: FontWeight.w500,
                   color: closer ? context.colors.success : context.colors.danger,

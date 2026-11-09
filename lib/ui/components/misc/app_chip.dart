@@ -42,20 +42,19 @@ class AppChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.pill),
       ),
       child: Padding(
-        // Borders are drawn inside the box, so 1 more than the mockup's 3 / 9.
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (chipIcon != null) ...[
-              Icon(chipIcon, size: 13, color: iconColor),
+              Icon(chipIcon, size: 16, color: iconColor),
               const SizedBox(width: 4),
             ],
             if (leadText != null) ...[
-              Text(leadText, style: TextStyle(fontSize: 11, color: iconColor, height: 1.45)),
+              Text(leadText, style: TextStyle(fontSize: 13, color: iconColor, height: 1.45)),
               const SizedBox(width: 4),
             ],
-            Text(label, style: TextStyle(fontSize: 11, color: labelColor, height: 1.45)),
+            Flexible(child: Text(label, style: TextStyle(fontSize: 13, color: labelColor, height: 1.45))),
           ],
         ),
       ),
@@ -67,7 +66,8 @@ class AppChip extends StatelessWidget {
       onTap: tap,
       behavior: HitTestBehavior.opaque,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 32),
+        // A thumb needs 44; the pill itself stays slimmer.
+        constraints: const BoxConstraints(minHeight: 44),
         child: Align(widthFactor: 1, heightFactor: 1, child: chip),
       ),
     );

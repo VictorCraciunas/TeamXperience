@@ -23,7 +23,7 @@ class TeamMembersRow extends StatelessWidget {
           title,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            fontSize: 14,
+            fontSize: 16,
             color: colors.text,
           ),
         ),
@@ -35,7 +35,7 @@ class TeamMembersRow extends StatelessWidget {
             names,
             style: TextStyle(
               fontWeight: FontWeight.w300,
-              fontSize: 13,
+              fontSize: 15,
               color: colors.text,
             ),
           ),

@@ -26,7 +26,7 @@ class HowItWorksSheet extends StatelessWidget {
           children: [
             Text(
               'Cum se joacă',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, height: 1.45, color: context.colors.text),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, height: 1.45, color: context.colors.text),
             ),
             const SizedBox(height: 14),
             const HowItWorksStep(number: 1, title: 'Înscrie-ți echipa', line: 'Din pagina jocului'),

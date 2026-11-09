@@ -19,7 +19,7 @@ class CheckpointLine extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final count = labels.length;
-    final label = TextStyle(fontSize: 11, height: 1.45, color: colors.onNavy.withValues(alpha: .85));
+    final label = TextStyle(fontSize: 13, height: 1.45, color: colors.onNavy.withValues(alpha: .85));
 
     Widget dot(int i) => i < done
         ? TrailDot(

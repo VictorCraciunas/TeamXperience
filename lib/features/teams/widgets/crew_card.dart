@@ -82,7 +82,7 @@ class CrewCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: AppTextStyles.trailHeading(
                             context,
-                          ).copyWith(fontSize: 15, color: colors.onNavy),
+                          ).copyWith(fontSize: 17, color: colors.onNavy),
                         ),
                         Text(
                           _subtitle,

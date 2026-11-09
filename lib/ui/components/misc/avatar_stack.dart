@@ -143,7 +143,7 @@ class _Circle extends StatelessWidget {
           label,
           maxLines: 1,
           style: TextStyle(
-            fontSize: 11,
+            fontSize: 13,
             fontWeight: FontWeight.w500,
             color: textColor,
             height: 1.2,

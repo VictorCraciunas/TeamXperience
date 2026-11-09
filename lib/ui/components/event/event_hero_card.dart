@@ -92,7 +92,7 @@ class EventHeroCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 19,
+                  fontSize: 21,
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.2,
                 ),
@@ -105,7 +105,7 @@ class EventHeroCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Color(0xFFD3DAE6),
-                    fontSize: 12,
+                    fontSize: 14,
                   ),
                 ),
               ],
@@ -169,7 +169,7 @@ class _TimeChip extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -273,7 +273,7 @@ class _PrimaryButton extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: foreground,
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
                     ),

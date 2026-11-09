@@ -91,7 +91,7 @@ class _PeriodPickerState extends State<PeriodPicker> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: colors.text,
-                      fontSize: 15,
+                      fontSize: 17,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -158,7 +158,7 @@ class _MonthGrid extends StatelessWidget {
               label,
               style: TextStyle(
                 color: colors.muted,
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -220,7 +220,7 @@ class _Day extends StatelessWidget {
               '${date.day}',
               style: TextStyle(
                 color: isEdge ? colors.onTick : colors.text,
-                fontSize: 14,
+                fontSize: 16,
                 fontWeight: isEdge ? FontWeight.w700 : FontWeight.w400,
               ),
             ),

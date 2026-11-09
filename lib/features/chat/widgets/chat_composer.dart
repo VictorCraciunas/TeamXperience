@@ -45,13 +45,13 @@ class ChatComposer extends StatelessWidget {
                   minLines: 1,
                   textCapitalization: TextCapitalization.sentences,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     color: context.colors.text,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Trimite un mesaj…',
                     hintStyle: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       color: context.colors.muted,
                     ),
                     border: InputBorder.none,

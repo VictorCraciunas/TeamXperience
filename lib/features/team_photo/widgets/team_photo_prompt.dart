@@ -73,9 +73,9 @@ class TeamPhotoPrompt extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, height: 1.45, color: textColor)),
-                  if (note != null && url == null) Text(note, style: TextStyle(fontSize: 11, height: 1.45, color: softColor)),
-                  if (failure != null) Text(failure, style: TextStyle(fontSize: 11, height: 1.45, color: errorColor)),
+                  Text(title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.45, color: textColor)),
+                  if (note != null && url == null) Text(note, style: TextStyle(fontSize: 13, height: 1.45, color: softColor)),
+                  if (failure != null) Text(failure, style: TextStyle(fontSize: 13, height: 1.45, color: errorColor)),
                 ],
               ),
             ),
@@ -100,7 +100,7 @@ class TeamPhotoPrompt extends StatelessWidget {
                               )
                             : Text(
                                 url == null ? 'Fă poza' : 'Refă poza',
-                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, height: 1.45, color: buttonText),
+                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.45, color: buttonText),
                               ),
                       ),
                     ),

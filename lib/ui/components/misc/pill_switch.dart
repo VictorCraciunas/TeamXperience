@@ -34,19 +34,19 @@ class PillSwitch extends StatelessWidget {
                         ? BoxDecoration(color: colors.panel, border: Border.all(color: colors.border), borderRadius: pill)
                         : BoxDecoration(border: Border.all(color: colors.inset), borderRadius: pill),
                     child: Padding(
-                      padding: const EdgeInsets.all(5),
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 9),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(options[i].$1, size: 13, color: i == selected ? colors.accent : colors.muted),
-                          const SizedBox(width: 4),
+                          Icon(options[i].$1, size: 16, color: i == selected ? colors.accent : colors.muted),
+                          const SizedBox(width: 6),
                           Flexible(
                             child: Text(
                               options[i].$2,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 14,
                                 height: 1.45,
                                 fontWeight: i == selected ? FontWeight.w500 : FontWeight.w400,
                                 color: i == selected ? colors.accent : colors.muted,

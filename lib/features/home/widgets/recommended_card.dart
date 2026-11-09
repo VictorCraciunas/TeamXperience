@@ -49,12 +49,12 @@ class RecommendedCard extends StatelessWidget {
                 children: [
                   Text(
                     event.name ?? '',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
                   ),
                   if (start != null)
                     Text(
                       heroDateLine(start, event.punctDeStart),
-                      style: TextStyle(fontSize: 11, height: 1.45, color: colors.muted),
+                      style: TextStyle(fontSize: 13, height: 1.45, color: colors.muted),
                     ),
                   const SizedBox(height: 12),
                   NavyButton(label: 'Înscrie-ți echipa', onPressed: onRegister),

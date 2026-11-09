@@ -46,7 +46,7 @@ class PhotoCard extends StatelessWidget {
             children: [
               Icon(TablerIcons.camera, size: 30, color: palette.accent),
               const SizedBox(height: 6),
-              Text('Atinge ca să faci poza', style: TextStyle(fontSize: 12, height: 1.45, color: palette.muted)),
+              Text('Atinge ca să faci poza', style: TextStyle(fontSize: 14, height: 1.45, color: palette.muted)),
             ],
           ),
         ),
@@ -100,7 +100,7 @@ class PhotoCard extends StatelessWidget {
                                   const SizedBox(width: 3),
                                   Text(
                                     'Refă',
-                                    style: TextStyle(fontSize: 11, height: 1.45, fontWeight: FontWeight.w500, color: palette.ink),
+                                    style: TextStyle(fontSize: 13, height: 1.45, fontWeight: FontWeight.w500, color: palette.ink),
                                   ),
                                 ],
                               ),

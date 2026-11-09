@@ -46,7 +46,7 @@ class AttentionSection extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
                       '${items.length}',
-                      style: TextStyle(fontSize: 11, height: 1.45, fontWeight: FontWeight.w500, color: colors.onNavy),
+                      style: TextStyle(fontSize: 13, height: 1.45, fontWeight: FontWeight.w500, color: colors.onNavy),
                     ),
                   ),
                 ),
@@ -54,7 +54,7 @@ class AttentionSection extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
           child: items.isEmpty
-              ? Text('Nimic de rezolvat acum.', style: TextStyle(fontSize: 12, height: 1.45, color: colors.muted))
+              ? Text('Nimic de rezolvat acum.', style: TextStyle(fontSize: 14, height: 1.45, color: colors.muted))
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [

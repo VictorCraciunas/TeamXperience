@@ -100,7 +100,7 @@ class LiveRoomView extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
                     child: Text(
                       'Nu am putut citi echipele. Ce vezi poate fi vechi.',
-                      style: TextStyle(fontSize: 11, height: 1.45, color: colors.danger),
+                      style: TextStyle(fontSize: 13, height: 1.45, color: colors.danger),
                     ),
                   ),
                 if (loading)

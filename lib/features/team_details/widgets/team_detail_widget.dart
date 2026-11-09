@@ -25,7 +25,7 @@ class TeamDetailWidget extends StatelessWidget {
           text1,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            fontSize: 14,
+            fontSize: 16,
             color: context.colors.text,
           ),
         ),
@@ -35,7 +35,7 @@ class TeamDetailWidget extends StatelessWidget {
             controller: editingController,
             style: TextStyle(
               fontWeight: FontWeight.w300,
-              fontSize: 13,
+              fontSize: 15,
               color: context.colors.text,
             ),
             decoration: InputDecoration(
@@ -56,7 +56,7 @@ class TeamDetailWidget extends StatelessWidget {
             text2,
             style: TextStyle(
               fontWeight: FontWeight.w300,
-              fontSize: 13,
+              fontSize: 15,
               color: context.colors.text,
             ),
           ),

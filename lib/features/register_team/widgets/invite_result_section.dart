@@ -54,7 +54,7 @@ class InviteResultSection extends StatelessWidget {
                 Flexible(
                   child: Text(
                     '${initials.length} din $size în echipă',
-                    style: TextStyle(fontSize: 11, height: 1.45, color: colors.onNavy.withValues(alpha: .8)),
+                    style: TextStyle(fontSize: 13, height: 1.45, color: colors.onNavy.withValues(alpha: .8)),
                   ),
                 ),
               ],
@@ -64,7 +64,7 @@ class InviteResultSection extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 6),
                 child: Text(
                   'Sunt deja în altă echipă la acest eveniment: ${leftOut.join(', ')}.',
-                  style: TextStyle(fontSize: 11, height: 1.45, color: colors.onNavy.withValues(alpha: .8)),
+                  style: TextStyle(fontSize: 13, height: 1.45, color: colors.onNavy.withValues(alpha: .8)),
                 ),
               ),
           ],

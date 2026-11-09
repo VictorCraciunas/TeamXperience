@@ -55,7 +55,7 @@ class RegisteredEventCard extends StatelessWidget {
                         month,
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
-                          fontSize: 13,
+                          fontSize: 15,
                           color: context.colors.text,
                         ),
                       ),
@@ -63,7 +63,7 @@ class RegisteredEventCard extends StatelessWidget {
                         day,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
-                          fontSize: 15,
+                          fontSize: 17,
                           color: context.colors.text,
                         ),
                       ),
@@ -93,7 +93,7 @@ class RegisteredEventCard extends StatelessWidget {
                             child: Text(
                               event.location ?? "No Location",
                               style: TextStyle(
-                                fontSize: 13,
+                                fontSize: 15,
                                 color:
                                     upComingRegisteredEvent
                                         ? Colors.white70
@@ -108,7 +108,7 @@ class RegisteredEventCard extends StatelessWidget {
                       Text(
                         event.name ?? "No Title",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color:
                               upComingRegisteredEvent

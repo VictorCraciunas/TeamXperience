@@ -21,8 +21,8 @@ Future<bool> showAppDialog(
       final cancel = cancelLabel;
 
       return AlertDialog(
-        title: Text(title, style: TextStyle(color: colors.text, fontSize: 17, fontWeight: FontWeight.w600)),
-        content: body == null ? null : Text(body, style: TextStyle(color: colors.muted, fontSize: 14)),
+        title: Text(title, style: TextStyle(color: colors.text, fontSize: 19, fontWeight: FontWeight.w600)),
+        content: body == null ? null : Text(body, style: TextStyle(color: colors.muted, fontSize: 16)),
         actions: [
           if (cancel != null)
             TextButton(

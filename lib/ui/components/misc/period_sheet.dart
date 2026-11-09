@@ -64,7 +64,7 @@ class _PeriodSheetState extends State<_PeriodSheet> {
             'Selectează perioada',
             style: TextStyle(
               color: colors.text,
-              fontSize: 17,
+              fontSize: 19,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -145,7 +145,7 @@ class _PresetChip extends StatelessWidget {
                 label,
                 style: TextStyle(
                   color: selected ? colors.onTick : colors.text,
-                  fontSize: 13,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -181,7 +181,7 @@ class _PeriodPill extends StatelessWidget {
               text,
               style: TextStyle(
                 color: colors.text,
-                fontSize: 14,
+                fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
             ),

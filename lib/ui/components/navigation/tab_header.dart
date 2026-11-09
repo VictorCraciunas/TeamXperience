@@ -39,7 +39,7 @@ class TabHeader extends StatelessWidget {
                       title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
+                      style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
                     ),
                   ),
                   if (right != null) right,

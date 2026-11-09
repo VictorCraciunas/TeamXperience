@@ -41,7 +41,7 @@ class NavigateCard extends StatelessWidget {
             Text(
               text1,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: context.colors.text,
               ),
@@ -49,7 +49,7 @@ class NavigateCard extends StatelessWidget {
             Text(
               text2,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: context.colors.text,
               ),

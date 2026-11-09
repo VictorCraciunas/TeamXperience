@@ -100,7 +100,7 @@ class LocationPuzzleView extends StatelessWidget {
                 children: [
                   Icon(TablerIcons.map_pin, size: 22, color: palette.accent),
                   const SizedBox(height: 8),
-                  Text(text, textAlign: TextAlign.center, style: TextStyle(fontSize: 13, height: 1.45, color: palette.ink)),
+                  Text(text, textAlign: TextAlign.center, style: TextStyle(fontSize: 15, height: 1.45, color: palette.ink)),
                   if (action != null) ...[const SizedBox(height: 12), action],
                 ],
               ),

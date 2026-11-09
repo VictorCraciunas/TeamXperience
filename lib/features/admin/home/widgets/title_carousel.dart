@@ -15,7 +15,7 @@ class TitleCarousel extends StatelessWidget {
         Text(
           text,
           style: TextStyle(
-            fontSize: 22,
+            fontSize: 24,
             fontWeight: FontWeight.w500,
             color: context.colors.text,
           ),
@@ -28,7 +28,7 @@ class TitleCarousel extends StatelessWidget {
             child: Text(
               "Vezi mai multe >",
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: context.colors.accent,
               ),

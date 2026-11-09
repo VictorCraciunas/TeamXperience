@@ -14,7 +14,7 @@ class FieldLabel extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-          fontSize: 11,
+          fontSize: 13,
           fontWeight: FontWeight.w500,
           color: context.colors.text,
           height: 1.45,

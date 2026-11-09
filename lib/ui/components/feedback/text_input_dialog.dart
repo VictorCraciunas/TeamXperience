@@ -76,7 +76,7 @@ class _TextInputDialogState extends State<_TextInputDialog> {
         widget.title,
         style: TextStyle(
           color: colors.text,
-          fontSize: 17,
+          fontSize: 19,
           fontWeight: FontWeight.w600,
         ),
       ),

@@ -68,7 +68,7 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
           ? const Center(
         child: Text(
           "Nicio echipă înscrisă.",
-          style: TextStyle(fontSize: 18),
+          style: TextStyle(fontSize: 20),
         ),
       )
           : Padding(
@@ -98,7 +98,7 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
                 title: Text(
                   team.name,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 20,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -110,7 +110,7 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
                       "Căpitan: ${team.captainName}",
                       style: TextStyle(
                         color: context.colors.muted,
-                        fontSize: 14,
+                        fontSize: 16,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -118,7 +118,7 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
                       "Membri: ${team.memberList.map((member) => member.displayName).join(', ')}",
                       style: TextStyle(
                         color: context.colors.muted,
-                        fontSize: 12,
+                        fontSize: 14,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

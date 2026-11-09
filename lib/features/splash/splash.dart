@@ -68,7 +68,7 @@ class SplashScreen extends StatelessWidget {
                       children: [
                         const Text(
                           "Nu ai cont?",
-                          style: TextStyle(fontSize: 14),
+                          style: TextStyle(fontSize: 16),
                         ),
                         const SizedBox(width: 5.0),
                         GestureDetector(
@@ -78,7 +78,7 @@ class SplashScreen extends StatelessWidget {
                           child: Text(
                             "Inregistrează-te",
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 16,
                               color: context.colors.accent,
                               fontWeight: FontWeight.w600,
                             ),

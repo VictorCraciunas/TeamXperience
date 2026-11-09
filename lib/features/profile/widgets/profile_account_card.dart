@@ -17,7 +17,7 @@ class ProfileAccountCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final info = level;
-    final small = TextStyle(fontSize: 11, height: 1.45, color: colors.muted);
+    final small = TextStyle(fontSize: 13, height: 1.45, color: colors.muted);
     return Padding(
       padding: const EdgeInsets.all(14),
       child: Row(
@@ -34,7 +34,7 @@ class ProfileAccountCard extends StatelessWidget {
               child: Center(
                 child: Text(
                   initialsOf(name),
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: colors.onNavy),
+                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500, color: colors.onNavy),
                 ),
               ),
             ),
@@ -49,14 +49,14 @@ class ProfileAccountCard extends StatelessWidget {
                   name,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 15, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
+                  style: TextStyle(fontSize: 17, height: 1.45, fontWeight: FontWeight.w500, color: colors.text),
                 ),
                 if (info == null)
                   Text(email, maxLines: 1, overflow: TextOverflow.ellipsis, style: small)
                 else ...[
                   Text(
                     levelLine(info),
-                    style: TextStyle(fontSize: 11, height: 1.45, fontWeight: FontWeight.w500, color: colors.accent),
+                    style: TextStyle(fontSize: 13, height: 1.45, fontWeight: FontWeight.w500, color: colors.accent),
                   ),
                   const SizedBox(height: 4),
                   ClipRRect(

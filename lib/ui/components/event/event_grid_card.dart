@@ -49,7 +49,7 @@ class EventGridCard extends StatelessWidget {
                           decoration: BoxDecoration(color: colors.panel, borderRadius: BorderRadius.circular(99)),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 1),
-                            child: Text(date, style: TextStyle(fontSize: 11, height: 1.45, color: colors.text)),
+                            child: Text(date, style: TextStyle(fontSize: 13, height: 1.45, color: colors.text)),
                           ),
                         ),
                 ),
@@ -63,14 +63,14 @@ class EventGridCard extends StatelessWidget {
                         title,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
                       ),
                       if (facts.isNotEmpty)
                         Text(
                           facts,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 11, height: 1.45, color: colors.muted),
+                          style: TextStyle(fontSize: 13, height: 1.45, color: colors.muted),
                         ),
                     ],
                   ),

@@ -22,12 +22,12 @@ class NewPlayerGreeting extends StatelessWidget {
             'Salut, $firstName',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, height: 1.45, color: colors.text),
           ),
           const SizedBox(height: 4),
           Text(
             'Mergeți prin oraș, rezolvați indicii, descoperiți povestea.',
-            style: TextStyle(fontSize: 12, height: 1.45, color: colors.muted),
+            style: TextStyle(fontSize: 14, height: 1.45, color: colors.muted),
           ),
           Semantics(
             button: true,
@@ -39,7 +39,7 @@ class NewPlayerGreeting extends StatelessWidget {
                 child: Text(
                   'Cum funcționează',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                     height: 1.45,
                     color: colors.accent,

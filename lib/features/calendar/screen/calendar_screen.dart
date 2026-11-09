@@ -64,7 +64,7 @@ class _DateRangeSelectionScreenState extends State<DateRangeSelectionScreen> {
                         child: Text(
                           _selectedPeriodText,
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 18,
                             fontWeight: FontWeight.w500,
                             color: colors.text,
                           ),

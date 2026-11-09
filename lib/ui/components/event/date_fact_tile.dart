@@ -25,7 +25,7 @@ class DateFactTile extends StatelessWidget {
             Text(
               detail,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 11, height: 1.45, color: colors.onNavy),
+              style: TextStyle(fontSize: 13, height: 1.45, color: colors.onNavy),
             ),
           ],
         ),

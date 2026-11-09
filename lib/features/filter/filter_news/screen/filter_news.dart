@@ -120,7 +120,7 @@ class _FilterStiriScreenState extends State<FilterStiriScreen> {
                   Text(
                     'Categorie',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.w600,
                       color: context.colors.text,
                     ),

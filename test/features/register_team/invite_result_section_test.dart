@@ -58,7 +58,7 @@ void main() {
     expect(stack.onDark, isTrue);
     expect(find.text('VC'), findsOneWidget);
     final text = tester.widget<Text>(find.text('1 din 4 în echipă'));
-    expect(text.style?.fontSize, 11);
+    expect(text.style?.fontSize, 13);
     expect(text.style?.color, AppColors.light.onNavy.withValues(alpha: .8));
   });
 

@@ -56,7 +56,7 @@ class EventRow extends StatelessWidget {
                       monthLabel,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 10,
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -64,7 +64,7 @@ class EventRow extends StatelessWidget {
                       dayLabel,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 17,
+                        fontSize: 19,
                         fontWeight: FontWeight.w700,
                         height: 1.1,
                       ),
@@ -83,7 +83,7 @@ class EventRow extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: colors.text,
-                        fontSize: 13,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -91,7 +91,7 @@ class EventRow extends StatelessWidget {
                       subtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: colors.muted, fontSize: 11),
+                      style: TextStyle(color: colors.muted, fontSize: 13),
                     ),
                   ],
                 ),

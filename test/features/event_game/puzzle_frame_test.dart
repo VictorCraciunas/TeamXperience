@@ -40,7 +40,7 @@ void main() {
       expect(find.text('Casa cu ochi'), findsOneWidget);
       expect(find.text('0:42:18'), findsOneWidget);
       final title = tester.widget<Text>(find.text('Casa cu ochi')).style;
-      expect((title?.fontFamily, title?.fontSize), (EventPalette.parchment.voiceFont, 15));
+      expect((title?.fontFamily, title?.fontSize), (EventPalette.parchment.voiceFont, 17));
       final clock = tester.widget<Text>(find.text('0:42:18')).style;
       expect((clock?.fontFamily, clock?.fontWeight), ('Monospace', FontWeight.w500));
       await tester.tap(find.byIcon(TablerIcons.arrow_left));
@@ -64,7 +64,7 @@ void main() {
         const PuzzleFeedback(wrong: 'Nu e anul ăsta. Uită-te mai sus pe ușă.', maxAttempts: 3, attemptsLeft: 2),
       );
       final line = tester.widget<Text>(find.text('Nu e anul ăsta. Uită-te mai sus pe ușă.')).style;
-      expect((line?.color, line?.fontWeight, line?.fontSize), (EventPalette.parchment.danger, FontWeight.w500, 12));
+      expect((line?.color, line?.fontWeight, line?.fontSize), (EventPalette.parchment.danger, FontWeight.w500, 14));
       expect(find.byIcon(TablerIcons.alert_circle), findsOneWidget);
       expect(find.text('2 încercări rămase'), findsOneWidget);
     });

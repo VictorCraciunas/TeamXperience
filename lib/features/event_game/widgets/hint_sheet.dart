@@ -34,13 +34,13 @@ class HintSheet extends StatelessWidget {
               children: [
                 Icon(TablerIcons.bulb, size: 18, color: palette.accent),
                 const SizedBox(width: 6),
-                Text('Indiciu', style: TextStyle(fontFamily: palette.voiceFont, fontSize: 17, height: 1.3, color: palette.ink)),
+                Text('Indiciu', style: TextStyle(fontFamily: palette.voiceFont, fontSize: 19, height: 1.3, color: palette.ink)),
               ],
             ),
             const SizedBox(height: 10),
             Flexible(
               child: SingleChildScrollView(
-                child: Text(hint, style: TextStyle(fontSize: 14, height: 1.5, color: palette.ink)),
+                child: Text(hint, style: TextStyle(fontSize: 16, height: 1.5, color: palette.ink)),
               ),
             ),
           ],
