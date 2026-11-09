@@ -17,6 +17,8 @@ HomeHero heroFromProviders({
     activeTeam: userEvents.activeTeam,
     startedRecently: userEvents.recentlyStartedEvent,
     startedRecentlyTeam: null,
+    finishedEvent: userEvents.finishedEvent,
+    finishedTeam: userEvents.finishedTeam,
     registeredUpcoming: userEvents.upcomingRegisteredEvents,
     allEvents: eventList.events,
     registeredIds: registered.map((e) => e.eventId).toSet(),

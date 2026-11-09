@@ -42,7 +42,7 @@ PlayTabState playTabState(HomeHero hero) => switch (hero) {
       LiveHero(:final event, :final team) => PlayLive(event, team),
       StartingSoonHero(:final event, :final minutesLeftToEnter) => PlayEnterCode(event, minutesLeftToEnter),
       UpcomingHero(:final event, :final untilStart) => PlayNext(event, untilStart),
-      RecommendedHero() || NoHero() => const PlayNone(),
+      FinishedHero() || RecommendedHero() || NoHero() => const PlayNone(),
     };
 
 /// Whether the centre tab shows "În joc".

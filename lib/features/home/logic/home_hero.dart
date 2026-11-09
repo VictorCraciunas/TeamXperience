@@ -20,6 +20,17 @@ class LiveHero extends HomeHero {
   String get signature => 'live:${event.eventId}';
 }
 
+/// The team is done but the event still runs: results come when it ends.
+class FinishedHero extends HomeHero {
+  const FinishedHero(this.event, this.team);
+
+  final Event event;
+  final Team team;
+
+  @override
+  String get signature => 'finished:${event.eventId}';
+}
+
 class StartingSoonHero extends HomeHero {
   const StartingSoonHero(this.event, this.minutesLeftToEnter);
 
@@ -57,19 +68,25 @@ class NoHero extends HomeHero {
 }
 
 /// Picks what the top card of the player Home shows, in priority order:
-/// live game, start code still open, next registered event, recommendation.
+/// live game, team finished, start code still open, next registered event,
+/// recommendation.
 HomeHero resolveHomeHero({
   required DateTime now,
   required Event? activeEvent,
   required Team? activeTeam,
   required Event? startedRecently,
   required Team? startedRecentlyTeam,
+  Event? finishedEvent,
+  Team? finishedTeam,
   required List<Event> registeredUpcoming,
   required List<Event> allEvents,
   required Set<String> registeredIds,
 }) {
   final live = _live(now, activeEvent, activeTeam);
   if (live != null) return live;
+
+  final finished = _finished(now, finishedEvent, finishedTeam);
+  if (finished != null) return finished;
 
   final soon = _startingSoon(now, startedRecently, startedRecentlyTeam);
   if (soon != null) return soon;
@@ -95,6 +112,12 @@ HomeHero? _live(DateTime now, Event? event, Team? team) {
   if (_isOver(event, now)) return null;
   if (!team.hasStarted || team.hasFinished) return null;
   return LiveHero(event, team);
+}
+
+HomeHero? _finished(DateTime now, Event? event, Team? team) {
+  if (event == null || team == null) return null;
+  if (_isOver(event, now) || !team.hasFinished) return null;
+  return FinishedHero(event, team);
 }
 
 HomeHero? _startingSoon(DateTime now, Event? event, Team? team) {

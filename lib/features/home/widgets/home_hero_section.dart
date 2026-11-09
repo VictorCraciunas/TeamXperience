@@ -37,6 +37,8 @@ class HomeHeroSection extends StatelessWidget {
     final current = hero;
     return switch (current) {
       LiveHero(:final event, :final team) => _live(event, liveTeam?.call(team.name) ?? team),
+      // Replaced by the finished card with Home's picture cards.
+      FinishedHero() => const SizedBox.shrink(),
       StartingSoonHero(:final event, :final minutesLeftToEnter) => StartingSoonCard(
           event: event,
           minutesLeft: minutesLeftToEnter,
