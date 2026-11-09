@@ -6,6 +6,7 @@ import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/notifications/controller/notifications_controller.dart';
 import 'package:teamxperience/features/notifications/logic/notification_view.dart';
 import 'package:teamxperience/features/notifications/widgets/notifications_view.dart';
+import 'package:teamxperience/features/profile/logic/profile_texts.dart';
 import 'package:teamxperience/features/shell/logic/player_tabs.dart';
 import 'package:teamxperience/model/app_notification.dart';
 import 'package:teamxperience/model/event.dart';
@@ -13,7 +14,6 @@ import 'package:teamxperience/service/team_service/team_service.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 /// The player's notifications, opened from the bell on Acasă.
@@ -32,7 +32,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_controller != null) return;
-    final uid = context.read<UserProvider>().currentUser?.uid;
+    final users = context.read<UserProvider>();
+    final uid = profileDocId(users.firebaseUser?.uid, users.currentUser?.uid ?? '');
     _uid = uid;
     final repo = NotificationRepo();
     _controller = NotificationsController(
@@ -85,8 +86,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           if (event == null) return;
           await Navigator.pushNamed(context, Routes.eventDetails, arguments: {'event': event, 'isAdmin': false});
         case OpenTeams():
-          context.read<ShellController?>()?.select(PlayerTab.teams);
-          Navigator.of(context).pop();
+          // Pushed above the shell: the bell's caller switches the tab.
+          Navigator.of(context).pop(PlayerTab.teams);
         case StayHere():
           return;
       }

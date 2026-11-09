@@ -19,11 +19,6 @@ class NotificationRepo {
         .map((snap) => [for (final doc in snap.docs) AppNotification.fromMap(doc.id, doc.data())]);
   }
 
-  /// Whether anything is unread: the bell's dot.
-  Stream<bool> hasUnread(String uid) {
-    return _list(uid).where('read', isEqualTo: false).limit(1).snapshots().map((snap) => snap.docs.isNotEmpty);
-  }
-
   Future<void> markRead(String uid, String id) => _list(uid).doc(id).update({'read': true});
 
   /// Marks these read in one write.

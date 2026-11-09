@@ -71,7 +71,7 @@ class _HomeState extends State<Home> {
       standings: controller.teamService.streamStandings(seasonOf(DateTime.now()).id),
       seasonName: seasonOf(DateTime.now()).name,
       findTeam: controller.teamService.getUserTeamForEvent,
-      unread: NotificationRepo().hasUnread,
+      notifications: (uid) => NotificationRepo().stream(uid),
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.loadInitialData();

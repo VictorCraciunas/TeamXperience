@@ -8,7 +8,7 @@ The bell on Acasă opens the news list, which makes no sense for a bell, and new
 
 ## Decisions
 
-- **The bell opens a new page, Notificări**, and its red dot means an unread notification. News keeps its carousel and "Toate", and no longer affects the bell.
+- **The bell opens a new page, Notificări**, and its red dot means one of the notifications the page shows (the newest 50) is unread. News keeps its carousel and "Toate", and no longer affects the bell.
 - **For players only.** Organisers have no bell. Team messages to organisers stay push-only.
 - **Each player has their own list** at `users/{uid}/notifications/{id}`: `kind`, `title`, `body`, `createdAt`, `read`, and optionally `eventId`, `teamName`. Only the server writes them. A player can read their own and set `read` to true, nothing else.
 - **What goes in the list:**

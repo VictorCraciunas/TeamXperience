@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:teamxperience/features/home/logic/home_content.dart' as content;
 import 'package:teamxperience/features/team_photo/logic/team_album.dart';
+import 'package:teamxperience/model/app_notification.dart';
 import 'package:teamxperience/model/crew.dart';
 import 'package:teamxperience/model/memory.dart';
 import 'package:teamxperience/model/season_standing.dart';
@@ -18,8 +19,8 @@ class HomeExtrasController extends ChangeNotifier {
     required Stream<List<SeasonStanding>> standings,
     required this.seasonName,
     required Future<Team?> Function(String eventId, String uid) findTeam,
-    required Stream<bool> Function(String uid) unread,
-  })  : _unread = unread,
+    required Stream<List<AppNotification>> Function(String uid) notifications,
+  })  : _notifications = notifications,
         _memories = memories,
         _crews = crews,
         _findTeam = findTeam {
@@ -33,11 +34,11 @@ class HomeExtrasController extends ChangeNotifier {
   }
 
   final Stream<List<Memory>> Function(String uid) _memories;
-  final Stream<bool> Function(String uid) _unread;
-  StreamSubscription<bool>? _unreadWatch;
+  final Stream<List<AppNotification>> Function(String uid) _notifications;
+  StreamSubscription<List<AppNotification>>? _unreadWatch;
   bool _hasUnread = false;
 
-  /// The bell's dot: the player has an unread notification.
+  /// The bell's dot: one of the notifications the page shows is unread.
   bool get hasUnread => _hasUnread;
   final Stream<List<Crew>> Function(String uid) _crews;
   final Future<Team?> Function(String eventId, String uid) _findTeam;
@@ -101,8 +102,8 @@ class HomeExtrasController extends ChangeNotifier {
       _crewIds = const {};
       _changed();
     });
-    _unreadWatch = _unread(uid).listen((value) {
-      _hasUnread = value;
+    _unreadWatch = _notifications(uid).listen((value) {
+      _hasUnread = value.any((n) => !n.read);
       _changed();
     }, onError: (Object _) {
       _hasUnread = false;

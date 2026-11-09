@@ -42,21 +42,18 @@ class NotificationsController extends ChangeNotifier {
     if (!_disposed) notifyListeners();
   }
 
-  /// Marks [n] read, if it was not.
+  /// Marks [n] read, if it was not, without waiting: offline the write is
+  /// only confirmed later, and the tap must open its page at once.
   Future<void> open(AppNotification n) async {
     if (n.read) return;
-    try {
-      await _markRead(n.id);
-    } catch (_) {}
+    unawaited(_markRead(n.id).catchError((Object _) {}));
   }
 
-  /// Marks every unread row read.
+  /// Marks every unread row read, without waiting for the server either.
   Future<void> markAll() async {
     final unread = [for (final n in _items) if (!n.read) n.id];
     if (unread.isEmpty) return;
-    try {
-      await _markAllRead(unread);
-    } catch (_) {}
+    unawaited(_markAllRead(unread).catchError((Object _) {}));
   }
 
   @override

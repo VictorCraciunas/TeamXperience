@@ -5,6 +5,7 @@ import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/model/user.dart';
 import 'package:teamxperience/service/share_service.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
+import 'package:teamxperience/features/notifications/logic/open_notifications.dart';
 import 'package:teamxperience/features/shell/logic/player_tabs.dart';
 import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 
@@ -50,9 +51,7 @@ class HomeController {
   }
 
   /// The bell: the player's notifications.
-  void openNotifications() {
-    Navigator.pushNamed(context, Routes.notifications);
-  }
+  Future<void> openNotifications() => openNotificationsPage(Navigator.of(context), context.read<ShellController>());
 
   /// Știri is not a tab: it opens as a page.
   void navigateToNewsTab() {
