@@ -45,6 +45,7 @@ class _AppShellState extends State<AppShell> {
     return ListenableBuilder(
       listenable: _controller,
       builder: (context, _) {
+        final raised = widget.tabs.any((tab) => tab.item.raised);
         return PopScope(
           canPop: _controller.index == 0,
           onPopInvokedWithResult: (didPop, _) {
@@ -52,9 +53,14 @@ class _AppShellState extends State<AppShell> {
           },
           child: Scaffold(
             resizeToAvoidBottomInset: false,
-            body: IndexedStack(
-              index: _controller.index,
-              children: [for (var i = 0; i < widget.tabs.length; i++) _body(i)],
+            // A raised tab sticks up above the bar: the pages end above it, so
+            // their last row is never under it.
+            body: Padding(
+              padding: EdgeInsets.only(bottom: raised ? AppBottomNav.raisedRise : 0),
+              child: IndexedStack(
+                index: _controller.index,
+                children: [for (var i = 0; i < widget.tabs.length; i++) _body(i)],
+              ),
             ),
             bottomNavigationBar: AppBottomNav(
               currentIndex: _controller.index,

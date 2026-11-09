@@ -26,6 +26,26 @@ class _CounterState extends State<_Counter> {
   }
 }
 
+Widget _raisedShell() => MaterialApp(
+      theme: AppTheme.light,
+      home: AppShell(
+        tabs: [
+          AppShellTab(
+            item: const AppNavItem(icon: Icons.home_outlined, label: 'Acasă'),
+            builder: (_) => const SizedBox.expand(key: ValueKey('page')),
+          ),
+          AppShellTab(
+            item: const AppNavItem(icon: Icons.vpn_key_outlined, label: 'Joacă', raised: true),
+            builder: (_) => const SizedBox.expand(),
+          ),
+          AppShellTab(
+            item: const AppNavItem(icon: Icons.person_outline, label: 'Profil'),
+            builder: (_) => const SizedBox.expand(),
+          ),
+        ],
+      ),
+    );
+
 Widget _shell({ShellController? controller, List<String>? builtLog}) {
   return MaterialApp(
     theme: AppTheme.light,
@@ -52,6 +72,13 @@ Widget _shell({ShellController? controller, List<String>? builtLog}) {
 }
 
 void main() {
+  testWidgets('the raised tab never covers the end of a page', (tester) async {
+    await tester.pumpWidget(_raisedShell());
+    final page = tester.getRect(find.byKey(const ValueKey('page')));
+    final circle = tester.getRect(find.byKey(const ValueKey('nav-raised-circle')));
+    expect(page.bottom, lessThanOrEqualTo(circle.top));
+  });
+
   testWidgets('shows the first tab and builds the others lazily', (tester) async {
     final log = <String>[];
     await tester.pumpWidget(_shell(builtLog: log));
