@@ -17,6 +17,7 @@ abstract class Routes {
   static const finish = '/finish';
   static const memory = '/memory';
   static const memories = '/memories';
+  static const notifications = '/notifications';
   static const eventDashboard = '/events_dashboard';
   static const filter = '/filter';
   static const createNews = '/create_news';
