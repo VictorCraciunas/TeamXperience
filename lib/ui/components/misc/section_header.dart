@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/theme_context.dart';
-import '../route/waypoint_dot.dart';
 
-/// A heading over a group of cards, as the mockups' `.hd`: a small route
-/// ring (`.hd:before`), a 14 px title and,
-/// at the right, a muted count or an accent link. 14 px above and to the
-/// sides ([top]), 8 below.
+/// A heading over a group of cards, as the mockups' `.hd`: a 14 px title
+/// and, at the right, a muted count or an accent link. 14 px above and to
+/// the sides ([top]), 8 below.
 class SectionHeader extends StatelessWidget {
   const SectionHeader({super.key, required this.title, this.trailing, this.trailingChild, this.link, this.onLink, this.top = 14});
 
@@ -35,8 +33,6 @@ class SectionHeader extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(14, top, 14, 8),
       child: Row(
         children: [
-          const WaypointDot(key: ValueKey('hd-dot')),
-          const SizedBox(width: 6),
           Expanded(
             child: Text(
               title,
