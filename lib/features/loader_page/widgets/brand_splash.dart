@@ -7,7 +7,10 @@ import 'package:teamxperience/ui/ui.dart';
 /// part marked "loop" (the pulsing dot) repeats until the app moves on.
 /// Made by `tool/make_splash_lottie.py` from the Poppins Bold outlines.
 class BrandSplash extends StatefulWidget {
-  const BrandSplash({super.key});
+  const BrandSplash({super.key, this.onIntroDone});
+
+  /// Called once the intro has played (at once under reduced motion).
+  final VoidCallback? onIntroDone;
 
   static const asset = 'assets/loader/teamxperience.json';
 
@@ -30,10 +33,13 @@ class _BrandSplashState extends State<BrandSplash> with SingleTickerProviderStat
     if (MediaQuery.disableAnimationsOf(context)) {
       // Reduced motion: the finished logo, still.
       _controller.value = loopStart;
+      widget.onIntroDone?.call();
       return;
     }
-    _controller.forward().whenComplete(() {
-      if (mounted) _controller.repeat(min: loopStart);
+    _controller.animateTo(loopStart).whenComplete(() {
+      if (!mounted) return;
+      widget.onIntroDone?.call();
+      _controller.repeat(min: loopStart);
     });
   }
 
