@@ -81,6 +81,27 @@ describe("sendNotification", () => {
     assert.equal(sent.length, 0);
   });
 
+  test("everyone it reaches has it in their list, a player without a token too", async () => {
+    await seedUser("silent", {registeredEventIds: ["e1"]});
+    await sendNotification(db, "boss", {...NEWS, eventId: "e1"}, send);
+    const listOf = async (uid: string) =>
+      (await db.collection("users").doc(uid).collection("notifications").get()).docs.map((d) => d.data());
+    for (const uid of ["ana", "silent"]) {
+      const [entry] = await listOf(uid);
+      assert.deepEqual(
+        {kind: entry.kind, title: entry.title, body: entry.body, eventId: entry.eventId, read: entry.read},
+        {kind: "announcement", title: "Start", body: "Ne vedem la 18", eventId: "e1", read: false},
+      );
+    }
+    assert.equal((await listOf("dan")).length, 0);
+  });
+
+  test("nobody with a token: refused, and nothing is kept", async () => {
+    await db.collection("users").doc("lone").set({uid: "lone", role: "USER", registeredEventIds: ["e9"]});
+    await assert.rejects(sendNotification(db, "boss", {...NEWS, eventId: "e9"}, send), (e) => reasonOf(e) === "noRecipients");
+    assert.equal((await db.collection("users").doc("lone").collection("notifications").get()).size, 0);
+  });
+
   test("failed sends are counted", async () => {
     const half = async (message: PushMessage) => ({successCount: message.tokens.length - 1, failureCount: 1});
     assert.deepEqual(await sendNotification(db, "boss", NEWS, half), {recipients: 3, sent: 2, failed: 1});

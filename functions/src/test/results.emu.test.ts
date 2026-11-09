@@ -72,6 +72,35 @@ describe("results", () => {
     await clearDb();
   });
 
+  test("each player's results reach their list and their phone, once", async () => {
+    await seedGame();
+    const pushed: string[] = [];
+    const push = async (uid: string, title: string, body: string) => {
+      pushed.push(`${uid}|${title}|${body}`);
+    };
+    await applyResults(db, "e1", {push});
+    await db.doc("events/e1").update({resultsComputedAt: FieldValue.delete()});
+    await applyResults(db, "e1", {push});
+    const list = (await db.collection("users/u1/notifications").get()).docs.map((d) => d.data());
+    assert.equal(list.length, 1);
+    const [entry] = list;
+    assert.deepEqual(
+      {kind: entry.kind, title: entry.title, body: entry.body, eventId: entry.eventId, read: entry.read},
+      {kind: "results", title: "Rezultatele sunt gata", body: "Echipa Vulpile a ieșit pe locul 1 la Harta.", eventId: "e1", read: false},
+    );
+    assert.deepEqual(pushed.filter((p) => p.startsWith("u1|")), ["u1|Rezultatele sunt gata|Echipa Vulpile a ieșit pe locul 1 la Harta."]);
+    assert.equal(pushed.filter((p) => p.startsWith("u3|")).length, 1);
+  });
+
+  test("a push that fails holds nobody back", async () => {
+    await seedGame();
+    await applyResults(db, "e1", {push: async () => {
+      throw new Error("offline");
+    }});
+    assert.ok((await read("events/e1"))?.resultsComputedAt);
+    assert.equal((await read("users/u3"))?.stats?.games, 1);
+  });
+
   test("places, for the teams that played", async () => {
     await seedGame();
     await applyResults(db, "e1");

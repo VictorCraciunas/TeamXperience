@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:teamxperience/features/home/logic/home_content.dart' as content;
 import 'package:teamxperience/features/team_photo/logic/team_album.dart';
+import 'package:teamxperience/model/app_notification.dart';
 import 'package:teamxperience/model/crew.dart';
 import 'package:teamxperience/model/memory.dart';
 import 'package:teamxperience/model/season_standing.dart';
@@ -18,7 +19,9 @@ class HomeExtrasController extends ChangeNotifier {
     required Stream<List<SeasonStanding>> standings,
     required this.seasonName,
     required Future<Team?> Function(String eventId, String uid) findTeam,
-  })  : _memories = memories,
+    required Stream<List<AppNotification>> Function(String uid) notifications,
+  })  : _notifications = notifications,
+        _memories = memories,
         _crews = crews,
         _findTeam = findTeam {
     _standingsWatch = standings.listen((value) {
@@ -31,6 +34,12 @@ class HomeExtrasController extends ChangeNotifier {
   }
 
   final Stream<List<Memory>> Function(String uid) _memories;
+  final Stream<List<AppNotification>> Function(String uid) _notifications;
+  StreamSubscription<List<AppNotification>>? _unreadWatch;
+  bool _hasUnread = false;
+
+  /// The bell's dot: one of the notifications the page shows is unread.
+  bool get hasUnread => _hasUnread;
   final Stream<List<Crew>> Function(String uid) _crews;
   final Future<Team?> Function(String eventId, String uid) _findTeam;
 
@@ -67,8 +76,11 @@ class HomeExtrasController extends ChangeNotifier {
     _uid = uid;
     _memoriesWatch?.cancel();
     _crewsWatch?.cancel();
+    _unreadWatch?.cancel();
     _memoriesWatch = null;
     _crewsWatch = null;
+    _unreadWatch = null;
+    _hasUnread = false;
     _memory = null;
     _album = const [];
     _crewIds = const {};
@@ -88,6 +100,13 @@ class HomeExtrasController extends ChangeNotifier {
       _changed();
     }, onError: (Object _) {
       _crewIds = const {};
+      _changed();
+    });
+    _unreadWatch = _notifications(uid).listen((value) {
+      _hasUnread = value.any((n) => !n.read);
+      _changed();
+    }, onError: (Object _) {
+      _hasUnread = false;
       _changed();
     });
   }
@@ -121,6 +140,7 @@ class HomeExtrasController extends ChangeNotifier {
     _standingsWatch?.cancel();
     _memoriesWatch?.cancel();
     _crewsWatch?.cancel();
+    _unreadWatch?.cancel();
     super.dispose();
   }
 }

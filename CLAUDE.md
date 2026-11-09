@@ -112,6 +112,7 @@ Event lifecycle: players register for events (`registeredEventIds`), enter the e
 
 ### Notifications
 
+- The bell on Acasă opens `features/notifications` (`Routes.notifications`): each player's list at `users/{uid}/notifications`, written only by the functions through `functions/src/notifications/inbox.ts` (organiser pushes and announcements, organiser chat messages, someone joining a crew, a crew signed up, results). A player can only mark their own as read. Its red dot is an unread notification; news no longer lights it.
 - `service/FCMService.dart`: permission + token, foreground handler that shows a local notification on the `chat_notifications` Android channel. Token is saved on the user doc.
 - `functions/src/index.ts` (v2 functions): `onChatMessage` (Firestore trigger on `events/{eventId}/teams/{teamName}/messages/{id}`: admin message -> notify team members via `userIds`; user message -> notify admins).
 - Organiser push: `functions/src/notifications/`, the callable `sendNotification` (`{title, description, eventId?}` -> FCM to all users, or only those with `eventId` in `registeredEventIds`). Only `role: ADMIN` may call it; the app calls it through `NotificationFunctions` in `lib/backend/functions/`.

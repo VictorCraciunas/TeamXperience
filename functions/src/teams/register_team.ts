@@ -1,7 +1,9 @@
 import {FieldValue, Firestore} from "firebase-admin/firestore";
 import {cleanTeamName, nameKey, teamNameProblem} from "./names";
 import {addNewCrew} from "./new_crew";
-import {enrolmentOpen, Member, memberOf, refuse, teamsOf} from "./shared";
+import * as logger from "firebase-functions/logger";
+import {addToInboxes, InboxItem, pushToUser} from "../notifications/inbox";
+import {enrolmentOpen, Member, memberOf, refuse, shortDate, teamsOf, toDate} from "./shared";
 
 export interface RegisterInput {
   eventId?: string;
@@ -26,12 +28,13 @@ export async function registerTeam(
   uid: string,
   data: RegisterInput,
   now: Date = new Date(),
+  tell: (uids: string[], item: InboxItem) => Promise<void> = tellPlayers(db),
 ): Promise<RegisterOutput> {
   const eventId = String(data.eventId ?? "");
   if (eventId === "") throw refuse("eventNotFound");
   const eventRef = db.collection("events").doc(eventId);
 
-  return db.runTransaction(async (tx) => {
+  const done = await db.runTransaction(async (tx) => {
     const eventDoc = await tx.get(eventRef);
     const event = eventDoc.data();
     if (event === undefined || event.status === "draft") throw refuse("eventNotFound");
@@ -115,6 +118,32 @@ export async function registerTeam(
     for (const player of players) {
       tx.set(db.collection("users").doc(player.uid), {registeredEventIds: FieldValue.arrayUnion(eventId)}, {merge: true});
     }
-    return {teamName: name, crewId, inviteCode, skippedUids};
+    const others = players.map((p) => p.uid).filter((other) => other !== uid);
+    const date = toDate(event.dateEvent);
+    const item: InboxItem = {
+      kind: "team",
+      title: "Echipa ta s-a înscris",
+      body: `${name} merge la ${String(event.name ?? "")}${date === null ? "" : `, pe ${shortDate(date)}`}`,
+      eventId,
+    };
+    return {output: {teamName: name, crewId, inviteCode, skippedUids}, others, item};
   });
+
+  // The others hear after the sign-up is saved; a failure only is logged.
+  if (done.others.length > 0) {
+    try {
+      await tell(done.others, done.item);
+    } catch (error) {
+      logger.warn("Could not tell the crew it signed up", {eventId, error: String(error)});
+    }
+  }
+  return done.output;
+}
+
+/** Each player's list, then their phone. */
+function tellPlayers(db: Firestore): (uids: string[], item: InboxItem) => Promise<void> {
+  return async (uids, item) => {
+    await addToInboxes(db, uids, item);
+    await Promise.all(uids.map((other) => pushToUser(db, other, item.title, item.body)));
+  };
 }

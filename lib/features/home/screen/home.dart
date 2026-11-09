@@ -20,7 +20,7 @@ import 'package:teamxperience/model/memory.dart';
 import 'package:teamxperience/model/season_standing.dart';
 import 'package:teamxperience/features/home/logic/home_hero.dart';
 import 'package:teamxperience/features/home/logic/live_watch.dart';
-import 'package:teamxperience/features/home/logic/news_seen.dart';
+import 'package:teamxperience/backend/repo/notification_repo.dart';
 import 'package:teamxperience/features/home/widgets/events_grid_section.dart';
 import 'package:teamxperience/features/home/widgets/greeting_stats.dart';
 import 'package:teamxperience/features/home/widgets/home_header.dart';
@@ -55,8 +55,6 @@ class _HomeState extends State<Home> {
   late final HomeController controller;
   late final HomeLiveController _live;
   late final HomeExtrasController _extras;
-  final NewsSeenStore _newsSeen = NewsSeenStore();
-  DateTime? _lastSeenNews;
 
   /// The team of the next game, loaded once per hero event.
   String? _extrasFor;
@@ -73,13 +71,11 @@ class _HomeState extends State<Home> {
       standings: controller.teamService.streamStandings(seasonOf(DateTime.now()).id),
       seasonName: seasonOf(DateTime.now()).name,
       findTeam: controller.teamService.getUserTeamForEvent,
+      notifications: (uid) => NotificationRepo().stream(uid),
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.loadInitialData();
       context.read<UserEventsProvider>().loadActiveEvent();
-    });
-    _newsSeen.lastSeen().then((at) {
-      if (mounted) setState(() => _lastSeenNews = at);
     });
   }
 
@@ -130,12 +126,6 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Future<void> _openNews() async {
-    final now = DateTime.now();
-    setState(() => _lastSeenNews = now);
-    await controller.openNews(_newsSeen, now);
-  }
-
   HomeHeroActions _actions() {
     return HomeHeroActions(
       onContinue: controller.openGame,
@@ -174,7 +164,10 @@ class _HomeState extends State<Home> {
               (eventList.isLoading && !eventList.hasData) || (newsList.isLoading && !newsList.hasData);
           return Column(
             children: [
-              HomeHeader(unread: hasUnreadNews(newsList.stireList, _lastSeenNews), onBell: _openNews),
+              ListenableBuilder(
+                listenable: _extras,
+                builder: (context, _) => HomeHeader(unread: _extras.hasUnread, onBell: controller.openNotifications),
+              ),
               Expanded(
                 child: loading
                     ? const Center(child: CircularProgressIndicator())

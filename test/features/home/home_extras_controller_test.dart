@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/features/home/controller/home_extras_controller.dart';
+import 'package:teamxperience/model/app_notification.dart';
 import 'package:teamxperience/model/crew.dart';
 import 'package:teamxperience/model/memory.dart';
 import 'package:teamxperience/model/season_standing.dart';
@@ -11,6 +12,7 @@ class _Harness {
   final memories = StreamController<List<Memory>>.broadcast();
   final crews = StreamController<List<Crew>>.broadcast();
   final standings = StreamController<List<SeasonStanding>>.broadcast();
+  final unread = StreamController<List<AppNotification>>.broadcast();
   final watched = <String>[];
   Team? team;
 
@@ -23,8 +25,11 @@ class _Harness {
     standings: standings.stream,
     seasonName: 'Toamna 2026',
     findTeam: (_, __) async => team,
+    notifications: (_) => unread.stream,
   );
 }
+
+const _unreadOne = AppNotification(id: 'n', kind: NotificationKind.chat, title: 'T', body: 'B', read: false);
 
 Future<void> _settle() async {
   await Future<void>.delayed(Duration.zero);
@@ -32,6 +37,41 @@ Future<void> _settle() async {
 }
 
 void main() {
+  test('follows unread notifications for the player', () async {
+    final h = _Harness();
+    h.controller.watch('u1');
+    await _settle();
+    h.unread.add([_unreadOne]);
+    await _settle();
+    expect(h.controller.hasUnread, isTrue);
+    h.unread.add(const []);
+    await _settle();
+    expect(h.controller.hasUnread, isFalse);
+  });
+
+  test('a failing stream means no dot', () async {
+    final h = _Harness();
+    h.controller.watch('u1');
+    await _settle();
+    h.unread.add([_unreadOne]);
+    await _settle();
+    h.unread.addError(Exception('denied'));
+    await _settle();
+    expect(h.controller.hasUnread, isFalse);
+  });
+
+  test('watch(null) clears the dot and stops following', () async {
+    final h = _Harness();
+    h.controller.watch('u1');
+    await _settle();
+    h.unread.add([_unreadOne]);
+    await _settle();
+    h.controller.watch(null);
+    await _settle();
+    expect(h.controller.hasUnread, isFalse);
+    expect(h.unread.hasListener, isFalse);
+  });
+
   test('follows the newest memory and loads its album', () async {
     final h = _Harness()..team = Team.fromMap({'name': 'Vulpile', 'teamPhotos': {'start': {'url': 's'}}});
     h.controller.watch('u1');

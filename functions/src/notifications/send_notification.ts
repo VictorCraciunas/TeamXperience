@@ -2,6 +2,7 @@ import {Firestore} from "firebase-admin/firestore";
 import {getMessaging} from "firebase-admin/messaging";
 import * as logger from "firebase-functions/logger";
 import {refuse} from "../teams/shared";
+import {addToInboxes} from "./inbox";
 
 export interface PushMessage {
   tokens: string[];
@@ -48,6 +49,14 @@ export async function sendNotification(
     .map((doc) => doc.data().fcmToken)
     .filter((token): token is string => typeof token === "string" && token.trim() !== "");
   if (tokens.length === 0) throw refuse("noRecipients");
+
+  // Everyone it is meant for keeps it, a player without a token too.
+  await addToInboxes(db, recipients.docs.map((doc) => doc.id), {
+    kind: "announcement",
+    title,
+    body: description,
+    ...(typeof eventId === "string" ? {eventId} : {}),
+  });
 
   const result = await send({
     tokens,

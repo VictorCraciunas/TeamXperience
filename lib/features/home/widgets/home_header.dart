@@ -3,7 +3,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 /// The top of Home (mockup 02): the route mark, "TeamXperience", and the bell
-/// that opens Știri, with a red dot while there is news the player has not
+/// that opens the player's notifications, with a red dot while one is unread
 /// seen.
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key, required this.unread, required this.onBell});
@@ -43,7 +43,7 @@ class HomeHeader extends StatelessWidget {
               ),
               Semantics(
                 button: true,
-                label: unread ? 'Știri noi' : 'Știri',
+                label: unread ? 'Notificări noi' : 'Notificări',
                 child: GestureDetector(
                   key: const ValueKey('bell'),
                   onTap: onBell,

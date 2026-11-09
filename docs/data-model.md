@@ -48,6 +48,7 @@ All models live in `lib/model/`. Pattern: plain mutable classes, `fromMap`/`from
 
 ```
 users/{uid}                                  AppUser
+users/{uid}/notifications/{id}   {kind: announcement|chat|team|results, title, body, eventId?, teamName?, read, createdAt}; written only by the functions, a player may only set read to true (the bell's list)
 users/{uid}/memories/{eventId}               Memory (written by 7c; `date` is required: the query orders by it)
 events/{eventId}                             Event (missions→puzzles→components embedded)
 events/{eventId}/teams/{teamName}            Team (+ crewId, captainUid, members, inviteCode, photoConsent, presence, missionCompletedAt, attempts, lockedUntil, hintsUsed, teamPhotos.{start|finish} = {url, by, at}, the optional team photos, set by any member, each its own file under `events/{id}/team_photos/`; server-only nameKey, rulesAcceptedAt)
