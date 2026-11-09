@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:teamxperience/ui/ui.dart';
 
-/// The top of Home (mockup 02): the route mark, "TeamXperience", and the bell
+/// The top of Home: "TeamXperience" as on the website (a yellow X), and the bell
 /// that opens the player's notifications, with a red dot while one is unread
 /// seen.
 class HomeHeader extends StatelessWidget {
@@ -26,19 +26,19 @@ class HomeHeader extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(14, 8, 14, 9),
           child: Row(
             children: [
-              Icon(TablerIcons.route, size: 22, color: colors.accent),
-              const SizedBox(width: 8),
               Expanded(
-                child: Text(
-                  'TeamXperience',
+                // As on teamxperience.ro: Poppins bold, the X in the brand yellow.
+                child: Text.rich(
+                  TextSpan(
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, height: 1.45, color: colors.text),
+                    children: [
+                      const TextSpan(text: 'Team'),
+                      TextSpan(text: 'X', style: TextStyle(color: colors.brandX)),
+                      const TextSpan(text: 'perience'),
+                    ],
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                    height: 1.45,
-                    color: colors.text,
-                  ),
                 ),
               ),
               Semantics(

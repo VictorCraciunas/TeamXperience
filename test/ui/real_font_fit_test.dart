@@ -94,7 +94,7 @@ void main() {
     );
     expect(centre('Profil'), plain);
     await pumpUi(tester, Align(alignment: Alignment.topCenter, child: HomeHeader(unread: false, onBell: () {})));
-    expect(centre('TeamXperience'), plain);
+    expect(tester.getCenter(find.text('TeamXperience', findRichText: true)).dy, plain);
   });
 
   testWidgets('a short section link is wide enough to tap', (tester) async {

@@ -31,6 +31,7 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.tickOnNavy,
     required this.heroButton,
     required this.liveCard,
+    required this.brandX,
     required this.dangerOnNavy,
     required this.dangerTextOnNavy,
   });
@@ -82,6 +83,9 @@ class AppColors extends ThemeExtension<AppColors> {
   /// The live game card on Home (mockup 02's #0C092A).
   final Color liveCard;
 
+  /// The yellow X of "TeamXperience", as on teamxperience.ro (#F6AF1A).
+  final Color brandX;
+
   /// A wrong code's box border on navy (mockup 05).
   final Color dangerOnNavy;
 
@@ -117,6 +121,7 @@ class AppColors extends ThemeExtension<AppColors> {
     tickOnNavy: Color(0xFF53C4C7),
     heroButton: Color(0xE6FFFFFF),
     liveCard: Color(0xFF0C092A),
+    brandX: Color(0xFFF6AF1A),
     dangerOnNavy: Color(0xFFEF6A6E),
     dangerTextOnNavy: Color(0xFFF7C1C1),
   );
@@ -150,6 +155,7 @@ class AppColors extends ThemeExtension<AppColors> {
     tickOnNavy: Color(0xFF53C4C7),
     heroButton: Color(0xE6171B22),
     liveCard: Color(0xFF1B1446),
+    brandX: Color(0xFFF6AF1A),
     dangerOnNavy: Color(0xFFEF6A6E),
     dangerTextOnNavy: Color(0xFFF7C1C1),
   );
@@ -190,6 +196,7 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? tickOnNavy,
     Color? heroButton,
     Color? liveCard,
+    Color? brandX,
     Color? dangerOnNavy,
     Color? dangerTextOnNavy,
   }) {
@@ -222,6 +229,7 @@ class AppColors extends ThemeExtension<AppColors> {
       tickOnNavy: tickOnNavy ?? this.tickOnNavy,
       heroButton: heroButton ?? this.heroButton,
       liveCard: liveCard ?? this.liveCard,
+      brandX: brandX ?? this.brandX,
       dangerOnNavy: dangerOnNavy ?? this.dangerOnNavy,
       dangerTextOnNavy: dangerTextOnNavy ?? this.dangerTextOnNavy,
     );
@@ -261,6 +269,7 @@ class AppColors extends ThemeExtension<AppColors> {
       tickOnNavy: mix(tickOnNavy, other.tickOnNavy),
       heroButton: mix(heroButton, other.heroButton),
       liveCard: mix(liveCard, other.liveCard),
+      brandX: mix(brandX, other.brandX),
       dangerOnNavy: mix(dangerOnNavy, other.dangerOnNavy),
       dangerTextOnNavy: mix(dangerTextOnNavy, other.dangerTextOnNavy),
     );
