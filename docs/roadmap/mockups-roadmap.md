@@ -13,7 +13,7 @@ browser; the app should match them side by side at phone width.
 | # | File | Screens |
 |---|------|---------|
 | 01 | [01-event-details.html](mockups/01-event-details.html) | Event page (hero, route strip, facts, story, mission trail, how you play, past photos, logistics, organiser, sticky sign-up bar and its other states) |
-| 02 | [02-home.html](mockups/02-home.html) | Home before an event (countdown, team preparation, new events, memories) and during a live event (timer, progress, live leaderboard, team) |
+| 02 | [02-home.html](mockups/02-home.html) | Home before an event (countdown, team preparation, new events, memories) and during a live event (timer, progress, live leaderboard, team). The live layout stands; before a game, Home now follows `docs/superpowers/specs/2026-11-09-home-and-team-photos-design.md` |
 | 03 | [03-events-and-teams-tabs.html](mockups/03-events-and-teams-tabs.html) | Evenimente tab (list/map, filters, your registrations, open events) and Echipe tab (your team, invite code, season leaderboard) |
 | 04 | [04-register-and-join-team.html](mockups/04-register-and-join-team.html) | Short registration form, invite-code result, join by code |
 | 05 | [05-start-code-and-intro.html](mockups/05-start-code-and-intro.html) | Start-code screen with time left and wrong-code message, themed intro letter |
