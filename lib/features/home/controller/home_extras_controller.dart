@@ -18,7 +18,9 @@ class HomeExtrasController extends ChangeNotifier {
     required Stream<List<SeasonStanding>> standings,
     required this.seasonName,
     required Future<Team?> Function(String eventId, String uid) findTeam,
-  })  : _memories = memories,
+    required Stream<bool> Function(String uid) unread,
+  })  : _unread = unread,
+        _memories = memories,
         _crews = crews,
         _findTeam = findTeam {
     _standingsWatch = standings.listen((value) {
@@ -31,6 +33,12 @@ class HomeExtrasController extends ChangeNotifier {
   }
 
   final Stream<List<Memory>> Function(String uid) _memories;
+  final Stream<bool> Function(String uid) _unread;
+  StreamSubscription<bool>? _unreadWatch;
+  bool _hasUnread = false;
+
+  /// The bell's dot: the player has an unread notification.
+  bool get hasUnread => _hasUnread;
   final Stream<List<Crew>> Function(String uid) _crews;
   final Future<Team?> Function(String eventId, String uid) _findTeam;
 
@@ -67,8 +75,11 @@ class HomeExtrasController extends ChangeNotifier {
     _uid = uid;
     _memoriesWatch?.cancel();
     _crewsWatch?.cancel();
+    _unreadWatch?.cancel();
     _memoriesWatch = null;
     _crewsWatch = null;
+    _unreadWatch = null;
+    _hasUnread = false;
     _memory = null;
     _album = const [];
     _crewIds = const {};
@@ -88,6 +99,13 @@ class HomeExtrasController extends ChangeNotifier {
       _changed();
     }, onError: (Object _) {
       _crewIds = const {};
+      _changed();
+    });
+    _unreadWatch = _unread(uid).listen((value) {
+      _hasUnread = value;
+      _changed();
+    }, onError: (Object _) {
+      _hasUnread = false;
       _changed();
     });
   }
@@ -121,6 +139,7 @@ class HomeExtrasController extends ChangeNotifier {
     _standingsWatch?.cancel();
     _memoriesWatch?.cancel();
     _crewsWatch?.cancel();
+    _unreadWatch?.cancel();
     super.dispose();
   }
 }

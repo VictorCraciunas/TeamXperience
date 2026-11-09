@@ -11,6 +11,7 @@ class _Harness {
   final memories = StreamController<List<Memory>>.broadcast();
   final crews = StreamController<List<Crew>>.broadcast();
   final standings = StreamController<List<SeasonStanding>>.broadcast();
+  final unread = StreamController<bool>.broadcast();
   final watched = <String>[];
   Team? team;
 
@@ -23,6 +24,7 @@ class _Harness {
     standings: standings.stream,
     seasonName: 'Toamna 2026',
     findTeam: (_, __) async => team,
+    unread: (_) => unread.stream,
   );
 }
 
@@ -32,6 +34,41 @@ Future<void> _settle() async {
 }
 
 void main() {
+  test('follows unread notifications for the player', () async {
+    final h = _Harness();
+    h.controller.watch('u1');
+    await _settle();
+    h.unread.add(true);
+    await _settle();
+    expect(h.controller.hasUnread, isTrue);
+    h.unread.add(false);
+    await _settle();
+    expect(h.controller.hasUnread, isFalse);
+  });
+
+  test('a failing stream means no dot', () async {
+    final h = _Harness();
+    h.controller.watch('u1');
+    await _settle();
+    h.unread.add(true);
+    await _settle();
+    h.unread.addError(Exception('denied'));
+    await _settle();
+    expect(h.controller.hasUnread, isFalse);
+  });
+
+  test('watch(null) clears the dot and stops following', () async {
+    final h = _Harness();
+    h.controller.watch('u1');
+    await _settle();
+    h.unread.add(true);
+    await _settle();
+    h.controller.watch(null);
+    await _settle();
+    expect(h.controller.hasUnread, isFalse);
+    expect(h.unread.hasListener, isFalse);
+  });
+
   test('follows the newest memory and loads its album', () async {
     final h = _Harness()..team = Team.fromMap({'name': 'Vulpile', 'teamPhotos': {'start': {'url': 's'}}});
     h.controller.watch('u1');
