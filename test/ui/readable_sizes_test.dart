@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:teamxperience/features/event_details/widgets/hero_round_button.dart';
 import 'package:teamxperience/features/events_tab/widgets/events_header.dart';
+import 'package:teamxperience/features/finish/widgets/rating_stars.dart';
 import 'package:teamxperience/features/home/widgets/home_header.dart';
 import 'package:teamxperience/ui/components/misc/app_chip.dart';
 import 'package:teamxperience/ui/components/misc/pill_switch.dart';
@@ -66,6 +68,19 @@ void main() {
     testWidgets('the bell', (tester) async {
       await pumpUi(tester, HomeHeader(unread: false, onBell: () {}));
       expect(tester.getSize(find.byKey(const ValueKey('bell'))).height, greaterThanOrEqualTo(_smallestTap));
+    });
+
+    testWidgets('a rating star', (tester) async {
+      await pumpUi(tester, Center(child: RatingStars(rating: null, onRate: (_) {})));
+      final star = find.ancestor(of: find.byIcon(TablerIcons.star).first, matching: find.byType(GestureDetector)).first;
+      final size = tester.getSize(star);
+      expect(size.width, greaterThanOrEqualTo(_smallestTap));
+      expect(size.height, greaterThanOrEqualTo(_smallestTap));
+    });
+
+    testWidgets('the round button over an event\'s picture', (tester) async {
+      await pumpUi(tester, Center(child: HeroRoundButton(icon: TablerIcons.share, tooltip: 'Distribuie', onTap: () {})));
+      expect(tester.getSize(find.byType(HeroRoundButton)).height, greaterThanOrEqualTo(_smallestTap));
     });
 
     testWidgets('the search button', (tester) async {

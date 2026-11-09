@@ -34,7 +34,7 @@ class AppBottomNav extends StatelessWidget {
     // As tall as a tab whose icon sits in the active pill (2 + 29 + 2, then
     // 2 + the label), so the bar keeps its height when the raised tab is the
     // current one.
-    final rowHeight = 33 + 2 + MediaQuery.textScalerOf(context).scale(11) * 1.45;
+    final rowHeight = 33 + 2 + MediaQuery.textScalerOf(context).scale(12) * 1.45;
 
     final bar = DecoratedBox(
       decoration: BoxDecoration(

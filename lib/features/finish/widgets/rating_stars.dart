@@ -20,17 +20,19 @@ class RatingStars extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             for (var i = 1; i <= 5; i++) ...[
-              if (i > 1) const SizedBox(width: 10),
               Semantics(
                 button: true,
                 label: '$i din 5',
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () => onRate(i),
-                  child: Icon(
-                    i <= given ? TablerIcons.star_filled : TablerIcons.star,
-                    size: 22,
-                    color: palette.secondaryAccent,
+                  child: SizedBox.square(
+                    dimension: 48,
+                    child: Icon(
+                      i <= given ? TablerIcons.star_filled : TablerIcons.star,
+                      size: 28,
+                      color: palette.secondaryAccent,
+                    ),
                   ),
                 ),
               ),

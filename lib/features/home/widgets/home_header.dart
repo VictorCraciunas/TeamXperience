@@ -58,11 +58,11 @@ class HomeHeader extends StatelessWidget {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        Icon(TablerIcons.bell, size: 17, color: colors.text),
+                        Icon(TablerIcons.bell, size: 20, color: colors.text),
                         if (unread)
                           Positioned(
-                            top: 6,
-                            right: 7,
+                            top: 10,
+                            right: 11,
                             child: Container(
                               key: const ValueKey('bell-dot'),
                               width: 7,

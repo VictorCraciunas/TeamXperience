@@ -94,8 +94,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: DecoratedBox(
                   decoration: BoxDecoration(color: colors.iconButtonBg, shape: BoxShape.circle),
                   child: SizedBox.square(
-                    dimension: 32,
-                    child: Center(child: Icon(TablerIcons.settings, size: 17, color: colors.text)),
+                    dimension: 44,
+                    child: Center(child: Icon(TablerIcons.settings, size: 20, color: colors.text)),
                   ),
                 ),
               ),

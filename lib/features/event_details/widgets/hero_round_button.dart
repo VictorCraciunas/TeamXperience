@@ -21,7 +21,7 @@ class HeroRoundButton extends StatelessWidget {
         child: InkWell(
           customBorder: const CircleBorder(),
           onTap: onTap,
-          child: SizedBox(width: 32, height: 32, child: Icon(icon, size: 16, color: colors.text)),
+          child: SizedBox(width: 44, height: 44, child: Icon(icon, size: 20, color: colors.text)),
         ),
       ),
     );

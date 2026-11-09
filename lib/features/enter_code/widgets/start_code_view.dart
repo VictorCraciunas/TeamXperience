@@ -70,7 +70,7 @@ class StartCodeView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
               child: Row(
                 children: [
                   Semantics(
@@ -79,12 +79,14 @@ class StartCodeView extends StatelessWidget {
                     child: GestureDetector(
                       onTap: onClose,
                       behavior: HitTestBehavior.opaque,
-                      child: Icon(TablerIcons.x, size: 18, color: onNavy),
+                      child: SizedBox.square(dimension: 44, child: Icon(TablerIcons.x, size: 20, color: onNavy)),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Align(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Align(
                       alignment: Alignment.centerRight,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
@@ -108,6 +110,7 @@ class StartCodeView extends StatelessWidget {
                             ),
                           ),
                         ),
+                      ),
                       ),
                     ),
                   ),

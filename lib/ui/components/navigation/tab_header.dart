@@ -26,13 +26,15 @@ class TabHeader extends StatelessWidget {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          // The mockup's 12, plus the 1 px border drawn inside at the bottom.
-          padding: const EdgeInsets.fromLTRB(14, 12, 14, 13),
+          // Like Home's header: the title row is as tall as a 44 px button.
+          padding: const EdgeInsets.fromLTRB(14, 8, 14, 9),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
+              ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 44),
+                child: Row(
                 children: [
                   Expanded(
                     child: Text(
@@ -44,6 +46,7 @@ class TabHeader extends StatelessWidget {
                   ),
                   if (right != null) right,
                 ],
+                ),
               ),
               if (below != null) ...[const SizedBox(height: 10), below],
             ],

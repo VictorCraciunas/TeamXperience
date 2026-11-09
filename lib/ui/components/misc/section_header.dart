@@ -51,9 +51,10 @@ class SectionHeader extends StatelessWidget {
             GestureDetector(
               onTap: onLink,
               behavior: HitTestBehavior.opaque,
-              child: SizedBox(
-                height: _tap,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: _tap, minWidth: _tap),
                 child: Center(
+                  widthFactor: 1,
                   child: Text(
                 action,
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, height: 1.45, color: colors.accent),

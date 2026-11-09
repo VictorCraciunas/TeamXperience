@@ -42,7 +42,7 @@ class _StorySectionState extends State<StorySection> {
                 onTap: () => setState(() => _open = !_open),
                 behavior: HitTestBehavior.opaque,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   child: Text(
                     _open ? 'Mai puțin' : 'Citește tot',
                     style: TextStyle(

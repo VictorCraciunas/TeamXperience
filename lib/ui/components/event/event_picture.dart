@@ -52,7 +52,7 @@ class EventPicture extends StatelessWidget {
                 children: [
                   if (left != null) Flexible(child: left),
                   if (left != null && right != null) const SizedBox(width: 8),
-                  if (right != null) Flexible(child: right),
+                  if (right != null) left == null ? Flexible(child: right) : right,
                 ],
               ),
             ),

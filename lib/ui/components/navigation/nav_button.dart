@@ -28,7 +28,7 @@ class NavButton extends StatelessWidget {
       onTap: onTap,
       radius: 30,
       child: SizedBox(
-        width: 54,
+        width: double.infinity,
         child: Column(
           key: active ? ValueKey('nav-active-$index') : null,
           mainAxisSize: MainAxisSize.min,

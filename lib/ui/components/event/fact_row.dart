@@ -18,7 +18,7 @@ class FactRow extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(width: 62, child: date),
+            SizedBox(width: 76, child: date),
             for (final fact in facts) ...[
               const SizedBox(width: _gap),
               Expanded(child: fact),

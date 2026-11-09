@@ -101,9 +101,9 @@ class _CodeIcon extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-          child: Icon(icon, size: 16, color: context.colors.onNavy),
+        child: SizedBox.square(
+          dimension: 44,
+          child: Icon(icon, size: 18, color: context.colors.onNavy),
         ),
       ),
     );

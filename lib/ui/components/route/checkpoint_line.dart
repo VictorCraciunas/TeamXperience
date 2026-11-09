@@ -56,6 +56,7 @@ class CheckpointLine extends StatelessWidget {
           children: [
             for (var i = 0; i < count; i++)
               Flexible(
+                flex: labels[i].length,
                 child: Text(
                   labels[i],
                   maxLines: 1,
