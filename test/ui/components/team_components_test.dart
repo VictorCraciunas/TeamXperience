@@ -246,6 +246,19 @@ void main() {
       expect(tester.widget<Text>(find.text('5')).style?.color, AppColors.light.text);
     });
 
+    testWidgets('numbers below enabledFrom are greyed out and cannot be picked', (tester) async {
+      int? picked;
+      await pumpUi(tester, SizePicker(min: 2, max: 6, value: 4, enabledFrom: 4, onChanged: (n) => picked = n));
+      for (final n in [2, 3]) {
+        expect(_fill(tester, find.byKey(ValueKey('size-picker-$n'))), AppColors.light.inset);
+        expect(tester.widget<Text>(find.text('$n')).style?.color, AppColors.light.muted);
+      }
+      await tester.tap(find.text('3'));
+      expect(picked, isNull);
+      await tester.tap(find.text('5'));
+      expect(picked, 5);
+    });
+
     testWidgets('a long range wraps into rows of equal boxes', (tester) async {
       await pumpUi(tester, SizePicker(min: 2, max: 20, value: 4, onChanged: (_) {}));
       expect(tester.takeException(), isNull);

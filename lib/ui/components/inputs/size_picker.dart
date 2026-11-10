@@ -5,7 +5,8 @@ import '../../theme/theme_context.dart';
 
 /// One box per value from [min] to [max], side by side and equally wide, as
 /// in mockup 04: the team size picker. A long range wraps into rows of
-/// [_perRow].
+/// [_perRow]. Values below [enabledFrom] are shown greyed out and cannot be
+/// picked (a team that cannot shrink below its players).
 class SizePicker extends StatelessWidget {
   const SizePicker({
     super.key,
@@ -13,12 +14,14 @@ class SizePicker extends StatelessWidget {
     required this.max,
     required this.value,
     required this.onChanged,
+    this.enabledFrom,
   });
 
   final int min;
   final int max;
   final int value;
   final ValueChanged<int> onChanged;
+  final int? enabledFrom;
 
   static const double _gap = 5;
   static const int _perRow = 8;
@@ -42,7 +45,7 @@ class SizePicker extends StatelessWidget {
                 child: _SizeBox(
                   number: n,
                   selected: n == value,
-                  onTap: () => onChanged(n),
+                  onTap: n < (enabledFrom ?? min) ? null : () => onChanged(n),
                 ),
               ),
           ],
@@ -61,13 +64,17 @@ class _SizeBox extends StatelessWidget {
 
   final int number;
   final bool selected;
-  final VoidCallback onTap;
+
+  /// Null greys the box out.
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final disabled = onTap == null;
     return Semantics(
       button: true,
+      enabled: !disabled,
       selected: selected,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -75,7 +82,7 @@ class _SizeBox extends StatelessWidget {
         child: DecoratedBox(
           key: ValueKey('size-picker-$number'),
           decoration: BoxDecoration(
-            color: selected ? colors.navy : colors.panel,
+            color: selected ? colors.navy : (disabled ? colors.inset : colors.panel),
             borderRadius: BorderRadius.circular(AppRadius.button),
             border: Border.all(color: selected ? colors.navy : colors.border),
           ),
@@ -89,7 +96,7 @@ class _SizeBox extends StatelessWidget {
                 fontSize: 14,
                 height: 1.45,
                 fontWeight: selected ? FontWeight.w500 : FontWeight.w400,
-                color: selected ? colors.onNavy : colors.text,
+                color: selected ? colors.onNavy : (disabled ? colors.muted : colors.text),
               ),
             ),
           ),
