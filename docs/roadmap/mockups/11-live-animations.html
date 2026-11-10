@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>11-live-animations</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<!-- Mockup for the live game: how the red Joacă key ("În joc") and Home's LIVE badge could move.
+     Pick one animation for each and look at them together in the phone. -->
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:24px 16px 48px;background:#F4F6FA;font-family:Poppins,sans-serif;color:#0C092A;font-size:14px;line-height:1.45}
+h1{font-size:22px;font-weight:600;margin:0 0 4px}
+h2{font-size:15px;font-weight:600;margin:22px 0 8px}
+p{margin:0 0 8px}
+.mut{color:#47546A}
+.wrap{max-width:1000px;margin:0 auto;display:flex;gap:36px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+.side{flex:1 1 300px;max-width:420px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{min-height:44px;padding:0 14px;border-radius:12px;border:1px solid #CFD8E4;background:#fff;font:500 14px Poppins,sans-serif;color:#0C092A;cursor:pointer}
+.seg button.on{background:#222F62;color:#fff;border-color:#222F62}
+.note{margin-top:8px;font-size:13px;color:#47546A;min-height:40px}
+.chk{display:flex;align-items:center;gap:8px;min-height:44px;cursor:pointer;margin-top:10px}
+.chk input{width:20px;height:20px}
+
+.ph{position:relative;width:min(360px,100%);height:760px;border:8px solid #0C092A;border-radius:40px;overflow:hidden;background:#E7ECF3;flex:0 0 auto}
+.sb{height:30px;background:#fff;display:flex;align-items:center;padding:0 18px;font-size:12px;font-weight:500}
+.sb span{margin-left:auto;display:flex;gap:6px;align-items:center}
+.hd{height:56px;background:#fff;border-bottom:1px solid #CFD8E4;display:flex;align-items:center;gap:8px;padding:0 14px;font-weight:600;font-size:16px}
+.hd i.mark{color:#2AA5A9;font-size:22px}
+.hd .bell{margin-left:auto;width:44px;height:44px;border-radius:50%;background:#E3F2F3;display:grid;place-items:center;font-size:20px}
+
+/* Home live card */
+.card{margin:12px 14px 0;background:#0C092A;color:#fff;border-radius:22px;padding:12px 14px 14px;position:relative;overflow:hidden}
+.top{display:flex;align-items:center;gap:8px}
+.badge{position:relative;display:inline-flex;align-items:center;gap:6px;background:#E5484D;color:#fff;border-radius:99px;padding:2px 10px;font-size:12px;font-weight:600;letter-spacing:.5px;overflow:hidden}
+.clock{margin-left:auto;font-family:"Space Mono",monospace;font-size:17px}
+.clock small{font-family:Poppins,sans-serif;font-size:13px;opacity:.7;margin-left:6px}
+.ttl{font-size:20px;font-weight:600;margin-top:10px}
+.line{font-size:14px;opacity:.85}
+.prog{display:flex;gap:5px;margin-top:12px}
+.prog span{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.16)}
+.prog .d{background:#53C4C7}
+.prog .c{background:#F2A93B}
+.btns{display:flex;gap:8px;margin-top:14px}
+.btn{flex:1;min-height:46px;border-radius:14px;background:#2AA5A9;color:#0C092A;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px}
+.ibtn{width:46px;min-height:46px;border-radius:14px;background:rgba(255,255,255,.1);display:grid;place-items:center;font-size:20px}
+.blk{background:#fff;border:1px solid #CFD8E4;border-radius:16px;height:110px;margin:12px 14px 0}
+.blk .bar{height:12px;border-radius:6px;background:#E7ECF3;margin:14px 14px 0}
+
+/* bar */
+.nav{position:absolute;left:0;right:0;bottom:0;height:78px;background:#fff;border-top:1px solid #CFD8E4;display:flex;padding-bottom:8px}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;color:#47546A}
+.ni i{font-size:22px;padding:3px 16px;border-radius:99px}
+.ni.act{color:#167A7E}
+.ni.act i{background:#DDF3F3}
+.kc{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:11px;font-size:12px;font-weight:600;color:#E5484D}
+.key{position:absolute;top:-26px;left:50%;margin-left:-31px;width:62px;height:62px;border-radius:50%;background:#E5484D;color:#fff;border:4px solid #E7ECF3;display:grid;place-items:center;z-index:2}
+.key i{font-size:24px;position:relative;z-index:2}
+.fx{position:absolute;inset:-4px;border-radius:50%;pointer-events:none}
+
+/* ---- key animations ---- */
+/* 1 sonar: two rings leave the circle, one after the other */
+.k-sonar .fx::before,.k-sonar .fx::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid #E5484D;animation:sonar 2s ease-out infinite}
+.k-sonar .fx::after{animation-delay:1s}
+@keyframes sonar{from{transform:scale(1);opacity:.8}to{transform:scale(1.7);opacity:0}}
+/* 2 heartbeat: two quick beats, then a rest */
+.k-heart .key{animation:heart 1.4s ease-in-out infinite}
+@keyframes heart{0%,40%,100%{transform:scale(1)}10%{transform:scale(1.1)}20%{transform:scale(1)}30%{transform:scale(1.07)}}
+.k-heart .fx{box-shadow:0 0 0 0 rgba(229,72,77,.5);animation:heartglow 1.4s ease-out infinite}
+@keyframes heartglow{0%{box-shadow:0 0 0 0 rgba(229,72,77,.55)}45%{box-shadow:0 0 0 12px rgba(229,72,77,0)}100%{box-shadow:0 0 0 0 rgba(229,72,77,0)}}
+/* 3 orbit: a bright arc runs around the circle */
+.k-orbit .fx{inset:-9px;background:conic-gradient(from 0deg,rgba(229,72,77,0) 0deg,rgba(229,72,77,0) 250deg,#F2A93B 330deg,#fff 360deg);-webkit-mask:radial-gradient(circle,transparent 33px,#000 34px,#000 37px,transparent 38px);mask:radial-gradient(circle,transparent 33px,#000 34px,#000 37px,transparent 38px);animation:spin 1.6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.k-orbit .key i{animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(2px)}}
+/* 4 glow: a soft red light breathes around the key */
+.k-glow .key{animation:breathe 2.4s ease-in-out infinite}
+@keyframes breathe{0%,100%{box-shadow:0 0 6px 0 rgba(229,72,77,.35)}50%{box-shadow:0 0 22px 8px rgba(229,72,77,.55)}}
+/* 5 time ring: the game's time fills a ring around the key */
+.k-time .fx{inset:-9px;background:conic-gradient(#F2A93B calc(var(--p) * 1turn),rgba(229,72,77,.2) 0);-webkit-mask:radial-gradient(circle,transparent 33px,#000 34px,#000 37px,transparent 38px);mask:radial-gradient(circle,transparent 33px,#000 34px,#000 37px,transparent 38px)}
+.k-time .fx::after{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px;border-radius:50%;background:#fff;box-shadow:0 0 6px #F2A93B;transform:rotate(calc(var(--p) * 1turn)) translateY(-35.5px)}
+.k-time .key i{animation:nudge 1.6s ease-in-out infinite}
+
+/* ---- badge animations ---- */
+/* 1 halo: the pill sends out a soft red wave */
+.b-halo .badge{overflow:visible}
+.b-halo .badge::after{content:"";position:absolute;inset:0;border-radius:99px;border:2px solid #E5484D;animation:halo 1.8s ease-out infinite}
+@keyframes halo{from{transform:scale(1);opacity:.9}to{transform:scale(1.45,1.9);opacity:0}}
+/* 2 shine: a light sweep crosses the pill */
+.b-shine .badge::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);animation:shine 2.6s ease-in-out infinite}
+@keyframes shine{0%,55%{left:-60%}85%,100%{left:120%}}
+/* 3 bars: three bars jump like a sound meter */
+.eq{display:none;align-items:flex-end;gap:2px;height:12px}
+.eq span{width:3px;border-radius:2px;background:#fff;animation:eq 1s ease-in-out infinite}
+.eq span:nth-child(2){animation-delay:.2s}
+.eq span:nth-child(3){animation-delay:.4s}
+@keyframes eq{0%,100%{height:3px}50%{height:12px}}
+.b-bars .eq{display:inline-flex}
+/* 4 blink: the pill fades softly */
+.b-blink .badge{animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{50%{opacity:.55}}
+/* 5 card: the pill is still, the card's edge glows and the seconds roll */
+.b-edge .card{animation:edge 2.4s ease-in-out infinite}
+@keyframes edge{0%,100%{box-shadow:0 0 0 1px rgba(229,72,77,.35)}50%{box-shadow:0 0 0 2px rgba(229,72,77,.9),0 0 24px rgba(229,72,77,.35)}}
+.sec{display:inline-block}
+.roll{animation:roll .3s cubic-bezier(.3,1.4,.6,1)}
+@keyframes roll{from{transform:translateY(60%);opacity:0}to{transform:none;opacity:1}}
+
+.calm *,.calm *::before,.calm *::after{animation:none!important}
+</style>
+</head><body>
+<div class="wrap">
+
+<div class="side">
+  <h1>The live game, moving</h1>
+  <p class="mut">While your team plays, the red key and Home's LIVE badge can move a little, so the game feels on. Pick one of each and see them together.</p>
+
+  <h2>The key ("În joc")</h2>
+  <div class="seg" id="segKey">
+    <button data-v="none">Still (today)</button>
+    <button data-v="sonar" class="on">Sonar</button>
+    <button data-v="heart">Heartbeat</button>
+    <button data-v="orbit">Orbit</button>
+    <button data-v="glow">Glow</button>
+    <button data-v="time">Time ring</button>
+  </div>
+  <div class="note" id="noteKey"></div>
+
+  <h2>Home's LIVE badge</h2>
+  <div class="seg" id="segBadge">
+    <button data-v="none">Still (today)</button>
+    <button data-v="halo" class="on">Halo</button>
+    <button data-v="shine">Shine</button>
+    <button data-v="bars">Sound bars</button>
+    <button data-v="blink">Soft blink</button>
+    <button data-v="edge">Glowing card</button>
+  </div>
+  <div class="note" id="noteBadge"></div>
+
+  <label class="chk"><input type="checkbox" id="calm"> Reduced motion (everything still)</label>
+</div>
+
+<div class="ph" id="phone">
+  <div class="sb">20:32<span><i class="ti ti-wifi"></i><i class="ti ti-battery-3"></i>56%</span></div>
+  <div class="hd"><i class="ti ti-route mark"></i>TeamXperience<span class="bell"><i class="ti ti-bell"></i></span></div>
+
+  <div class="card">
+    <div class="top">
+      <span class="badge"><span class="eq"><span></span><span></span><span></span></span>LIVE</span>
+      <span class="clock" id="clock">1:17:42<small>rămase</small></span>
+    </div>
+    <div class="ttl">Harta Pierdută</div>
+    <div class="line">Echipa Vulpile · misiunea 4 din 6</div>
+    <div class="prog"><span class="d"></span><span class="d"></span><span class="d"></span><span class="c"></span><span></span><span></span></div>
+    <div class="btns"><div class="btn"><i class="ti ti-player-play"></i>Continuă jocul</div><div class="ibtn"><i class="ti ti-message-circle"></i></div></div>
+  </div>
+  <div class="blk"><div class="bar" style="width:40%"></div><div class="bar" style="width:75%"></div><div class="bar" style="width:60%"></div></div>
+  <div class="blk"><div class="bar" style="width:55%"></div><div class="bar" style="width:35%"></div></div>
+
+  <nav class="nav">
+    <div class="ni act"><i class="ti ti-home"></i>Acasă</div>
+    <div class="ni"><i class="ti ti-map-2"></i>Evenimente</div>
+    <div class="kc"><div class="key"><span class="fx"></span><i class="ti ti-player-play"></i></div>În joc</div>
+    <div class="ni"><i class="ti ti-users-group"></i>Echipe</div>
+    <div class="ni"><i class="ti ti-user"></i>Profil</div>
+  </nav>
+</div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const phone = $('#phone');
+const NOTES = {
+  key: {
+    none: 'As in the app now: a red circle with the play icon.',
+    sonar: 'Two red rings leave the circle one after the other, every 2 s, like a sonar.',
+    heart: 'The circle beats twice and rests, with a soft red wave on each beat.',
+    orbit: 'A bright arc runs round the circle; the play icon nudges forward.',
+    glow: 'A soft red light breathes in and out around the key.',
+    time: 'An amber ring fills as the game\'s 3 hours go by, with a bright point at the end; it moves a little each minute.'
+  },
+  badge: {
+    none: 'As in the app now: a red LIVE pill.',
+    halo: 'The pill sends out a soft red wave.',
+    shine: 'A light sweeps across the pill every few seconds.',
+    bars: 'Three small bars jump before LIVE, like a sound meter.',
+    blink: 'The pill fades softly in and out.',
+    edge: 'The pill stays still; the card\'s edge glows red and the seconds roll in.'
+  }
+};
+let key = 'sonar', badge = 'halo';
+function apply() {
+  phone.className = 'ph k-' + key + ' b-' + badge + ($('#calm').checked ? ' calm' : '');
+  $('#noteKey').textContent = NOTES.key[key];
+  $('#noteBadge').textContent = NOTES.badge[badge];
+}
+function seg(id, set) {
+  $(id).addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    $(id).querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    set(b.dataset.v); apply();
+  });
+}
+seg('#segKey', v => key = v);
+seg('#segBadge', v => badge = v);
+$('#calm').addEventListener('change', apply);
+
+// The game clock: 3 h from a start 1 h 42 min ago, ticking every second.
+const end = Date.now() + (77 * 60 + 42) * 1000;
+const total = 3 * 3600 * 1000;
+const two = n => String(n).padStart(2, '0');
+let lastSec = '';
+function tick() {
+  const left = Math.max(0, end - Date.now());
+  const s = Math.floor(left / 1000);
+  const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sec = two(s % 60);
+  const rollIt = badge === 'edge' && sec !== lastSec;
+  $('#clock').innerHTML = `${h}:${two(m)}:<span class="sec${rollIt ? ' roll' : ''}">${sec}</span><small>rămase</small>`;
+  lastSec = sec;
+  phone.style.setProperty('--p', (1 - left / total).toFixed(4));
+}
+apply(); tick(); setInterval(tick, 1000);
+</script>
+</body></html>
