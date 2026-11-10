@@ -30,4 +30,10 @@ void main() {
     expect(labels[PlayerTab.teams], 'Echipe');
     expect(labels[PlayerTab.profile], 'Profil');
   });
+
+  test('the middle tab knows when the pop-up is open', () {
+    expect(playerNavItems(live: false)[PlayerTab.play].open, isFalse);
+    expect(playerNavItems(live: false, open: true)[PlayerTab.play].open, isTrue);
+    expect(playerNavItems(live: true, open: true)[PlayerTab.play].live, isTrue);
+  });
 }

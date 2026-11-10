@@ -7,6 +7,7 @@ class AppNavItem {
     this.showBadge = false,
     this.raised = false,
     this.live = false,
+    this.open = false,
   });
 
   final IconData icon;
@@ -18,4 +19,7 @@ class AppNavItem {
 
   /// A raised item turns red while a game is on ("În joc").
   final bool live;
+
+  /// A raised item whose pop-up is open: its icon turns into an X.
+  final bool open;
 }
