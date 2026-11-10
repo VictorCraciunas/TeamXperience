@@ -56,12 +56,14 @@ void main() {
   group('previewLeftClock', () {
     final now = DateTime(2026, 11, 8, 12);
 
-    test('three hours from when the walk-through began, whatever the event date', () {
-      expect(previewLeftClock(now.subtract(const Duration(minutes: 10)), now), liveClock(const Duration(hours: 2, minutes: 50)));
+    test('the event duration from when the walk-through began, whatever the event date', () {
+      final event = Event(eventId: 'e', durationMinutes: 90);
+      expect(previewLeftClock(event, now.subtract(const Duration(minutes: 10)), now), liveClock(const Duration(minutes: 80)));
     });
 
-    test('no start: the whole three hours', () {
-      expect(previewLeftClock(null, now), liveClock(Event.maxDuration));
+    test('no start: the whole duration', () {
+      expect(previewLeftClock(Event(eventId: 'e', durationMinutes: 90), null, now), liveClock(const Duration(minutes: 90)));
+      expect(previewLeftClock(Event(eventId: 'e'), null, now), liveClock(Event.defaultPlayTime));
     });
   });
 }

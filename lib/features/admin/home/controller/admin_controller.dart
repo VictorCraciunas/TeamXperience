@@ -156,7 +156,7 @@ class AdminHomeController extends ChangeNotifier {
         eventList.events.where((e) {
           final start = e.dateEvent;
           return start != null &&
-              !(e.isStopped || now.isAfter(start.add(Event.maxDuration)));
+              !(e.isStopped || now.isAfter(start.add(e.playTime)));
         }).toList();
     await loadEventStats(events);
   }

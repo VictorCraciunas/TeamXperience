@@ -28,18 +28,18 @@ String playedClock(DateTime? startedAt, DateTime? eventStart, DateTime now) {
   return liveClock(now.difference(start));
 }
 
-/// How long until the game closes ([Event.maxDuration] after the start).
+/// How long until the game closes ([Event.playTime] after the start).
 String leftClock(Event event, DateTime now) {
   final start = event.dateEvent;
   if (start == null) return liveClock(Duration.zero);
-  return liveClock(start.add(Event.maxDuration).difference(now));
+  return liveClock(start.add(event.playTime).difference(now));
 }
 
 /// The time left in an organiser's walk-through, counted from when it began:
 /// the event's own date means nothing there.
-String previewLeftClock(DateTime? startedAt, DateTime now) {
-  if (startedAt == null) return liveClock(Event.maxDuration);
-  return liveClock(startedAt.add(Event.maxDuration).difference(now));
+String previewLeftClock(Event event, DateTime? startedAt, DateTime now) {
+  if (startedAt == null) return liveClock(event.playTime);
+  return liveClock(startedAt.add(event.playTime).difference(now));
 }
 
 /// Where a mission is: its own place, else its first location puzzle with

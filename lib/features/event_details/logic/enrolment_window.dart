@@ -5,7 +5,7 @@ import 'package:teamxperience/model/event.dart';
 
 bool isOverAt(Event e, DateTime now) {
   final start = e.dateEvent;
-  return e.isStopped || (start != null && now.isAfter(start.add(Event.maxDuration)));
+  return e.isStopped || (start != null && now.isAfter(start.add(e.playTime)));
 }
 
 /// From the start to the event's [Event.enterWindow] after it, the last minute included.

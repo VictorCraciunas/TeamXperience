@@ -105,7 +105,7 @@ HomeHero resolveHomeHero({
 bool _isOver(Event event, DateTime now) {
   final start = event.dateEvent;
   if (start == null) return true;
-  return event.isStopped || now.isAfter(start.add(Event.maxDuration));
+  return event.isStopped || now.isAfter(start.add(event.playTime));
 }
 
 HomeHero? _live(DateTime now, Event? event, Team? team) {

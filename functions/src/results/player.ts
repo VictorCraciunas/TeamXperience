@@ -1,4 +1,4 @@
-import {bucharestTime, MAX_DURATION_MS} from "../teams/shared";
+import {bucharestTime, DEFAULT_PLAY_MS} from "../teams/shared";
 
 /** A team as the results need it, with plain dates. */
 export interface TeamFacts {
@@ -35,6 +35,8 @@ export interface EventFacts {
   name: string;
   date: Date;
   missionCount: number;
+  /** How long the game lasts; three hours when not given. */
+  playMs?: number;
 }
 
 export const XP_GAME = 100;
@@ -81,12 +83,12 @@ function endedAtNight(team: TeamFacts): boolean {
   return bucharestTime(last).hour >= NIGHT_FROM_HOUR;
 }
 
-/** Minutes played: to the finish, else the last mission, at most the game's three hours. */
+/** Minutes played: to the finish, else the last mission, at most the game's length. */
 function minutesPlayed(team: TeamFacts, event: EventFacts): number {
   const start = team.startedAt ?? event.date;
   const end = team.finishedAt ?? lastMissionAt(team);
   if (end === null) return 0;
-  const played = Math.min(end.getTime() - start.getTime(), MAX_DURATION_MS);
+  const played = Math.min(end.getTime() - start.getTime(), event.playMs ?? DEFAULT_PLAY_MS);
   return Math.max(0, Math.round(played / 60000));
 }
 

@@ -105,18 +105,39 @@ class Event {
 
   bool get isDraft => status == EventStatus.draft;
 
-  static const Duration maxDuration = Duration(hours: 3);
+  /// How long a game lasts when the event has no duration (older events).
+  static const Duration defaultPlayTime = Duration(hours: 3);
 
-  /// How long after the start teams can still type the start code.
-  Duration get enterWindow => Duration(minutes: enterWindowMinutes);
+  /// Past this a duration is a typo, and the date maths would overflow; the
+  /// server reads it the same way.
+  static const Duration longestPlayTime = Duration(days: 3650);
 
-  bool get hasExpired {
-    final start = dateEvent;
-    if (start == null) return false;
-    return DateTime.now().isAfter(start.add(maxDuration));
+  /// How long the game lasts: the event's duration, any number of minutes;
+  /// the game ends for every team that long after the start.
+  Duration get playTime {
+    final minutes = durationMinutes;
+    if (minutes == null || minutes <= 0) return defaultPlayTime;
+    return minutes > longestPlayTime.inMinutes ? longestPlayTime : Duration(minutes: minutes);
   }
 
-  bool get isOver => isStopped || hasExpired;
+  /// When the game ends; null without a date.
+  DateTime? get endsAt => dateEvent?.add(playTime);
+
+  /// How long after the start teams can still type the start code, never
+  /// past the end of the game.
+  Duration get enterWindow {
+    final window = Duration(minutes: enterWindowMinutes);
+    return window > playTime ? playTime : window;
+  }
+
+  /// Stopped, or its time ran out by [now].
+  bool isOverAt(DateTime now) {
+    if (isStopped) return true;
+    final end = endsAt;
+    return end != null && now.isAfter(end);
+  }
+
+  bool get isOver => isOverAt(DateTime.now());
 
   /// The route length, from [routeLengthKm] or the first number in
   /// [lungimeTraseu] ("4,5 km", "3.5km", "500 m").
@@ -300,6 +321,8 @@ class Event {
       'name': name,
       'missions': missions.map((m) => m.toJson()).toList(),
       'dateEvent': dateEvent,
+      // Read only by the server, to find games that run longer than a week.
+      'endsAt': endsAt,
       'dateDeadlineEnrollment': dateDeadlineEnrollment,
       'dateStartEnrollment': dateStartEnrollment,
       'location': location,

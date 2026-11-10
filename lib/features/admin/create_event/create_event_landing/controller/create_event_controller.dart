@@ -11,6 +11,7 @@ import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/service/event_service/event_completeness.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/ui/components/feedback/snackbars.dart';
+import 'package:teamxperience/ui/components/inputs/reveal_form_error.dart';
 import 'package:teamxperience/utils/calendar_helper.dart';
 import 'package:teamxperience/utils/event_formats.dart';
 import 'package:teamxperience/utils/image_helper.dart';
@@ -177,6 +178,13 @@ class CreateEventController {
   static String? hintsProblem(String text) =>
       text.trim().isEmpty || _inRange(text, 0, 5) != null ? null : 'Între 0 și 5';
 
+  /// The message for a duration that is not a whole number of minutes above
+  /// zero, or null. The game ends for everyone this long after the start.
+  static String? durationProblem(String text) {
+    final minutes = int.tryParse(text.trim());
+    return minutes == null || minutes <= 0 ? 'Introdu durata în minute' : null;
+  }
+
   /// The message for minutes that are not 10 to 180, or null.
   static String? enterWindowProblem(String text) =>
       text.trim().isEmpty || _inRange(text, 10, 180) != null ? null : 'Între 10 și 180 de minute';
@@ -317,7 +325,13 @@ class CreateEventController {
   /// Continue to the missions. [mode] is 'create', 'blueprint' (copied from
   /// another event), 'edit' (a published event) or 'draft' (resuming a draft).
   Future<void> createEvent(BuildContext context, String mode) async {
-    if (!(formKey.currentState?.validate() ?? false)) return;
+    // A wrong field may be far up the page: go to it and say what is wrong.
+    final error = await revealFormError(formKey);
+    if (error != null) {
+      if (context.mounted) MySnackBars.warningSnackBar(context, title: 'Corectează câmpul marcat', message: error);
+      return;
+    }
+    if (!context.mounted) return;
 
     final problem = enrollmentProblem() ?? teamSizeProblem();
     if (problem != null) {

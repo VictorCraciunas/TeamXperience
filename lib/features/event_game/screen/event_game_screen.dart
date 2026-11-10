@@ -145,7 +145,7 @@ class _EventGameScreenState extends State<EventGameScreen> {
                     now,
                   ),
                   left: controller.isPreview
-                      ? previewLeftClock(controller.previewTeam?.startedAt, now)
+                      ? previewLeftClock(controller.event, controller.previewTeam?.startedAt, now)
                       : leftClock(controller.event, now),
                   stops: controller.stops,
                   onClose: () => Navigator.maybePop(context),

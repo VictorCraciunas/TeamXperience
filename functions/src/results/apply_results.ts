@@ -1,6 +1,6 @@
 import {DocumentData, DocumentReference, FieldValue, Firestore, Timestamp, WriteBatch} from "firebase-admin/firestore";
 import * as logger from "firebase-functions/logger";
-import {teamsOf, toDate} from "../teams/shared";
+import {playTimeMs, teamsOf, toDate} from "../teams/shared";
 import {EventFacts, isCompleted, playerResult, Previous, TeamFacts} from "./player";
 import {inboxEntry, InboxItem, pushToUser} from "../notifications/inbox";
 import {rankTeams} from "./ranking";
@@ -160,6 +160,7 @@ export async function applyResults(db: Firestore, eventId: string, options: Appl
     name: String(data.name ?? ""),
     date: toDate(data.dateEvent) ?? new Date(),
     missionCount: Array.isArray(data.missions) ? data.missions.length : 0,
+    playMs: playTimeMs(data),
   };
 
   const docs = (await teamsOf(db, eventId).get()).docs;
@@ -237,20 +238,30 @@ export async function applyResults(db: Firestore, eventId: string, options: Appl
 }
 
 const LOOK_BACK_MS = 7 * 24 * 60 * 60 * 1000;
-const MAX_DURATION_MS = 3 * 60 * 60 * 1000;
 
 /**
- * Events whose three hours ran out in the past week and that have no results.
- * The week keeps a first deploy from scoring every game ever played.
+ * Events whose time ran out (their duration, else three hours) and that have
+ * no results: those that started in the past week, and those whose saved
+ * `endsAt` is in the past week (games longer than a week; older app
+ * versions do not save it). The week keeps a first deploy from scoring every
+ * game ever played.
  */
 export async function expiredEventIds(db: Firestore, now: Date): Promise<string[]> {
-  const until = new Date(now.getTime() - MAX_DURATION_MS);
-  const from = new Date(until.getTime() - LOOK_BACK_MS);
-  const events = await db.collection("events")
-    .where("dateEvent", ">=", Timestamp.fromDate(from))
-    .where("dateEvent", "<", Timestamp.fromDate(until))
-    .get();
-  return events.docs
-    .filter((doc) => doc.data().resultsComputedAt === undefined && doc.data().status !== "draft")
-    .map((doc) => doc.id);
+  const from = Timestamp.fromDate(new Date(now.getTime() - LOOK_BACK_MS));
+  const until = Timestamp.fromDate(now);
+  const events = db.collection("events");
+  const [started, ended] = await Promise.all([
+    events.where("dateEvent", ">=", from).where("dateEvent", "<", until).get(),
+    events.where("endsAt", ">=", from).where("endsAt", "<", until).get(),
+  ]);
+  const ids = new Set<string>();
+  for (const doc of [...started.docs, ...ended.docs]) {
+    const data = doc.data();
+    const start = toDate(data.dateEvent);
+    if (data.resultsComputedAt === undefined && data.status !== "draft" &&
+      start !== null && now.getTime() > start.getTime() + playTimeMs(data)) {
+      ids.add(doc.id);
+    }
+  }
+  return [...ids];
 }

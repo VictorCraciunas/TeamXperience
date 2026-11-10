@@ -69,6 +69,15 @@ void main() {
       expect(CreateEventController.enterWindowProblem('9'), isNotNull);
       expect(CreateEventController.enterWindowProblem('o oră'), isNotNull);
     });
+
+    test('the duration: any whole number of minutes above zero', () {
+      expect(CreateEventController.durationProblem('120'), isNull);
+      expect(CreateEventController.durationProblem('2'), isNull);
+      expect(CreateEventController.durationProblem('20000'), isNull);
+      expect(CreateEventController.durationProblem('0'), 'Introdu durata în minute');
+      expect(CreateEventController.durationProblem(''), 'Introdu durata în minute');
+      expect(CreateEventController.durationProblem('2 ore'), 'Introdu durata în minute');
+    });
   });
 
   testWidgets('the section shows the four fields', (tester) async {

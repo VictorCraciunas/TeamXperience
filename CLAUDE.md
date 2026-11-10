@@ -80,7 +80,7 @@ Providers registered in `main.dart` (order matters — later ones read earlier o
 - `UserProvider` — current `AppUser` + Firebase `User`. `AppUser` is immutable, so mutations (e.g. `addRegisteredEvent`) rebuild a new instance.
 - `EventList` — cached list of all events with `upcomingEvents` / `liveEvents` / `pastEvents` getters; `loadEvents()` is throttled (5 min) unless `forceRefresh`. Admin-side views use this.
 - `NewsList` — same pattern for news.
-- `UserEventsProvider` — player-side: derives registered/upcoming/past events from `UserProvider` + `EventList`, and finds the user's *active event* (a team with `hasStarted && !hasFinished`) to drive the "play event" card on Home. Skips events where `Event.isOver` (stopped by admin or >3h after start).
+- `UserEventsProvider` — player-side: derives registered/upcoming/past events from `UserProvider` + `EventList`, and finds the user's *active event* (a team with `hasStarted && !hasFinished`) to drive the "play event" card on Home. Skips events where `Event.isOver` (stopped by admin or past its duration).
 
 Game-time screens use their own `ChangeNotifier` controllers (e.g. `EventGameController`) and Firestore streams rather than the global providers.
 
@@ -101,7 +101,7 @@ Event content hierarchy: `Event` -> `Mission` -> `Puzzle` (`PuzzleType`: code, i
 
 Team progress is `missionProgress` + `puzzleNumber`; location is written continuously by `LocationService` during play and shown to admins on the map. Photo puzzles: player uploads -> posted as an image message in the team chat -> `Team.photoApprovals['{mission}_{puzzle}']` (`Team.approvalKey`) set to pending -> admin approves/denies from the chat bubble -> player's Continue button unlocks.
 
-Event lifecycle: players register for events (`registeredEventIds`), enter the event's `startCode` (`features/enter_code`) up to ~1h after start, then play via `features/event_game` (mission list `event_game_screen` -> `puzzle_game_screen`). An event ends when admin sets `isStopped` or 3h after `dateEvent` (`Event.hasExpired`); `EventGameController` watches both via a timer and `EventService.streamEvent`.
+Event lifecycle: players register for events (`registeredEventIds`), enter the event's `startCode` (`features/enter_code`) within `Event.enterWindow` after start (never past the end), then play via `features/event_game` (mission list `event_game_screen` -> `puzzle_game_screen`). An event ends when admin sets `isStopped` or its duration has passed since `dateEvent` (`Event.playTime` = `durationMinutes`, 3 h for an event without one; `endsAt`, `isOverAt(now)`); `EventGameController` watches both via a timer and `EventService.streamEvent`, and moves the timer when the organiser changes the duration mid-game. The server reads the same rule (`playTimeMs` in `functions/src/teams/shared.ts`).
 
 ### Features map (`lib/features/`)
 
@@ -117,7 +117,7 @@ Event lifecycle: players register for events (`registeredEventIds`), enter the e
 - `functions/src/index.ts` (v2 functions): `onChatMessage` (Firestore trigger on `events/{eventId}/teams/{teamName}/messages/{id}`: admin message -> notify team members via `userIds`; user message -> notify admins).
 - Organiser push: `functions/src/notifications/`, the callable `sendNotification` (`{title, description, eventId?}` -> FCM to all users, or only those with `eventId` in `registeredEventIds`). Only `role: ADMIN` may call it; the app calls it through `NotificationFunctions` in `lib/backend/functions/`.
 - Team Cloud Functions live in `functions/src/teams/`: the callables `checkTeamName`, `createCrew`, `registerTeam`, `previewInvite`, `joinTeam` and `renameTeam` (the captain, before the game starts: the team moves to a new document with its chat, messages marked `moved` so they are not pushed again, and the crew takes the name), which the app calls through `TeamFunctions` in `lib/backend/functions/`. Each handler takes `(db, uid, data)`; `callables.ts` holds the one-line `onCall` wrappers.
-- Results: `functions/src/results/` works out places, XP, badges, memories, crew stats and season points when an event stops (`onEventStopped`) or its three hours run out (`closeExpiredEvents`, every 15 minutes). Safe to run again: each player and crew is counted once.
+- Results: `functions/src/results/` works out places, XP, badges, memories, crew stats and season points when an event stops (`onEventStopped`) or its duration runs out (`closeExpiredEvents`, every 15 minutes). Safe to run again: each player and crew is counted once.
 - `firestore.rules` is tested on the emulator with `npm --prefix functions test`; add a rule and a test with any new client write, since a forgotten one fails silently in the middle of a game.
 
 ### Theme

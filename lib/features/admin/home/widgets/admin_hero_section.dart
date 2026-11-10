@@ -45,7 +45,7 @@ class AdminHeroSection extends StatelessWidget {
     final remaining =
         start == null
             ? Duration.zero
-            : start.add(Event.maxDuration).difference(now);
+            : start.add(event.playTime).difference(now);
 
     return EventHeroCard(
       status: HeroStatus.live,

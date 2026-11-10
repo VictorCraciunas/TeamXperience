@@ -453,8 +453,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     controller: controller.durationController,
                     label: 'Durata (minute)',
                     hint: 'Ex. 120',
+                    helper: 'Jocul se oprește automat după acest timp.',
                     keyboardType: TextInputType.number,
-                    validator: (v) => int.tryParse((v ?? '').trim()) == null ? 'Introdu durata în minute' : null,
+                    validator: (v) => CreateEventController.durationProblem(v ?? ''),
                   ),
                   const SizedBox(height: 20),
                   AppDropdown<Difficulty>(

@@ -20,7 +20,7 @@ const wrongLimit = 3;
 bool eventEnded(Event event, DateTime now) {
   if (event.isStopped) return true;
   final start = event.dateEvent;
-  return start != null && now.isAfter(start.add(Event.maxDuration));
+  return start != null && now.isAfter(start.add(event.playTime));
 }
 
 /// The event has started and has not ended.

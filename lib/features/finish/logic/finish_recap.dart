@@ -42,7 +42,7 @@ Duration playedTime(Event event, Team team, DateTime now) {
   // finish time was never written (offline, app closed).
   final finish = team.finishedAt ?? team.lastMissionAt;
   if (finish != null && routeCompleted(event, team)) return finish.difference(start);
-  final close = (event.dateEvent ?? start).add(Event.maxDuration);
+  final close = (event.dateEvent ?? start).add(event.playTime);
   final end = now.isBefore(close) ? now : close;
   return end.difference(start);
 }
