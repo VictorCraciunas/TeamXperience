@@ -366,9 +366,14 @@ describe("firestore.rules", () => {
       await assertFails(as("u3").collection(`${TEAM}/messages`).add({sender: "USER", text: "Hei"}));
     });
 
-    test("a player cannot speak as the organiser or announce", async () => {
+    test("a player cannot speak as the organiser, announce, or mark a message moved", async () => {
       await assertFails(as("u1").collection(`${TEAM}/messages`).add({sender: "ADMIN", text: "Hei"}));
       await assertFails(as("u1").collection(`${TEAM}/messages`).add({sender: "USER", announcement: true}));
+      await assertFails(as("u1").collection(`${TEAM}/messages`).add({sender: "USER", text: "Hei", moved: true}));
+    });
+
+    test("nobody writes to a team that is gone (renamed): it would never be read", async () => {
+      await assertFails(as("admin").collection("events/e1/teams/Nimeni/messages").add({sender: "ADMIN", text: "Hei"}));
     });
 
     test("an organiser posts, edits and deletes; a player does not", async () => {

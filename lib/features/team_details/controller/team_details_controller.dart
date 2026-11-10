@@ -86,24 +86,41 @@ class TeamControllerDetails {
     if (currentTeam == null) return 'Nu s-au putut salva modificările.';
 
     var name = currentTeam.name;
+    var renamed = false;
     final wanted = cleanTeamName(nameController.text);
     if (canRename() && wanted != name) {
       if (teamNameProblem(wanted) != null) return teamErrorText(TeamError.nameInvalid);
       try {
         name = await teamService.renameTeam(event.eventId, name, wanted);
+        renamed = true;
       } catch (e) {
+        // It may have gone through before the answer was lost: show the team
+        // as it is now, so a retry starts from the right name.
+        team = await _fresh(currentTeam);
         return teamErrorText(TeamError.fromException(e));
       }
     }
 
-    try {
-      await teamService.updateTeamPhone(event.eventId, name, phoneController.text.trim());
-    } catch (e) {
-      team = await _getTeam() ?? currentTeam;
-      return 'Nu s-au putut salva modificările.';
+    final phone = phoneController.text.trim();
+    if (phone != currentTeam.phoneNumber) {
+      try {
+        await teamService.updateTeamPhone(event.eventId, name, phone);
+      } catch (e) {
+        team = await _fresh(currentTeam);
+        return renamed ? 'Numele s-a schimbat, dar telefonul nu s-a salvat.' : 'Nu s-au putut salva modificările.';
+      }
     }
-    team = await _getTeam() ?? currentTeam;
+    team = await _fresh(currentTeam);
     return null;
+  }
+
+  /// The team as saved now, or [fallback] when it cannot be read.
+  Future<Team> _fresh(Team fallback) async {
+    try {
+      return await _getTeam() ?? fallback;
+    } catch (_) {
+      return fallback;
+    }
   }
 
   Future<void> initializeTeam() async {

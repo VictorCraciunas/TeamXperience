@@ -89,7 +89,8 @@ class EventDetailsController extends ChangeNotifier {
         // Back from sign-up the team may exist now: look it up again.
         Navigator.pushNamed(context, Routes.registerTeam, arguments: event).then((_) => reload());
       case SignupAction.teamDetails:
-        Navigator.pushNamed(context, Routes.registerTeamDetails, arguments: {'event': event, 'user': user});
+        // The captain may rename the team there: look it up again after.
+        Navigator.pushNamed(context, Routes.registerTeamDetails, arguments: {'event': event, 'user': user}).then((_) => reload());
       case SignupAction.enterCode:
         Navigator.pushNamed(context, Routes.enterCodeScreen, arguments: event);
       case SignupAction.continueGame:

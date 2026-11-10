@@ -1,6 +1,6 @@
 import 'package:cloud_functions/cloud_functions.dart';
 
-/// Why a team callable failed. The first 14 are the `reason` values the
+/// Why a team callable failed. The first 16 are the `reason` values the
 /// functions send; `network` and `unknown` are made on the app side.
 enum TeamError {
   notSignedIn,

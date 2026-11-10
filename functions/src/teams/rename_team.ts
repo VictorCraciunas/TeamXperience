@@ -32,7 +32,12 @@ export async function renameTeam(
     if (event === undefined) throw refuse("eventNotFound");
     const oldRef = teamsOf(db, eventId).doc(oldName);
     const team = (await tx.get(oldRef)).data();
-    if (team === undefined) throw refuse("teamNotFound");
+    if (team === undefined) {
+      // A retry after the rename went through (the answer was lost): done.
+      const renamed = (await tx.get(teamsOf(db, eventId).doc(newName))).data();
+      if (renamed?.captainUid === uid) return {teamName: newName};
+      throw refuse("teamNotFound");
+    }
     if (team.captainUid !== uid) throw refuse("notCaptain");
     const start = toDate(event.dateEvent);
     if (team.hasStarted === true || (start !== null && now.getTime() >= start.getTime())) throw refuse("gameStarted");
@@ -55,7 +60,7 @@ export async function renameTeam(
     tx.delete(oldRef);
     if (crewRef !== null && crew !== undefined) {
       const links = crewTeams(crew).map((link) =>
-        link.eventId === eventId && link.teamName === oldName ? {eventId, teamName: newName} : link);
+        link.eventId === eventId && link.teamName === oldName ? {...link, teamName: newName} : link);
       tx.update(crewRef, {name: newName, teams: links});
     }
     return {teamName: newName};

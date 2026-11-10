@@ -89,7 +89,7 @@ Future<TeamControllerDetails> _controller(_FakeTeams teams) async {
 
 void main() {
   group('renaming', () {
-    test('the captain renames the team, then saves the phone under the new name', () async {
+    test('the captain renames the team', () async {
       final teams = _FakeTeams();
       final controller = await _controller(teams);
       controller.nameController.text = '  Lupii ';
@@ -97,7 +97,7 @@ void main() {
       expect(await controller.save(), isNull);
 
       expect(teams.renamed, [(eventId: 'e1', from: 'Vulpile', to: 'Lupii')]);
-      expect(teams.saved.single.teamName, 'Lupii');
+      expect(teams.saved, isEmpty, reason: 'the phone did not change');
       expect(controller.team?.name, 'Lupii');
       controller.disposeControllers();
     });
@@ -110,6 +110,40 @@ void main() {
 
       expect(await controller.save(), 'Numele e luat');
       expect(teams.saved, isEmpty);
+      controller.disposeControllers();
+    });
+
+    test('a rename that went through before an error shows the new name, so a retry does not resend the old one', () async {
+      final teams = _FakeTeams();
+      final controller = await _controller(teams);
+      teams.name = 'Lupii';
+      teams.renameFailure = FirebaseFunctionsException(message: 'deadline', code: 'deadline-exceeded');
+      controller.nameController.text = 'Lupii';
+
+      expect(await controller.save(), isNotNull);
+      expect(controller.team?.name, 'Lupii');
+      controller.disposeControllers();
+    });
+
+    test('a new name with the phone unchanged writes only the name', () async {
+      final teams = _FakeTeams();
+      final controller = await _controller(teams);
+      controller.nameController.text = 'Lupii';
+
+      expect(await controller.save(), isNull);
+      expect(teams.renamed, hasLength(1));
+      expect(teams.saved, isEmpty);
+      controller.disposeControllers();
+    });
+
+    test('the name saved but the phone not: it says so', () async {
+      final teams = _FakeTeams()..saveFailure = Exception('offline');
+      final controller = await _controller(teams);
+      controller.nameController.text = 'Lupii';
+      controller.phoneController.text = '0733 111 111';
+
+      expect(await controller.save(), 'Numele s-a schimbat, dar telefonul nu s-a salvat.');
+      expect(controller.team?.name, 'Lupii');
       controller.disposeControllers();
     });
 

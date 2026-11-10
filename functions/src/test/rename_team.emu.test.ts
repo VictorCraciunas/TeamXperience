@@ -87,6 +87,12 @@ describe("renameTeam", () => {
     assert.equal((await teams().doc("VULPILE").get()).data()?.name, "VULPILE");
   });
 
+  test("a rename retried after it went through answers with the new name", async () => {
+    await rename("u1", "Lupii");
+    assert.deepEqual(await rename("u1", "Lupii"), {teamName: "Lupii"});
+    await refused(rename("u2", "Lupii"), "teamNotFound");
+  });
+
   test("a team that does not exist", async () => {
     await refused(renameTeam(db, "u1", {eventId: "e1", teamName: "Nimeni", newName: "Lupii"}, NOW), "teamNotFound");
   });
