@@ -15,7 +15,7 @@ import 'team_name_field.dart';
 /// null greys the button out. [locked] makes the form read-only and hides the
 /// button, for after the team is registered; while [sending] it is read-only
 /// too, with the button shown as busy.
-/// The organiser's consent texts. The first two are needed to sign up.
+/// The organiser's consent texts. All three are needed to sign up.
 const rulesConsentText = 'Sunt de acord cu Regulamentul Specific al activității.';
 const dataConsentText = 'Sunt de acord cu folosirea datelor cu caracter personal.';
 const photoConsentText = 'Sunt de acord ca imaginile și video-urile care sunt realizate de organizatori sau de membrii echipei mele în timpul activității să îmi fie trimise după eveniment. În același timp ASOCIAȚIA VBE SIBIU poate folosi aceste resurse pentru promovare.';

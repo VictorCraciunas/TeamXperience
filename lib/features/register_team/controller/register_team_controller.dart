@@ -141,6 +141,7 @@ class RegisterTeamController extends ChangeNotifier {
     }
     if (!rulesAccepted) return 'Acceptă regulamentul';
     if (!dataAccepted) return 'Acceptă folosirea datelor personale';
+    if (!photoConsent) return 'Acceptă fotografiile și video-urile';
     return null;
   }
 
