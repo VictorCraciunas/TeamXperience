@@ -163,6 +163,7 @@ class _Harness {
     controller.onPhoneChanged(phone);
     controller.setRulesAccepted(rules);
     controller.setDataAccepted(rules);
+    controller.setPhotoConsent(rules);
   }
 }
 
@@ -229,6 +230,9 @@ void main() {
       expect(c.blocker, 'Acceptă folosirea datelor personale');
 
       c.setDataAccepted(true);
+      expect(c.blocker, 'Acceptă fotografiile și video-urile');
+
+      c.setPhotoConsent(true);
       expect(c.blocker, isNull);
       expect(c.canSubmit, isTrue);
     });
@@ -241,12 +245,12 @@ void main() {
       expect(h.controller.blocker, 'Numele e luat');
     });
 
-    testWidgets('the photo consent is not required', (tester) async {
+    testWidgets('the photo consent is required too', (tester) async {
       final h = _Harness(tester);
       await h.pump();
       await h.fillIn();
-      expect(h.controller.photoConsent, isFalse);
-      expect(h.controller.blocker, isNull);
+      h.controller.setPhotoConsent(false);
+      expect(h.controller.canSubmit, isFalse);
     });
 
     testWidgets('changing the name again blocks until it is checked', (
