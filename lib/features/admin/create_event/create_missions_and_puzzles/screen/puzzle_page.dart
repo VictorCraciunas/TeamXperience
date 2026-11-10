@@ -69,6 +69,7 @@ class _PuzzlePageState extends State<PuzzlePage> {
                     padding: _padding,
                     child: PuzzleRulesForm(
                       puzzle: puzzle,
+                      near: widget.controller.placeNearMission(widget.mission),
                       onChanged: () => setState(() {}),
                     ),
                   ),

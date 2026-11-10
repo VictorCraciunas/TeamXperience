@@ -66,6 +66,12 @@ class EventList extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
   String? get error => _error;
+
+  /// The last read failed and there is nothing to show from before it.
+  bool get loadFailed => _error != null && !hasData;
+
+  /// The first read is running: nothing is known yet.
+  bool get firstLoading => _isLoading && !hasData;
   bool get hasData => _events.isNotEmpty;
   bool get needsRefresh => _lastFetch == null ||
       DateTime.now().difference(_lastFetch!).inMinutes > 5;
@@ -88,24 +94,6 @@ class EventList extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _setError(e.toString());
-    } finally {
-      _setLoading(false);
-    }
-  }
-
-  Future<Event> createEvent(Event event) async {
-    _setLoading(true);
-    clearError();
-
-    try {
-      final createdEvent = await _eventService.createEvent(event);
-      _events.add(createdEvent);
-      _sortEvents();
-      notifyListeners();
-      return createdEvent;
-    } catch (e) {
-      _setError(e.toString());
-      rethrow;
     } finally {
       _setLoading(false);
     }

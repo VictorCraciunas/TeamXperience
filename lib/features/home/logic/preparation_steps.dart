@@ -1,51 +1,31 @@
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 
-class PreparationStep {
-  const PreparationStep({
-    required this.title,
-    required this.subtitle,
-    required this.done,
-  });
+/// The three things a team gets ready before its event, as on the next-game
+/// card: registered, a full team, and the start code (handed out on the day).
+const List<String> preparationLabels = ['Înscriși', 'Echipă completă', 'Cod de start'];
 
-  final String title;
-  final String subtitle;
-  final bool done;
+/// How far a team has got with [preparationLabels].
+class PreparationTrail {
+  const PreparationTrail({required this.teamName, required this.done});
+
+  final String teamName;
+
+  /// How many of the steps are done, counted from the first, so a later step
+  /// never shows done before an earlier one.
+  final int done;
 }
 
-/// The three things a team does before an event: register, complete its
-/// details, and receive the start code on the day of the event.
-List<PreparationStep> preparationSteps(Event event, Team? team, DateTime now) {
-  final registered = team != null;
-  final detailsComplete = team != null &&
-      team.name.trim().isNotEmpty &&
-      team.captainName.trim().isNotEmpty &&
-      team.phoneNumber.trim().isNotEmpty &&
-      team.captainEmail.trim().isNotEmpty;
-
+PreparationTrail preparationTrail(Event event, Team team, DateTime now) {
+  final complete = team.numberOfMembers > 0 && team.memberList.length >= team.numberOfMembers;
   final start = event.dateEvent;
   final eventDay = start == null ? null : DateTime(start.year, start.month, start.day);
-  final codeAvailable = eventDay != null && !now.isBefore(eventDay);
+  final codeDay = eventDay != null && !now.isBefore(eventDay);
 
-  return [
-    PreparationStep(
-      title: 'Înscriere confirmată',
-      subtitle: team == null
-          ? 'Nu ai înscris încă o echipă'
-          : '${team.name} · ${team.numberOfMembers} membri',
-      done: registered,
-    ),
-    PreparationStep(
-      title: 'Detalii echipă complete',
-      subtitle: 'Căpitan, telefon și email',
-      done: detailsComplete,
-    ),
-    PreparationStep(
-      title: 'Codul de start',
-      subtitle: codeAvailable
-          ? 'Îl primești de la organizatori'
-          : 'Îl primești în ziua evenimentului',
-      done: codeAvailable,
-    ),
-  ];
+  var done = 1;
+  if (complete) {
+    done = 2;
+    if (codeDay) done = 3;
+  }
+  return PreparationTrail(teamName: team.name, done: done);
 }

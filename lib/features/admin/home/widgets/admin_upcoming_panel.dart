@@ -27,7 +27,7 @@ class AdminUpcomingPanel extends StatelessWidget {
           events.isEmpty
               ? Text(
                 'Nu ai evenimente programate.',
-                style: TextStyle(color: context.colors.muted, fontSize: 12),
+                style: TextStyle(color: context.colors.muted, fontSize: 14),
               )
               : Column(
                 children: [
@@ -59,13 +59,13 @@ class AdminUpcomingPanel extends StatelessWidget {
             '${stats.teams} echipe',
             style: TextStyle(
               color: colors.text,
-              fontSize: 11,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
           ),
           Text(
             '${stats.persons} pers.',
-            style: TextStyle(color: colors.muted, fontSize: 10),
+            style: TextStyle(color: colors.muted, fontSize: 12),
           ),
         ],
       ),

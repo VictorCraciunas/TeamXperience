@@ -34,8 +34,34 @@ void main() {
 
   testWidgets('a photo puzzle explains how it is checked', (tester) async {
     await _pump(tester, Puzzle(id: '0', type: PuzzleType.imageToUpload));
+    expect(find.text('Indiciu (opțional)'), findsNothing, reason: 'the game shows no hint on a photo puzzle');
     expect(find.textContaining('aprobi'), findsOneWidget);
     expect(find.text('Răspuns corect'), findsNothing);
+  });
+
+  testWidgets('a code puzzle also asks for the attempt limit and the wrong-answer line', (tester) async {
+    final puzzle = Puzzle(id: '0', type: PuzzleType.code);
+    await _pump(tester, puzzle);
+    expect(find.text('Număr maxim de încercări'), findsOneWidget);
+    expect(find.text('Mesaj la răspuns greșit'), findsOneWidget);
+    await tester.enterText(find.widgetWithText(TextField, 'Gol = nelimitat').first, '3');
+    await tester.enterText(find.widgetWithText(TextField, 'Gol = „Nu e corect. Mai încearcă.”').first, 'Mai sus.');
+    expect(puzzle.maxAttempts, 3);
+    expect(puzzle.wrongAnswerMessage, 'Mai sus.');
+  });
+
+  testWidgets('a location puzzle has no attempt limit, but a circle size', (tester) async {
+    final puzzle = Puzzle(id: '0', type: PuzzleType.geolocation);
+    await _pump(tester, puzzle);
+    expect(find.text('Număr maxim de încercări'), findsNothing);
+    expect(find.text('Raza cercului (m)'), findsOneWidget);
+    await tester.enterText(find.widgetWithText(TextField, 'Gol = 20').first, '35');
+    expect(puzzle.radiusMeters, 35);
+  });
+
+  testWidgets('a code puzzle has no circle size', (tester) async {
+    await _pump(tester, Puzzle(id: '0', type: PuzzleType.code));
+    expect(find.text('Raza cercului (m)'), findsNothing);
   });
 
   testWidgets('typing the answer writes it onto the puzzle', (tester) async {

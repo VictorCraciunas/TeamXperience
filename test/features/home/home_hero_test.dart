@@ -42,6 +42,8 @@ HomeHero _resolve({
   Team? activeTeam,
   Event? startedRecently,
   Team? startedRecentlyTeam,
+  Event? finishedEvent,
+  Team? finishedTeam,
   List<Event> registeredUpcoming = const [],
   List<Event> allEvents = const [],
   Set<String> registeredIds = const {},
@@ -52,6 +54,8 @@ HomeHero _resolve({
     activeTeam: activeTeam,
     startedRecently: startedRecently,
     startedRecentlyTeam: startedRecentlyTeam,
+    finishedEvent: finishedEvent,
+    finishedTeam: finishedTeam,
     registeredUpcoming: registeredUpcoming,
     allEvents: allEvents,
     registeredIds: registeredIds,
@@ -62,6 +66,48 @@ void main() {
   signatureTests();
   recentlyStartedTests();
   final inOneHour = _now.add(const Duration(hours: 1));
+
+  group('finished', () {
+    final running = _event('run', start: _now.subtract(const Duration(minutes: 30)));
+
+    test('a finished team sees that, not the start code', () {
+      final hero = _resolve(finishedEvent: running, finishedTeam: _team(started: true, finished: true), startedRecently: running);
+      expect(hero, isA<FinishedHero>());
+      expect(hero.signature, 'finished:run');
+    });
+
+    test('another event\'s start code wins, so the player does not miss it', () {
+      final other = _event('other', start: _now.subtract(const Duration(minutes: 5)));
+      final hero = _resolve(finishedEvent: running, finishedTeam: _team(started: true, finished: true), startedRecently: other);
+      expect(hero, isA<StartingSoonHero>());
+      expect(hero.signature, 'soon:other');
+    });
+
+    test('the finished event is skipped when looking for a start code', () {
+      final first = _event('first', start: _now.subtract(const Duration(minutes: 40)));
+      final second = _event('second', start: _now.subtract(const Duration(minutes: 5)));
+      expect(recentlyStartedEvent([first, second], _now)?.eventId, 'first');
+      expect(recentlyStartedEvent([first, second], _now, except: 'first')?.eventId, 'second');
+      expect(recentlyStartedEvent([first], _now, except: 'first'), isNull);
+    });
+
+    test('a game in play wins over a finished one', () {
+      final hero = _resolve(
+        activeEvent: _event('live', start: _now.subtract(const Duration(minutes: 10))),
+        activeTeam: _team(started: true),
+        finishedEvent: running,
+        finishedTeam: _team(started: true, finished: true),
+      );
+      expect(hero, isA<LiveHero>());
+    });
+
+    test('an event that is over is not "finished" any more', () {
+      final over = _event('over', start: _now.subtract(const Duration(hours: 4)));
+      final next = _event('next', start: inOneHour);
+      final hero = _resolve(finishedEvent: over, finishedTeam: _team(started: true, finished: true), registeredUpcoming: [next]);
+      expect(hero, isA<UpcomingHero>());
+    });
+  });
 
   group('live', () {
     test('a started, unfinished team in a running event wins over everything', () {
@@ -111,6 +157,17 @@ void main() {
       final hero = _resolve(startedRecently: event, startedRecentlyTeam: _team());
       expect(hero, isA<StartingSoonHero>());
       expect((hero as StartingSoonHero).minutesLeftToEnter, 50);
+    });
+
+    test('a 30-minute window: 20 minutes left 10 minutes after the start', () {
+      final event = _event('e', start: _now.subtract(const Duration(minutes: 10)))..enterWindowMinutes = 30;
+      final hero = _resolve(startedRecently: event, startedRecentlyTeam: _team());
+      expect((hero as StartingSoonHero).minutesLeftToEnter, 20);
+    });
+
+    test('a 30-minute window is closed 31 minutes after the start', () {
+      final event = _event('e', start: _now.subtract(const Duration(minutes: 31)))..enterWindowMinutes = 30;
+      expect(recentlyStartedEvent([event], _now), isNull);
     });
 
     test('works when the team is not known yet', () {

@@ -24,7 +24,8 @@ class FCMService {
         sound: true,
       );
 
-      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+          settings.authorizationStatus == AuthorizationStatus.provisional) {
         String? token = await _messaging.getToken();
         print('FCM Token: $token');
         return token;

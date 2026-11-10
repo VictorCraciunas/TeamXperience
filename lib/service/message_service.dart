@@ -13,11 +13,18 @@ class MessageService{
     Message message;
     if (user.role == Role.ADMIN){
       message = Message(sender: Role.ADMIN, text: text,timestamp: DateTime.now());
+      await repo.sendMessage(message, eventId, teamName);
     }
     else{
       message = Message(sender: Role.USER, text: text, timestamp: DateTime.now());
+      await repo.sendPlayerMessage(message, eventId, teamName);
     }
-    repo.sendMessage(message, eventId, teamName);
+  }
+
+  /// The organiser's announcement, into the chat of every team in [teamNames].
+  Future<void> announce(String eventId, List<String> teamNames, String text) {
+    final message = Message(sender: Role.ADMIN, text: text, timestamp: DateTime.now(), announcement: true);
+    return repo.sendToTeams(message, eventId, teamNames);
   }
 
   Future<void> sendImageMessage(

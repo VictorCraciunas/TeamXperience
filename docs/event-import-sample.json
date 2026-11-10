@@ -3,18 +3,38 @@
   "description": "O vânătoare de comori prin centrul vechi, în echipe de câte 4.",
   "location": "Sibiu",
   "punctDeStart": "Piața Mare, lângă fântână",
+  "startLatitude": 45.7971,
+  "startLongitude": 24.152,
+  "finishLatitude": 45.797768,
+  "finishLongitude": 24.1500813,
+  "finishPoint": "Catedrala Evanghelică",
+  "area": "Orașul de Sus",
+  "routeLengthKm": 1.5,
+  "durationMinutes": 90,
+  "difficulty": "easy",
+  "teamSizeMin": 2,
+  "teamSizeMax": 6,
+  "maxTeams": 20,
+  "meetingPointNote": "Piața Mare, lângă fântână",
+  "arriveMinutesBefore": 15,
+  "whatToBring": [
+    "Telefon încărcat",
+    "încălțări comode"
+  ],
+  "story": "O comoară ascunsă în piețele Sibiului așteaptă echipa care știe să privească atent.",
+  "organiserName": "TeamXperience",
   "type": "PUBLIC",
   "startCode": "SIBIU26",
   "dateEvent": "2027-05-15T18:00",
   "dateStartEnrollment": "2027-05-01T09:00",
   "dateDeadlineEnrollment": "2027-05-14T23:59",
-  "lungimeTraseu": "3 km",
-  "durata": "2 ore",
-  "dificultate": "Medie",
   "landingImageUrl": null,
   "taskBackgroundImageUrl": null,
   "missions": [
     {
+      "title": "Piața Mare",
+      "teaser": "Un an, o casă, un pod care nu minte.",
+      "isTeaserPublic": true,
       "puzzles": [
         {
           "type": "code",
@@ -23,6 +43,7 @@
           "components": [
             {
               "type": "text",
+              "textColor": "#1B1B1B",
               "text": "În ce an a fost construită prima casă din piață?",
               "fontSize": 20,
               "fontWeight": "Bold (700)",
@@ -33,6 +54,9 @@
               "codeLength": 4,
               "inputType": "Separated",
               "capsLock": "Fără",
+              "textColor": "#1B1B1B",
+              "frameBackgroundColor": "#F4F1EA",
+              "inputBackgroundColor": "#FFFFFF",
               "colorBorderInput": "#2AA5A9",
               "inputCornerRadius": 8
             },
@@ -53,6 +77,7 @@
           "components": [
             {
               "type": "text",
+              "textColor": "#1B1B1B",
               "text": "Du-te la Podul Minciunilor.",
               "fontSize": 18,
               "textAlign": "center"
@@ -62,12 +87,16 @@
       ]
     },
     {
+      "title": "Poza de la catedrală",
+      "teaser": "Toată echipa, o singură poză.",
+      "isTeaserPublic": false,
       "puzzles": [
         {
           "type": "imageToUpload",
           "components": [
             {
               "type": "text",
+              "textColor": "#1B1B1B",
               "text": "Fă o poză de echipă în fața Catedralei. Un organizator o aprobă.",
               "fontSize": 18,
               "textAlign": "center"

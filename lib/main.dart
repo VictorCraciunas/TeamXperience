@@ -1,3 +1,8 @@
+import 'package:teamxperience/features/game_intro/screen/game_intro_screen.dart';
+import 'package:teamxperience/features/finish/screen/finish_screen.dart';
+import 'package:teamxperience/features/memories/screen/memories_screen.dart';
+import 'package:teamxperience/features/memories/screen/memory_screen.dart';
+import 'package:teamxperience/features/notifications/screen/notifications_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -9,18 +14,22 @@ import 'package:teamxperience/features/admin/shell/screen/admin_shell.dart';
 import 'package:teamxperience/features/calendar/screen/calendar_screen.dart';
 import 'package:teamxperience/features/chat/screen/chat_screen.dart';
 import 'package:teamxperience/features/enter_code/screen/enter_code.dart';
-import 'package:teamxperience/features/event_management/screen/event_management_screen.dart';
+import 'package:teamxperience/features/live_room/screen/live_board_screen.dart';
+import 'package:teamxperience/features/live_room/screen/live_map_screen.dart';
+import 'package:teamxperience/features/live_room/screen/live_room_screen.dart';
 import 'package:teamxperience/features/event_details/screen/event_details_screen.dart';
 import 'package:teamxperience/features/event_game/screen/event_game_screen.dart';
 import 'package:teamxperience/features/event_game/screen/puzzle_game_screen.dart';
 import 'package:teamxperience/features/event_see_registered_teams/event_registered_teams_screen.dart';
 import 'package:teamxperience/features/filter/filter_news/screen/filter_news.dart';
 import 'package:teamxperience/features/forgot-password/screen/forgot_password_screen.dart';
-import 'package:teamxperience/features/map/screen/map_screen.dart';
+
 import 'package:teamxperience/features/news_category_manipulation/screen/news_catergory_manipulation_screen.dart';
 import 'package:teamxperience/features/news_dashboard/screen/stiri_dashboard_screen.dart';
 import 'package:teamxperience/features/news_details/news_screen.dart';
 import 'package:teamxperience/features/notification/screen/notification_screen.dart';
+import 'package:teamxperience/features/join_team/screen/join_team_screen.dart';
+import 'package:teamxperience/features/teams/screen/teams_screen.dart';
 import 'package:teamxperience/features/register_team/screen/register_team_screen.dart';
 import 'package:teamxperience/features/sign-up/screen/register.dart';
 import 'package:teamxperience/features/splash/splash.dart';
@@ -39,7 +48,7 @@ import 'backend/authentication/AuthenticationRepository.dart';
 import 'backend/repo/user_repo.dart';
 import 'features/admin/create_event/create_event_landing/screen/create_event_screen.dart';
 import 'features/events_dashboard/events_dashboard_admin/screen/events_dasboard_screen.dart';
-import 'features/events_dashboard/events_dashboard_user/screen/events_dashboard_screen.dart';
+import 'features/events_tab/screen/events_tab_screen.dart';
 import 'features/filter/filter_events/screen/filter_events_screen.dart';
 import 'features/loader_page/landing_page.dart';
 import 'features/log-in/screen/log_in_screen.dart';
@@ -147,6 +156,11 @@ class MyApp extends StatelessWidget {
                 Routes.forgotPassword: (_) => const ForgotPasswordScreen(),
                 Routes.eventDetails: (_) => const EventDetailsScreen(),
                 Routes.eventGame: (_) => const EventGameScreen(),
+                Routes.gameIntro: (_) => const GameIntroScreen(),
+                Routes.finish: (_) => const FinishScreen(),
+                Routes.memory: (_) => const MemoryScreen(),
+                Routes.memories: (_) => const MemoriesScreen(),
+                Routes.notifications: (_) => const NotificationsScreen(),
                 Routes.puzzleGame: (_) => const PuzzleGameScreen(),
                 Routes.eventDashboard: (_) => const EventsDashboard(),
                 Routes.filter: (_) => const FilterEventsScreen(),
@@ -157,17 +171,20 @@ class MyApp extends StatelessWidget {
                     (_) => const NewsCategoryManipulationScreen(),
                 Routes.filterStiri: (_) => const FilterStiriScreen(),
                 Routes.calendar: (_) => const DateRangeSelectionScreen(),
-                Routes.eventDashboardUser: (_) => const FilterEventsUser(),
+                Routes.eventDashboardUser: (_) => const Scaffold(body: EventsTabScreen()),
                 Routes.registerTeam: (_) => const RegisterTeamScreen(),
                 Routes.registerTeamDetails: (_) => const TeamDetailsScreen(),
+                Routes.joinTeam: (_) => const JoinTeamScreen(),
+                Routes.teams: (_) => const TeamsScreen(),
                 Routes.enterCodeScreen: (_) => const EnterCode(),
                 Routes.chatScreen: (_) => const ChatScreen(),
                 Routes.teamConversations: (_) => const TeamChatsScreen(),
-                Routes.map: (_) => const MapScreen(),
+                Routes.map: (_) => const LiveMapScreen(),
                 Routes.sendNotification: (_) => const NotificationScreen(),
                 Routes.eventRegisteredTeams:
                     (_) => const EventRegisteredTeams(),
-                Routes.eventManagement: (_) => const EventManagementScreen(),
+                Routes.eventManagement: (_) => const LiveRoomScreen(),
+                Routes.liveBoard: (_) => const LiveBoardScreen(),
               },
             ),
       ),

@@ -15,6 +15,9 @@ Event _complete() => Event(
       description: 'Un joc',
       location: 'Sibiu',
       punctDeStart: 'Piața Mare',
+      finishPoint: 'Turnul Sfatului',
+      startLatitude: 45.79,
+      startLongitude: 24.15,
       dateEvent: DateTime(2026, 10, 25, 14),
       dateStartEnrollment: DateTime(2026, 10, 1),
       dateDeadlineEnrollment: DateTime(2026, 10, 24),
@@ -25,7 +28,7 @@ Event _complete() => Event(
       dificultate: 'Medie',
       status: EventStatus.draft,
       missions: [
-        Mission(id: '0', puzzles: [
+        Mission(id: '0', title: 'Ceasul', puzzles: [
           Puzzle(
             id: 'p',
             type: PuzzleType.code,
@@ -44,6 +47,14 @@ void main() {
 
     test('a complete one is at the end', () {
       expect(draftProgress(_complete()), 1);
+    });
+
+    test('team sizes the wrong way round keep it from the end, and right ones add nothing', () {
+      final reversed = _complete()
+        ..teamSizeMin = 6
+        ..teamSizeMax = 2;
+      expect(draftProgress(reversed), lessThan(1));
+      expect(draftSummary(reversed), 'Minimul de membri e mai mare decât maximul');
     });
 
     test('more filled in means further along, never outside 0 to 1', () {

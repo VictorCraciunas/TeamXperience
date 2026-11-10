@@ -19,7 +19,7 @@ class ChatComposer extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
       decoration: BoxDecoration(
         color: context.colors.panel,
-        border: Border(top: BorderSide(color: Color(0x0A0C092A))),
+        border: Border(top: BorderSide(color: context.colors.liveCard.withValues(alpha: .04))),
       ),
       child: SafeArea(
         top: false,
@@ -45,13 +45,13 @@ class ChatComposer extends StatelessWidget {
                   minLines: 1,
                   textCapitalization: TextCapitalization.sentences,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     color: context.colors.text,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Trimite un mesaj…',
                     hintStyle: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       color: context.colors.muted,
                     ),
                     border: InputBorder.none,
@@ -72,11 +72,11 @@ class ChatComposer extends StatelessWidget {
                   color: hasText ? null : context.colors.border,
                   shape: BoxShape.circle,
                   boxShadow: hasText
-                      ? const [
+                      ? [
                           BoxShadow(
-                            color: Color(0x40222F62),
+                            color: context.colors.navy.withValues(alpha: .25),
                             blurRadius: 16,
-                            offset: Offset(0, 6),
+                            offset: const Offset(0, 6),
                           )
                         ]
                       : null,
@@ -84,7 +84,7 @@ class ChatComposer extends StatelessWidget {
                 child: Icon(
                   Icons.send_rounded,
                   size: 20,
-                  color: hasText ? Colors.white : const Color(0xFFBBBBBB),
+                  color: hasText ? context.colors.onNavy : context.colors.muted,
                 ),
               ),
             ),

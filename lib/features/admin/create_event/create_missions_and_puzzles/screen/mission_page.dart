@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/controller/add_missions_controller.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/screen/puzzle_page.dart';
+import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/mission_list/mission_text_fields.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/puzzle_list/puzzle_row.dart';
 import 'package:teamxperience/features/admin/create_event/create_missions_and_puzzles/widgets/puzzle_list/puzzle_type_sheet.dart';
 import 'package:teamxperience/ui/components/buttons/app_button.dart';
@@ -74,6 +75,20 @@ class _MissionPageState extends State<MissionPage> {
             AppSpacing.page,
             30,
           ),
+          header: Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+            child: MissionTextFields(
+              mission: _controller.event.missions[widget.index],
+              onChanged: ({title, teaser, isTeaserPublic}) => _controller.setMissionText(
+                widget.index,
+                title: title,
+                teaser: teaser,
+                isTeaserPublic: isTeaserPublic,
+              ),
+              onPlaceChanged: (place) => _controller.setMissionPlace(widget.index, place),
+              near: _controller.startPlace,
+            ),
+          ),
           itemCount: puzzles.length,
           onReorderItem:
               (from, to) => _controller.movePuzzle(widget.index, from, to),
@@ -98,7 +113,7 @@ class _MissionPageState extends State<MissionPage> {
                   child: Text(
                     'Misiunea nu are încă puzzle-uri.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: context.colors.muted, fontSize: 13),
+                    style: TextStyle(color: context.colors.muted, fontSize: 15),
                   ),
                 ),
               AppButton(

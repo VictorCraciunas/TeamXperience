@@ -37,6 +37,81 @@ Map<String, dynamic> _event({
 EventImportResult _import(Object? json) => importEventFromJson(jsonEncode(json));
 
 void main() {
+  group('event page fields', () {
+    test('every new event field is read', () {
+      final result = _import(_event(extra: {
+        'area': 'Orașul de Sus',
+        'finishPoint': 'Turnul Sfatului',
+        'routeLengthKm': 4.5,
+        'durationMinutes': 120,
+        'difficulty': 'medium',
+        'teamSizeMin': 2,
+        'teamSizeMax': 6,
+        'maxTeams': 14,
+        'startLatitude': 45.7971,
+        'startLongitude': 24.152,
+        'finishLatitude': 45.7975,
+        'finishLongitude': 24.1513,
+        'meetingPointNote': 'Piața Mare, lângă fântână',
+        'arriveMinutesBefore': 15,
+        'whatToBring': ['Telefon încărcat', 'încălțări comode'],
+        'story': 'Un cartograf a lăsat o hartă.',
+        'organiserName': 'TeamXperience',
+      }));
+      expect(result.errors, isEmpty);
+      final e = result.event!;
+      expect((e.area, e.finishPoint, e.routeLengthKm, e.durationMinutes, e.difficulty?.name),
+          ('Orașul de Sus', 'Turnul Sfatului', 4.5, 120, 'medium'));
+      expect((e.teamSizeMin, e.teamSizeMax, e.maxTeams, e.arriveMinutesBefore), (2, 6, 14, 15));
+      expect((e.startLatitude, e.startLongitude), (45.7971, 24.152));
+      expect((e.finishLatitude, e.finishLongitude), (45.7975, 24.1513));
+      expect(e.meetingPointNote, 'Piața Mare, lângă fântână');
+      expect(e.whatToBring, ['Telefon încărcat', 'încălțări comode']);
+      expect((e.story, e.organiserName), ('Un cartograf a lăsat o hartă.', 'TeamXperience'));
+    });
+
+    test('the numbers also become the text that cards and home read', () {
+      final e = _import(_event(extra: {
+        'routeLengthKm': 3.2,
+        'durationMinutes': 90,
+        'difficulty': 'hard',
+        'lungimeTraseu': '1,5 km',
+        'durata': '2 ore',
+        'dificultate': 'Medie',
+      })).event!;
+      expect((e.lungimeTraseu, e.durata, e.dificultate), ('3,2 km', '1 h 30', 'Grea'));
+    });
+
+    test('without the numbers the old text stays as written', () {
+      final e = _import(_event(extra: {'lungimeTraseu': '1,5 km', 'durata': '2 ore', 'dificultate': 'Medie'})).event!;
+      expect((e.lungimeTraseu, e.durata, e.dificultate), ('1,5 km', '2 ore', 'Medie'));
+    });
+
+    test('missing page fields keep the defaults', () {
+      final e = _import(_event()).event!;
+      expect((e.teamSizeMin, e.teamSizeMax, e.arriveMinutesBefore), (2, 6, 15));
+      expect(e.whatToBring, isEmpty);
+    });
+
+    test('a difficulty that does not exist names the field', () {
+      final result = _import(_event(extra: {'difficulty': 'medie'}));
+      expect(result.errors.join(), contains('difficulty'));
+    });
+
+    test('team sizes and limits out of range are explained', () {
+      final result = _import(_event(extra: {'teamSizeMax': 40, 'maxTeams': 0, 'arriveMinutesBefore': 500}));
+      expect(result.errors.join(' | '), allOf(contains('teamSizeMax'), contains('maxTeams'), contains('arriveMinutesBefore')));
+    });
+
+    test('mission title, teaser and the public flag are read', () {
+      final result = _import(_event(missions: [
+        {'title': 'Scara Pasajului', 'teaser': 'Numără treptele.', 'isTeaserPublic': true, 'puzzles': []},
+      ]));
+      final m = result.event!.missions.single;
+      expect((m.title, m.teaser, m.isTeaserPublic), ('Scara Pasajului', 'Numără treptele.', true));
+    });
+  });
+
   group('a good event', () {
     test('is read into an event', () {
       final result = _import(_event(extra: {'location': 'Sibiu', 'startCode': 'GO'}));
@@ -609,6 +684,95 @@ void main() {
       expect(result.errors.single, allOf(contains('8'), contains('72')));
       final weight = withComponent({'type': 'text', 'fontWeight': 'bold'});
       expect(weight.errors.single, contains('Bold (700)'));
+    });
+  });
+  group('the game start and the puzzle rules', () {
+    Map<String, dynamic> withRules() => _event(
+          extra: {
+            'introLetter': 'Dragi exploratori…',
+            'introSignature': 'Cartograful',
+            'hintsPerMission': 2,
+            'enterWindowMinutes': 30,
+            'finishTitle': 'Harta e completă',
+            'finishMessage': 'Vulpile au moștenit secretul.',
+          },
+          missions: [
+            {
+              'title': 'Podul Minciunilor',
+              'latitude': 45.7983,
+              'longitude': 24.1522,
+              'puzzles': [
+                {
+                  'type': 'code',
+                  'code': '1859',
+                  'maxAttempts': 3,
+                  'wrongAnswerMessage': 'Nu e anul ăsta.',
+                  'components': [
+                    {'type': 'text', 'text': 'Salut'},
+                  ],
+                },
+              ],
+            },
+          ],
+        );
+
+    test('are read', () {
+      final result = _import(withRules());
+      expect(result.errors, isEmpty);
+      final event = result.event;
+      expect(event?.introLetter, 'Dragi exploratori…');
+      expect(event?.introSignature, 'Cartograful');
+      expect(event?.hintsPerMission, 2);
+      expect(event?.enterWindowMinutes, 30);
+      expect(event?.finishTitle, 'Harta e completă');
+      expect(event?.finishMessage, 'Vulpile au moștenit secretul.');
+      final mission = event?.missions.single;
+      expect((mission?.latitude, mission?.longitude), (45.7983, 24.1522));
+      final puzzle = mission?.puzzles.single;
+      expect(puzzle?.maxAttempts, 3);
+      expect(puzzle?.wrongAnswerMessage, 'Nu e anul ăsta.');
+    });
+
+    test('left out, the defaults apply', () {
+      final event = _import(_event()).event;
+      expect(event?.hintsPerMission, 1);
+      expect(event?.enterWindowMinutes, 60);
+      expect(event?.missions.single.latitude, isNull);
+      expect(event?.missions.single.puzzles.single.maxAttempts, isNull);
+    });
+
+    test('a location puzzle\'s circle size is read, and a tiny one refused', () {
+      Map<String, dynamic> withRadius(int radius) => _event(missions: [
+            {
+              'title': 'Unde dorm clopotele',
+              'puzzles': [
+                {
+                  'type': 'geolocation',
+                  'latitude': 45.79,
+                  'longitude': 24.15,
+                  'radiusMeters': radius,
+                  'components': [
+                    {'type': 'text', 'text': 'Mergeți la clopote.'},
+                  ],
+                },
+              ],
+            },
+          ]);
+      expect(_import(withRadius(35)).event?.missions.single.puzzles.single.radiusMeters, 35);
+      expect(_import(withRadius(5)).errors.join(), contains('Misiunea 1, puzzle 1: „radiusMeters”'));
+    });
+
+    test('out of range is refused, with where it is', () {
+      final json = withRules();
+      json['hintsPerMission'] = 9;
+      json['enterWindowMinutes'] = 5;
+      ((json['missions'] as List).single as Map)['latitude'] = 120;
+      (((json['missions'] as List).single as Map)['puzzles'] as List).single['maxAttempts'] = 50;
+      final errors = _import(json).errors.join(' | ');
+      expect(errors, contains('hintsPerMission'));
+      expect(errors, contains('enterWindowMinutes'));
+      expect(errors, contains('Misiunea 1: „latitude”'));
+      expect(errors, contains('Misiunea 1, puzzle 1: „maxAttempts”'));
     });
   });
 }

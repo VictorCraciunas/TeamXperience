@@ -1,13 +1,17 @@
+import 'package:teamxperience/features/game_intro/logic/game_door.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/model/user.dart';
 import 'package:teamxperience/service/share_service.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
+import 'package:teamxperience/features/notifications/logic/open_notifications.dart';
+import 'package:teamxperience/features/shell/logic/player_tabs.dart';
 import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 
 import '../../../constants/routes.dart';
 import '../../../model/event.dart';
+import '../../../model/memory.dart';
 import '../../../model/stire.dart';
 import '../../../state_management/events_state_management.dart';
 import '../../../state_management/news_state_management.dart';
@@ -30,10 +34,28 @@ class HomeController {
   }
 
   void navigateToEventDashboard() {
-    context.read<ShellController>().select(1);
+    context.read<ShellController>().select(PlayerTab.events);
   }
+
+  /// "Clasament": the season's standings are on the Echipe tab.
+  void openTeamsTab() {
+    context.read<ShellController>().select(PlayerTab.teams);
+  }
+
+  void openMemory(Memory memory) {
+    Navigator.pushNamed(context, Routes.memory, arguments: {'memory': memory});
+  }
+
+  void openAllMemories() {
+    Navigator.pushNamed(context, Routes.memories);
+  }
+
+  /// The bell: the player's notifications.
+  Future<void> openNotifications() => openNotificationsPage(Navigator.of(context), context.read<ShellController>());
+
+  /// Știri is not a tab: it opens as a page.
   void navigateToNewsTab() {
-    context.read<ShellController>().select(2);
+    Navigator.pushNamed(context, Routes.newsDashboard, arguments: context.read<NewsList>().stireList);
   }
 
   void navigateToEnterCodeScreen(Event event) {
@@ -73,22 +95,11 @@ class HomeController {
     return teamService.getUserTeamForEvent(event.eventId, user.uid);
   }
 
-  Future<int?> teamCountFor(Event event) async {
-    try {
-      return (await teamService.getTeams(event.eventId)).length;
-    } catch (_) {
-      return null;
-    }
-  }
-
   void navigateToRegisterTeam(Event event) => navigateToEventDetails(event);
 
+  /// The intro letter the first time on this phone, then the game.
   void openGame(Event event, Team team) {
-    Navigator.pushNamed(
-      context,
-      Routes.eventGame,
-      arguments: {'event': event, 'team': team},
-    );
+    GameDoor().open(Navigator.of(context), event, team);
   }
 
   void openChat(Event event, Team team) {

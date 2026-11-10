@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import '../../theme/theme_context.dart';
 import 'app_nav_item.dart';
+import 'nav_button.dart';
+import 'raised_nav_button.dart';
 
+/// The bottom bar of the mockups (`.nav`): panel fill, a top border, up to
+/// five tabs sitting on the bottom, and an optional raised round tab.
 class AppBottomNav extends StatelessWidget {
   // ignore: prefer_const_constructors_in_immutables -- the assert reads items.length, which is not const-evaluable
   AppBottomNav({
@@ -10,17 +15,28 @@ class AppBottomNav extends StatelessWidget {
     required this.currentIndex,
     required this.onSelected,
     required this.items,
-  }) : assert(items.length <= 4, 'AppBottomNav supports at most 4 items');
+  }) : assert(items.length <= 5, 'AppBottomNav supports at most 5 items');
 
   final int currentIndex;
   final ValueChanged<int> onSelected;
   final List<AppNavItem> items;
 
+  /// How far the raised circle sticks out above the bar, as the mockup's CSS
+  /// lays it out: the 58 px circle takes 32 in its column, the active pill
+  /// column is 33, so 26 - 1 - (1 + 6) = 18.
+  static const double raisedRise = 18;
+
+  static const double _side = 4;
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    // As tall as a tab whose icon sits in the active pill (2 + 29 + 2, then
+    // 2 + the label), so the bar keeps its height when the raised tab is the
+    // current one.
+    final rowHeight = 33 + 2 + MediaQuery.textScalerOf(context).scale(12) * 1.45;
 
-    return DecoratedBox(
+    final bar = DecoratedBox(
       decoration: BoxDecoration(
         color: colors.panel,
         border: Border(top: BorderSide(color: colors.border)),
@@ -28,95 +44,131 @@ class AppBottomNav extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-          child: Row(
-            children: [
-              for (var i = 0; i < items.length; i++)
-                Expanded(
-                  child: _NavButton(
-                    item: items[i],
-                    index: i,
-                    active: i == currentIndex,
-                    onTap: () => onSelected(i),
+          // The mockup's 6 / 4 / 10, plus the 1 px top border drawn inside.
+          padding: const EdgeInsets.fromLTRB(_side, 7, _side, 10),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: rowHeight),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                for (var i = 0; i < items.length; i++)
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      heightFactor: 1,
+                      child: items[i].raised
+                          ? RaisedNavButton(item: items[i], onTap: () => onSelected(i))
+                          : NavButton(
+                              item: items[i],
+                              index: i,
+                              active: i == currentIndex,
+                              onTap: () => onSelected(i),
+                            ),
+                    ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
-  }
-}
 
-class _NavButton extends StatelessWidget {
-  const _NavButton({
-    required this.item,
-    required this.index,
-    required this.active,
-    required this.onTap,
-  });
+    final raised = items.indexWhere((item) => item.raised);
+    if (raised < 0) return bar;
 
-  final AppNavItem item;
-  final int index;
-  final bool active;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    final color = active ? colors.text : colors.muted;
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+    // The whole column under the raised circle takes its taps, and taps on
+    // the part of the circle above the bar are brought down into it.
+    return _RaisedHitArea(
+      index: raised,
+      count: items.length,
+      side: _side,
+      rise: raisedRise,
+      radius: RaisedNavButton.size / 2,
+      child: Stack(
         children: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                key: active ? ValueKey('nav-active-$index') : null,
-                width: 52,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: active ? colors.navActivePill : Colors.transparent,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(item.icon, size: 20, color: color),
-              ),
-              if (item.showBadge)
-                Positioned(
-                  key: ValueKey('nav-badge-$index'),
-                  right: 11,
-                  top: 3,
-                  child: Container(
-                    width: 9,
-                    height: 9,
-                    decoration: BoxDecoration(
-                      color: colors.live,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: colors.panel, width: 2),
+          bar,
+          Positioned.fill(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: _side),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (var i = 0; i < items.length; i++)
+                    Expanded(
+                      child: i == raised
+                          ? GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              excludeFromSemantics: true,
+                              onTap: () => onSelected(i),
+                            )
+                          : const SizedBox(),
                     ),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 2),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              item.label,
-              maxLines: 1,
-              style: TextStyle(
-                color: color,
-                fontSize: 11,
-                fontWeight: active ? FontWeight.w600 : FontWeight.w500,
+                ],
               ),
             ),
           ),
         ],
       ),
     );
+  }
+}
+
+/// Lets a tap on the raised circle above the bar's top edge reach the bar,
+/// which Flutter would otherwise send to the page behind.
+class _RaisedHitArea extends SingleChildRenderObjectWidget {
+  const _RaisedHitArea({
+    required this.index,
+    required this.count,
+    required this.side,
+    required this.rise,
+    required this.radius,
+    required super.child,
+  });
+
+  final int index;
+  final int count;
+  final double side;
+  final double rise;
+  final double radius;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenderRaisedHitArea(index: index, count: count, side: side, rise: rise, radius: radius);
+
+  @override
+  void updateRenderObject(BuildContext context, _RenderRaisedHitArea renderObject) {
+    renderObject
+      ..index = index
+      ..count = count
+      ..side = side
+      ..rise = rise
+      ..radius = radius;
+  }
+}
+
+class _RenderRaisedHitArea extends RenderProxyBox {
+  _RenderRaisedHitArea({
+    required this.index,
+    required this.count,
+    required this.side,
+    required this.rise,
+    required this.radius,
+  });
+
+  int index;
+  int count;
+  double side;
+  double rise;
+  double radius;
+
+  @override
+  bool hitTest(BoxHitTestResult result, {required Offset position}) {
+    if (position.dy < 0) {
+      final cell = (size.width - 2 * side) / count;
+      final centre = Offset(side + cell * (index + 0.5), radius - rise);
+      if (position.dy < -rise || (position - centre).distance > radius) return false;
+      return super.hitTest(result, position: Offset(position.dx, 0));
+    }
+    return super.hitTest(result, position: position);
   }
 }

@@ -11,6 +11,9 @@ class Message {
   final String? imageUrl;
   final String? approvalKey;
 
+  /// Posted to every team by the organiser's "Anunț"; that sends its own push.
+  final bool announcement;
+
   Message({
     required this.sender,
     required this.text,
@@ -18,6 +21,7 @@ class Message {
     this.type = MessageType.text,
     this.imageUrl,
     this.approvalKey,
+    this.announcement = false,
   });
 
   factory Message.fromFirestore(Map<String, dynamic> data) {
@@ -35,6 +39,7 @@ class Message {
       type: type,
       imageUrl: data['imageUrl'] as String?,
       approvalKey: data['approvalKey'] as String?,
+      announcement: data['announcement'] == true,
     );
   }
 
@@ -46,6 +51,7 @@ class Message {
       'type': type.name,
       if (imageUrl != null) 'imageUrl': imageUrl,
       if (approvalKey != null) 'approvalKey': approvalKey,
+      if (announcement) 'announcement': true,
     };
   }
 }

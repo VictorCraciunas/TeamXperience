@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>06-game-route-and-code-puzzle</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>:root{--surface-1:#F4F6FA;--font-mono:"Space Mono",monospace;--font-voice:Georgia,"Times New Roman",serif}body{margin:0;padding:24px;background:#F4F6FA;font-family:Poppins,sans-serif}</style>
+</head><body>
+<!-- Reference mockup for docs/roadmap/mockups-roadmap.md. The app must match this. -->
+<style>
+.ph{width:316px;flex:0 0 316px;border:6px solid #0C092A;border-radius:34px;overflow:hidden;font-size:12px;line-height:1.45;display:flex;flex-direction:column;background:#EADBC0;color:#3B2A1A}
+.top{display:flex;align-items:center;gap:8px;padding:12px 14px 8px}
+.rb{width:32px;height:32px;border-radius:50%;background:rgba(59,42,26,.1);display:flex;align-items:center;justify-content:center}
+.seg{display:flex;gap:3px;padding:0 14px}
+.seg span{flex:1;height:5px;border-radius:99px;background:rgba(59,42,26,.18)}
+.seg .d{background:#8A3B12}
+.seg .c{background:#B8862B}
+</style>
+<h2 class="sr-only">Mockups of the in-game screens in the event's own parchment theme: the mission route drawn as a winding trail with stops, and a code puzzle with progress, timer, attempts, a wrong-answer message and a hint.</h2>
+<div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;padding:1rem 0;background:var(--surface-1);border-radius:12px">
+
+<div class="ph">
+  <div class="top">
+    <span class="rb"><i class="ti ti-x" style="font-size:16px"></i></span>
+    <div style="flex:1;text-align:center"><div style="font-family:var(--font-voice);font-size:15px">Moștenirea Cartografului</div><div style="font-size:11px;opacity:.75">Vulpile · locul 2 din 12</div></div>
+    <span class="rb"><i class="ti ti-message-circle" style="font-size:16px"></i></span>
+  </div>
+  <div style="display:flex;justify-content:center;gap:16px;font-size:11px;padding-bottom:6px">
+    <span><i class="ti ti-clock" style="font-size:13px"></i> <b style="font-weight:500;font-family:var(--font-mono)">0:42:18</b> jucat</span>
+    <span><i class="ti ti-hourglass" style="font-size:13px"></i> <b style="font-weight:500;font-family:var(--font-mono)">1:17:42</b> rămas</span>
+  </div>
+
+  <div style="position:relative;height:430px">
+    <svg width="304" height="430" style="position:absolute;left:0;top:0" aria-hidden="true">
+      <path d="M60 400 C 200 390, 250 340, 210 300 S 60 250, 90 200 S 260 160, 220 110 S 100 50, 150 25" fill="none" stroke="#8A3B12" stroke-width="3" stroke-dasharray="7 6" opacity=".75"/>
+      <path d="M60 400 C 200 390, 250 340, 210 300 S 60 250, 90 200" fill="none" stroke="#8A3B12" stroke-width="3"/>
+    </svg>
+    <div style="position:absolute;left:44px;top:384px;display:flex;align-items:center;gap:8px"><span style="width:32px;height:32px;border-radius:50%;background:#8A3B12;color:#EADBC0;display:flex;align-items:center;justify-content:center"><i class="ti ti-check" style="font-size:16px"></i></span><span style="font-size:11px">1 · Scara Pasajului</span></div>
+    <div style="position:absolute;left:194px;top:284px;display:flex;align-items:center;gap:8px;flex-direction:row-reverse"><span style="width:32px;height:32px;border-radius:50%;background:#8A3B12;color:#EADBC0;display:flex;align-items:center;justify-content:center"><i class="ti ti-check" style="font-size:16px"></i></span><span style="font-size:11px">2 · Podul Minciunilor</span></div>
+    <div style="position:absolute;left:74px;top:184px;display:flex;align-items:center;gap:8px"><span style="width:32px;height:32px;border-radius:50%;background:#8A3B12;color:#EADBC0;display:flex;align-items:center;justify-content:center"><i class="ti ti-check" style="font-size:16px"></i></span><span style="font-size:11px">3 · Turnul Sfatului</span></div>
+    <div style="position:absolute;left:150px;top:78px;width:140px;background:#FBF4E4;border:2px solid #B8862B;border-radius:14px;padding:8px 10px">
+      <div style="font-size:11px;color:#8A3B12;font-weight:500">Misiunea 4 · acum</div>
+      <div style="font-family:var(--font-voice);font-size:14px">Casa cu ochi</div>
+      <div style="font-size:11px;opacity:.75">la 180 m de tine</div>
+      <div style="margin-top:6px;background:#8A3B12;color:#FBF4E4;border-radius:10px;text-align:center;padding:6px;font-weight:500">Continuă</div>
+    </div>
+    <div style="position:absolute;left:134px;top:10px;display:flex;align-items:center;gap:6px;opacity:.6"><span style="width:28px;height:28px;border-radius:50%;border:2px dashed #3B2A1A;display:flex;align-items:center;justify-content:center;box-sizing:border-box"><i class="ti ti-lock" style="font-size:13px"></i></span><span style="font-size:11px">5 · 6</span><i class="ti ti-flag" style="font-size:16px"></i></div>
+  </div>
+</div>
+
+<div class="ph">
+  <div class="top">
+    <span class="rb"><i class="ti ti-arrow-left" style="font-size:16px"></i></span>
+    <div style="flex:1"><div style="font-size:11px;opacity:.75">Misiunea 4 din 6</div><div style="font-family:var(--font-voice);font-size:15px">Casa cu ochi</div></div>
+    <span style="font-family:var(--font-mono);font-weight:500">0:42:18</span>
+  </div>
+  <div class="seg"><span class="d"></span><span class="d"></span><span class="d"></span><span class="c"></span><span></span><span></span></div>
+
+  <div style="margin:16px 14px 0;height:120px;border-radius:12px;background:#C9B48E;display:flex;align-items:center;justify-content:center;color:#5E4426;font-size:11px">Imagine din puzzle (setată de organizator)</div>
+  <p style="font-family:var(--font-voice);font-size:15px;line-height:1.5;margin:14px 16px 0">Acoperișul are ochi care nu dorm. Numără-i pe cei care privesc spre piață și scrie anul de pe ușă.</p>
+
+  <div style="display:flex;gap:6px;justify-content:center;margin:16px 0 0">
+    <span style="width:40px;height:48px;border:2px solid #D13438;border-radius:10px;background:#FBF4E4;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:20px">1</span>
+    <span style="width:40px;height:48px;border:2px solid #D13438;border-radius:10px;background:#FBF4E4;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:20px">7</span>
+    <span style="width:40px;height:48px;border:2px solid #D13438;border-radius:10px;background:#FBF4E4;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:20px">8</span>
+    <span style="width:40px;height:48px;border:2px solid #D13438;border-radius:10px;background:#FBF4E4;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:20px">9</span>
+  </div>
+  <div style="text-align:center;margin-top:8px;color:#A3262A;font-size:12px;font-weight:500"><i class="ti ti-alert-circle" style="font-size:14px;vertical-align:-2px"></i> Nu e anul ăsta. Uită-te mai sus pe ușă.</div>
+  <div style="display:flex;justify-content:center;align-items:center;gap:5px;margin-top:8px;font-size:11px;opacity:.8">
+    <span style="width:8px;height:8px;border-radius:50%;background:#8A3B12"></span><span style="width:8px;height:8px;border-radius:50%;background:#8A3B12"></span><span style="width:8px;height:8px;border-radius:50%;border:1.5px solid #8A3B12;box-sizing:border-box"></span><span style="margin-left:4px">2 încercări rămase</span>
+  </div>
+
+  <div style="margin-top:auto;padding:12px 14px 14px;display:flex;gap:8px">
+    <span style="flex:1;border:1.5px solid #8A3B12;color:#8A3B12;border-radius:12px;padding:10px;text-align:center;font-weight:500"><i class="ti ti-bulb" style="font-size:15px;vertical-align:-2px"></i> Indiciu</span>
+    <span style="flex:1.4;background:#8A3B12;color:#FBF4E4;border-radius:12px;padding:10px;text-align:center;font-weight:500">Verifică</span>
+  </div>
+</div>
+</div>
+</body></html>

@@ -124,7 +124,7 @@ class ColorPickerDialog {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(hint, style: TextStyle(fontSize: 20, color: context.colors.text)),
+        Text(hint, style: TextStyle(fontSize: 22, color: context.colors.text)),
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: context.colors.accent, width: 1.5),

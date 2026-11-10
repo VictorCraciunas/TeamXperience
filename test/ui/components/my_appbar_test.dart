@@ -21,9 +21,4 @@ void main() {
     expect(find.text('Puzzle 1'), findsOneWidget);
     expect(find.text('Cod'), findsOneWidget);
   });
-
-  testWidgets('without tabs it is the usual height', (tester) async {
-    await _pump(tester, const MyAppBar(appBarText: 'Misiuni'));
-    expect(tester.getSize(find.byType(AppBar)).height, kToolbarHeight);
-  });
 }

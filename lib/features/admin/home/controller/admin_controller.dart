@@ -8,7 +8,6 @@ import '../../../../constants/routes.dart';
 import '../../../../model/event.dart';
 import '../../../../model/stire.dart';
 import '../../../../state_management/events_state_management.dart';
-import '../../../../service/team_service/team_service.dart';
 import '../logic/admin_event_stats.dart';
 import 'package:teamxperience/features/admin/create_event/start/open_create_event_flow.dart';
 
@@ -87,14 +86,7 @@ class AdminHomeController extends ChangeNotifier {
   }
 
   void navigateToMap(Event event) {
-    Navigator.pushNamed(
-      context,
-      Routes.map,
-      arguments: {
-        'eventId': event.eventId,
-        'teams': TeamService().getStreamTeams(event.eventId),
-      },
-    );
+    Navigator.pushNamed(context, Routes.map, arguments: event);
   }
 
   void navigateToChats(Event event) {

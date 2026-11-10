@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>09-admin-live-control-room</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>:root{--surface-1:#F4F6FA;--font-mono:"Space Mono",monospace;--font-voice:Georgia,"Times New Roman",serif}body{margin:0;padding:24px;background:#F4F6FA;font-family:Poppins,sans-serif}</style>
+</head><body>
+<!-- Reference mockup for docs/roadmap/mockups-roadmap.md. The app must match this. -->
+<style>
+.ph{width:316px;flex:0 0 316px;background:#E7ECF3;border:6px solid #0C092A;border-radius:34px;overflow:hidden;font-size:12px;color:#0C092A;line-height:1.45;display:flex;flex-direction:column}
+.card{background:#fff;border:1px solid #CFD8E4;border-radius:14px;padding:10px 12px}
+.mut{color:#47546A}
+.h{font-size:14px;font-weight:500;margin:0}
+.hd{display:flex;align-items:center;gap:6px;margin:12px 14px 8px}
+.pin{position:absolute;width:24px;height:24px;border-radius:50%;color:#fff;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.row{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #E1E7EF}
+.bar{flex:1;display:flex;gap:2px}
+.bar span{flex:1;height:5px;border-radius:99px;background:#E1E7EF}
+.bar .d{background:#2AA5A9}
+</style>
+<h2 class="sr-only">Mockups of the organiser's live control room: a map with team positions, live counts and a queue of things needing attention, and a board of every team's progress through the missions.</h2>
+<div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;padding:1rem 0;background:var(--surface-1);border-radius:12px">
+
+<div class="ph">
+  <div style="background:#0C092A;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:8px">
+    <i class="ti ti-arrow-left" style="font-size:18px"></i>
+    <div style="flex:1"><div style="font-weight:500">Moștenirea Cartografului</div><div style="font-size:11px;opacity:.75"><span style="color:#F09595">● LIVE</span> · 1:17:42 rămase</div></div>
+    <span style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center"><i class="ti ti-speakerphone" style="font-size:16px"></i></span>
+  </div>
+  <div style="height:170px;background:#F3F6FA;position:relative;border-bottom:1px solid #CFD8E4;overflow:hidden">
+    <svg width="304" height="170" style="position:absolute" aria-hidden="true"><path d="M0 60 L304 40 M0 130 L304 120 M80 0 L100 170 M200 0 L215 170" stroke="#E1E7EF" stroke-width="8"/><path d="M30 150 C 90 140, 120 110, 110 85 S 180 50, 260 30" fill="none" stroke="#2AA5A9" stroke-width="2.5" stroke-dasharray="6 5"/></svg>
+    <span class="pin" style="left:240px;top:24px;background:#167A7E">B</span>
+    <span class="pin" style="left:150px;top:56px;background:#222F62">V</span>
+    <span class="pin" style="left:132px;top:66px;background:#222F62">L</span>
+    <span class="pin" style="left:96px;top:96px;background:#F2A93B;color:#0C092A">C</span>
+    <span class="pin" style="left:40px;top:136px;background:#47546A">R</span>
+    <span style="position:absolute;right:8px;bottom:8px;background:#fff;border:1px solid #CFD8E4;border-radius:99px;padding:3px 9px;font-size:11px"><i class="ti ti-maximize" style="font-size:12px"></i> Hartă mare</span>
+  </div>
+  <div style="display:flex;gap:6px;padding:10px 14px 0">
+    <div class="card" style="flex:1;padding:6px 8px"><div style="font-weight:500;font-size:15px">9</div><div class="mut" style="font-size:11px">în joc</div></div>
+    <div class="card" style="flex:1;padding:6px 8px"><div style="font-weight:500;font-size:15px;color:#1F8F5A">1</div><div class="mut" style="font-size:11px">au terminat</div></div>
+    <div class="card" style="flex:1;padding:6px 8px"><div style="font-weight:500;font-size:15px;color:#B7791F">2</div><div class="mut" style="font-size:11px">neporniți</div></div>
+  </div>
+
+  <div class="hd"><p class="h">Necesită atenție</p><span style="margin-left:auto;background:#E5484D;color:#fff;border-radius:99px;padding:0 8px;font-size:11px;font-weight:500">3</span></div>
+  <div style="padding:0 14px 14px;display:grid;gap:6px">
+    <div class="card" style="display:flex;gap:10px;align-items:center;padding:8px">
+      <span style="width:44px;height:44px;border-radius:8px;background:#8C6A44;flex:none"></span>
+      <div style="flex:1;min-width:0"><div style="font-weight:500">Poză de aprobat</div><div class="mut" style="font-size:11px">Vulpile · misiunea 3</div></div>
+      <span style="width:30px;height:30px;border-radius:50%;background:#FBE5E6;color:#D13438;display:flex;align-items:center;justify-content:center"><i class="ti ti-x" style="font-size:15px"></i></span>
+      <span style="width:30px;height:30px;border-radius:50%;background:#E2F4EA;color:#1F8F5A;display:flex;align-items:center;justify-content:center"><i class="ti ti-check" style="font-size:15px"></i></span>
+    </div>
+    <div class="card" style="display:flex;gap:10px;align-items:center;padding:8px;border-color:#F2A93B">
+      <span style="width:30px;height:30px;border-radius:50%;background:#FBEFD8;color:#B7791F;display:flex;align-items:center;justify-content:center;flex:none"><i class="ti ti-hourglass" style="font-size:15px"></i></span>
+      <div style="flex:1"><div style="font-weight:500">Cometele stau de 25 min</div><div class="mut" style="font-size:11px">Misiunea 2 · 3 încercări greșite</div></div>
+      <i class="ti ti-message-circle" style="font-size:18px;color:#167A7E"></i>
+    </div>
+    <div class="card" style="display:flex;gap:10px;align-items:center;padding:8px">
+      <span style="width:30px;height:30px;border-radius:50%;background:#E3F2F3;color:#167A7E;display:flex;align-items:center;justify-content:center;flex:none"><i class="ti ti-message-circle" style="font-size:15px"></i></span>
+      <div style="flex:1"><div style="font-weight:500">Mesaj nou de la Lupii</div><div class="mut" style="font-size:11px">„Ușa e închisă, ce facem?”</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="ph">
+  <div style="background:#0C092A;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:8px">
+    <i class="ti ti-arrow-left" style="font-size:18px"></i>
+    <div style="flex:1"><div style="font-weight:500">Progresul echipelor</div><div style="font-size:11px;opacity:.75">12 echipe · 6 misiuni</div></div>
+  </div>
+  <div style="display:flex;gap:6px;padding:10px 14px 0">
+    <span style="background:#222F62;color:#fff;border-radius:99px;padding:3px 10px;font-size:11px">Toate</span>
+    <span style="background:#fff;border:1px solid #CFD8E4;border-radius:99px;padding:3px 10px;font-size:11px">Blocate</span>
+    <span style="background:#fff;border:1px solid #CFD8E4;border-radius:99px;padding:3px 10px;font-size:11px">Neporniți</span>
+  </div>
+  <div class="card" style="margin:10px 14px 0;padding:0">
+    <div class="row"><span style="width:16px;font-weight:500">1</span><div style="width:92px"><div style="font-weight:500">Bufnițele</div><div class="mut" style="font-size:11px">acum 2 min</div></div><div class="bar"><span class="d"></span><span class="d"></span><span class="d"></span><span class="d"></span><span class="d"></span><span></span></div></div>
+    <div class="row" style="background:#DDF3F3"><span style="width:16px;font-weight:500">2</span><div style="width:92px"><div style="font-weight:500">Vulpile</div><div class="mut" style="font-size:11px"><i class="ti ti-photo" style="font-size:11px"></i> poză în așteptare</div></div><div class="bar"><span class="d"></span><span class="d"></span><span class="d"></span><span style="background:#F2A93B"></span><span></span><span></span></div></div>
+    <div class="row"><span style="width:16px;font-weight:500">3</span><div style="width:92px"><div style="font-weight:500">Lupii de Cetate</div><div class="mut" style="font-size:11px">acum 5 min</div></div><div class="bar"><span class="d"></span><span class="d"></span><span class="d"></span><span></span><span></span><span></span></div></div>
+    <div class="row"><span style="width:16px;font-weight:500">4</span><div style="width:92px"><div style="font-weight:500">Cometele</div><div style="font-size:11px;color:#B7791F">blocați 25 min</div></div><div class="bar"><span class="d"></span><span style="background:#F2A93B"></span><span></span><span></span><span></span><span></span></div></div>
+    <div class="row"><span style="width:16px;font-weight:500">5</span><div style="width:92px"><div style="font-weight:500">Rapsodia</div><div class="mut" style="font-size:11px">acum 1 min</div></div><div class="bar"><span class="d"></span><span></span><span></span><span></span><span></span><span></span></div></div>
+    <div class="row" style="border-bottom:0;opacity:.55"><span style="width:16px;font-weight:500">–</span><div style="width:92px"><div style="font-weight:500">Pisicile</div><div class="mut" style="font-size:11px">n-au introdus codul</div></div><span style="color:#167A7E;font-weight:500;font-size:11px;margin-left:auto">Sună căpitanul</span></div>
+  </div>
+  <div style="margin-top:auto;padding:12px 14px 14px;display:flex;gap:8px">
+    <span style="flex:1;border:1.5px solid #167A7E;color:#167A7E;border-radius:12px;padding:10px;text-align:center;font-weight:500"><i class="ti ti-speakerphone" style="font-size:14px;vertical-align:-2px"></i> Anunț</span>
+    <span style="flex:1;border:1.5px solid #D13438;color:#D13438;border-radius:12px;padding:10px;text-align:center;font-weight:500"><i class="ti ti-player-stop" style="font-size:14px;vertical-align:-2px"></i> Oprește</span>
+  </div>
+</div>
+</div>
+</body></html>

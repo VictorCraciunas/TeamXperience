@@ -1,15 +1,12 @@
+import 'confirmed_docs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../enums/photo_approval_status.dart';
+import '../../enums/team_photo_slot.dart';
 import '../../model/team.dart';
 
 class TeamRepo {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  Future<void> addTeam(Team team, String eventId) async {
-    var docRef = _firestore.collection('events').doc(eventId).collection('teams').doc(team.name);
-    await docRef.set(team.toJson());
-  }
 
   Future<void> deleteTeam(String eventId, String teamName) async {
     try {
@@ -19,6 +16,22 @@ class TeamRepo {
       print('Stack trace: $stacktrace');
       throw Exception('Failed to delete team: $teamName');
     }
+  }
+
+  /// How many teams are registered for [eventId], counted on the server
+  /// without downloading them.
+  Future<int> countTeams(String eventId) async {
+    final snapshot = await _firestore.collection('events').doc(eventId).collection('teams').count().get();
+    return snapshot.count ?? 0;
+  }
+
+  /// The event's teams for a screen that lists them: offline with nothing
+  /// cached it throws, instead of answering that there are none.
+  Future<List<Team>> getTeamsOrFail(String eventId) async {
+    final teams = _firestore.collection('events').doc(eventId).collection('teams');
+    final snapshot = await teams.get();
+    final docs = await confirmedDocs(teams, snapshot);
+    return [for (final doc in docs) Team.fromMap(doc.data())];
   }
 
   Future<List<Team>> getAllTeamsForEvent(String eventId) async {
@@ -37,6 +50,13 @@ class TeamRepo {
     }
   }
 
+  /// The team as saved, or null when there is none under [teamName].
+  Future<Team?> getTeam(String eventId, String teamName) async {
+    final doc = await _team(eventId, teamName).get();
+    final data = doc.data();
+    return data == null ? null : Team.fromMap(data);
+  }
+
   Stream<Team> getStreamTeam(String eventId, String teamName) {
     return _firestore
         .collection('events')
@@ -47,19 +67,37 @@ class TeamRepo {
         .map((doc) => Team.fromMap(doc.data() as Map<String, dynamic>));
   }
 
+  /// Saves the team's start or final photo; a retake replaces it.
+  Future<void> setTeamPhoto(String eventId, String teamName, TeamPhotoSlot slot, String url, String uid) {
+    return _team(eventId, teamName).update({
+      'teamPhotos.${slot.name}': {'url': url, 'by': uid, 'at': FieldValue.serverTimestamp()},
+    });
+  }
+
   Future<void> setPhotoApproval(
     String eventId,
     String teamName,
     String key,
-    PhotoApprovalStatus status,
-  ) async {
+    PhotoApprovalStatus status, {
+    String? reason,
+    String? url,
+  }) async {
     try {
       await _firestore
           .collection('events')
           .doc(eventId)
           .collection('teams')
           .doc(teamName)
-          .update({'photoApprovals.$key': status.name});
+          .update({
+            'photoApprovals.$key': {
+              'status': status.name,
+              if (reason != null) 'reason': reason,
+              if (url != null) 'url': url,
+              'at': FieldValue.serverTimestamp(),
+            },
+            // The security rules read which try a player is sending from this.
+            if (status == PhotoApprovalStatus.pending) 'lastPhotoKey': key,
+          });
     } catch (e, stacktrace) {
       print('Error updating photo approval: $e');
       print('Stack trace: $stacktrace');
@@ -87,10 +125,69 @@ class TeamRepo {
   }
 
   // Updated: Use team name as document ID
-  Future<void> updateMissionProgress(String eventId, String teamName, int progress) async {
+  /// Marks [uid] as seen playing now (server time).
+  Future<void> markPresent(String eventId, String teamName, String uid) {
+    return _firestore.collection('events').doc(eventId).collection('teams').doc(teamName).update({
+      'presence.$uid': FieldValue.serverTimestamp(),
+    });
+  }
+
+  DocumentReference<Map<String, dynamic>> _team(String eventId, String teamName) =>
+      _firestore.collection('events').doc(eventId).collection('teams').doc(teamName);
+
+  /// The organiser has read the team's messages.
+  Future<void> clearUnread(String eventId, String teamName) {
+    return _team(eventId, teamName).update({'unreadByAdmin': FieldValue.delete()});
+  }
+
+  /// Adds [meters] to the walk of the phone signed in as [uid].
+  Future<void> addWalked(String eventId, String teamName, String uid, double meters) {
+    return _team(eventId, teamName).update({'walked.$uid': FieldValue.increment(meters)});
+  }
+
+  /// A player's rating of the event (1–5), one per player; a new tap replaces it.
+  Future<void> saveRating(String eventId, String uid, {required String teamName, required int rating}) {
+    return _firestore.collection('events').doc(eventId).collection('feedback').doc(uid).set({
+      'rating': rating,
+      'teamName': teamName,
+      'at': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// Every player's rating of the event, as they come (organisers only).
+  Stream<List<int>> streamRatings(String eventId) {
+    return _firestore.collection('events').doc(eventId).collection('feedback').snapshots().map((snapshot) => [
+          for (final doc in snapshot.docs)
+            if (doc.data()['rating'] case final num rating) rating.toInt(),
+        ]);
+  }
+
+  /// Counts one wrong answer on the puzzle [key] ("3_0"). An increment, so two
+  /// phones answering at once both count.
+  Future<void> addWrongAttempt(String eventId, String teamName, String key) {
+    return _team(eventId, teamName).update({'attempts.$key': FieldValue.increment(1)});
+  }
+
+  /// Pauses answers on the puzzle [key] until [until] and starts its count over.
+  Future<void> lockPuzzle(String eventId, String teamName, String key, DateTime until) {
+    return _team(eventId, teamName).update({
+      'lockedUntil.$key': Timestamp.fromDate(until),
+      'attempts.$key': 0,
+    });
+  }
+
+  /// Notes that the team opened the hint of the puzzle [key].
+  Future<void> markHintUsed(String eventId, String teamName, String key) {
+    return _team(eventId, teamName).update({'hintsUsed.$key': true});
+  }
+
+  /// Sets the team's progress and, with [completedMission], stamps when that
+  /// mission was solved (server time) in the same write.
+  Future<void> updateMissionProgress(String eventId, String teamName, int progress, {int? completedMission}) async {
     try {
       await _firestore.collection('events').doc(eventId).collection('teams').doc(teamName).update({
         'missionProgress': progress,
+        if (completedMission != null) 'missionCompletedAt.$completedMission': FieldValue.serverTimestamp(),
       });
     } catch (e, stacktrace) {
       print('Error updating mission progress: $e');
@@ -166,10 +263,19 @@ class TeamRepo {
       throw Exception('Failed to fetch team for user: $userId in event: $eventId');
     }
   }
+  /// Marks the team started and, the first time only, stamps `startedAt`
+  /// with the server time: the first member to enter the code starts the
+  /// clock for everyone. `hasStarted` is a plain write, so with no signal it
+  /// is kept and sent later; the clock's transaction needs the server and
+  /// runs once that write has gone through.
   Future<void> startTeam(String eventId, String teamName) async {
     try {
-      await _firestore.collection('events').doc(eventId).collection('teams').doc(teamName).update({
-        'hasStarted': true,
+      final ref = _firestore.collection('events').doc(eventId).collection('teams').doc(teamName);
+      await ref.update({'hasStarted': true});
+      await _firestore.runTransaction((tx) async {
+        final snapshot = await tx.get(ref);
+        if (snapshot.data()?['startedAt'] != null) return;
+        tx.update(ref, {'startedAt': FieldValue.serverTimestamp()});
       });
     } catch (e, stacktrace) {
       print('Error starting team: $e');
@@ -178,11 +284,18 @@ class TeamRepo {
     }
   }
 
-  Future<void> finishTeam(String eventId, String teamName) async {
+  /// Marks the team finished. With [completed] (its last mission solved) it
+  /// also stamps `finishedAt` with the server time, only the first time.
+  Future<void> finishTeam(String eventId, String teamName, {required bool completed}) async {
     try {
-      await _firestore.collection('events').doc(eventId).collection('teams').doc(teamName).update({
-        'hasFinished': true,
-      });
+      final ref = _team(eventId, teamName);
+      await ref.update({'hasFinished': true});
+      if (completed) {
+        await _firestore.runTransaction((tx) async {
+          final snap = await tx.get(ref);
+          if (snap.data()?['finishedAt'] == null) tx.update(ref, {'finishedAt': FieldValue.serverTimestamp()});
+        });
+      }
     } catch (e, stacktrace) {
       print('Error finishing team: $e');
       print('Stack trace: $stacktrace');
@@ -190,20 +303,19 @@ class TeamRepo {
     }
   }
 
-  Future<void> updateTeamDetails(String eventId, String oldTeamName, Team updatedTeam) async {
+  /// Changes only the captain's phone; the rest of the team is not touched.
+  Future<void> updateTeamPhone(String eventId, String teamName, String phone) async {
     try {
-      if (oldTeamName == updatedTeam.name) {
-        // Name didn't change, just update the fields
-        await _firestore.collection('events').doc(eventId).collection('teams').doc(oldTeamName).update(updatedTeam.toJson());
-      } else {
-        // Name changed — delete old doc and create new one
-        await _firestore.collection('events').doc(eventId).collection('teams').doc(oldTeamName).delete();
-        await _firestore.collection('events').doc(eventId).collection('teams').doc(updatedTeam.name).set(updatedTeam.toJson());
-      }
+      await _firestore
+          .collection('events')
+          .doc(eventId)
+          .collection('teams')
+          .doc(teamName)
+          .update({'phoneNumber': phone});
     } catch (e, stacktrace) {
-      print('Error updating team details: $e');
+      print('Error updating team phone: $e');
       print('Stack trace: $stacktrace');
-      throw Exception('Failed to update team details for team: $oldTeamName');
+      throw Exception('Failed to update phone for team: $teamName');
     }
   }
 

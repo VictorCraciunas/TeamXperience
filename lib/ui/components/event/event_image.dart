@@ -84,7 +84,7 @@ class EventImage extends StatelessWidget {
                         Text(
                           "$nrTeams",
                           style: const TextStyle(
-                            fontSize: 12,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
                           ),
@@ -93,7 +93,7 @@ class EventImage extends StatelessWidget {
                         Text(
                           "($nrPerson p.)",
                           style: const TextStyle(
-                            fontSize: 9,
+                            fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: Colors.white,
                           ),
@@ -120,7 +120,7 @@ class EventImage extends StatelessWidget {
                           : "GRATUIT",
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/features/home/logic/home_hero.dart';
 import 'package:teamxperience/features/home/widgets/home_hero_actions.dart';
@@ -36,7 +35,7 @@ void main() {
         onLayoutChange: () {},
       ),
     );
-    expect(find.text('Următorul eveniment'), findsOneWidget);
+    expect(find.text('Următorul tău joc'), findsOneWidget);
     expect(find.byType(ClockBuilder), findsOneWidget);
   });
 

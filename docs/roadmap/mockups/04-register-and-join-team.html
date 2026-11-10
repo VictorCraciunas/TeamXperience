@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>04-register-and-join-team</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>:root{--surface-1:#F4F6FA;--font-mono:"Space Mono",monospace;--font-voice:Georgia,"Times New Roman",serif}body{margin:0;padding:24px;background:#F4F6FA;font-family:Poppins,sans-serif}</style>
+</head><body>
+<!-- Reference mockup for docs/roadmap/mockups-roadmap.md. The app must match this. -->
+<style>
+.ph{width:316px;flex:0 0 316px;background:#E7ECF3;border:6px solid #0C092A;border-radius:34px;overflow:hidden;font-size:12px;color:#0C092A;line-height:1.45;display:flex;flex-direction:column}
+.card{background:#fff;border:1px solid #CFD8E4;border-radius:14px;padding:10px 12px}
+.mut{color:#47546A}
+.lb{font-size:11px;font-weight:500;margin:0 0 4px}
+.in{background:#fff;border:1px solid #CFD8E4;border-radius:12px;padding:9px 12px}
+.bar{background:#fff;border-bottom:1px solid #CFD8E4;padding:12px 14px;display:flex;align-items:center;gap:8px}
+.btn{background:#222F62;color:#fff;border-radius:12px;padding:11px;text-align:center;font-weight:500}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;border:2px solid #fff}
+</style>
+<h2 class="sr-only">Mockups of creating a team for an event on one short screen with an invite code to share, and of a teammate joining by entering the code and seeing who is already in the team.</h2>
+<div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;padding:1rem 0;background:var(--surface-1);border-radius:12px">
+
+<div class="ph">
+  <div class="bar"><i class="ti ti-x" style="font-size:18px"></i><div style="flex:1"><div style="font-weight:500">Înscrie echipa</div><div class="mut" style="font-size:11px">Moștenirea Cartografului · 14 nov</div></div></div>
+  <div style="padding:14px;display:grid;gap:12px">
+    <div>
+      <p class="lb">Numele echipei</p>
+      <div style="display:flex;gap:8px">
+        <span style="width:42px;height:42px;border-radius:12px;background:#2AA5A9;display:flex;align-items:center;justify-content:center;flex:none"><i class="ti ti-paw" style="font-size:22px"></i></span>
+        <div class="in" style="flex:1;border-color:#2AA5A9;display:flex;align-items:center">Vulpile<i class="ti ti-circle-check" style="font-size:16px;color:#1F8F5A;margin-left:auto"></i></div>
+      </div>
+      <div style="font-size:11px;color:#1F8F5A;margin-top:3px">Numele e liber</div>
+    </div>
+    <div>
+      <p class="lb">Câți veți fi?</p>
+      <div style="display:flex;gap:5px">
+        <span class="in" style="flex:1;text-align:center;padding:7px 0">2</span><span class="in" style="flex:1;text-align:center;padding:7px 0">3</span>
+        <span class="in" style="flex:1;text-align:center;padding:7px 0;background:#222F62;color:#fff;border-color:#222F62;font-weight:500">4</span>
+        <span class="in" style="flex:1;text-align:center;padding:7px 0">5</span><span class="in" style="flex:1;text-align:center;padding:7px 0">6</span>
+      </div>
+    </div>
+    <div>
+      <p class="lb">Telefonul căpitanului</p>
+      <div class="in mut">0722 123 456</div>
+      <div class="mut" style="font-size:11px;margin-top:3px">Numele și emailul le luăm din contul tău.</div>
+    </div>
+    <div class="card" style="padding:8px 10px;display:grid;gap:6px">
+      <div style="display:flex;gap:8px;align-items:center"><span style="width:18px;height:18px;border-radius:5px;background:#167A7E;color:#fff;display:flex;align-items:center;justify-content:center"><i class="ti ti-check" style="font-size:12px"></i></span><span>Accept regulamentul</span></div>
+      <div style="display:flex;gap:8px;align-items:center"><span style="width:18px;height:18px;border-radius:5px;background:#167A7E;color:#fff;display:flex;align-items:center;justify-content:center"><i class="ti ti-check" style="font-size:12px"></i></span><span>Sunt de acord cu foto și video</span></div>
+    </div>
+    <div class="btn">Înscrie echipa</div>
+  </div>
+
+  <div style="margin:4px 14px 14px;background:#222F62;color:#fff;border-radius:22px;padding:14px;text-align:center">
+    <div style="font-size:11px;opacity:.8">Gata. Trimite codul coechipierilor</div>
+    <div style="font-family:var(--font-mono);font-size:26px;font-weight:500;letter-spacing:4px;margin:6px 0;border:1.5px dashed rgba(255,255,255,.4);border-radius:12px;padding:6px 0">VLP-482</div>
+    <div style="display:flex;gap:6px">
+      <span style="flex:1;background:#53C4C7;color:#0C092A;border-radius:10px;padding:8px;font-weight:500"><i class="ti ti-brand-whatsapp" style="font-size:14px;vertical-align:-2px"></i> WhatsApp</span>
+      <span style="flex:1;background:rgba(255,255,255,.12);border-radius:10px;padding:8px;font-weight:500"><i class="ti ti-copy" style="font-size:14px;vertical-align:-2px"></i> Copiază</span>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;font-size:11px">
+      <span class="av" style="background:#53C4C7;color:#0C092A;border-color:#222F62">VC</span>
+      <span class="av" style="background:transparent;border:2px dashed rgba(255,255,255,.4);margin-left:-6px"></span>
+      <span class="av" style="background:transparent;border:2px dashed rgba(255,255,255,.4);margin-left:-6px"></span>
+      <span class="av" style="background:transparent;border:2px dashed rgba(255,255,255,.4);margin-left:-6px"></span>
+      <span style="opacity:.8">1 din 4 în echipă</span>
+    </div>
+  </div>
+</div>
+
+<div class="ph">
+  <div class="bar"><i class="ti ti-arrow-left" style="font-size:18px"></i><span style="font-weight:500">Intră într-o echipă</span></div>
+  <div style="padding:16px 14px 0;text-align:center">
+    <div style="width:56px;height:56px;margin:0 auto;border-radius:50%;background:#E3F2F3;display:flex;align-items:center;justify-content:center"><i class="ti ti-ticket" style="font-size:28px;color:#167A7E"></i></div>
+    <div style="font-size:15px;font-weight:500;margin-top:8px">Ai primit un cod?</div>
+    <div class="mut">Îl găsești în mesajul de la căpitan.</div>
+    <div style="display:flex;gap:6px;justify-content:center;margin-top:12px;font-family:var(--font-mono);font-size:20px">
+      <span class="in" style="width:20px;padding:8px 6px;border-color:#2AA5A9">V</span><span class="in" style="width:20px;padding:8px 6px;border-color:#2AA5A9">L</span><span class="in" style="width:20px;padding:8px 6px;border-color:#2AA5A9">P</span><span style="align-self:center;opacity:.5">-</span><span class="in" style="width:20px;padding:8px 6px;border-color:#2AA5A9">4</span><span class="in" style="width:20px;padding:8px 6px;border-color:#2AA5A9">8</span><span class="in" style="width:20px;padding:8px 6px;border-color:#2AA5A9">2</span>
+    </div>
+  </div>
+
+  <div class="card" style="margin:16px 14px 0;padding:0;overflow:hidden">
+    <div style="height:64px;background:#167A7E;position:relative"><span style="position:absolute;left:10px;bottom:8px;color:#fff;font-weight:500">Moștenirea Cartografului</span></div>
+    <div style="padding:10px 12px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="width:40px;height:40px;border-radius:12px;background:#2AA5A9;display:flex;align-items:center;justify-content:center"><i class="ti ti-paw" style="font-size:22px"></i></span>
+        <div style="flex:1"><div style="font-weight:500;font-size:14px">Vulpile</div><div class="mut" style="font-size:11px">Căpitan: Victor · Sâm 14 nov, 10:00</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:10px">
+        <span class="av" style="background:#222F62;color:#fff">VC</span>
+        <span class="av" style="background:#F2A93B;margin-left:-8px">AM</span>
+        <span class="av" style="background:#fff;border:2px dashed #2AA5A9;margin-left:-8px;color:#167A7E"><i class="ti ti-plus" style="font-size:13px"></i></span>
+        <span class="av" style="background:#fff;border:2px dashed #CFD8E4;margin-left:-8px"></span>
+        <span class="mut" style="font-size:11px">2 din 4 · tu ești al 3-lea</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:14px;margin-top:auto">
+    <div class="btn">Intră în Vulpile</div>
+    <div class="mut" style="text-align:center;font-size:11px;margin-top:8px">Evenimentul apare la Înscrierile tale și primești notificări.</div>
+  </div>
+</div>
+</div>
+</body></html>

@@ -39,6 +39,11 @@ void main() {
       expect(contrast(c.onTick, c.tick), greaterThanOrEqualTo(4.5));
     });
 
+    test('$name: text and teal accents on navy are readable', () {
+      expect(contrast(c.onNavy, c.navy), greaterThanOrEqualTo(4.5));
+      expect(contrast(c.tickOnNavy, c.navy), greaterThanOrEqualTo(3));
+    });
+
     test('$name: feedback colours are readable on their soft backgrounds', () {
       expect(contrast(c.success, c.successSoft), greaterThanOrEqualTo(3));
       expect(contrast(c.warning, c.warningSoft), greaterThanOrEqualTo(3));

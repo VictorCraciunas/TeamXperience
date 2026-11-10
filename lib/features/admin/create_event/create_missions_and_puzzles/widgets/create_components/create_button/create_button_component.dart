@@ -265,7 +265,7 @@ class _ButtonComponentFieldsWidgetState
             value: controller.enableGlow,
             onChanged: (v) => setState(() => controller.enableGlow = v!),
             activeColor: context.colors.accent,
-            checkColor: Colors.white,
+            checkColor: context.colors.onTick,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),
             ),

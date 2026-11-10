@@ -42,7 +42,7 @@ class StatTile extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: colors.text,
-                fontSize: 20,
+                fontSize: 22,
                 fontWeight: FontWeight.w700,
                 height: 1.1,
               ),
@@ -51,7 +51,7 @@ class StatTile extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: colors.muted, fontSize: 11),
+              style: TextStyle(color: colors.muted, fontSize: 13),
             ),
           ],
         ),

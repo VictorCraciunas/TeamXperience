@@ -5,6 +5,7 @@ import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/puzzle.dart';
 import 'package:teamxperience/service/event_service/event_completeness.dart';
+import 'package:teamxperience/service/event_service/event_status_changes.dart';
 import 'package:teamxperience/ui/components/feedback/snackbars.dart';
 
 import '../../../../../exceptions/events_exceptions.dart';
@@ -31,6 +32,20 @@ class AddMissionsController {
   /// True when the event was a draft: saving then publishes it.
   final bool isDraft;
 
+  /// The event's start pin, if it has one.
+  ({double lat, double lng})? get startPlace {
+    final lat = event.startLatitude;
+    final lng = event.startLongitude;
+    return lat == null || lng == null ? null : (lat: lat, lng: lng);
+  }
+
+  /// Where a puzzle's map opens: its mission's place, else the event's start.
+  ({double lat, double lng})? placeNearMission(int mission) {
+    final lat = event.missions[mission].latitude;
+    final lng = event.missions[mission].longitude;
+    return lat == null || lng == null ? startPlace : (lat: lat, lng: lng);
+  }
+
   AddMissionsController(this.event, this.mode, {this.onStateChanged, this.isDraft = false}) {
     if (mode == 'blueprint') _copyMissionsWithoutAnswers();
   }
@@ -41,9 +56,8 @@ class AddMissionsController {
   void _copyMissionsWithoutAnswers() {
     event.missions = [
       for (final mission in event.missions)
-        Mission(
-          id: mission.id,
-          puzzles: [
+        mission.withId(mission.id)
+          ..puzzles = [
             for (final puzzle in mission.puzzles)
               Puzzle.fromMap(puzzle.toJson())
                 ..code = null
@@ -51,9 +65,30 @@ class AddMissionsController {
                 ..longitude = null
                 ..indiciu = null,
           ],
-        ),
     ];
     event.nrMissions = event.missions.length;
+  }
+
+  /// Sets the title, the event-page line and whether the page shows the
+  /// mission. Text is trimmed and blank is stored as nothing; fields not given
+  /// stay as they are.
+  void setMissionText(int index, {String? title, String? teaser, bool? isTeaserPublic}) {
+    if (index < 0 || index >= event.missions.length) return;
+    final mission = event.missions[index];
+    String? clean(String text) => text.trim().isEmpty ? null : text.trim();
+    if (title != null) mission.title = clean(title);
+    if (teaser != null) mission.teaser = clean(teaser);
+    if (isTeaserPublic != null) mission.isTeaserPublic = isTeaserPublic;
+    onStateChanged?.call();
+  }
+
+  /// Sets where a mission is, or clears it with null.
+  void setMissionPlace(int index, ({double lat, double lng})? place) {
+    if (index < 0 || index >= event.missions.length) return;
+    event.missions[index]
+      ..latitude = place?.lat
+      ..longitude = place?.lng;
+    onStateChanged?.call();
   }
 
   void addNewMission() {
@@ -68,7 +103,7 @@ class AddMissionsController {
 
     final left = [...event.missions]..removeAt(index);
     event.missions = [
-      for (var i = 0; i < left.length; i++) Mission(id: i.toString(), puzzles: left[i].puzzles),
+      for (var i = 0; i < left.length; i++) left[i].withId(i.toString()),
     ];
     event.nrMissions = event.missions.length;
     onStateChanged?.call();
@@ -83,7 +118,7 @@ class AddMissionsController {
     final moved = [...event.missions];
     moved.insert(to, moved.removeAt(from));
     event.missions = [
-      for (var i = 0; i < moved.length; i++) Mission(id: i.toString(), puzzles: moved[i].puzzles),
+      for (var i = 0; i < moved.length; i++) moved[i].withId(i.toString()),
     ];
     onStateChanged?.call();
   }
@@ -159,8 +194,9 @@ class AddMissionsController {
     return '${problems.first.text}$more';
   }
 
-  /// Creates, updates or publishes the event. True when it worked, so the
-  /// screen knows whether to leave.
+  /// Publishes or updates the event. True when it worked, so the screen knows
+  /// whether to leave. A new event or a draft has to be complete; an edit of a
+  /// live event only must not leave teams stuck.
   Future<bool> saveEvent(BuildContext context) async {
     _showProgress(context);
     final eventList = context.read<EventList>();
@@ -173,13 +209,14 @@ class AddMissionsController {
         Navigator.of(context).pop();
         MySnackBars.successSnackBar(context, title: "Eveniment publicat !", message: "Evenimentul este acum vizibil pentru jucători");
       } else if (mode == 'edit') {
+        checkLiveEdit(event);
         await eventList.updateEvent(event);
         if (!context.mounted) return true;
         Navigator.of(context).pop();
         MySnackBars.successSnackBar(context, title: "Eveniment editat !", message: "Eveniment editat cu success");
       } else {
         // EventService handles all image uploads.
-        await eventList.createEvent(event);
+        await eventList.publishEvent(event);
         if (!context.mounted) return true;
         Navigator.of(context).pop();
         MySnackBars.successSnackBar(context, title: "Eveniment create !", message: "Eveniment creat cu success");
@@ -190,7 +227,7 @@ class AddMissionsController {
         Navigator.of(context).pop(); // the progress dialog
         MySnackBars.warningSnackBar(
           context,
-          title: 'Evenimentul nu poate fi publicat încă',
+          title: !isDraft && mode == 'edit' ? 'Evenimentul nu poate fi salvat' : 'Evenimentul nu poate fi publicat încă',
           message: publishFailureMessage(e),
         );
       }

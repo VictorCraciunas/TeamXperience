@@ -1,0 +1,68 @@
+import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/buttons/app_button.dart';
+import 'package:teamxperience/ui/ui.dart';
+
+import 'events_tab_preview.dart';
+import 'game_intro_preview.dart';
+import 'home_preview.dart';
+import 'finish_preview.dart';
+import 'location_puzzle_preview.dart';
+import 'photo_puzzle_preview.dart';
+import 'play_popup_preview.dart';
+import 'package:teamxperience/features/admin/create_event/common_widgets/pin_picker_screen.dart';
+
+import 'live_room_preview.dart';
+import 'profile_preview.dart';
+import 'puzzle_frame_preview.dart';
+import 'route_preview.dart';
+import 'start_code_preview.dart';
+
+/// The gallery buttons that open the Acasă, Evenimente and Joacă tabs with the
+/// five-tab bar, the start code, the intro letter, the route, the puzzles and
+/// the finish recap, Profil, and the organiser's live room.
+class ShellPreviewsLauncher extends StatelessWidget {
+  const ShellPreviewsLauncher({super.key});
+
+  void _open(BuildContext context, Widget screen) =>
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: context.colors.page,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AppButton(label: 'Acasă', onPressed: () => _open(context, const HomePreview())),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(label: 'Evenimente', onPressed: () => _open(context, const EventsTabPreview())),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(label: 'Joacă', onPressed: () => _open(context, const PlayPopupPreview())),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(label: 'Cod de start', onPressed: () => _open(context, const StartCodePreview())),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(label: 'Scrisoarea', onPressed: () => _open(context, const GameIntroPreview())),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(label: 'Traseu', onPressed: () => _open(context, const RoutePreview())),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(label: 'Puzzle', onPressed: () => _open(context, const PuzzleFramePreview())),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(label: 'Locație', onPressed: () => _open(context, const LocationPuzzlePreview())),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(label: 'Poză', onPressed: () => _open(context, const PhotoPuzzlePreview())),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(label: 'Final', onPressed: () => _open(context, const FinishPreview())),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(label: 'Profil', onPressed: () => _open(context, const ProfilePreview())),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(label: 'Camera organizatorului', onPressed: () => _open(context, const LiveRoomPreview())),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(label: 'Alege locul pe hartă', onPressed: () => showPinPicker(context)),
+          ],
+        ),
+      ),
+    );
+  }
+}

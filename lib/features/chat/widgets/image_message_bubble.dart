@@ -15,6 +15,9 @@ class ImageMessageBubble extends StatelessWidget {
   final VoidCallback? onApprove;
   final VoidCallback? onDeny;
 
+  /// The organiser's reason, shown under a rejected photo.
+  final String? rejectReason;
+
   const ImageMessageBubble({
     super.key,
     required this.imageUrl,
@@ -26,6 +29,7 @@ class ImageMessageBubble extends StatelessWidget {
     this.status,
     this.onApprove,
     this.onDeny,
+    this.rejectReason,
   });
 
   @override
@@ -50,16 +54,16 @@ class ImageMessageBubble extends StatelessWidget {
               borderRadius: bubbleRadius(isMe, position),
               boxShadow: [
                 if (isMe)
-                  const BoxShadow(
-                    color: Color(0x33222F62),
+                  BoxShadow(
+                    color: context.colors.navy.withValues(alpha: .2),
                     blurRadius: 18,
-                    offset: Offset(0, 6),
+                    offset: const Offset(0, 6),
                   )
                 else
-                  const BoxShadow(
-                    color: Color(0x0A0C092A),
+                  BoxShadow(
+                    color: context.colors.liveCard.withValues(alpha: .04),
                     blurRadius: 2,
-                    offset: Offset(0, 1),
+                    offset: const Offset(0, 1),
                   ),
               ],
             ),
@@ -84,7 +88,7 @@ class ImageMessageBubble extends StatelessWidget {
                             loadingBuilder: (context, child, progress) {
                               if (progress == null) return child;
                               return Container(
-                                color: const Color(0xFFD9E4E6),
+                                color: context.colors.insetBorder,
                                 alignment: Alignment.center,
                                 child: CircularProgressIndicator(
                                   color: context.colors.accent,
@@ -92,10 +96,10 @@ class ImageMessageBubble extends StatelessWidget {
                               );
                             },
                             errorBuilder: (context, error, stack) => Container(
-                              color: const Color(0xFFD9E4E6),
+                              color: context.colors.insetBorder,
                               alignment: Alignment.center,
-                              child: const Icon(Icons.broken_image,
-                                  color: Color(0x610C092A)),
+                              child: Icon(Icons.broken_image,
+                                  color: context.colors.muted),
                             ),
                           ),
                         ),
@@ -109,6 +113,14 @@ class ImageMessageBubble extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (status == PhotoApprovalStatus.denied && (rejectReason ?? '').trim().isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 6, 8, 4),
+                    child: Text(
+                      (rejectReason ?? '').trim(),
+                      style: TextStyle(fontSize: 14, height: 1.4, color: context.colors.danger),
+                    ),
+                  ),
                 if (showApprovalActions) ...[
                   const SizedBox(height: 8),
                   Padding(
@@ -149,7 +161,7 @@ class ImageMessageBubble extends StatelessWidget {
               child: Text(
                 time!,
                 style: TextStyle(
-                  fontSize: 10.5,
+                  fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: context.colors.muted,
                 ),
@@ -171,19 +183,19 @@ class _StatusChip extends StatelessWidget {
     final (Color bg, Color fg, String label, IconData icon) = switch (status) {
       PhotoApprovalStatus.pending => (
         context.colors.border,
-        const Color(0xFFB97A00),
+        context.colors.warning,
         'În așteptare',
         Icons.access_time_rounded,
       ),
       PhotoApprovalStatus.approved => (
         context.colors.iconButtonBg,
-        const Color(0xFF1F8F92),
+        context.colors.accent,
         'Aprobat',
         Icons.check_rounded,
       ),
       PhotoApprovalStatus.denied => (
-        const Color(0x24D95757),
-        const Color(0xFFB83B3B),
+        context.colors.dangerSoft,
+        context.colors.danger,
         'Respins',
         Icons.close_rounded,
       ),
@@ -202,13 +214,13 @@ class _StatusChip extends StatelessWidget {
             width: 14,
             height: 14,
             decoration: BoxDecoration(shape: BoxShape.circle, color: fg),
-            child: Icon(icon, size: 10, color: Colors.white),
+            child: Icon(icon, size: 10, color: context.colors.onNavy),
           ),
           const SizedBox(width: 6),
           Text(
             label,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: fg,
               letterSpacing: 0.3,
@@ -247,11 +259,11 @@ class _ActionButton extends StatelessWidget {
               : Border.all(color: context.colors.border, width: 2),
           borderRadius: BorderRadius.circular(50),
           boxShadow: filled
-              ? const [
+              ? [
                   BoxShadow(
-                    color: Color(0x40222F62),
+                    color: context.colors.navy.withValues(alpha: .25),
                     blurRadius: 12,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                   )
                 ]
               : null,
@@ -259,14 +271,14 @@ class _ActionButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 14, color: filled ? Colors.white : context.colors.text),
+            Icon(icon, size: 14, color: filled ? context.colors.onNavy : context.colors.text),
             const SizedBox(width: 6),
             Text(
               label,
               style: TextStyle(
-                fontSize: 13.5,
+                fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: filled ? Colors.white : context.colors.text,
+                color: filled ? context.colors.onNavy : context.colors.text,
               ),
             ),
           ],

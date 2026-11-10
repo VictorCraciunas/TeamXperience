@@ -73,7 +73,7 @@ class PosterCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: Color(0xFFF0E1B8),
-                      fontSize: 10,
+                      fontSize: 12,
                     ),
                   ),
                   Text(
@@ -82,7 +82,7 @@ class PosterCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 12,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                       height: 1.25,
                     ),
@@ -93,7 +93,7 @@ class PosterCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: Color(0xFFD3DAE6),
-                      fontSize: 10,
+                      fontSize: 12,
                     ),
                   ),
                 ],

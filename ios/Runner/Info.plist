@@ -59,5 +59,11 @@
      <key>NSLocationWhenInUseUsageDescription</key>
      <string>This app needs location access to track your team's position during the event.</string>
 
+     <key>NSCameraUsageDescription</key>
+     <string>Ai nevoie de cameră pentru pozele echipei din joc.</string>
+
+     <key>NSPhotoLibraryUsageDescription</key>
+     <string>Alegi din galerie pozele trimise în joc.</string>
+
 </dict>
 </plist>

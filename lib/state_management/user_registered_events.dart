@@ -15,9 +15,15 @@ class UserEventsProvider extends ChangeNotifier {
 
   Event? _activeEvent;
   Team? _activeTeam;
+  Event? _finishedEvent;
+  Team? _finishedTeam;
 
   Event? get activeEvent => _activeEvent;
   Team? get activeTeam => _activeTeam;
+
+  /// An event still running whose team, the player's, is done.
+  Event? get finishedEvent => _finishedEvent;
+  Team? get finishedTeam => _finishedTeam;
 
   UserEventsProvider(this._userProvider, this._eventList, this._eventService, this._teamService) {
     _userProvider.addListener(_onDataChanged);
@@ -54,7 +60,8 @@ class UserEventsProvider extends ChangeNotifier {
   }
 
   /// A registered event whose start code can still be entered.
-  Event? get recentlyStartedEvent => hero.recentlyStartedEvent(registeredEvents, DateTime.now());
+  Event? get recentlyStartedEvent =>
+      hero.recentlyStartedEvent(registeredEvents, DateTime.now(), except: _finishedEvent?.eventId);
 
   Event? get nextEventWithinHour {
     if (_activeEvent != null) return _activeEvent;
@@ -82,22 +89,31 @@ class UserEventsProvider extends ChangeNotifier {
       event.dateEvent != null && event.dateEvent!.isBefore(now)
     ).toList();
 
+    Event? finishedEvent;
+    Team? finishedTeam;
     for (final event in pastEvents) {
       if (event.isOver) continue;
       final team = await _teamService.getUserTeamForEvent(event.eventId, user.uid);
       if (team != null && team.hasStarted && !team.hasFinished) {
         _activeEvent = event;
         _activeTeam = team;
+        _finishedEvent = null;
+        _finishedTeam = null;
         notifyListeners();
         return;
       }
+      if (team != null && team.hasFinished && finishedEvent == null) {
+        finishedEvent = event;
+        finishedTeam = team;
+      }
     }
 
-    if (_activeEvent != null) {
-      _activeEvent = null;
-      _activeTeam = null;
-      notifyListeners();
-    }
+    final changed = _activeEvent != null || _finishedEvent?.eventId != finishedEvent?.eventId;
+    _activeEvent = null;
+    _activeTeam = null;
+    _finishedEvent = finishedEvent;
+    _finishedTeam = finishedTeam;
+    if (changed) notifyListeners();
   }
 
   @override

@@ -51,7 +51,7 @@ class CreateEventStartSheet extends StatelessWidget {
               'Eveniment nou',
               style: TextStyle(
                 color: colors.text,
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -82,7 +82,7 @@ class CreateEventStartSheet extends StatelessWidget {
                 'Ciorne',
                 style: TextStyle(
                   color: colors.text,
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -143,13 +143,13 @@ class _Option extends StatelessWidget {
                       title,
                       style: TextStyle(
                         color: enabled ? colors.text : colors.muted,
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
                       subtitle,
-                      style: TextStyle(color: colors.muted, fontSize: 12),
+                      style: TextStyle(color: colors.muted, fontSize: 14),
                     ),
                   ],
                 ),

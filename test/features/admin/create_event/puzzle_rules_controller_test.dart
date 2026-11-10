@@ -79,6 +79,91 @@ void main() {
 
   });
 
+  group('attempts and the wrong-answer line', () {
+    test('load from the puzzle', () {
+      final c = _controller(Puzzle(id: '0', type: PuzzleType.code, maxAttempts: 3, wrongAnswerMessage: 'Nu e anul ăsta.'));
+      expect(c.maxAttemptsController.text, '3');
+      expect(c.wrongAnswerController.text, 'Nu e anul ăsta.');
+    });
+
+    test('are written onto a code puzzle', () {
+      final puzzle = Puzzle(id: '0', type: PuzzleType.code);
+      _controller(puzzle)
+        ..maxAttemptsController.text = ' 3 '
+        ..wrongAnswerController.text = ' Mai sus pe ușă. '
+        ..apply();
+      expect(puzzle.maxAttempts, 3);
+      expect(puzzle.wrongAnswerMessage, 'Mai sus pe ușă.');
+    });
+
+    test('empty means unlimited and the default line', () {
+      final puzzle = Puzzle(id: '0', type: PuzzleType.code, maxAttempts: 3, wrongAnswerMessage: 'x');
+      _controller(puzzle)
+        ..maxAttemptsController.text = ''
+        ..wrongAnswerController.text = '  '
+        ..apply();
+      expect(puzzle.maxAttempts, isNull);
+      expect(puzzle.wrongAnswerMessage, isNull);
+    });
+
+    test('a limit outside 1 to 20 is an error and is not kept', () {
+      final puzzle = Puzzle(id: '0', type: PuzzleType.code);
+      final c = _controller(puzzle);
+      for (final text in ['0', '21', 'trei', '2.5']) {
+        c.maxAttemptsController.text = text;
+        expect(c.maxAttemptsError, isNotNull, reason: text);
+        c.apply();
+        expect(puzzle.maxAttempts, isNull, reason: text);
+      }
+      c.maxAttemptsController.text = '';
+      expect(c.maxAttemptsError, isNull);
+    });
+
+    test('only a code puzzle keeps them', () {
+      final puzzle = Puzzle(id: '0', type: PuzzleType.imageToUpload);
+      _controller(puzzle)
+        ..maxAttemptsController.text = '3'
+        ..wrongAnswerController.text = 'x'
+        ..apply();
+      expect(puzzle.maxAttempts, isNull);
+      expect(puzzle.wrongAnswerMessage, isNull);
+    });
+  });
+
+  group('the circle size', () {
+    test('loads and writes for a location puzzle', () {
+      final puzzle = Puzzle(id: '0', type: PuzzleType.geolocation, radiusMeters: 35);
+      final c = _controller(puzzle);
+      expect(c.radiusController.text, '35');
+      c
+        ..radiusController.text = ' 50 '
+        ..apply();
+      expect(puzzle.radiusMeters, 50);
+    });
+
+    test('20 m shows as empty, and empty or out of range saves 20', () {
+      final puzzle = Puzzle(id: '0', type: PuzzleType.geolocation);
+      final c = _controller(puzzle);
+      expect(c.radiusController.text, '');
+      for (final text in ['', '500', 'mare']) {
+        c.radiusController.text = text;
+        c.apply();
+        expect(puzzle.radiusMeters, 20, reason: text);
+      }
+      c.radiusController.text = '500';
+      expect(c.radiusError, isNotNull);
+      c.radiusController.text = '';
+      expect(c.radiusError, isNull);
+    });
+
+    test('changing the type resets it', () {
+      final puzzle = Puzzle(id: '0', type: PuzzleType.geolocation, radiusMeters: 35);
+      final c = _controller(puzzle)..changeType(PuzzleType.code);
+      expect(puzzle.radiusMeters, 20);
+      expect(c.radiusController.text, '');
+    });
+  });
+
   group('coordinate checks', () {
     test('nothing typed is not an error yet', () {
       final c = _controller(Puzzle(id: '0', type: PuzzleType.geolocation));
@@ -128,6 +213,17 @@ void changeTypeTests() {
       expect(puzzle.latitude, isNull);
       expect(puzzle.longitude, isNull);
       expect(puzzle.indiciu, isNull);
+    });
+
+    test('the attempt limit and wrong-answer line are cleared too', () {
+      final puzzle = filled()
+        ..maxAttempts = 3
+        ..wrongAnswerMessage = 'x';
+      final c = _controller(puzzle)..changeType(PuzzleType.geolocation);
+      expect(puzzle.maxAttempts, isNull);
+      expect(puzzle.wrongAnswerMessage, isNull);
+      expect(c.maxAttemptsController.text, '');
+      expect(c.wrongAnswerController.text, '');
     });
 
     test('the form fields are emptied too', () {

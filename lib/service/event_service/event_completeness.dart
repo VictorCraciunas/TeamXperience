@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart' show StringCharacters;
+import 'package:teamxperience/enums/component-type.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
@@ -7,6 +9,7 @@ import 'package:teamxperience/model/puzzle.dart';
 enum PuzzleIssue {
   noType('lipsește tipul'),
   noAnswer('lipsește răspunsul'),
+  answerDoesNotFit('răspunsul nu încape în căsuțe'),
   noLocation('lipsește locația'),
   noComponents('nu are nimic pe ecran');
 
@@ -22,7 +25,11 @@ List<PuzzleIssue> puzzleIssues(Puzzle puzzle) {
   if (type == null) {
     issues.add(PuzzleIssue.noType);
   } else if (type == PuzzleType.code) {
-    if ((puzzle.code ?? '').trim().isEmpty) issues.add(PuzzleIssue.noAnswer);
+    if ((puzzle.code ?? '').trim().isEmpty) {
+      issues.add(PuzzleIssue.noAnswer);
+    } else if (_answerDoesNotFit(puzzle)) {
+      issues.add(PuzzleIssue.answerDoesNotFit);
+    }
   } else if (type == PuzzleType.geolocation) {
     if (!_validCoordinates(puzzle.latitude, puzzle.longitude)) {
       issues.add(PuzzleIssue.noLocation);
@@ -31,6 +38,18 @@ List<PuzzleIssue> puzzleIssues(Puzzle puzzle) {
 
   if (puzzle.components.isEmpty) issues.add(PuzzleIssue.noComponents);
   return issues;
+}
+
+/// How many boxes a separated code input shows when it does not say.
+const _defaultBoxes = 5;
+
+/// One character goes in each box of a separated input, so a longer answer can
+/// never be typed. A shorter one can, and one free box takes any length.
+bool _answerDoesNotFit(Puzzle puzzle) {
+  final inputs = puzzle.components.where((c) => c.type == ComponentType.code);
+  if (inputs.isEmpty) return false;
+  final length = (puzzle.code ?? '').trim().characters.length;
+  return inputs.every((c) => c.inputType == 'Separated' && length > (c.codeLength ?? _defaultBoxes));
 }
 
 bool _validCoordinates(double? lat, double? lng) {
@@ -50,11 +69,13 @@ class MissionProblem {
 }
 
 List<MissionProblem> missionProblems(Mission mission) {
+  final problems = <MissionProblem>[
+    if (_blank(mission.title)) const MissionProblem('Nu are titlu'),
+  ];
   if (mission.puzzles.isEmpty) {
-    return const [MissionProblem('Nu are puzzle-uri')];
+    return [...problems, const MissionProblem('Nu are puzzle-uri')];
   }
 
-  final problems = <MissionProblem>[];
   for (var i = 0; i < mission.puzzles.length; i++) {
     for (final issue in puzzleIssues(mission.puzzles[i])) {
       problems.add(MissionProblem('Puzzle ${i + 1}: ${issue.label}', puzzleIndex: i));
@@ -77,9 +98,12 @@ enum EventIssue {
   enrollmentAfterEvent('Înscrierile trebuie să se închidă înainte de eveniment'),
   noType('Lipsește tipul evenimentului'),
   noStartCode('Lipsește codul de start'),
+  teamSizeOrder('Minimul de membri e mai mare decât maximul'),
   noRoute('Lipsește lungimea traseului'),
   noDuration('Lipsește durata'),
   noDifficulty('Lipsește dificultatea'),
+  noStartPin('Lipsește locul de start pe hartă'),
+  noFinishPoint('Lipsește punctul de final'),
   noMissions('Evenimentul nu are misiuni');
 
   const EventIssue(this.label);
@@ -115,9 +139,12 @@ List<EventIssue> eventIssues(Event event) {
 
   if (event.type == null) issues.add(EventIssue.noType);
   if (_blank(event.startCode)) issues.add(EventIssue.noStartCode);
-  if (_blank(event.lungimeTraseu)) issues.add(EventIssue.noRoute);
-  if (_blank(event.durata)) issues.add(EventIssue.noDuration);
-  if (_blank(event.dificultate)) issues.add(EventIssue.noDifficulty);
+  if (event.teamSizeMin > event.teamSizeMax) issues.add(EventIssue.teamSizeOrder);
+  if (event.effectiveRouteKm == null) issues.add(EventIssue.noRoute);
+  if (event.effectiveDurationMinutes == null) issues.add(EventIssue.noDuration);
+  if (event.effectiveDifficulty == null) issues.add(EventIssue.noDifficulty);
+  if (!event.hasStartPin) issues.add(EventIssue.noStartPin);
+  if (_blank(event.finishPoint)) issues.add(EventIssue.noFinishPoint);
   if (event.missions.isEmpty) issues.add(EventIssue.noMissions);
 
   return issues;
@@ -150,6 +177,20 @@ List<PublishProblem> publishProblems(Event event) {
 
 bool canPublish(Event event) => publishProblems(event).isEmpty;
 
+/// What would leave teams stuck in an event that is already live. Editing one
+/// is held to this and not to [publishProblems], because an older event may
+/// lack details added since, and that must not stop a quick correction.
+List<PublishProblem> stuckProblems(Event event) => [
+      if (eventIssues(event).contains(EventIssue.teamSizeOrder)) PublishProblem(EventIssue.teamSizeOrder.label),
+      for (var m = 0; m < event.missions.length; m++)
+        for (var p = 0; p < event.missions[m].puzzles.length; p++)
+          if (puzzleIssues(event.missions[m].puzzles[p]).contains(PuzzleIssue.answerDoesNotFit))
+            PublishProblem(
+              'Misiunea ${m + 1}: Puzzle ${p + 1}: ${PuzzleIssue.answerDoesNotFit.label}',
+              missionIndex: m,
+            ),
+    ];
+
 /// How far along a draft is, from 0 (nothing filled in) to 1 (ready to
 /// publish). Each detail counts once, and each mission counts once.
 double draftProgress(Event event) {
@@ -159,11 +200,14 @@ double draftProgress(Event event) {
     EventIssue.enrollmentAfterEvent,
   };
 
-  // The enrolment checks are one detail, everything else is its own.
-  final detailChecks = EventIssue.values.length - enrollment.length + 1;
   final failedDetails = <Object>{
     for (final issue in eventIssues(event)) enrollment.contains(issue) ? 'enrollment' : issue,
   };
+
+  // The enrolment checks are one detail, everything else is its own. Team sizes
+  // count only when they are wrong: a new draft has good ones without any work.
+  final sizesWrong = failedDetails.contains(EventIssue.teamSizeOrder);
+  final detailChecks = EventIssue.values.length - enrollment.length + (sizesWrong ? 1 : 0);
 
   final missions = event.missions;
   final failedMissions = missions.where((m) => !isMissionComplete(m)).length;

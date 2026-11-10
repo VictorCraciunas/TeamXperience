@@ -7,10 +7,12 @@
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "test:unit": "tsc && node scripts/run-tests.js unit",
+    "test": "tsc && node scripts/test-all.js"
   },
   "engines": {
-    "node": "20"
+    "node": "22"
   },
   "main": "lib/index.js",
   "dependencies": {
@@ -18,6 +20,8 @@
     "firebase-functions": "^4.3.1"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^3.0.4",
+    "firebase": "^10.14.1",
     "firebase-functions-test": "^3.1.0",
     "typescript": "^4.9.0"
   },

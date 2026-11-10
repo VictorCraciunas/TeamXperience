@@ -115,7 +115,7 @@ class _AppTextFieldState extends State<AppTextField> {
     final colors = context.colors;
     final labelStyle = TextStyle(
       color: colors.text,
-      fontSize: 14,
+      fontSize: 16,
       fontWeight: FontWeight.w600,
     );
 
@@ -149,13 +149,13 @@ class _AppTextFieldState extends State<AppTextField> {
           textInputAction: widget.textInputAction,
           onChanged: widget.onChanged,
           validator: _validate,
-          style: TextStyle(color: colors.text, fontSize: 14),
+          style: TextStyle(color: colors.text, fontSize: 16),
           decoration: InputDecoration(
             hintText: widget.hint,
-            hintStyle: TextStyle(color: colors.muted, fontSize: 14),
+            hintStyle: TextStyle(color: colors.muted, fontSize: 16),
             helperText: widget.helper,
-            helperStyle: TextStyle(color: colors.muted, fontSize: 11),
-            errorStyle: TextStyle(color: colors.live, fontSize: 11),
+            helperStyle: TextStyle(color: colors.muted, fontSize: 13),
+            errorStyle: TextStyle(color: colors.live, fontSize: 13),
             filled: true,
             fillColor: colors.panel,
             prefixIcon: _leading(),

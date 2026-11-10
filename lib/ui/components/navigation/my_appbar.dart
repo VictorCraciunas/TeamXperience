@@ -116,7 +116,7 @@ class _MyAppBarState extends State<MyAppBar> {
                 Text(
                   widget.appBarText,
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 22,
                     fontWeight: FontWeight.w600,
                     color: context.colors.text,
                   ),
@@ -124,7 +124,7 @@ class _MyAppBarState extends State<MyAppBar> {
                 Text(
                   widget.subtitle!,
                   style: TextStyle(
-                    fontSize: 11.5,
+                    fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: context.colors.muted,
                   ),

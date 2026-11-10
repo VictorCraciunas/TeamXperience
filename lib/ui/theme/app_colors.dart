@@ -20,10 +20,21 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.soon,
     required this.success,
     required this.warning,
+    required this.amber,
     required this.danger,
     required this.successSoft,
     required this.warningSoft,
     required this.dangerSoft,
+    required this.onNavy,
+    required this.onNavyMuted,
+    required this.onNavyFaint,
+    required this.tickOnNavy,
+    required this.heroButton,
+    required this.liveCard,
+    required this.scrim,
+    required this.brandX,
+    required this.dangerOnNavy,
+    required this.dangerTextOnNavy,
   });
 
   final Color page;
@@ -48,10 +59,42 @@ class AppColors extends ThemeExtension<AppColors> {
   /// their soft backgrounds.
   final Color success;
   final Color warning;
+  /// The mockups' #F2A93B: a stuck team's pin, card border and current bar.
+  final Color amber;
   final Color danger;
   final Color successSoft;
   final Color warningSoft;
   final Color dangerSoft;
+
+  /// Text and icons on a [navy] fill (cards, the date tile, selected chips).
+  final Color onNavy;
+
+  /// Secondary text on a [navy] fill.
+  final Color onNavyMuted;
+
+  /// Tiles and dividers on a [navy] fill.
+  final Color onNavyFaint;
+
+  /// Teal accents on a [navy] fill (route dashes, progress).
+  final Color tickOnNavy;
+
+  /// Round buttons over a hero image (back, share).
+  final Color heroButton;
+
+  /// The live game card on Home (mockup 02's #0C092A).
+  final Color liveCard;
+
+  /// The dimmed page behind the Joacă pop-up (mockup 10).
+  final Color scrim;
+
+  /// The yellow X of "TeamXperience", as on teamxperience.ro (#F6AF1A).
+  final Color brandX;
+
+  /// A wrong code's box border on navy (mockup 05).
+  final Color dangerOnNavy;
+
+  /// An error line on navy (mockup 05).
+  final Color dangerTextOnNavy;
 
   static const AppColors light = AppColors(
     page: Color(0xFFE7ECF3),
@@ -71,10 +114,21 @@ class AppColors extends ThemeExtension<AppColors> {
     soon: Color(0xFFF2A93B),
     success: Color(0xFF1F8F5A),
     warning: Color(0xFFB7791F),
+    amber: Color(0xFFF2A93B),
     danger: Color(0xFFD13438),
     successSoft: Color(0xFFE2F4EA),
     warningSoft: Color(0xFFFBEFD8),
     dangerSoft: Color(0xFFFBE5E6),
+    onNavy: Color(0xFFFFFFFF),
+    onNavyMuted: Color(0x66FFFFFF),
+    onNavyFaint: Color(0x1AFFFFFF),
+    tickOnNavy: Color(0xFF53C4C7),
+    heroButton: Color(0xE6FFFFFF),
+    liveCard: Color(0xFF0C092A),
+    scrim: Color(0x8C0C092A),
+    brandX: Color(0xFFF6AF1A),
+    dangerOnNavy: Color(0xFFEF6A6E),
+    dangerTextOnNavy: Color(0xFFF7C1C1),
   );
 
   static const AppColors dark = AppColors(
@@ -95,10 +149,21 @@ class AppColors extends ThemeExtension<AppColors> {
     soon: Color(0xFFF2A93B),
     success: Color(0xFF3DBE7F),
     warning: Color(0xFFE8A94B),
+    amber: Color(0xFFF2A93B),
     danger: Color(0xFFEF6A6E),
     successSoft: Color(0xFF173226),
     warningSoft: Color(0xFF352A14),
     dangerSoft: Color(0xFF3A1B1D),
+    onNavy: Color(0xFFF2F4F8),
+    onNavyMuted: Color(0x66F2F4F8),
+    onNavyFaint: Color(0x1AF2F4F8),
+    tickOnNavy: Color(0xFF53C4C7),
+    heroButton: Color(0xE6171B22),
+    liveCard: Color(0xFF1B1446),
+    scrim: Color(0xA6000000),
+    brandX: Color(0xFFF6AF1A),
+    dangerOnNavy: Color(0xFFEF6A6E),
+    dangerTextOnNavy: Color(0xFFF7C1C1),
   );
 
   LinearGradient get ctaGradient => const LinearGradient(
@@ -126,10 +191,21 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? soon,
     Color? success,
     Color? warning,
+    Color? amber,
     Color? danger,
     Color? successSoft,
     Color? warningSoft,
     Color? dangerSoft,
+    Color? onNavy,
+    Color? onNavyMuted,
+    Color? onNavyFaint,
+    Color? tickOnNavy,
+    Color? heroButton,
+    Color? liveCard,
+    Color? scrim,
+    Color? brandX,
+    Color? dangerOnNavy,
+    Color? dangerTextOnNavy,
   }) {
     return AppColors(
       page: page ?? this.page,
@@ -149,10 +225,21 @@ class AppColors extends ThemeExtension<AppColors> {
       soon: soon ?? this.soon,
       success: success ?? this.success,
       warning: warning ?? this.warning,
+      amber: amber ?? this.amber,
       danger: danger ?? this.danger,
       successSoft: successSoft ?? this.successSoft,
       warningSoft: warningSoft ?? this.warningSoft,
       dangerSoft: dangerSoft ?? this.dangerSoft,
+      onNavy: onNavy ?? this.onNavy,
+      onNavyMuted: onNavyMuted ?? this.onNavyMuted,
+      onNavyFaint: onNavyFaint ?? this.onNavyFaint,
+      tickOnNavy: tickOnNavy ?? this.tickOnNavy,
+      heroButton: heroButton ?? this.heroButton,
+      liveCard: liveCard ?? this.liveCard,
+      scrim: scrim ?? this.scrim,
+      brandX: brandX ?? this.brandX,
+      dangerOnNavy: dangerOnNavy ?? this.dangerOnNavy,
+      dangerTextOnNavy: dangerTextOnNavy ?? this.dangerTextOnNavy,
     );
   }
 
@@ -179,10 +266,21 @@ class AppColors extends ThemeExtension<AppColors> {
       soon: mix(soon, other.soon),
       success: mix(success, other.success),
       warning: mix(warning, other.warning),
+      amber: mix(amber, other.amber),
       danger: mix(danger, other.danger),
       successSoft: mix(successSoft, other.successSoft),
       warningSoft: mix(warningSoft, other.warningSoft),
       dangerSoft: mix(dangerSoft, other.dangerSoft),
+      onNavy: mix(onNavy, other.onNavy),
+      onNavyMuted: mix(onNavyMuted, other.onNavyMuted),
+      onNavyFaint: mix(onNavyFaint, other.onNavyFaint),
+      tickOnNavy: mix(tickOnNavy, other.tickOnNavy),
+      heroButton: mix(heroButton, other.heroButton),
+      liveCard: mix(liveCard, other.liveCard),
+      scrim: mix(scrim, other.scrim),
+      brandX: mix(brandX, other.brandX),
+      dangerOnNavy: mix(dangerOnNavy, other.dangerOnNavy),
+      dangerTextOnNavy: mix(dangerTextOnNavy, other.dangerTextOnNavy),
     );
   }
 }

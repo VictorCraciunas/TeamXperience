@@ -39,7 +39,7 @@ class RemovableChip extends StatelessWidget {
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: colors.text, fontSize: 12),
+                style: TextStyle(color: colors.text, fontSize: 14),
               ),
             ),
             IconButton(

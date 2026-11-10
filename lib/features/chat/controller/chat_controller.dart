@@ -13,15 +13,35 @@ class ChatController{
   late Team team;
   late String eventId;
   final chatTextField = TextEditingController();
-  MessageService messageService = MessageService();
-  TeamService teamService = TeamService();
+  late MessageService messageService = MessageService();
+  late TeamService teamService = TeamService();
   late BuildContext context;
-  ChatController(this.eventId, this.team, this.context);
+
+  /// Writes a photo decision; by default through [teamService] (tests pass
+  /// their own).
+  late final Future<void> Function(String key, PhotoApprovalStatus status, {String? reason, String? url}) _writeApproval;
+
+  ChatController(
+    this.eventId,
+    this.team,
+    this.context, {
+    Future<void> Function(String key, PhotoApprovalStatus status, {String? reason, String? url})? writeApproval,
+  }) {
+    _writeApproval = writeApproval ??
+        (key, status, {reason, url}) =>
+            teamService.setPhotoApproval(eventId, team.name, key, status, reason: reason, url: url);
+  }
 
   Future<void> sendMessage() async {
     AppUser? user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
     messageService.sendMessage(eventId, team.name, chatTextField.text,user!);
+  }
+
+  /// The organiser has seen this chat: the live room stops asking about it.
+  /// A failure only leaves the card up.
+  void markRead() {
+    teamService.clearUnread(eventId, team.name).catchError((_) {});
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>>  getMessages() {
@@ -32,21 +52,14 @@ class ChatController{
     return teamService.getStreamTeam(eventId, team.name);
   }
 
-  Future<void> approvePhoto(Team currentTeam, String approvalKey) async {
-    await teamService.setPhotoApproval(
-      eventId,
-      team.name,
-      approvalKey,
-      PhotoApprovalStatus.approved,
-    );
+  /// Approves a photo, keeping its picture ([url]) on the try.
+  Future<void> approvePhoto(Team currentTeam, String approvalKey, {String? url}) async {
+    await _writeApproval(approvalKey, PhotoApprovalStatus.approved, url: url);
   }
 
-  Future<void> denyPhoto(Team currentTeam, String approvalKey) async {
-    await teamService.setPhotoApproval(
-      eventId,
-      team.name,
-      approvalKey,
-      PhotoApprovalStatus.denied,
-    );
+  /// Rejects a photo with the [reason] the team will read.
+  Future<void> denyPhoto(Team currentTeam, String approvalKey, String reason, {String? url}) async {
+    final text = reason.trim();
+    await _writeApproval(approvalKey, PhotoApprovalStatus.denied, reason: text.isEmpty ? null : text, url: url);
   }
 }

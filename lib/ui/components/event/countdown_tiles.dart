@@ -44,14 +44,14 @@ class _Tile extends StatelessWidget {
                 value.toString().padLeft(2, '0'),
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 20,
+                  fontSize: 22,
                   fontWeight: FontWeight.w700,
                   height: 1.1,
                 ),
               ),
               Text(
                 label,
-                style: const TextStyle(color: Color(0xFFD3DAE6), fontSize: 10),
+                style: const TextStyle(color: Color(0xFFD3DAE6), fontSize: 12),
               ),
             ],
           ),

@@ -23,7 +23,7 @@ class InfoRowWidget extends StatelessWidget {
         Text(
           "$label: ",
           style: TextStyle(
-            fontSize: 13,
+            fontSize: 15,
             fontWeight: FontWeight.w500,
             color: context.colors.muted,
           ),
@@ -32,7 +32,7 @@ class InfoRowWidget extends StatelessWidget {
           child: Text(
             value,
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 15,
               fontWeight: FontWeight.w400,
               color: context.colors.text,
             ),

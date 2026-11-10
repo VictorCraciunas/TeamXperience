@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/enums/component-type.dart';
+import 'package:teamxperience/enums/difficulty.dart';
 import 'package:teamxperience/enums/event_status.dart';
 import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/enums/puzzle_type.dart';
@@ -26,7 +27,7 @@ Puzzle _geoPuzzle({double? lat = 45.79, double? lng = 24.15}) => Puzzle(
       components: [_text()],
     );
 
-Mission _mission(List<Puzzle> puzzles) => Mission(id: '0', puzzles: puzzles);
+Mission _mission(List<Puzzle> puzzles) => Mission(id: '0', title: 'Ceasul', puzzles: puzzles);
 
 final _start = DateTime(2026, 10, 1);
 final _deadline = DateTime(2026, 10, 24);
@@ -38,6 +39,9 @@ Event _event({List<Mission>? missions}) => Event(
       description: 'Un joc',
       location: 'Sibiu',
       punctDeStart: 'Piața Mare',
+      finishPoint: 'Turnul Sfatului',
+      startLatitude: 45.79,
+      startLongitude: 24.15,
       dateEvent: _day,
       dateStartEnrollment: _start,
       dateDeadlineEnrollment: _deadline,
@@ -106,6 +110,35 @@ void main() {
     });
   });
 
+  group('event page fields', () {
+    test('an event with no start pin says so', () {
+      expect(eventIssues(_event()..startLatitude = null), contains(EventIssue.noStartPin));
+    });
+
+    test('an event with no finish point says so', () {
+      expect(eventIssues(_event()..finishPoint = ' '), contains(EventIssue.noFinishPoint));
+    });
+
+    test('route, duration and difficulty may come from the new fields or the old text', () {
+      final numbers = _event()
+        ..lungimeTraseu = ''
+        ..durata = ''
+        ..dificultate = ''
+        ..routeLengthKm = 4
+        ..durationMinutes = 90
+        ..difficulty = Difficulty.easy;
+      expect(eventIssues(numbers), isEmpty);
+      final unreadable = _event()..lungimeTraseu = 'lung';
+      expect(eventIssues(unreadable), [EventIssue.noRoute]);
+    });
+
+    test('a mission without a title says so first', () {
+      final untitled = Mission(id: '0', puzzles: [_codePuzzle()]);
+      expect(missionProblems(untitled).map((p) => p.text), ['Nu are titlu']);
+      expect(missionProblems(Mission(id: '0')).map((p) => p.text), ['Nu are titlu', 'Nu are puzzle-uri']);
+    });
+  });
+
   group('eventIssues', () {
     test('a complete event has none', () {
       expect(eventIssues(_event()), isEmpty);
@@ -149,6 +182,106 @@ void main() {
       for (final issue in EventIssue.values) {
         expect(issue.label, isNotEmpty);
       }
+    });
+  });
+
+  group('an answer that does not fit its boxes', () {
+    Puzzle boxes(String code, {int? length = 4, String? input = 'Separated'}) => Puzzle(
+          id: 'p',
+          type: PuzzleType.code,
+          code: code,
+          components: [Component(type: ComponentType.code, codeLength: length, inputType: input)],
+        );
+
+    test('longer than the boxes cannot be typed', () {
+      expect(puzzleIssues(boxes('ABCDE')), [PuzzleIssue.answerDoesNotFit]);
+    });
+
+    test('as long as the boxes is fine, and so is shorter, since it can still be typed', () {
+      expect(puzzleIssues(boxes('ABCD')), isEmpty);
+      expect(puzzleIssues(boxes('ABC')), isEmpty);
+    });
+
+    test('spaces at the ends are not typed, so they do not count', () {
+      expect(puzzleIssues(boxes(' ABCD ')), isEmpty);
+    });
+
+    test('no number of boxes means five', () {
+      expect(puzzleIssues(boxes('ABCDE', length: null)), isEmpty);
+      expect(puzzleIssues(boxes('ABCDEF', length: null)), [PuzzleIssue.answerDoesNotFit]);
+    });
+
+    test('one free box takes any length, also when the input type is left out', () {
+      expect(puzzleIssues(boxes('ABCDEFGHIJKLMNOP', input: 'Free')), isEmpty);
+      expect(puzzleIssues(boxes('ABCDEFGHIJKLMNOP', input: null)), isEmpty);
+    });
+
+    test('one box takes one whole character, whatever it is made of', () {
+      expect(puzzleIssues(boxes('🔑🔑', length: 2)), isEmpty);
+      expect(puzzleIssues(boxes('🔑🔑🔑', length: 2)), [PuzzleIssue.answerDoesNotFit]);
+    });
+
+    test('it is enough that one of two inputs fits', () {
+      final puzzle = boxes('ABCDE')..components.add(Component(type: ComponentType.code, inputType: 'Free'));
+      expect(puzzleIssues(puzzle), isEmpty);
+    });
+
+    test('a puzzle that is not a code puzzle is not checked', () {
+      expect(puzzleIssues(boxes('ABCDE')..type = PuzzleType.imageToUpload), isEmpty);
+    });
+
+    test('stops the event from being published, and says where', () {
+      final problems = publishProblems(_event(missions: [_mission([boxes('ABCDE')])]));
+      expect(problems.map((p) => p.text), ['Misiunea 1: Puzzle 1: răspunsul nu încape în căsuțe']);
+    });
+  });
+
+  group('stuckProblems, what would leave teams stuck on a live event', () {
+    Puzzle boxes(String code) => Puzzle(
+          id: 'p',
+          type: PuzzleType.code,
+          code: code,
+          components: [Component(type: ComponentType.code, codeLength: 4, inputType: 'Separated')],
+        );
+
+    test('a playable event has none, even with newer details missing', () {
+      final event = _event(missions: [_mission([boxes('ABCD')])])
+        ..finishPoint = null
+        ..startLatitude = null;
+      expect(stuckProblems(event), isEmpty);
+    });
+
+    test('says which mission and puzzle has an answer that does not fit', () {
+      final event = _event(missions: [
+        _mission([boxes('ABCD')]),
+        _mission([boxes('ABCD'), boxes('ABCDE')]),
+      ]);
+      final problems = stuckProblems(event);
+      expect(problems.map((p) => p.text), ['Misiunea 2: Puzzle 2: răspunsul nu încape în căsuțe']);
+      expect(problems.single.missionIndex, 1);
+    });
+
+    test('team sizes the wrong way round', () {
+      final event = _event()
+        ..teamSizeMin = 6
+        ..teamSizeMax = 2;
+      expect(stuckProblems(event).map((p) => p.text), [EventIssue.teamSizeOrder.label]);
+    });
+  });
+
+  group('team sizes', () {
+    test('a minimum above the maximum stops the event from being published', () {
+      final event = _event()
+        ..teamSizeMin = 6
+        ..teamSizeMax = 2;
+      expect(eventIssues(event), [EventIssue.teamSizeOrder]);
+    });
+
+    test('the same minimum and maximum is fine', () {
+      final event = _event()
+        ..teamSizeMin = 4
+        ..teamSizeMax = 4;
+      expect(eventIssues(event), isEmpty);
     });
   });
 

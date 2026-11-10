@@ -5,7 +5,7 @@
 - Firebase project `teamxperience-dadc6` (`.firebaserc`, `firebase.json`, `lib/firebase_options.dart`; Android appId `1:37662081989:android:e4d1102c63c4bbbf3081ac`, iOS appId `…:ios:092d26caf00c46e33081ac`). `google-services.json` and `GoogleService-Info.plist` are committed.
 
 ## Dependencies (pubspec) by purpose
-- Firebase: `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage`, `firebase_messaging`; `google_sign_in`.
+- Firebase: `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage`, `firebase_messaging`, `cloud_functions` (the team callables, through `lib/backend/functions/team_functions.dart`); `google_sign_in`.
 - State: `provider`. Notifications: `flutter_local_notifications`. HTTP: `http`.
 - Maps/location: `flutter_map`, `latlong2`, `geolocator`.
 - UI: `lottie`, `flutter_svg`, `cached_network_image`, `flutter_cache_manager`, `flutter_colorpicker`, `cupertino_icons`.
@@ -20,18 +20,18 @@
 - Default FCM channel meta-data = `chat_notifications` (matches `FCMService._chatChannel`).
 
 ## iOS (`ios/`)
-- `Info.plist`: only `NSLocationWhenInUseUsageDescription` (English text) and `LSApplicationQueriesSchemes` (https, http, whatsapp, mailto, tel, sms). **Missing** `NSPhotoLibraryUsageDescription` (needed by `image_picker` gallery → crash on iOS when picking), and no push-notification capability/background modes visible; `AppDelegate.swift` is the plain Flutter one. `FCMService` initialises local notifications for Android only.
+- `Info.plist`: `NSLocationWhenInUseUsageDescription` (English text), `NSCameraUsageDescription` and `NSPhotoLibraryUsageDescription` (Romanian, needed by `image_picker`) and `LSApplicationQueriesSchemes` (https, http, whatsapp, mailto, tel, sms). No push-notification capability/background modes visible; `AppDelegate.swift` is the plain Flutter one. `FCMService` initialises local notifications for Android only.
 
 ## Firebase / backend config
 - `firebase.json`: FlutterFire platform config + one functions codebase (`functions/`, predeploy `npm run build`).
 - No Firestore rules/indexes, no Storage rules, no hosting in repo. The `query` in `TeamRepo.getUserTeamForEvent` (`array-contains`) and `UserRepo.findByEmail` rely on default single-field indexes only.
-- Cloud Functions runtime Node 20; deps `firebase-admin ^11.11.1`, `firebase-functions ^4.3.1`, TS `^4.9`. A root `package-lock.json` also exists (unused).
+- Functions and rules tests: `npm --prefix functions run test:unit` runs the pure tests; `npm --prefix functions test` runs everything on the Firestore and Auth emulators (project `demo-teamxperience`, nothing touches the live project). It uses the Firebase CLI on your PATH; 14.11.2 with Java 17 works.
+- Cloud Functions runtime Node 22 (Node 20 was retired on 2026-10-30; Node 22 stops being deployable on 2028-10-31); deps `firebase-admin ^11.11.1`, `firebase-functions ^4.3.1`, TS `^4.9`. A root `package-lock.json` also exists (unused).
 
 ## External services
 - Firebase Auth (email/password, Google), Firestore, Storage, FCM.
 - `router.project-osrm.org` public routing demo (walking directions; rate-limited, no SLA) — `RouteService`.
 - `tile.openstreetmap.org` tiles (OSM tile usage policy requires a real User-Agent; currently placeholder package name).
-- Cloud Run URL of the `sendNotification` function hardcoded in `backend/network/NetworkAPI.dart`.
 
 ## Testing
 `test/widget_test.dart` is the untouched Flutter counter template; it would fail (the app has no counter and needs Firebase initialised). There are no unit/integration tests.

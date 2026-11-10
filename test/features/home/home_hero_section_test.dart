@@ -1,166 +1,205 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:teamxperience/dev/sample_event.dart';
 import 'package:teamxperience/features/home/logic/home_hero.dart';
 import 'package:teamxperience/features/home/widgets/home_hero_actions.dart';
 import 'package:teamxperience/features/home/widgets/home_hero_section.dart';
+import 'package:teamxperience/features/home/widgets/navy_game_card.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
-import 'package:teamxperience/ui/components/event/countdown_tiles.dart';
-import 'package:teamxperience/ui/components/event/event_hero_card.dart';
+import 'package:teamxperience/model/team_member.dart';
+import 'package:teamxperience/ui/theme/app_theme.dart';
 
 import '../../ui/pump_ui.dart';
 
-final _now = DateTime(2026, 10, 20, 12);
+/// The sample event starts Sâm 14 nov at 10:00; this is 3 d 14 h 22 min before.
+final _before = DateTime(2026, 11, 10, 19, 38);
 
-Event _event({
-  Duration startedAgo = const Duration(minutes: 45),
-  int nrMissions = 5,
-  String? image,
-  String? route,
-}) {
-  return Event(
-    eventId: 'e1',
-    name: 'Treasure Hunt Sibiu',
-    location: 'Piața Mare',
-    dateEvent: _now.subtract(startedAgo),
-    nrMissions: nrMissions,
-    landingImageUrl: image,
-    lungimeTraseu: route,
-  );
-}
-
-Team _team({int progress = 1}) => Team(
-      name: 'Vulturii',
-      teamMembers: 'Ana, Dan',
-      captainName: 'Ana',
-      phoneNumber: '0712345678',
-      captainEmail: 'ana@example.com',
-      hasStarted: true,
+Team _team({int progress = 0, int members = 4, bool started = false}) => Team(
+      name: 'Vulpile',
+      teamMembers: '',
+      captainName: 'Victor',
+      phoneNumber: '',
+      captainEmail: '',
+      numberOfMembers: 4,
       missionProgress: progress,
+      hasStarted: started,
+      members: [
+        for (var i = 0; i < members; i++) TeamMember(uid: 'u$i', displayName: 'M $i', initials: 'M$i'),
+      ],
     );
 
 class _Calls {
   final log = <String>[];
 
   HomeHeroActions get actions => HomeHeroActions(
-        onContinue: (e, t) => log.add('continue:${e.eventId}:${t.name}'),
-        onChat: (e, t) => log.add('chat:${e.eventId}'),
-        onEnterCode: (e) => log.add('code:${e.eventId}'),
-        onDetails: (e) => log.add('details:${e.eventId}'),
-        onShare: (e) => log.add('share:${e.eventId}'),
-        onRegister: (e) => log.add('register:${e.eventId}'),
+        onContinue: (e, t) => log.add('continue:${t.name}'),
+        onChat: (e, t) => log.add('chat'),
+        onEnterCode: (e) => log.add('code'),
+        onDetails: (e) => log.add('details'),
+        onShare: (e) => log.add('share'),
+        onRegister: (e) => log.add('register'),
       );
 }
 
 Future<_Calls> _pump(
   WidgetTester tester,
   HomeHero hero, {
-  int? recommendedTeamCount,
+  required DateTime now,
+  Team? upcomingTeam,
+  double width = 360,
   double textScale = 1,
+  ThemeData? theme,
 }) async {
   final calls = _Calls();
   await pumpUi(
     tester,
-    HomeHeroSection(
-      hero: hero,
-      now: _now,
-      actions: calls.actions,
-      recommendedTeamCount: recommendedTeamCount,
-    ),
+    HomeHeroSection(hero: hero, now: now, actions: calls.actions, upcomingTeam: upcomingTeam),
+    width: width,
     textScale: textScale,
+    theme: theme,
   );
   return calls;
 }
 
-int _segments(String kind) => find
-    .byWidgetPredicate((w) {
-      final key = w.key;
-      return key is ValueKey<String> && key.value.startsWith('hero-segment-$kind');
-    })
-    .evaluate()
-    .length;
-
 void main() {
+  final event = sampleEvent();
+
+  group('next game', () {
+    final hero = UpcomingHero(event, const Duration(days: 3, hours: 14, minutes: 22));
+
+    testWidgets('the badge, the name, day, time and start point, and the countdown', (tester) async {
+      await _pump(tester, hero, now: _before, upcomingTeam: _team(members: 4));
+      expect(find.text('Următorul tău joc'), findsOneWidget);
+      expect(find.text('Moștenirea Cartografului'), findsOneWidget);
+      expect(find.text('Sâm 14 nov · 10:00 · Piața Mare'), findsOneWidget);
+      for (final t in ['3', '14', '22']) {
+        expect(find.text(t), findsOneWidget);
+      }
+      expect(tester.widget<NavyGameCard>(find.byType(NavyGameCard)).fill, NavyFill.navy);
+    });
+
+    testWidgets("with the team: its preparation, two of three done for a full team days before", (tester) async {
+      await _pump(tester, hero, now: _before, upcomingTeam: _team(members: 4));
+      expect(find.text('Pregătirea echipei Vulpile'), findsOneWidget);
+      expect(find.text('Echipă completă'), findsOneWidget);
+      expect(find.byIcon(TablerIcons.check), findsNWidgets(2));
+    });
+
+    testWidgets('without the team (still loading): no preparation band', (tester) async {
+      await _pump(tester, hero, now: _before);
+      expect(find.textContaining('Pregătirea'), findsNothing);
+    });
+
+    testWidgets('a tap opens the registration details', (tester) async {
+      final calls = await _pump(tester, hero, now: _before, upcomingTeam: _team());
+      await tester.tap(find.text('Moștenirea Cartografului'));
+      expect(calls.log, ['details']);
+    });
+  });
+
   group('live', () {
-    testWidgets('shows the live card with time left, mission and progress', (tester) async {
-      await _pump(tester, LiveHero(_event(), _team()));
+    final live = DateTime(2026, 11, 14, 11, 42, 18); // 1:17:42 before 10:00 + 3 h
+
+    testWidgets('LIVE, the time left, the team and mission, the progress line', (tester) async {
+      await _pump(tester, LiveHero(event, _team(progress: 3, started: true)), now: live);
       expect(find.text('LIVE'), findsOneWidget);
-      expect(find.text('2:15:00 rămase'), findsOneWidget);
-      expect(find.text('Vulturii · Misiunea 2 din 5'), findsOneWidget);
-      expect(find.text('Continuă jocul'), findsOneWidget);
-      expect(_segments('done'), 1);
+      expect(find.text('1:17:42'), findsOneWidget);
+      expect(find.text('rămase'), findsOneWidget);
+      expect(find.text('Echipa Vulpile · misiunea 4 din 6'), findsOneWidget);
+      expect(find.text('4'), findsOneWidget);
+      expect(find.byIcon(TablerIcons.flag), findsOneWidget);
+      expect(tester.widget<NavyGameCard>(find.byType(NavyGameCard)).fill, NavyFill.live);
     });
 
-    testWidgets('continue and chat call back with the event and the team', (tester) async {
-      final calls = await _pump(tester, LiveHero(_event(), _team()));
+    testWidgets('Continuă jocul and the chat button call back', (tester) async {
+      final calls = await _pump(tester, LiveHero(event, _team(progress: 3, started: true)), now: live);
       await tester.tap(find.text('Continuă jocul'));
-      await tester.tap(find.byIcon(Icons.chat_bubble_outline));
-      expect(calls.log, ['continue:e1:Vulturii', 'chat:e1']);
+      await tester.tap(find.byIcon(TablerIcons.message_circle));
+      expect(calls.log, ['continue:Vulpile', 'chat']);
     });
 
-    testWidgets('an event with no missions shows no progress', (tester) async {
-      await _pump(tester, LiveHero(_event(nrMissions: 0), _team(progress: 0)));
-      expect(_segments(''), 0);
-    });
-
-    testWidgets('the mission number never goes past the last mission', (tester) async {
-      await _pump(tester, LiveHero(_event(nrMissions: 3), _team(progress: 3)));
-      expect(find.text('Vulturii · Misiunea 3 din 3'), findsOneWidget);
-    });
-  });
-
-  group('starting soon', () {
-    testWidgets('shows minutes left and the enter code action', (tester) async {
-      final calls = await _pump(tester, StartingSoonHero(_event(), 47));
-      expect(find.text('A început'), findsOneWidget);
-      expect(find.text('Mai ai 47 min să intri'), findsOneWidget);
-      await tester.tap(find.text('Introdu codul de start'));
-      expect(calls.log, ['code:e1']);
-    });
-  });
-
-  group('upcoming', () {
-    testWidgets('shows the countdown, details and share actions', (tester) async {
-      final calls = await _pump(
+    testWidgets('a fresher streamed team wins over the stale one: its mission, and Continue opens it', (tester) async {
+      Team? opened;
+      final stale = _team(progress: 3, started: true);
+      final fresh = _team(progress: 4, started: true);
+      await pumpUi(
         tester,
-        UpcomingHero(_event(), const Duration(days: 3, hours: 14, minutes: 22)),
+        HomeHeroSection(
+          hero: LiveHero(event, stale),
+          now: live,
+          actions: HomeHeroActions(
+            onContinue: (_, t) => opened = t,
+            onChat: (_, _) {},
+            onEnterCode: (_) {},
+            onDetails: (_) {},
+            onShare: (_) {},
+            onRegister: (_) {},
+          ),
+          liveTeam: (name) => name == 'Vulpile' ? fresh : null,
+        ),
       );
-      expect(find.text('Următorul eveniment'), findsOneWidget);
-      expect(find.byType(CountdownTiles), findsOneWidget);
-      await tester.tap(find.text('Detalii înscriere'));
-      await tester.tap(find.byIcon(Icons.share_outlined));
-      expect(calls.log, ['details:e1', 'share:e1']);
+      expect(find.text('Echipa Vulpile · misiunea 5 din 6'), findsOneWidget);
+      expect(find.text('5'), findsOneWidget);
+      await tester.tap(find.text('Continuă jocul'));
+      expect(opened?.missionProgress, 4);
+    });
+
+    testWidgets('an event without missions: just the team and the flag', (tester) async {
+      final none = sampleEvent()..nrMissions = 0;
+      await _pump(tester, LiveHero(none, _team(started: true)), now: live);
+      expect(find.text('Echipa Vulpile'), findsOneWidget);
+      expect(find.byIcon(TablerIcons.flag), findsOneWidget);
+      expect(find.byKey(const ValueKey('mission-current')), findsNothing);
+    });
+
+    testWidgets('past the end the clock stops at 0:00:00', (tester) async {
+      await _pump(tester, LiveHero(event, _team(progress: 3, started: true)), now: DateTime(2026, 11, 14, 13, 5));
+      expect(find.text('0:00:00'), findsOneWidget);
     });
   });
 
-  group('recommended', () {
-    testWidgets('shows the facts line and the register action', (tester) async {
-      final calls = await _pump(
-        tester,
-        RecommendedHero(_event(route: '4 km')),
-        recommendedTeamCount: 12,
-      );
-      expect(find.text('Recomandat pentru tine'), findsOneWidget);
-      expect(find.textContaining('4 km'), findsOneWidget);
-      expect(find.textContaining('12 echipe'), findsOneWidget);
-      await tester.tap(find.text('Înscrie-ți echipa'));
-      expect(calls.log, ['register:e1']);
-    });
-
-    testWidgets('leaves out the team count and route when unknown', (tester) async {
-      await _pump(tester, RecommendedHero(_event()));
-      expect(find.textContaining('echipe'), findsNothing);
-      expect(find.textContaining('km'), findsNothing);
-    });
+  testWidgets('code window open: A început, the minutes left and the code button', (tester) async {
+    final calls = await _pump(tester, StartingSoonHero(event, 42), now: DateTime(2026, 11, 14, 10, 18));
+    expect(find.text('A început'), findsOneWidget);
+    expect(find.text('Mai ai 42 min să intri'), findsOneWidget);
+    await tester.tap(find.text('Introdu codul de start'));
+    expect(calls.log, ['code']);
   });
 
-  testWidgets('no hero renders nothing', (tester) async {
-    await _pump(tester, const NoHero());
-    expect(find.byType(EventHeroCard), findsNothing);
+  testWidgets('recommended: the badge, the day line with the route facts, and the register button', (tester) async {
+    final calls = await _pump(tester, RecommendedHero(event), now: _before);
+    expect(find.text('Recomandat pentru tine'), findsOneWidget);
+    expect(find.textContaining('Sâm 14 nov · 10:00 · Piața Mare'), findsOneWidget);
+    await tester.tap(find.text('Înscrie-ți echipa'));
+    expect(calls.log, ['register']);
   });
 
-  testWidgets('an empty cover image URL renders without errors', (tester) async {
-    await _pump(tester, LiveHero(_event(image: ''), _team()), textScale: 1.5);
-    expect(tester.takeException(), isNull);
+  testWidgets('no hero: nothing', (tester) async {
+    await _pump(tester, const NoHero(), now: _before);
+    expect(find.byType(NavyGameCard), findsNothing);
+  });
+
+  for (final theme in [AppTheme.light, AppTheme.dark]) {
+    testWidgets('every card fits 320 px at 1.3x text (${theme.brightness.name})', (tester) async {
+      final heroes = <(HomeHero, DateTime)>[
+        (UpcomingHero(event, const Duration(days: 3, hours: 14, minutes: 22)), _before),
+        (LiveHero(event, _team(progress: 3, started: true)), DateTime(2026, 11, 14, 11, 42, 18)),
+        (StartingSoonHero(event, 42), DateTime(2026, 11, 14, 10, 18)),
+        (RecommendedHero(event), _before),
+      ];
+      for (final (hero, now) in heroes) {
+        await _pump(tester, hero, now: now, upcomingTeam: _team(), width: 320, textScale: 1.3, theme: theme);
+        expect(tester.takeException(), isNull, reason: hero.signature);
+      }
+    });
+  }
+
+  test('the sample event has six missions and its start point', () {
+    expect(event.nrMissions, 6);
+    expect(event.punctDeStart, 'Piața Mare');
+    expect(event.dateEvent, DateTime(2026, 11, 14, 10));
+    expect(Event.maxDuration, const Duration(hours: 3));
   });
 }

@@ -40,25 +40,25 @@ class MessageBubble extends StatelessWidget {
               borderRadius: bubbleRadius(isMe, position),
               boxShadow: [
                 if (isMe)
-                  const BoxShadow(
-                    color: Color(0x2E222F62),
+                  BoxShadow(
+                    color: context.colors.navy.withValues(alpha: .18),
                     blurRadius: 14,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                   )
                 else
-                  const BoxShadow(
-                    color: Color(0x0A0C092A),
+                  BoxShadow(
+                    color: context.colors.liveCard.withValues(alpha: .04),
                     blurRadius: 2,
-                    offset: Offset(0, 1),
+                    offset: const Offset(0, 1),
                   ),
               ],
             ),
             child: Text(
               text,
               style: TextStyle(
-                fontSize: 14.5,
+                fontSize: 16,
                 fontWeight: FontWeight.w400,
-                color: isMe ? Colors.white : context.colors.text,
+                color: isMe ? context.colors.onNavy : context.colors.text,
                 height: 1.45,
               ),
             ),
@@ -73,7 +73,7 @@ class MessageBubble extends StatelessWidget {
               child: Text(
                 time!,
                 style: TextStyle(
-                  fontSize: 10.5,
+                  fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: context.colors.muted,
                 ),

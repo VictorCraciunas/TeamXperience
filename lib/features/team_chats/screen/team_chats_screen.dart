@@ -1,3 +1,5 @@
+import 'package:teamxperience/ui/components/feedback/load_failed.dart';
+import 'package:teamxperience/ui/theme/contrast.dart';
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/features/team_chats/controller/team_chats_controller.dart';
@@ -15,7 +17,6 @@ class TeamChatsScreen extends StatefulWidget {
 
 class _TeamChatsScreenState extends State<TeamChatsScreen> {
   late TeamChatsController controller;
-  bool isLoading = true;
   late Event event;
 
   bool _initialized = false;
@@ -36,14 +37,13 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
   }
 
   Future<void> _loadTeams() async {
+    setState(() => controller.isLoading = true);
     await controller.loadTeams();
-    setState(() {
-      isLoading = false;
-    });
+    if (mounted) setState(() {});
   }
 
   void _navigateToChat(int index) {
-    final team = controller.teams![index];
+    final team = controller.teams[index];
     Navigator.pushNamed(
       context,
       Routes.chatScreen, // Make sure you have this route defined
@@ -57,16 +57,18 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(appBarText: "Team Chats"),
-      body: isLoading
+      appBar: MyAppBar(appBarText: "Conversații"),
+      body: controller.isLoading
           ? const Center(
         child: CircularProgressIndicator(),
       )
-          : controller.teams.length == 0
+          : controller.failed
+          ? LoadFailed(message: 'Nu am putut încărca echipele.', onRetry: _loadTeams)
+          : controller.teams.isEmpty
           ? const Center(
         child: Text(
-          "No teams available",
-          style: TextStyle(fontSize: 18),
+          "Nicio echipă înscrisă.",
+          style: TextStyle(fontSize: 20),
         ),
       )
           : Padding(
@@ -74,7 +76,7 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
         child: ListView.builder(
           itemCount: controller.teams.length,
           itemBuilder: (context, index) {
-            final team = controller.teams![index];
+            final team = controller.teams[index];
             return Card(
               margin: const EdgeInsets.only(bottom: 12.0),
               elevation: 2,
@@ -84,11 +86,11 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
               child: ListTile(
                 contentPadding: const EdgeInsets.all(16.0),
                 leading: CircleAvatar(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: context.colors.accent,
                   child: Text(
                     team.name.isNotEmpty ? team.name[0].toUpperCase() : 'T',
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: readableOn([context.colors.accent]),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -96,7 +98,7 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
                 title: Text(
                   team.name,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 20,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -105,27 +107,27 @@ class _TeamChatsScreenState extends State<TeamChatsScreen> {
                   children: [
                     const SizedBox(height: 4),
                     Text(
-                      "Captain: ${team.captainName}",
+                      "Căpitan: ${team.captainName}",
                       style: TextStyle(
                         color: context.colors.muted,
-                        fontSize: 14,
+                        fontSize: 16,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      "Members: ${team.teamMembers}",
+                      "Membri: ${team.memberList.map((member) => member.displayName).join(', ')}",
                       style: TextStyle(
                         color: context.colors.muted,
-                        fontSize: 12,
+                        fontSize: 14,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
-                trailing: const Icon(
+                trailing: Icon(
                   Icons.chat_bubble_outline,
-                  color: Colors.blue,
+                  color: context.colors.accent,
                 ),
                 onTap: () => _navigateToChat(index),
               ),

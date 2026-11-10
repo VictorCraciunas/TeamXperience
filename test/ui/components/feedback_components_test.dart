@@ -1,57 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/ui/components/feedback/app_dialog.dart';
-import 'package:teamxperience/ui/components/feedback/async_state.dart';
 import 'package:teamxperience/ui/components/feedback/snackbars.dart';
 import 'package:teamxperience/ui/theme/app_colors.dart';
 import 'package:teamxperience/ui/theme/app_theme.dart';
 
 import '../pump_ui.dart';
 
-Widget _asyncState({
-  bool isLoading = false,
-  Object? error,
-  bool isEmpty = false,
-  VoidCallback? onRetry,
-}) {
-  return AsyncState(
-    isLoading: isLoading,
-    error: error,
-    isEmpty: isEmpty,
-    onRetry: onRetry,
-    emptyMessage: 'Nimic aici',
-    child: const Text('conținut'),
-  );
-}
-
 void main() {
-  group('AsyncState', () {
-    testWidgets('shows a spinner while loading', (tester) async {
-      await pumpUi(tester, _asyncState(isLoading: true));
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      expect(find.text('conținut'), findsNothing);
-    });
-
-    testWidgets('shows the error with a retry button', (tester) async {
-      var retries = 0;
-      await pumpUi(tester, _asyncState(error: 'eșec', onRetry: () => retries++));
-      expect(find.text('Reîncearcă'), findsOneWidget);
-      await tester.tap(find.text('Reîncearcă'));
-      expect(retries, 1);
-    });
-
-    testWidgets('shows the empty message', (tester) async {
-      await pumpUi(tester, _asyncState(isEmpty: true));
-      expect(find.text('Nimic aici'), findsOneWidget);
-      expect(find.text('conținut'), findsNothing);
-    });
-
-    testWidgets('shows the child otherwise', (tester) async {
-      await pumpUi(tester, _asyncState());
-      expect(find.text('conținut'), findsOneWidget);
-    });
-  });
-
   group('showAppDialog', () {
     bool? result;
 

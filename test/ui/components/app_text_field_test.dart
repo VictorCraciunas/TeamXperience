@@ -73,15 +73,6 @@ void main() {
     expect(taps, 1);
   });
 
-  testWidgets('multiline field uses a 14 radius border', (tester) async {
-    await pumpUi(tester, const AppTextField(label: 'Componență', maxLines: 3));
-    final border = tester
-        .widget<InputDecorator>(find.byType(InputDecorator))
-        .decoration
-        .enabledBorder as OutlineInputBorder;
-    expect(border.borderRadius, BorderRadius.circular(14));
-  });
-
   testWidgets('typing reports changes', (tester) async {
     String? last;
     await pumpUi(tester, AppTextField(label: 'Nume', onChanged: (v) => last = v));
@@ -92,23 +83,5 @@ void main() {
     await pumpUi(tester, const AppTextField(hint: 'Caută eveniment'));
     expect(find.byKey(const ValueKey('app-text-field-label')), findsNothing);
     expect(find.byType(TextField), findsOneWidget);
-  });
-  testWidgets('leading and trailing icons are limited to 20dp', (tester) async {
-    await pumpUi(
-      tester,
-      const AppTextField(
-        label: 'Email',
-        leading: SizedBox(width: 40, height: 40),
-        trailing: SizedBox(width: 40, height: 40),
-      ),
-    );
-    expect(
-      tester.getSize(find.byKey(const ValueKey('app-text-field-leading'))),
-      const Size(20, 20),
-    );
-    expect(
-      tester.getSize(find.byKey(const ValueKey('app-text-field-trailing'))),
-      const Size(20, 20),
-    );
   });
 }

@@ -1,9 +1,6 @@
-import 'package:teamxperience/enums/event_type.dart';
+import 'package:teamxperience/features/play_tab/logic/play_suggestions.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
-
-/// How long after the start a registered team may still enter the start code.
-const Duration enterCodeWindow = Duration(minutes: 60);
 
 sealed class HomeHero {
   const HomeHero();
@@ -21,6 +18,17 @@ class LiveHero extends HomeHero {
 
   @override
   String get signature => 'live:${event.eventId}';
+}
+
+/// The team is done but the event still runs: results come when it ends.
+class FinishedHero extends HomeHero {
+  const FinishedHero(this.event, this.team);
+
+  final Event event;
+  final Team team;
+
+  @override
+  String get signature => 'finished:${event.eventId}';
 }
 
 class StartingSoonHero extends HomeHero {
@@ -60,13 +68,16 @@ class NoHero extends HomeHero {
 }
 
 /// Picks what the top card of the player Home shows, in priority order:
-/// live game, start code still open, next registered event, recommendation.
+/// live game, start code still open, team finished, next registered event,
+/// recommendation.
 HomeHero resolveHomeHero({
   required DateTime now,
   required Event? activeEvent,
   required Team? activeTeam,
   required Event? startedRecently,
   required Team? startedRecentlyTeam,
+  Event? finishedEvent,
+  Team? finishedTeam,
   required List<Event> registeredUpcoming,
   required List<Event> allEvents,
   required Set<String> registeredIds,
@@ -74,8 +85,12 @@ HomeHero resolveHomeHero({
   final live = _live(now, activeEvent, activeTeam);
   if (live != null) return live;
 
-  final soon = _startingSoon(now, startedRecently, startedRecentlyTeam);
+  // Another event's start code comes first, so the player does not miss it.
+  final finished = _finished(now, finishedEvent, finishedTeam);
+  final sameEvent = finished != null && startedRecently?.eventId == finishedEvent?.eventId;
+  final soon = sameEvent ? null : _startingSoon(now, startedRecently, startedRecentlyTeam);
   if (soon != null) return soon;
+  if (finished != null) return finished;
 
   final upcoming = _upcoming(now, registeredUpcoming);
   if (upcoming != null) return upcoming;
@@ -100,14 +115,20 @@ HomeHero? _live(DateTime now, Event? event, Team? team) {
   return LiveHero(event, team);
 }
 
+HomeHero? _finished(DateTime now, Event? event, Team? team) {
+  if (event == null || team == null) return null;
+  if (_isOver(event, now) || !team.hasFinished) return null;
+  return FinishedHero(event, team);
+}
+
 HomeHero? _startingSoon(DateTime now, Event? event, Team? team) {
   if (event == null) return null;
   final start = event.dateEvent;
   if (start == null || _isOver(event, now)) return null;
   if (team != null && team.hasStarted) return null;
   final sinceStart = now.difference(start);
-  if (sinceStart.isNegative || sinceStart > enterCodeWindow) return null;
-  final minutesLeft = (enterCodeWindow - sinceStart).inMinutes;
+  if (sinceStart.isNegative || sinceStart > event.enterWindow) return null;
+  final minutesLeft = (event.enterWindow - sinceStart).inMinutes;
   return StartingSoonHero(event, minutesLeft < 0 ? 0 : minutesLeft);
 }
 
@@ -129,13 +150,7 @@ HomeHero? _recommended(DateTime now, List<Event> allEvents, Set<String> register
   Event? earliest;
   for (final event in allEvents) {
     final start = event.dateEvent;
-    if (start == null || !start.isAfter(now)) continue;
-    if (event.type != EventType.PUBLIC) continue;
-    if (registeredIds.contains(event.eventId)) continue;
-    final opens = event.dateStartEnrollment;
-    final closes = event.dateDeadlineEnrollment;
-    if (opens != null && opens.isAfter(now)) continue;
-    if (closes != null && closes.isBefore(now)) continue;
+    if (start == null || !isOpenSuggestion(event, registeredIds, now)) continue;
     final current = earliest?.dateEvent;
     if (current == null || start.isBefore(current)) earliest = event;
   }
@@ -143,15 +158,17 @@ HomeHero? _recommended(DateTime now, List<Event> allEvents, Set<String> register
   return chosen == null ? null : RecommendedHero(chosen);
 }
 
-/// The registered event that started within [enterCodeWindow] and is not over,
-/// oldest first, so the player can still enter its start code.
-Event? recentlyStartedEvent(List<Event> registered, DateTime now) {
+/// The registered event that started within its [Event.enterWindow] and is not over,
+/// oldest first, so the player can still enter its start code. [except] is an
+/// event the player's team has already finished.
+Event? recentlyStartedEvent(List<Event> registered, DateTime now, {String? except}) {
   Event? chosen;
   for (final event in registered) {
+    if (event.eventId == except) continue;
     final start = event.dateEvent;
     if (start == null || _isOver(event, now)) continue;
     final since = now.difference(start);
-    if (since.isNegative || since > enterCodeWindow) continue;
+    if (since.isNegative || since > event.enterWindow) continue;
     final current = chosen?.dateEvent;
     if (current == null || start.isBefore(current)) chosen = event;
   }

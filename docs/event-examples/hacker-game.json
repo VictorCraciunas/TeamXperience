@@ -3,18 +3,37 @@
   "description": "Ești parte dintr-o echipă de hackeri. Spargeți firewall-ul, urmăriți serverul prin oraș și obțineți acces root înainte să vă prindă sistemul.",
   "location": "Sibiu",
   "punctDeStart": "Piața Mare, Sibiu",
+  "startLatitude": 45.7971,
+  "startLongitude": 24.152,
+  "finishLatitude": 45.7975,
+  "finishLongitude": 24.1513,
+  "finishPoint": "Turnul Sfatului",
+  "area": "Centrul Istoric",
+  "routeLengthKm": 2.0,
+  "durationMinutes": 90,
+  "difficulty": "medium",
+  "teamSizeMin": 2,
+  "teamSizeMax": 5,
+  "meetingPointNote": "Piața Mare, lângă fântână",
+  "arriveMinutesBefore": 15,
+  "whatToBring": [
+    "Telefon încărcat",
+    "căști"
+  ],
+  "story": "Un sistem al orașului a fost spart. Aveți o oră și ceva să intrați înaintea celorlalți.",
+  "organiserName": "TeamXperience",
   "type": "PUBLIC",
   "startCode": "ZERODAY",
   "dateEvent": "2026-11-07T20:00",
   "dateStartEnrollment": "2026-10-20T09:00",
   "dateDeadlineEnrollment": "2026-11-06T23:59",
-  "lungimeTraseu": "2 km",
-  "durata": "2 ore",
-  "dificultate": "Medie",
   "landingImageUrl": null,
   "taskBackgroundImageUrl": null,
   "missions": [
     {
+      "title": "Acces blocat",
+      "teaser": "Parola e scrisă în binar.",
+      "isTeaserPublic": true,
       "puzzles": [
         {
           "type": "code",
@@ -160,6 +179,9 @@
       ]
     },
     {
+      "title": "Privilegii maxime",
+      "teaser": "O poză de dovadă și ultimul cod.",
+      "isTeaserPublic": false,
       "puzzles": [
         {
           "type": "imageToUpload",

@@ -1,3 +1,4 @@
+import 'package:teamxperience/ui/components/feedback/load_failed.dart';
 import 'package:flutter/material.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/model/event.dart';
@@ -80,11 +81,19 @@ class _EventRegisteredTeamsState extends State<EventRegisteredTeams> {
       appBar: const MyAppBar(appBarText: "Echipe înscrise"),
       body: controller.isLoading
           ? const Center(child: CircularProgressIndicator())
+          : controller.failed
+          ? LoadFailed(
+              message: 'Nu am putut încărca echipele.',
+              onRetry: () {
+                setState(() => controller.isLoading = true);
+                _loadTeams();
+              },
+            )
           : controller.teams.isEmpty
               ? Center(
                   child: Text(
                     "Nicio echipă înscrisă",
-                    style: TextStyle(fontSize: 16, color: context.colors.muted),
+                    style: TextStyle(fontSize: 18, color: context.colors.muted),
                   ),
                 )
               : ListView.separated(

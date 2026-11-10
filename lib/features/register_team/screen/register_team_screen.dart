@@ -1,13 +1,12 @@
+import 'package:teamxperience/features/register_team/widgets/crew_choice.dart';
 import 'package:flutter/material.dart';
-import 'package:teamxperience/ui/ui.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:teamxperience/features/register_team/controller/register_team_controller.dart';
+import 'package:teamxperience/features/register_team/widgets/invite_result_section.dart';
+import 'package:teamxperience/features/register_team/widgets/register_form.dart';
 import 'package:teamxperience/model/event.dart';
-import 'package:teamxperience/ui/components/misc/step_register_icon.dart';
-import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
-import 'package:teamxperience/ui/components/buttons/app_button.dart';
-
-import '../widgets/step1.dart';
-import '../widgets/step2.dart';
+import 'package:teamxperience/ui/components/navigation/screen_bar.dart';
+import 'package:teamxperience/utils/event_formats.dart';
 
 class RegisterTeamScreen extends StatefulWidget {
   const RegisterTeamScreen({super.key});
@@ -17,211 +16,130 @@ class RegisterTeamScreen extends StatefulWidget {
 }
 
 class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
-  late RegisterTeamController controller;
+  RegisterTeamController? _controller;
+  final GlobalKey _resultKey = GlobalKey();
+  bool _resultShown = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final event = ModalRoute.of(context)!.settings.arguments as Event;
-    controller = RegisterTeamController(
-      context,
-      event,
-    ); // Initialize with context
+    if (_controller != null) return;
+    final event = ModalRoute.of(context)?.settings.arguments;
+    if (event is! Event) return;
+    _controller = RegisterTeamController(context: context, event: event)
+      ..addListener(_scrollToResult);
+  }
+
+  /// Brings the invite card into view the first time it appears.
+  void _scrollToResult() {
+    final controller = _controller;
+    if (controller == null || !controller.registered || _resultShown) return;
+    _resultShown = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final target = _resultKey.currentContext;
+      if (target == null || !target.mounted) return;
+      Scrollable.ensureVisible(
+        target,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const MyAppBar(appBarText: "Detalii echipa"),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 25),
-                Row(
-                  children: [
-                    const StepRegisterWidget(text: '1', isEnabled: true),
-                    Expanded(
-                      child: Divider(
-                        color:
-                            !controller.secondStep
-                                ? context.colors.border
-                                : context.colors.tick, // line color
-                        thickness: 2, // line height
-                        indent: 10, // space to the left of the line
-                        endIndent: 10, // space to the right of the line
-                      ),
-                    ),
-                    StepRegisterWidget(
-                      text: '2',
-                      isEnabled: controller.secondStep,
-                    ),
-                    Expanded(
-                      child: Divider(
-                        color:
-                            !controller.thirdStep
-                                ? context.colors.border
-                                : context.colors.tick, // line color
-                        thickness: 2, // line height
-                        indent: 10, // space to the left of the line
-                        endIndent: 10, // space to the right of the line
-                      ),
-                    ),
-                    StepRegisterWidget(
-                      text: '3',
-                      isEnabled: controller.thirdStep,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 45),
-                if (!controller.secondStep && !controller.thirdStep)
-                  Form(
-                    key: controller.step1FormKey,
-                    child: Step1(
-                      numeEchipaController: controller.numeEchipaController,
-                      componentaEchipeiController:
-                          controller.componentaEchipeiController,
-                      numarPersoaneController:
-                          controller.numarPersoaneController,
-                    ),
-                  ),
-                if (controller.secondStep && !controller.thirdStep)
-                  Form(
-                    key: controller.step2FormKey,
-                    child: Step2(
-                      numeCapitanController: controller.numeCapitanController,
-                      numarDeTelefonController:
-                          controller.numarDeTelefonController,
-                      emailCapitanController: controller.emailCapitanController,
-                    ),
-                  ),
-                if (controller.secondStep && controller.thirdStep)
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          Transform.scale(
-                            scale: 1.5,
-                            child: Checkbox(
-                              value: controller.checkBox1,
-                              onChanged:
-                                  (value) => setState(
-                                    () => controller.checkBox1 = value!,
-                                  ),
-                              activeColor: context.colors.tick,
-                              checkColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              side: BorderSide(
-                                width: 1.5,
-                                color: context.colors.border,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 5),
-                          Expanded(
-                            child: Text(
-                              "Sunt de acord cu Regulamentul Specific al activității.",
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: context.colors.text,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      Row(
-                        children: [
-                          Transform.scale(
-                            scale: 1.5,
-                            child: Checkbox(
-                              value: controller.checkBox2,
-                              onChanged:
-                                  (value) => setState(
-                                    () => controller.checkBox2 = value!,
-                                  ),
-                              activeColor: context.colors.tick,
-                              checkColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              side: BorderSide(
-                                width: 1.5,
-                                color: context.colors.border,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 5),
-                          Expanded(
-                            child: Text(
-                              "Sunt de acord cu folosirea datelor cu caracter personal.",
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: context.colors.text,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Transform.scale(
-                            scale: 1.5,
-                            child: Checkbox(
-                              value: controller.checkBox3,
-                              onChanged:
-                                  (value) => setState(
-                                    () => controller.checkBox3 = value!,
-                                  ),
-                              activeColor: context.colors.tick,
-                              checkColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              side: BorderSide(
-                                width: 1.5,
-                                color: context.colors.border,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 5),
-                          Expanded(
-                            child: Text(
-                              "Sunt de acord ca imaginile și  video-urile care sunt realizate de organizatori sau de membrii echipei  mele în timpul activității să îmi fie trimise după eveniment. În același timp ASOCIAȚIA VBE SIBIU poate folosi aceste resurse pentru promovare.",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: context.colors.text,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+    final controller = _controller;
+    if (controller == null) return const Scaffold();
+    final event = controller.event;
+    final date = event.dateEvent;
+    final subtitle = [
+      if (event.name != null) event.name,
+      if (date != null) dayAndMonth(date),
+    ].join(' · ');
 
-                const SizedBox(height: 30),
-                AppButton(
-                  label:
-                      !(controller.secondStep && controller.thirdStep)
-                          ? "Următorul pas"
-                          : "Înscrie-ți echipa",
-                  onPressed: () {
-                    setState(() {
-                      controller.buttonOnTap();
-                    });
-                  },
+    return ListenableBuilder(
+      listenable: controller,
+      builder: (context, _) {
+        return Scaffold(
+          body: Column(
+            children: [
+              ScreenBar(
+                leadingIcon: TablerIcons.x,
+                onLeading: controller.close,
+                title: 'Înscrie echipa',
+                subtitle: subtitle.isEmpty ? null : subtitle,
+              ),
+              Expanded(
+                child: SafeArea(
+                  top: false,
+                  child: SingleChildScrollView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    child: Column(
+                      children: [
+                        if (controller.crews.isNotEmpty &&
+                            !controller.registered)
+                          CrewChoice(
+                            crews: controller.crews,
+                            chosen: controller.chosenCrew,
+                            onChoose: controller.chooseCrew,
+                            editing: controller.editing,
+                            onToggleEdit: controller.sending
+                                ? null
+                                : (controller.editing
+                                    ? controller.cancelEditing
+                                    : controller.startEditing),
+                          ),
+                        RegisterForm(
+                          nameController: controller.nameController,
+                          phoneController: controller.phoneController,
+                          onNameChanged: controller.onNameChanged,
+                          onPhoneChanged: controller.onPhoneChanged,
+                          nameStatus: controller.nameStatus,
+                          nameStatusText: controller.nameStatusText,
+                          sizeMin: event.teamSizeMin,
+                          sizeFloor: controller.sizeMin,
+                          sizeMax: event.teamSizeMax,
+                          size: controller.size,
+                          onSizeChanged: controller.setSize,
+                          rulesAccepted: controller.rulesAccepted,
+                          onRulesChanged: controller.setRulesAccepted,
+                          dataAccepted: controller.dataAccepted,
+                          onDataChanged: controller.setDataAccepted,
+                          photoConsent: controller.photoConsent,
+                          onPhotoChanged: controller.setPhotoConsent,
+                          onSubmit:
+                              controller.canSubmit ? controller.submit : null,
+                          sending: controller.sending,
+                          locked: controller.registered,
+                          fieldsLocked: controller.fieldsLocked,
+                        ),
+                        if (controller.registered)
+                          InviteResultSection(
+                            key: _resultKey,
+                            code: controller.displayInviteCode,
+                            size: controller.size,
+                            initials: controller.teamInitials,
+                            leftOut: controller.leftOutNames,
+                            onShare: controller.shareInvite,
+                            onCopy: controller.copyInvite,
+                            onDone: controller.close,
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

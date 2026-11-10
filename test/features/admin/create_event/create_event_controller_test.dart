@@ -61,9 +61,8 @@ void main() {
             ..descriptionController.text = 'Un joc'
             ..punctDeStartController.text = 'Piața Mare'
             ..startCodeController.text = 'XTREME'
-            ..lungimeController.text = '4 km'
-            ..durataController.text = '2 ore'
-            ..dificultateController.text = 'Medie'
+            ..routeKmController.text = '4'
+            ..durationController.text = '120'
             ..selectedType = EventType.PRIVAT
             ..dateEvent = _day
             ..dateStartEnrollement = _opens
@@ -141,6 +140,30 @@ void main() {
       expect(c.canSaveDraft, isFalse);
       c.nameController.text = 'Ceva';
       expect(c.canSaveDraft, isTrue);
+    });
+  });
+
+  group('teamSizeProblem', () {
+    test('is fine by default, and for the same minimum and maximum', () {
+      final c = CreateEventController(null);
+      expect(c.teamSizeProblem(), isNull);
+      c.teamSizeMinController.text = '4';
+      c.teamSizeMaxController.text = '4';
+      expect(c.teamSizeProblem(), isNull);
+    });
+
+    test('says when the minimum is above the maximum', () {
+      final c = CreateEventController(null);
+      c.teamSizeMinController.text = '6';
+      c.teamSizeMaxController.text = '2';
+      expect(c.teamSizeProblem(), 'Minimul de membri e mai mare decât maximul');
+    });
+
+    test('an empty field counts as its default, as it does when saved', () {
+      final c = CreateEventController(null);
+      c.teamSizeMinController.text = '';
+      c.teamSizeMaxController.text = '1';
+      expect(c.teamSizeProblem(), 'Minimul de membri e mai mare decât maximul');
     });
   });
 

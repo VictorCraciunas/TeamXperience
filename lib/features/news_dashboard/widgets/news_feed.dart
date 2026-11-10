@@ -45,7 +45,7 @@ class NewsFeed extends StatelessWidget {
             child: Center(
               child: Text(
                 emptyMessage,
-                style: TextStyle(color: context.colors.muted, fontSize: 15),
+                style: TextStyle(color: context.colors.muted, fontSize: 17),
               ),
             ),
           ),

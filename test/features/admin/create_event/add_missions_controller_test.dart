@@ -47,6 +47,64 @@ void main() {
       expect(c.event.nrMissions, 0);
     });
 
+    test('titles and teasers survive removing a mission', () {
+      final c = AddMissionsController(
+        _event([Mission(id: '0', title: 'A'), Mission(id: '1', title: 'B', teaser: 'b', isTeaserPublic: true)]),
+        'create',
+      );
+      c.removeMission(0);
+      final m = c.event.missions.single;
+      expect((m.id, m.title, m.teaser, m.isTeaserPublic), ('0', 'B', 'b', true));
+    });
+
+    test('titles and teasers survive moving a mission', () {
+      final c = AddMissionsController(
+        _event([Mission(id: '0', title: 'A', teaser: 'a'), Mission(id: '1', title: 'B')]),
+        'create',
+      );
+      c.moveMission(0, 1);
+      expect(c.event.missions.map((m) => (m.id, m.title, m.teaser)), [('0', 'B', null), ('1', 'A', 'a')]);
+    });
+
+    test('a copy of an old event keeps the mission titles and teasers', () {
+      final c = AddMissionsController(
+        _event([Mission(id: '0', title: 'A', teaser: 'a', isTeaserPublic: true)]),
+        'blueprint',
+      );
+      final m = c.event.missions.single;
+      expect((m.title, m.teaser, m.isTeaserPublic), ('A', 'a', true));
+    });
+
+    test('mission text is trimmed, and blank is stored as nothing', () {
+      var changed = 0;
+      final c = AddMissionsController(_event([Mission(id: '0')]), 'create', onStateChanged: () => changed++);
+      c.setMissionText(0, title: '  Scara Pasajului ', teaser: ' Numără treptele. ', isTeaserPublic: true);
+      final m = c.event.missions.single;
+      expect((m.title, m.teaser, m.isTeaserPublic), ('Scara Pasajului', 'Numără treptele.', true));
+      c.setMissionText(0, title: '');
+      expect(c.event.missions.single.title, isNull);
+      expect(c.event.missions.single.teaser, 'Numără treptele.', reason: 'fields not given stay as they were');
+      expect(changed, 2);
+    });
+
+    test('a mission place is set and cleared', () {
+      var changed = 0;
+      final c = AddMissionsController(_event([Mission(id: '0')]), 'create', onStateChanged: () => changed++);
+      c.setMissionPlace(0, (lat: 45.7983, lng: 24.1522));
+      expect((c.event.missions.single.latitude, c.event.missions.single.longitude), (45.7983, 24.1522));
+      c.setMissionPlace(0, null);
+      expect(c.event.missions.single.latitude, isNull);
+      expect(c.event.missions.single.longitude, isNull);
+      c.setMissionPlace(4, (lat: 1, lng: 1));
+      expect(changed, 2);
+    });
+
+    test('mission text for a mission that does not exist changes nothing', () {
+      final c = AddMissionsController(_event([Mission(id: '0')]), 'create');
+      c.setMissionText(3, title: 'X');
+      expect(c.event.missions.single.title, isNull);
+    });
+
     test('puzzles survive a renumber', () {
       final kept = Mission(id: '1', puzzles: [_puzzle('0', type: PuzzleType.code, code: 'A')]);
       final c = AddMissionsController(_event([Mission(id: '0'), kept]), 'create');
@@ -58,7 +116,7 @@ void main() {
 
   group('status of a mission', () {
     test('a mission without puzzles says so', () {
-      final c = AddMissionsController(_event([Mission(id: '0')]), 'create');
+      final c = AddMissionsController(_event([Mission(id: '0', title: 'A')]), 'create');
       expect(c.isDone(0), isFalse);
       expect(c.statusText(0), 'Nu are puzzle-uri');
     });

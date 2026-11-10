@@ -22,6 +22,21 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Takes the XP, stats, badges and events of a fresh copy of the signed-in user's
+  /// document; anyone else's, or nobody's, is ignored.
+  void updateProfile(AppUser fresh) {
+    final user = _currentUser;
+    if (user == null || user.uid != fresh.uid) return;
+    _currentUser = user.copyWith(
+      xp: fresh.xp,
+      stats: fresh.stats,
+      badges: fresh.badges,
+      // A captain signing up the crew adds the event from the server.
+      registeredEventIds: fresh.registeredEventIds,
+    );
+    notifyListeners();
+  }
+
   void clearUser() {
     _currentUser = null;
     _firebaseUser = null;
@@ -29,24 +44,10 @@ class UserProvider extends ChangeNotifier {
   }
 
   void addRegisteredEvent(String eventId) {
-    if (_currentUser != null) {
-      final updatedEventIds = List<String>.from(_currentUser!.registeredEventIds);
-      if (!updatedEventIds.contains(eventId)) {
-        updatedEventIds.add(eventId);
-
-        _currentUser = AppUser(
-            email: _currentUser!.email,
-            firstName: _currentUser!.firstName,
-            lastName: _currentUser!.lastName,
-            uid: _currentUser!.uid,
-            role: _currentUser!.role,
-            registeredEventIds: updatedEventIds,
-            fcmToken: _currentUser!.fcmToken
-        );
-
-        notifyListeners();
-      }
-    }
+    final user = _currentUser;
+    if (user == null || user.registeredEventIds.contains(eventId)) return;
+    _currentUser = user.copyWith(registeredEventIds: [...user.registeredEventIds, eventId]);
+    notifyListeners();
   }
 
 }

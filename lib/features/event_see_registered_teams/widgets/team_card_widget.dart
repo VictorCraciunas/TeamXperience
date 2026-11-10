@@ -12,13 +12,15 @@ class TeamCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final members = team.memberList.map((m) => m.displayName).join(', ');
+
     return Container(
       decoration: BoxDecoration(
         color: context.colors.panel,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: context.colors.liveCard.withValues(alpha: 0.06),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -32,13 +34,13 @@ class TeamCardWidget extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundColor: context.colors.accent,
+                backgroundColor: context.colors.tick,
                 child: Text(
                   team.name.isNotEmpty ? team.name[0].toUpperCase() : 'T',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: context.colors.onTick,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 18,
                   ),
                 ),
               ),
@@ -47,7 +49,7 @@ class TeamCardWidget extends StatelessWidget {
                 child: Text(
                   team.name,
                   style: TextStyle(
-                    fontSize: 17,
+                    fontSize: 19,
                     fontWeight: FontWeight.w600,
                     color: context.colors.text,
                   ),
@@ -58,28 +60,45 @@ class TeamCardWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 child: Padding(
                   padding: const EdgeInsets.all(4),
-                  child: Icon(Icons.close, color: context.colors.danger, size: 22),
+                  child: Icon(
+                    Icons.close,
+                    color: context.colors.danger,
+                    size: 22,
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          InfoRowWidget(icon: Icons.person_outline, label: "Căpitan", value: team.captainName),
+          InfoRowWidget(
+            icon: Icons.person_outline,
+            label: "Căpitan",
+            value: team.captainName,
+          ),
           const SizedBox(height: 6),
-          InfoRowWidget(icon: Icons.email_outlined, label: "Email", value: team.captainEmail),
+          InfoRowWidget(
+            icon: Icons.email_outlined,
+            label: "Email",
+            value: team.captainEmail,
+          ),
           const SizedBox(height: 6),
-          InfoRowWidget(icon: Icons.phone_outlined, label: "Telefon", value: team.phoneNumber),
+          InfoRowWidget(
+            icon: Icons.phone_outlined,
+            label: "Telefon",
+            value: team.phoneNumber,
+          ),
           const SizedBox(height: 6),
-          InfoRowWidget(icon: Icons.group_outlined, label: "Componență", value: team.teamMembers),
+          InfoRowWidget(
+            icon: Icons.group_outlined,
+            label: "Componență",
+            value: members,
+          ),
           const SizedBox(height: 8),
           Align(
             alignment: Alignment.bottomRight,
             child: Text(
-              "${team.numberOfMembers} membri",
-              style: TextStyle(
-                fontSize: 12,
-                color: context.colors.muted,
-              ),
+              "${team.userIds.length} din ${team.numberOfMembers}",
+              style: TextStyle(fontSize: 14, color: context.colors.muted),
             ),
           ),
         ],

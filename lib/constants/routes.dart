@@ -13,6 +13,11 @@ abstract class Routes {
   static const eventDetails = '/event_details';
   static const puzzleGame ='/puzzle_game';
   static const eventGame = '/event_game';
+  static const gameIntro = '/game_intro';
+  static const finish = '/finish';
+  static const memory = '/memory';
+  static const memories = '/memories';
+  static const notifications = '/notifications';
   static const eventDashboard = '/events_dashboard';
   static const filter = '/filter';
   static const createNews = '/create_news';
@@ -24,6 +29,8 @@ abstract class Routes {
   static const eventDashboardUser = '/events_dasboard/user';
   static const registerTeam = '/register_tean';
   static const registerTeamDetails = '/register_team/details';
+  static const joinTeam = '/join_team';
+  static const teams = '/teams';
   static const eventRegisteredTeams = '/event_registered_teams';
   static const enterCodeScreen = '/enter_code/screen';
   static const chatScreen = '/chat/screen';
@@ -31,5 +38,6 @@ abstract class Routes {
   static const map = '/map';
   static const sendNotification = '/notifcation';
   static const eventManagement = '/event_management';
+  static const liveBoard = '/event_management/board';
 
 }

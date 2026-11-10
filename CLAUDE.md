@@ -19,7 +19,7 @@ flutter test test/ui/components/app_button_test.dart --plain-name "<name>"   # s
 flutter build apk
 ```
 
-Cloud Functions (`functions/`, Node 20, TypeScript):
+Cloud Functions (`functions/`, Node 22, TypeScript):
 
 ```bash
 cd functions && npm run build        # tsc
@@ -45,6 +45,7 @@ Firebase project id: `teamxperience-dadc6` (`firebase.json`, `lib/firebase_optio
 - [docs/screens.md](docs/screens.md) — screen-by-screen behaviour, validation and user-visible strings
 - [docs/platform-and-config.md](docs/platform-and-config.md) — Android/iOS config, dependencies, Firebase project, external services, tests
 - [docs/known-issues.md](docs/known-issues.md) — bugs/risks found by code reading (verify before fixing)
+- [docs/roadmap/mockups-roadmap.md](docs/roadmap/mockups-roadmap.md) — the mockup redesign: logic and UI roadmap, reference mockups, branch rules (step branches → `redesign/mockups`)
 
 Keep these in sync when adding routes, models, collections or providers.
 
@@ -57,11 +58,11 @@ main.dart          Firebase init, FCM init, MultiProvider, MaterialApp, ALL rout
 constants/         routes.dart (Routes.* string consts)
 enums/             Role, EventType, PuzzleType, ComponentType, MissionState, MessageType, PhotoApprovalStatus, StireType, AnimationType
 model/             Plain data classes with fromMap/fromFirestore + toJson (see "Data model")
-backend/           Raw Firebase access: authentication/, repo/*_repo.dart (Firestore), storage/ (Firebase Storage), network/ (HTTP to Cloud Function)
+backend/           Raw Firebase access: authentication/, repo/*_repo.dart (Firestore), storage/ (Firebase Storage), functions/ (Cloud Function callables)
 service/           Business logic over repos: event_service/, team_service/, news_service/, message_service, FCMService, LocationService, RouteService, share_service
 state_management/  ChangeNotifier providers: UserProvider, EventList, NewsList, UserEventsProvider
 features/          One folder per screen/flow: controller/ + screen/ (+ widgets/, service/)
-ui/                Shared UI layer: theme/ (AppColors tokens, AppTheme, radius/spacing) and components/ (buttons, inputs, navigation, event, news, feedback, misc: AppButton, AppTextField, AppDropdown, SectionCard, EventHeroCard, MyAppBar, EventCard, StireCard, MySnackBars, showAppDialog, AsyncState, ...)
+ui/                Shared UI layer: theme/ (AppColors tokens, AppTheme, radius/spacing) and components/ (buttons, inputs, navigation, event, news, feedback, misc: AppButton, AppTextField, AppDropdown, SectionCard, EventHeroCard, MyAppBar, EventCard, StireCard, MySnackBars, showAppDialog, ...)
 utils/             AuthUtil, calendar_helper, image_helper, color_conversion, component_conversion/
 ```
 
@@ -71,7 +72,7 @@ Flow: `screen -> *Controller -> service -> repo -> Firestore`. Not every feature
 
 - No router package. Named routes live in `MaterialApp.routes` in `main.dart`, keyed by `Routes.*` in `lib/constants/routes.dart`. **Adding a screen = add const to `Routes` + entry in `main.dart`.**
 - Route arguments are passed via `Navigator.pushNamed(..., arguments:)` and read with `ModalRoute.of(context)!.settings.arguments`. Shapes vary per route: a bare `Event`, a `List<Event>`, or a `Map` like `{'event': ..., 'mode': ..., 'isBlueprint': ...}`. Check both the pusher (usually a controller) and the receiving screen when changing them.
-- Start: `Routes.redirect` -> `LandingPage(authUtil)` -> `AuthUtil.checkUserAndRedirect` loads `AppUser` by email via `UserRepo`, stores it in `UserProvider`, then `pushNamedAndRemoveUntil` to `Routes.adminHome` (ADMIN) or `Routes.home` (USER, which is now `UserShell`: a tab shell with Acasă, Evenimente, Știri and Profil built on `AppShell` + `ShellController` from `lib/ui/components/navigation/`; tabs are built on first visit and kept alive, back returns to Acasă), or `Routes.splash` if signed out. Auth is email/password + Google Sign-In (`backend/authentication/AuthenticationRepository.dart`).
+- Start: `Routes.redirect` -> `LandingPage(authUtil)` -> `AuthUtil.checkUserAndRedirect` loads `AppUser` by email via `UserRepo`, stores it in `UserProvider`, then `pushNamedAndRemoveUntil` to `Routes.adminHome` (ADMIN) or `Routes.home` (USER, which is now `UserShell`: the mockups' five-tab shell — Acasă, Evenimente, Joacă (raised in the middle, "În joc" in red while a game is on; it opens the Joacă pop-up over the current tab, not a page), Echipe, Profil — built on `AppShell` + `ShellController` from `lib/ui/components/navigation/`; tab numbers are named in `features/shell/logic/player_tabs.dart` (`PlayerTab`); tabs are built on first visit and kept alive, back returns to Acasă; Știri is a page reached from the bell in Acasă's header), or `Routes.splash` if signed out. Auth is email/password + Google Sign-In (`backend/authentication/AuthenticationRepository.dart`).
 
 ### State management (provider)
 
@@ -105,19 +106,23 @@ Event lifecycle: players register for events (`registeredEventIds`), enter the e
 ### Features map (`lib/features/`)
 
 - **Auth:** `splash`, `loader_page`, `log-in`, `sign-up`, `forgot-password`
-- **Player:** `home`, `events_dashboard/events_dashboard_user`, `event_details`, `register_team`, `team_details`, `enter_code`, `event_game`, `calendar`, `map`, `news_dashboard`, `news_details`, `filter/*`
-- **Admin:** `admin/home`, `admin/create_event` (landing form + `create_missions_and_puzzles` builder with per-component `create_*` editors and controllers), `admin/create_news`, `events_dashboard/events_dashboard_admin`, `event_management` (live control: stop event, etc.), `event_see_registered_teams`, `team_chats` (list of team conversations), `chat`, `news_category_manipulation`, `notification` (send push)
+- **Player:** `shell` (UserShell), `home`, `events_tab`, `play_tab`, `teams`, `profile`, `memories`, `team_photo`, `event_details`, `register_team`, `team_details`, `enter_code`, `event_game`, `calendar`, `news_dashboard`, `news_details`, `filter/*`
+- **Admin:** `admin/home`, `admin/create_event` (landing form + `create_missions_and_puzzles` builder with per-component `create_*` editors and controllers), `admin/create_news`, `events_dashboard/events_dashboard_admin`, `live_room` (mockup 09: map, counts, attention queue, players' ratings, board, announce, stop), `event_see_registered_teams`, `team_chats` (list of team conversations), `chat`, `news_category_manipulation`, `notification` (send push)
 - Directories named `common_widgets`, `widgets/` hold per-feature sub-widgets; `event_game/widgets/image_upload/` is the split photo-puzzle upload flow driven by `ImageUploadPuzzleController`.
 
 ### Notifications
 
+- The bell on Acasă opens `features/notifications` (`Routes.notifications`): each player's list at `users/{uid}/notifications`, written only by the functions through `functions/src/notifications/inbox.ts` (organiser pushes and announcements, organiser chat messages, someone joining a crew, a crew signed up, results). A player can only mark their own as read. Its red dot is an unread notification; news no longer lights it.
 - `service/FCMService.dart`: permission + token, foreground handler that shows a local notification on the `chat_notifications` Android channel. Token is saved on the user doc.
-- `functions/src/index.ts` (v2 functions): `sendNotification` (HTTP POST `{title, description, eventId?}` -> FCM to all users, or only those with `eventId` in `registeredEventIds`), `onChatMessage` (Firestore trigger on `events/{eventId}/teams/{teamName}/messages/{id}`: admin message -> notify team members via `userIds`; user message -> notify admins), `testEndpoint`.
-- The app calls `sendNotification` via a **hardcoded Cloud Run URL** in `backend/network/NetworkAPI.dart`; update it if the function is redeployed to a different project/region.
+- `functions/src/index.ts` (v2 functions): `onChatMessage` (Firestore trigger on `events/{eventId}/teams/{teamName}/messages/{id}`: admin message -> notify team members via `userIds`; user message -> notify admins).
+- Organiser push: `functions/src/notifications/`, the callable `sendNotification` (`{title, description, eventId?}` -> FCM to all users, or only those with `eventId` in `registeredEventIds`). Only `role: ADMIN` may call it; the app calls it through `NotificationFunctions` in `lib/backend/functions/`.
+- Team Cloud Functions live in `functions/src/teams/`: the callables `checkTeamName`, `createCrew`, `registerTeam`, `previewInvite`, `joinTeam` and `renameTeam` (the captain, before the game starts: the team moves to a new document with its chat, messages marked `moved` so they are not pushed again, and the crew takes the name), which the app calls through `TeamFunctions` in `lib/backend/functions/`. Each handler takes `(db, uid, data)`; `callables.ts` holds the one-line `onCall` wrappers.
+- Results: `functions/src/results/` works out places, XP, badges, memories, crew stats and season points when an event stops (`onEventStopped`) or its three hours run out (`closeExpiredEvents`, every 15 minutes). Safe to run again: each player and crew is counted once.
+- `firestore.rules` is tested on the emulator with `npm --prefix functions test`; add a rule and a test with any new client write, since a forgotten one fails silently in the middle of a game.
 
 ### Theme
 
-Theme lives in `lib/ui/theme/`: `AppColors` (a `ThemeExtension` with light and dark tokens: page, panel, border, inset, text, muted, accent, tick, onTick (text on tick fills), navy, ...), `AppTheme.light/dark` (Material 3, Poppins, scaffold = page colour, canvas = panel colour), `AppRadius`, `AppSpacing`, and `context.colors` to read the tokens. `themeMode` comes from `ThemeController` (saved choice: Sistem / Luminos / Întunecat, default Luminos). Screens and shared widgets read colours from `context.colors`; there is no `MyColors` any more. Text styles come from `AppTextStyles` (also registered as the `TextTheme`), spacing from `AppSpacing` (`AppSpacing.page` = 16 side padding), and feedback colours from `AppColors.success/warning/danger` (+ `*Soft`). `test/ui/no_hardcoded_colors_test.dart` stops `lib/features` from gaining literal colours (allow-list in `test/ui/colour_allowlist.txt`). Fonts: `Poppins` (weights 300–800) and `Monospace` (SpaceMono) in `assets/fonts/`. Lottie loader at `assets/loader/loader.json`; images in `assets/images/`.
+Theme lives in `lib/ui/theme/`: `AppColors` (a `ThemeExtension` with light and dark tokens: page, panel, border, inset, text, muted, accent, tick, onTick (text on tick fills), navy, ...), `AppTheme.light/dark` (Material 3, Poppins, scaffold = page colour, canvas = panel colour), `AppRadius`, `AppSpacing`, and `context.colors` to read the tokens. `themeMode` comes from `ThemeController` (saved choice: Sistem / Luminos / Întunecat, default Luminos). Screens and shared widgets read colours from `context.colors`; there is no `MyColors` any more. Text styles come from `AppTextStyles` (also registered as the `TextTheme`), spacing from `AppSpacing` (`AppSpacing.page` = 16 side padding), and feedback colours from `AppColors.success/warning/danger` (+ `*Soft`). `test/ui/no_hardcoded_colors_test.dart` stops `lib/features` from gaining literal colours (allow-list in `test/ui/colour_allowlist.txt`). Inside an event's own screens colours come from `context.eventPalette` (`EventPalette`, set with `EventThemeScope`; falls back to the app colours); each event's palette is computed from its own puzzle components by `eventPaletteOf` (`features/event_game/logic/style_hints.dart`), so organisers set nothing extra. Fonts: `Poppins` (weights 300–800) and `Monospace` (SpaceMono) in `assets/fonts/`; icons for the redesign from `flutter_tabler_icons`. `flutter run -t lib/dev/gallery_main.dart` opens a Firebase-free gallery of the redesign components to compare with `docs/roadmap/mockups/`. Start-up animation: `BrandSplash` (`features/loader_page/widgets/`) plays `assets/loader/teamxperience.json` on the navy (intro once, then the part marked "loop"), made from the Poppins Bold outlines by `python tool/make_splash_lottie.py assets/fonts/Poppins-Bold.ttf assets/loader/teamxperience.json`; the Android and iOS launch screens are the same navy; images in `assets/images/`.
 
 ## Gotchas
 

@@ -14,6 +14,14 @@ class ImageHelper{
     ),
   );
 
+  /// A new photo from the camera, kept small enough to send from the street;
+  /// null when the player cancels.
+  static Future<File?> takePhoto() async {
+    final picker = ImagePicker();
+    final taken = await picker.pickImage(source: ImageSource.camera, maxWidth: 1600, imageQuality: 75);
+    return taken == null ? null : File(taken.path);
+  }
+
   static Future<File?> pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
