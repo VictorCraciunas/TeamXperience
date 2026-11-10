@@ -107,7 +107,7 @@ Event lifecycle: players register for events (`registeredEventIds`), enter the e
 
 - **Auth:** `splash`, `loader_page`, `log-in`, `sign-up`, `forgot-password`
 - **Player:** `shell` (UserShell), `home`, `events_tab`, `play_tab`, `teams`, `profile`, `memories`, `team_photo`, `event_details`, `register_team`, `team_details`, `enter_code`, `event_game`, `calendar`, `news_dashboard`, `news_details`, `filter/*`
-- **Admin:** `admin/home`, `admin/create_event` (landing form + `create_missions_and_puzzles` builder with per-component `create_*` editors and controllers), `admin/create_news`, `events_dashboard/events_dashboard_admin`, `live_room` (mockup 09: map, counts, attention queue, board, announce, stop), `event_see_registered_teams`, `team_chats` (list of team conversations), `chat`, `news_category_manipulation`, `notification` (send push)
+- **Admin:** `admin/home`, `admin/create_event` (landing form + `create_missions_and_puzzles` builder with per-component `create_*` editors and controllers), `admin/create_news`, `events_dashboard/events_dashboard_admin`, `live_room` (mockup 09: map, counts, attention queue, players' ratings, board, announce, stop), `event_see_registered_teams`, `team_chats` (list of team conversations), `chat`, `news_category_manipulation`, `notification` (send push)
 - Directories named `common_widgets`, `widgets/` hold per-feature sub-widgets; `event_game/widgets/image_upload/` is the split photo-puzzle upload flow driven by `ImageUploadPuzzleController`.
 
 ### Notifications

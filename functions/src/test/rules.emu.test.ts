@@ -191,6 +191,26 @@ describe("firestore.rules", () => {
       await assertSucceeds(as("u1").doc("events/e1/feedback/u1").set({rating: 4, teamName: "Vulpile"}));
       await assertFails(as("u2").doc("events/e1/feedback/u1").set({rating: 1}));
     });
+
+    test("feedback: a whole number of stars, 1 to 5, and nothing else", async () => {
+      const mine = () => as("u1").doc("events/e1/feedback/u1");
+      await assertSucceeds(mine().set({rating: 1, teamName: "Vulpile", at: FieldValue.serverTimestamp()}));
+      await assertFails(mine().set({rating: 0, teamName: "Vulpile"}));
+      await assertFails(mine().set({rating: 6, teamName: "Vulpile"}));
+      await assertFails(mine().set({rating: 4.5, teamName: "Vulpile"}));
+      await assertFails(mine().set({rating: "5", teamName: "Vulpile"}));
+      await assertFails(mine().set({teamName: "Vulpile"}));
+      await assertFails(mine().set({rating: 5, teamName: "Vulpile", role: "ADMIN"}));
+    });
+
+    test("feedback: an organiser reads every rating, a player only theirs", async () => {
+      await env.withSecurityRulesDisabled(async (context) => {
+        await context.firestore().doc("events/e1/feedback/u2").set({rating: 3});
+      });
+      await assertSucceeds(as("admin").collection("events/e1/feedback").get());
+      await assertFails(as("u1").collection("events/e1/feedback").get());
+      await assertFails(as("u1").doc("events/e1/feedback/u2").get());
+    });
   });
 
   describe("a team", () => {

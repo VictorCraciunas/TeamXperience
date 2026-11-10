@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../logic/attention_queue.dart';
 import '../logic/live_board.dart';
 import '../logic/live_status.dart';
+import '../logic/rating_summary.dart';
 
 /// What an announcement managed to do. [busy]: another one is on its way, so
 /// this one was not sent.
@@ -40,6 +41,7 @@ class LiveRoomController extends ChangeNotifier {
     required Event event,
     Stream<Event>? eventStream,
     Stream<List<Team>>? teamStream,
+    Stream<List<int>>? ratingStream,
     Future<void> Function(Team team, String key, PhotoApprovalStatus status, {String? reason, String? url})? writeApproval,
     Future<void> Function(String eventId)? stopEvent,
     Future<void> Function(List<String> teams, String text)? postToChats,
@@ -73,6 +75,11 @@ class LiveRoomController extends ChangeNotifier {
       _loading = false;
       notifyListeners();
     });
+    // A failed read keeps the last ratings; they are not worth a warning.
+    _ratingSubscription = (ratingStream ?? TeamService().streamRatings(event.eventId)).listen((fresh) {
+      _ratings = ratingSummary(fresh);
+      notifyListeners();
+    }, onError: (Object _) {});
   }
 
   static Future<bool> _sendPush(String eventId, String title, String text) async {
@@ -98,6 +105,7 @@ class LiveRoomController extends ChangeNotifier {
 
   late final StreamSubscription<Event> _eventSubscription;
   late final StreamSubscription<List<Team>> _teamSubscription;
+  late final StreamSubscription<List<int>> _ratingSubscription;
 
   Event _event;
   Event get event => _event;
@@ -107,6 +115,14 @@ class LiveRoomController extends ChangeNotifier {
 
   bool _loading = true;
   bool get loading => _loading;
+
+  RatingSummary _ratings = ratingSummary(const []);
+
+  /// The stars the players gave at the finish.
+  RatingSummary get ratings => _ratings;
+
+  /// The ratings for the room: hidden until someone rated or the event is over.
+  RatingSummary? shownRatings(DateTime now) => _ratings.count > 0 || eventEnded(_event, now) ? _ratings : null;
 
   Object? _error;
 
@@ -268,6 +284,7 @@ class LiveRoomController extends ChangeNotifier {
     _disposed = true;
     _eventSubscription.cancel();
     _teamSubscription.cancel();
+    _ratingSubscription.cancel();
     super.dispose();
   }
 }

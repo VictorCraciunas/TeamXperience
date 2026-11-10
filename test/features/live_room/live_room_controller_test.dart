@@ -21,6 +21,7 @@ class _Room {
       sendTimeout: const Duration(milliseconds: 20),
       eventStream: events.stream,
       teamStream: teams.stream,
+      ratingStream: ratings.stream,
       writeApproval: (team, key, status, {reason, url}) async {
         approvals.add((team.name, key, status, reason, url));
         final gate = approvalGate;
@@ -53,6 +54,7 @@ class _Room {
 
   final events = StreamController<Event>();
   final teams = StreamController<List<Team>>();
+  final ratings = StreamController<List<int>>();
   late final Event original;
   late final LiveRoomController controller;
   Completer<void>? postGate;
@@ -78,11 +80,48 @@ class _Room {
 
 const _key = '1_0_0';
 
+void ratingTests() {
+  group('ratings', () {
+    test('the players stars, summed up as they come', () async {
+      final room = _Room();
+      expect(room.controller.ratings.count, 0);
+      room.ratings.add([5, 4]);
+      await Future<void>.delayed(Duration.zero);
+      expect(room.controller.ratings.count, 2);
+      expect(room.controller.ratings.average, 4.5);
+      room.ratings.add([5, 4, 3]);
+      await Future<void>.delayed(Duration.zero);
+      expect(room.controller.ratings.count, 3);
+    });
+
+    test('shown once someone rated, or once the event is over', () async {
+      final playing = _Room();
+      expect(playing.controller.shownRatings(_now), isNull);
+      playing.ratings.add([4]);
+      await Future<void>.delayed(Duration.zero);
+      expect(playing.controller.shownRatings(_now)?.count, 1);
+
+      final over = _Room(stopped: true);
+      expect(over.controller.shownRatings(_now)?.count, 0);
+    });
+
+    test('a failed read keeps the last ratings', () async {
+      final room = _Room();
+      room.ratings.add([5]);
+      await Future<void>.delayed(Duration.zero);
+      room.ratings.addError(Exception('no'));
+      await Future<void>.delayed(Duration.zero);
+      expect(room.controller.ratings.count, 1);
+    });
+  });
+}
+
 Team _waiting(String name) => _team(name)..photoApprovals[_key] = PhotoApprovalStatus.pending;
 
 PhotoAttention _photo(Team team) => PhotoAttention(team: team, at: _now, key: _key, url: 'u', mission: 2);
 
 void main() {
+  ratingTests();
   test('teams arrive and notify; it stops loading', () async {
     final room = _Room();
     var notified = 0;
