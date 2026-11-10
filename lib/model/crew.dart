@@ -1,4 +1,5 @@
 import 'crew_stats.dart';
+import 'crew_team.dart';
 import 'package:teamxperience/model/team_member.dart';
 import 'package:teamxperience/utils/invite_code.dart' as invite_code;
 
@@ -16,6 +17,9 @@ class Crew {
   /// What the crew has done together; zeros until its first results.
   final CrewStats stats;
 
+  /// Its teams, oldest sign-up first (the functions append each new one).
+  final List<CrewTeam> teams;
+
   const Crew({
     required this.id,
     required this.name,
@@ -24,6 +28,7 @@ class Crew {
     required this.members,
     required this.inviteCode,
     this.stats = const CrewStats(),
+    this.teams = const [],
   });
 
   factory Crew.fromMap(String id, Map<String, dynamic> map) {
@@ -40,11 +45,24 @@ class Crew {
           .toList(),
       inviteCode: map['inviteCode'] as String? ?? '',
       stats: CrewStats.fromMap(map['stats']),
+      teams: [
+        for (final raw in map['teams'] as List<dynamic>? ?? const [])
+          if (CrewTeam.fromMap(raw) case final team?) team,
+      ],
     );
   }
 
   /// "VLP482" becomes "VLP-482".
   String get displayCode => invite_code.displayCode(inviteCode);
+
+  /// The team it signed up last for an event other than [eventId]; null when
+  /// it has none.
+  CrewTeam? lastTeamExcept(String eventId) {
+    for (final team in teams.reversed) {
+      if (team.eventId != eventId) return team;
+    }
+    return null;
+  }
 
   TeamMember? get captain {
     for (final member in members) {

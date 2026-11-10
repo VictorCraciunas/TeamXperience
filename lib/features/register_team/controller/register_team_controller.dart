@@ -2,8 +2,10 @@ import 'package:teamxperience/model/crew.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:teamxperience/features/register_team/logic/crew_prefill.dart';
 import 'package:teamxperience/features/register_team/logic/team_name_check.dart';
 import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/service/share_service.dart';
 import 'package:teamxperience/service/team_service/register_result.dart';
 import 'package:teamxperience/service/team_service/team_errors.dart';
@@ -29,7 +31,7 @@ class RegisterTeamController extends ChangeNotifier {
     nameCheck = TeamNameCheck(
       isFree: (name) => _teams.isTeamNameFree(event.eventId, name),
     );
-    nameCheck.state.addListener(notifyListeners);
+    nameCheck.state.addListener(_onNameState);
     _loadCrews();
   }
 
@@ -57,19 +59,114 @@ class RegisterTeamController extends ChangeNotifier {
   }
 
   /// The team must have room for everyone in the chosen crew.
-  int get sizeMin {
-    final members = chosenCrew?.members.length ?? 0;
-    return members > event.teamSizeMin ? members : event.teamSizeMin;
+  int get sizeMin => crewSizeMin(chosenCrew, event);
+
+  /// While a crew is chosen and not being edited, its name, size and phone
+  /// are filled in and greyed out; only the consents are left to tick.
+  bool editing = false;
+
+  bool get fieldsLocked => chosenCrew != null && !editing;
+
+  /// The values filled in for the chosen crew, which "Anulează" puts back.
+  CrewPrefill? _prefill;
+
+  /// Counts the choices, so a slow read for an earlier one is dropped.
+  int _choice = 0;
+
+  /// The chosen crew's last sign-up has been read (or found missing).
+  bool _lastLoaded = false;
+
+  /// The size filled in before the last sign-up was read.
+  int _firstSize = 0;
+
+  /// Signs up [crew] with everything from its last sign-up, or goes back to
+  /// an empty new team.
+  void chooseCrew(Crew? crew) {
+    final choice = ++_choice;
+    chosenCrew = crew;
+    editing = false;
+    _lastLoaded = false;
+    if (crew == null) {
+      _prefill = null;
+      _fill((name: '', size: _startSize(event), phone: ''));
+      notifyListeners();
+      return;
+    }
+    final first = crewPrefill(crew: crew, event: event, fallback: _startSize(event));
+    _prefill = first;
+    _firstSize = first.size;
+    _fill(first);
+    notifyListeners();
+    _loadLastSignUp(crew, choice);
   }
 
-  /// Signs up [crew] under its name, or goes back to a new team.
-  void chooseCrew(Crew? crew) {
-    chosenCrew = crew;
-    if (crew != null) {
-      nameController.text = crew.name;
-      onNameChanged(crew.name);
-      if (size < sizeMin) size = sizeMin;
+  /// The size and phone of the crew's last sign-up. Edit mode opens when
+  /// there is no phone to fill in, so the captain is never stuck.
+  Future<void> _loadLastSignUp(Crew crew, int choice) async {
+    final link = crew.lastTeamExcept(event.eventId);
+    Team? last;
+    if (link != null) {
+      try {
+        last = await _teams.getTeam(link.eventId, link.teamName);
+      } catch (_) {
+        // The captain types the phone.
+      }
     }
+    if (_disposed || choice != _choice) return;
+    final prefill = crewPrefill(crew: crew, event: event, fallback: _startSize(event), last: last);
+    _prefill = prefill;
+    _lastLoaded = true;
+    if (!editing) {
+      _fill(prefill);
+    } else {
+      // Edit mode opened by itself before the read came back: fill in what
+      // the captain has not changed yet.
+      if (phoneController.text.trim().isEmpty) phoneController.text = prefill.phone;
+      if (size == _firstSize) size = prefill.size;
+    }
+    _openIfBlocked();
+    notifyListeners();
+  }
+
+  void _fill(CrewPrefill values) {
+    if (nameController.text != values.name) {
+      nameController.text = values.name;
+      nameCheck.onChanged(values.name);
+    }
+    size = values.size;
+    phoneController.text = values.phone;
+  }
+
+  /// "Editează": the captain changes the name, the phone or adds players.
+  void startEditing() {
+    if (chosenCrew == null || registered || sending) return;
+    editing = true;
+    notifyListeners();
+  }
+
+  /// "Anulează": back to the values filled in for the crew, locked. It stays
+  /// locked even when they block the sign-up (the status line says why), so
+  /// the button always does what it says.
+  void cancelEditing() {
+    final values = _prefill;
+    if (chosenCrew == null || values == null || registered || sending) return;
+    editing = false;
+    _fill(values);
+    notifyListeners();
+  }
+
+  /// A taken name, or one that could not be checked, opens edit mode for a
+  /// chosen crew; so does a missing phone.
+  void _openIfBlocked() {
+    if (chosenCrew == null || editing || registered) return;
+    final values = _prefill;
+    if (nameStatus == FieldStatus.problem || (_lastLoaded && values != null && values.phone.isEmpty)) {
+      editing = true;
+    }
+  }
+
+  void _onNameState() {
+    _openIfBlocked();
     notifyListeners();
   }
 
@@ -233,7 +330,7 @@ class RegisterTeamController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
-    nameCheck.state.removeListener(notifyListeners);
+    nameCheck.state.removeListener(_onNameState);
     nameCheck.dispose();
     nameController.dispose();
     phoneController.dispose();

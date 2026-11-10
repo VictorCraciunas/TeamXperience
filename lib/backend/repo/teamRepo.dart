@@ -50,6 +50,13 @@ class TeamRepo {
     }
   }
 
+  /// The team as saved, or null when there is none under [teamName].
+  Future<Team?> getTeam(String eventId, String teamName) async {
+    final doc = await _team(eventId, teamName).get();
+    final data = doc.data();
+    return data == null ? null : Team.fromMap(data);
+  }
+
   Stream<Team> getStreamTeam(String eventId, String teamName) {
     return _firestore
         .collection('events')

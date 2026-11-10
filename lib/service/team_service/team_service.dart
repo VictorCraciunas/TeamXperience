@@ -177,6 +177,9 @@ class TeamService {
     return teamRepo.getStreamTeamsForEvent(eventId);
   }
 
+  /// The team as saved, or null when there is none under [teamName].
+  Future<Team?> getTeam(String eventId, String teamName) => teamRepo.getTeam(eventId, teamName);
+
   Stream<Team> getStreamTeam(String eventId, String teamName) {
     return teamRepo.getStreamTeam(eventId, teamName);
   }

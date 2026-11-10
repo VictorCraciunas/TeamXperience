@@ -16,6 +16,7 @@ class TeamNameField extends StatelessWidget {
     required this.status,
     required this.statusText,
     this.readOnly = false,
+    this.dimmed = false,
   });
 
   final TextEditingController controller;
@@ -23,6 +24,9 @@ class TeamNameField extends StatelessWidget {
   final FieldStatus status;
   final String statusText;
   final bool readOnly;
+
+  /// Greyed out: the name is filled in and cannot be changed now.
+  final bool dimmed;
 
   static const double _badge = 42;
 
@@ -54,7 +58,8 @@ class TeamNameField extends StatelessWidget {
               child: RegisterInput(
                 controller: controller,
                 onChanged: onChanged,
-                readOnly: readOnly,
+                readOnly: readOnly || dimmed,
+                dimmed: dimmed,
                 textCapitalization: TextCapitalization.words,
                 textInputAction: TextInputAction.next,
                 borderColor: ok ? colors.tick : null,
