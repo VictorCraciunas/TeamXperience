@@ -32,6 +32,7 @@ class RegisterForm extends StatelessWidget {
     required this.nameStatus,
     required this.nameStatusText,
     required this.sizeMin,
+    this.sizeFloor,
     required this.sizeMax,
     required this.size,
     required this.onSizeChanged,
@@ -54,6 +55,10 @@ class RegisterForm extends StatelessWidget {
   final FieldStatus nameStatus;
   final String nameStatusText;
   final int sizeMin;
+
+  /// Sizes below it show greyed out: the players a team signing up again
+  /// already has. Null leaves every size open.
+  final int? sizeFloor;
   final int sizeMax;
   final int size;
   final ValueChanged<int> onSizeChanged;
@@ -100,6 +105,7 @@ class RegisterForm extends StatelessWidget {
                 max: sizeMax,
                 value: size,
                 onChanged: onSizeChanged,
+                enabledFrom: sizeFloor,
               ),
             ),
           ),
