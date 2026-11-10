@@ -24,6 +24,8 @@ void main() {
       TeamError.eventFull: 'Nu mai sunt locuri',
       TeamError.eventNotFound: 'Evenimentul nu mai există',
       TeamError.rulesNotAccepted: 'Acceptă regulamentul ca să continui',
+      TeamError.teamNotFound: 'Echipa nu mai există',
+      TeamError.gameStarted: 'Jocul a început, numele nu se mai schimbă',
       TeamError.notSignedIn: 'Intră în cont din nou',
       TeamError.network: 'Nu a mers. Verifică internetul.',
       TeamError.unknown: 'Ceva n-a mers. Încearcă din nou.',
