@@ -315,6 +315,10 @@ describe("playerResult", () => {
       assert.equal(playTimeMs({durationMinutes: 90.7}), 90 * 60000);
     });
 
+    test("an absurd number counts as 10 years, as in the app", () => {
+      assert.equal(playTimeMs({durationMinutes: 1e13}), 3650 * 24 * 60 * 60000);
+    });
+
     test("over once its duration has passed, or when stopped", () => {
       const event = {dateEvent: Timestamp.fromDate(T0), durationMinutes: 90};
       assert.equal(eventIsOver(event, after(90)), false);

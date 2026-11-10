@@ -331,6 +331,7 @@ class CreateEventController {
       if (context.mounted) MySnackBars.warningSnackBar(context, title: 'Corectează câmpul marcat', message: error);
       return;
     }
+    if (!context.mounted) return;
 
     final problem = enrollmentProblem() ?? teamSizeProblem();
     if (problem != null) {

@@ -332,6 +332,14 @@ describe("results", () => {
       await event("long-over", 6, {durationMinutes: 300});
       assert.deepEqual((await expiredEventIds(db, NOW)).sort(), ["long-over", "short-over"]);
     });
+
+    test("a game longer than the week is found by its saved end", async () => {
+      const day = 24 * 60;
+      const endsAt = (hoursAgo: number) => Timestamp.fromDate(new Date(NOW.getTime() - hoursAgo * 3600000));
+      await event("month-over", 24 * 30, {durationMinutes: 29 * day, endsAt: endsAt(24)});
+      await event("month-running", 24 * 20, {durationMinutes: 29 * day, endsAt: endsAt(-24 * 9)});
+      assert.deepEqual(await expiredEventIds(db, NOW), ["month-over"]);
+    });
   });
 
   describe("teamFacts", () => {

@@ -288,7 +288,7 @@ class _Reader {
       return null;
     }
     if (!_inRange(value, min, max)) {
-      _fail(key, 'trebuie să fie între ${_show(min)} și ${_show(max)}.');
+      _fail(key, max == null ? 'trebuie să fie cel puțin ${_show(min)}.' : 'trebuie să fie între ${_show(min)} și ${_show(max)}.');
       return null;
     }
     return value.toInt();

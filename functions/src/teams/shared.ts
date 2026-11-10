@@ -51,15 +51,20 @@ export function memberOf(uid: string, user: DocumentData | undefined): Member {
 /** How long a game lasts when the event has no duration (older events). */
 export const DEFAULT_PLAY_MS = 3 * 60 * 60 * 1000;
 
+/** Past this a duration is a typo; as the app's `Event.longestPlayTime`. */
+const LONGEST_PLAY_MINUTES = 3650 * 24 * 60;
+
 /**
  * How long the game lasts: the event's duration in whole minutes (any number
- * above zero), else three hours. As the app's `Event.playTime`.
+ * above zero, at most 10 years), else three hours. As the app's
+ * `Event.playTime`.
  */
 export function playTimeMs(event: DocumentData | undefined): number {
   const raw = event?.durationMinutes;
   if (typeof raw !== "number" || !Number.isFinite(raw)) return DEFAULT_PLAY_MS;
   const minutes = Math.trunc(raw);
-  return minutes > 0 ? minutes * 60000 : DEFAULT_PLAY_MS;
+  if (minutes <= 0) return DEFAULT_PLAY_MS;
+  return Math.min(minutes, LONGEST_PLAY_MINUTES) * 60000;
 }
 
 export function toDate(value: unknown): Date | null {

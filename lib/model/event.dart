@@ -108,11 +108,16 @@ class Event {
   /// How long a game lasts when the event has no duration (older events).
   static const Duration defaultPlayTime = Duration(hours: 3);
 
+  /// Past this a duration is a typo, and the date maths would overflow; the
+  /// server reads it the same way.
+  static const Duration longestPlayTime = Duration(days: 3650);
+
   /// How long the game lasts: the event's duration, any number of minutes;
   /// the game ends for every team that long after the start.
   Duration get playTime {
     final minutes = durationMinutes;
-    return minutes != null && minutes > 0 ? Duration(minutes: minutes) : defaultPlayTime;
+    if (minutes == null || minutes <= 0) return defaultPlayTime;
+    return minutes > longestPlayTime.inMinutes ? longestPlayTime : Duration(minutes: minutes);
   }
 
   /// When the game ends; null without a date.
@@ -316,6 +321,8 @@ class Event {
       'name': name,
       'missions': missions.map((m) => m.toJson()).toList(),
       'dateEvent': dateEvent,
+      // Read only by the server, to find games that run longer than a week.
+      'endsAt': endsAt,
       'dateDeadlineEnrollment': dateDeadlineEnrollment,
       'dateStartEnrollment': dateStartEnrollment,
       'location': location,

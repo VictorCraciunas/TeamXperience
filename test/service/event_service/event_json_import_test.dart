@@ -98,7 +98,7 @@ void main() {
       expect(short.errors, isEmpty);
       expect(short.event?.durationMinutes, 5);
       expect(_import(_event(extra: {'durationMinutes': 2000})).event?.durationMinutes, 2000);
-      expect(_import(_event(extra: {'durationMinutes': 0})).errors.join(), contains('durationMinutes'));
+      expect(_import(_event(extra: {'durationMinutes': 0})).errors.join(), allOf(contains('durationMinutes'), contains('cel puțin 1')));
     });
 
     test('a difficulty that does not exist names the field', () {
