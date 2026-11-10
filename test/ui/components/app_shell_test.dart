@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/ui/components/navigation/app_nav_item.dart';
 import 'package:teamxperience/ui/components/navigation/app_shell.dart';
@@ -72,6 +73,8 @@ Widget _shell({ShellController? controller, List<String>? builtLog}) {
 }
 
 void main() {
+  group('action tabs', actionTabTests);
+
   testWidgets('the raised tab never covers the end of a page', (tester) async {
     await tester.pumpWidget(_raisedShell());
     final page = tester.getRect(find.byKey(const ValueKey('page')));
@@ -119,5 +122,83 @@ void main() {
     controller.select(1);
     await tester.pump();
     expect(find.text('events:0'), findsOneWidget);
+  });
+}
+
+Widget _actionShell({
+  required ShellController controller,
+  required VoidCallback onPlay,
+  Widget? overlay,
+  VoidCallback? onOverlayBack,
+  bool open = false,
+}) =>
+    MaterialApp(
+      theme: AppTheme.light,
+      home: AppShell(
+        controller: controller,
+        overlay: overlay,
+        onOverlayBack: onOverlayBack,
+        tabs: [
+          AppShellTab(
+            item: const AppNavItem(icon: Icons.home_outlined, label: 'Acasă'),
+            builder: (_) => const SizedBox.expand(key: ValueKey('home-page')),
+          ),
+          AppShellTab(
+            item: const AppNavItem(icon: Icons.map_outlined, label: 'Evenimente'),
+            builder: (_) => const SizedBox.expand(key: ValueKey('events-page')),
+          ),
+          AppShellTab(
+            item: AppNavItem(icon: Icons.vpn_key_outlined, label: 'Joacă', raised: true, open: open),
+            onTap: onPlay,
+          ),
+        ],
+      ),
+    );
+
+void actionTabTests() {
+  testWidgets('an action tab runs its callback and keeps the current page', (tester) async {
+    final controller = ShellController(3);
+    var taps = 0;
+    await tester.pumpWidget(_actionShell(controller: controller, onPlay: () => taps++));
+    await tester.tap(find.text('Joacă'));
+    await tester.pump();
+    expect(taps, 1);
+    expect(controller.index, 0);
+    expect(find.byKey(const ValueKey('home-page')), findsOneWidget);
+  });
+
+  testWidgets('the overlay covers the pages and the bar still works', (tester) async {
+    final controller = ShellController(3);
+    await tester.pumpWidget(_actionShell(
+      controller: controller,
+      onPlay: () {},
+      overlay: const SizedBox.expand(key: ValueKey('overlay')),
+    ));
+    expect(find.byKey(const ValueKey('overlay')), findsOneWidget);
+    await tester.tap(find.text('Evenimente'));
+    await tester.pump();
+    expect(controller.index, 1);
+  });
+
+  testWidgets('back with an overlay closes it and stays on the tab', (tester) async {
+    final controller = ShellController(3)..select(1);
+    var backs = 0;
+    await tester.pumpWidget(_actionShell(
+      controller: controller,
+      onPlay: () {},
+      overlay: const SizedBox.expand(),
+      onOverlayBack: () => backs++,
+    ));
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    expect(backs, 1);
+    expect(controller.index, 1);
+  });
+
+  testWidgets('an open raised tab shows an X', (tester) async {
+    await tester.pumpWidget(_actionShell(controller: ShellController(3), onPlay: () {}, open: true));
+    await tester.pumpAndSettle();
+    expect(find.byIcon(TablerIcons.x), findsOneWidget);
+    expect(find.byIcon(Icons.vpn_key_outlined), findsNothing);
   });
 }

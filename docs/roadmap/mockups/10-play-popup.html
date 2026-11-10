@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>10-play-popup</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<!-- Interactive mockup for the Joacă button: a card that comes out of the key instead of a new screen.
+     Pick a situation and an animation, then tap the key in the phone. -->
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:24px 16px 48px;background:#F4F6FA;font-family:Poppins,sans-serif;color:#0C092A;font-size:14px;line-height:1.45}
+h1{font-size:22px;font-weight:600;margin:0 0 4px}
+h2{font-size:15px;font-weight:600;margin:22px 0 8px}
+p{margin:0 0 8px}
+.mut{color:#47546A}
+.wrap{max-width:1000px;margin:0 auto;display:flex;gap:36px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+.side{flex:1 1 300px;max-width:420px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{min-height:44px;padding:0 14px;border-radius:12px;border:1px solid #CFD8E4;background:#fff;font:500 14px Poppins,sans-serif;color:#0C092A;cursor:pointer}
+.seg button.on{background:#222F62;color:#fff;border-color:#222F62}
+.chk{display:flex;align-items:center;gap:8px;min-height:44px;cursor:pointer}
+.chk input{width:20px;height:20px}
+.notes li{margin-bottom:6px}
+
+/* phone */
+.ph{position:relative;width:min(360px,100%);height:760px;border:8px solid #0C092A;border-radius:40px;overflow:hidden;background:#E7ECF3;flex:0 0 auto;user-select:none}
+.sb{height:30px;background:#fff;display:flex;align-items:center;padding:0 18px;font-size:12px;font-weight:500}
+.sb span{margin-left:auto;display:flex;gap:6px;align-items:center}
+.ab{height:52px;background:#fff;border-bottom:1px solid #CFD8E4;display:flex;align-items:center;padding:0 16px;font-size:18px;font-weight:500}
+.home{padding:14px 16px}
+.hero{background:#222F62;color:#fff;border-radius:18px;padding:16px;height:150px}
+.blk{background:#fff;border:1px solid #CFD8E4;border-radius:16px;height:96px;margin-top:12px}
+.bar{height:12px;border-radius:6px;background:rgba(255,255,255,.18);margin-top:10px}
+.blk .bar{background:#E7ECF3;margin:14px 14px 0}
+
+.nav{position:absolute;left:0;right:0;bottom:0;height:78px;background:#fff;border-top:1px solid #CFD8E4;display:flex;z-index:6;padding-bottom:8px}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;color:#47546A}
+.ni i{font-size:22px;padding:3px 16px;border-radius:99px}
+.ni.act{color:#167A7E}
+.ni.act i{background:#DDF3F3}
+.kc{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:11px;font-size:12px;font-weight:600}
+.key{position:absolute;top:-26px;left:50%;margin-left:-31px;width:62px;height:62px;border-radius:50%;background:#222F62;color:#fff;border:4px solid #fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 16px rgba(34,47,98,.35);transition:transform .2s,background .25s;padding:0}
+.key i{font-size:27px;transition:transform .32s cubic-bezier(.34,1.56,.64,1),opacity .15s}
+.key:active{transform:scale(.9)}
+.key.turn i{transform:rotate(90deg)}
+.key.open{background:#0C092A}
+.key.live::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:3px solid #E5484D;animation:ring 1.6s ease-out infinite}
+.key.open::after{display:none}
+@keyframes ring{from{transform:scale(.85);opacity:.9}to{transform:scale(1.25);opacity:0}}
+
+.ov{position:absolute;left:0;right:0;top:0;bottom:78px;z-index:5;background:rgba(12,9,42,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .25s}
+.ov.on{opacity:1;pointer-events:auto}
+#stage{position:absolute;left:14px;right:14px;bottom:20px;perspective:1000px}
+.toast{position:absolute;left:16px;right:16px;top:92px;z-index:7;background:#0C092A;color:#fff;border-radius:12px;padding:10px 14px;font-size:13px;opacity:0;transform:translateY(-8px);transition:.25s;pointer-events:none}
+.toast.on{opacity:1;transform:none}
+
+/* cards */
+.card{position:relative;background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 18px 40px rgba(12,9,42,.4);touch-action:none}
+.ticket{--cut:200px;
+  -webkit-mask:radial-gradient(circle 13px at 0 var(--cut),#0000 12.5px,#000 13px) left/51% 100% no-repeat,radial-gradient(circle 13px at 100% var(--cut),#0000 12.5px,#000 13px) right/51% 100% no-repeat;
+  mask:radial-gradient(circle 13px at 0 var(--cut),#0000 12.5px,#000 13px) left/51% 100% no-repeat,radial-gradient(circle 13px at 100% var(--cut),#0000 12.5px,#000 13px) right/51% 100% no-repeat}
+.top{padding:10px 18px 18px;color:#fff}
+.handle{width:40px;height:5px;border-radius:3px;background:rgba(255,255,255,.4);margin:0 auto 10px}
+.bot .handle{background:#CFD8E4}
+.bot{padding:16px 18px 18px;border-top:2px dashed #CFD8E4}
+.nocut{border-top:0}
+.small{font-size:12px;opacity:.8}
+.ttl{font-size:21px;font-weight:600;line-height:1.25;margin-top:2px}
+.line{font-size:14px;opacity:.85;margin-top:2px}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:3px 11px;font-size:12px;font-weight:600}
+.cdrow{display:flex;gap:8px;margin-top:14px}
+.cd{flex:1;background:rgba(255,255,255,.1);border-radius:12px;padding:8px 0 6px;text-align:center;overflow:hidden}
+.cd .n{display:block;font-family:"Space Mono",monospace;font-size:24px;font-weight:700;line-height:1.1}
+.cd small{font-size:12px;opacity:.75}
+.roll{animation:roll .3s cubic-bezier(.3,1.4,.6,1)}
+@keyframes roll{from{transform:translateY(70%);opacity:0}to{transform:none;opacity:1}}
+.row{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px}
+.row i{font-size:20px;color:#167A7E}
+.avs{display:flex}
+.av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;border:2px solid #fff;margin-left:-8px;color:#0C092A}
+.av:first-child{margin-left:0}
+.av.empty{border:2px dashed #CFD8E4;background:#fff}
+.btn{min-height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:15px;cursor:pointer;border:0;width:100%;font-family:inherit}
+.btn+.btn{margin-top:8px}
+.b-navy{background:#222F62;color:#fff}
+.b-tick{background:#2AA5A9;color:#0C092A}
+.b-out{background:#fff;color:#0C092A;border:1px solid #CFD8E4}
+.b-link{background:none;color:#167A7E;min-height:44px;font-weight:500;font-size:14px}
+.btn:active{transform:scale(.98)}
+.prog{display:flex;gap:5px;margin-top:12px}
+.prog span{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.16)}
+.prog .d{background:#53C4C7}
+.prog .c{background:#F2A93B;animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{50%{opacity:.45}}
+.stats{display:flex;gap:8px;margin-top:12px}
+.stats div{flex:1;background:rgba(255,255,255,.1);border-radius:12px;padding:8px 10px}
+.stats b{display:block;font-size:16px}
+.stats small{font-size:12px;opacity:.75}
+.cover{height:150px;margin:0 14px;border-radius:16px;display:grid;place-items:center;position:relative;overflow:hidden}
+.cover>i{font-size:64px}
+.cover .pill i{font-size:14px}
+.cover .pill{position:absolute;left:10px;top:10px}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.meta span{background:#F3F6FA;border:1px solid #E1E7EF;border-radius:99px;padding:3px 10px;font-size:12px}
+.two{display:flex;gap:8px;margin-top:14px}
+.two .btn{margin:0}
+.two .b-out{flex:0 0 auto;width:auto;padding:0 16px}
+.dice{transition:transform .5s cubic-bezier(.3,1.5,.5,1)}
+.spin .dice{transform:rotate(360deg)}
+
+/* stagger */
+.st{opacity:0}
+.card.in .st{animation:stUp .38s ease-out both;animation-delay:calc(var(--i,0) * 55ms)}
+@keyframes stUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.calm .st{opacity:1!important;animation:none!important}
+
+/* entries */
+.a-key{animation:fromKey .56s cubic-bezier(.2,.9,.3,1.15) both;transform-origin:50% calc(100% + 60px)}
+@keyframes fromKey{0%{transform:translateY(50px) scale(.1);opacity:0}40%{opacity:1}75%{transform:translateY(-6px) scale(1.03)}100%{transform:none;opacity:1}}
+.a-map{animation:unfold .75s ease-out both;transform-origin:50% 100%}
+@keyframes unfold{0%{transform:rotateX(-90deg);opacity:0}12%{opacity:1}55%{transform:rotateX(14deg)}78%{transform:rotateX(-5deg)}100%{transform:none}}
+.crease{position:absolute;inset:0;pointer-events:none;z-index:3;background:linear-gradient(to bottom,transparent 32.5%,rgba(12,9,42,.28) 33.3%,rgba(255,255,255,.35) 34%,transparent 35%,transparent 65.5%,rgba(12,9,42,.28) 66.6%,rgba(255,255,255,.35) 67.3%,transparent 68.3%);animation:fadeOut 1.3s ease-in .2s both}
+@keyframes fadeOut{to{opacity:0}}
+.a-flip{animation:flipIn .3s ease-out both}
+@keyframes flipIn{from{transform:rotateY(-90deg)}to{transform:none}}
+.a-fade{animation:fade .2s ease-out both}
+@keyframes fade{from{opacity:0}}
+.a-out{animation:toKey .22s ease-in both;transform-origin:50% calc(100% + 60px)}
+@keyframes toKey{to{transform:translateY(50px) scale(.1);opacity:0}}
+.flipOut{transition:transform .18s ease-in!important;transform:rotateY(90deg)!important}
+
+.ghost{position:absolute;left:0;right:0;bottom:0;border-radius:22px;border:3px solid #fff;background:#222F62 repeating-linear-gradient(45deg,rgba(83,196,199,.13) 0 12px,transparent 12px 24px);display:grid;place-items:center;color:#53C4C7;box-shadow:0 12px 30px rgba(12,9,42,.35);transition:transform .34s cubic-bezier(.3,1.35,.5,1),opacity .25s;opacity:0;transform:translateY(160px) scale(.12)}
+.ghost div{text-align:center;font-weight:600;font-size:14px;color:#fff}
+.ghost i{font-size:56px;color:#53C4C7;display:block}
+</style>
+</head><body>
+<div class="wrap">
+
+<div class="side">
+  <h1>Joacă: the pop-up</h1>
+  <p class="mut">No new screen. Tapping the key opens one card above the bar, chosen by what the player has going on. Try it in the phone.</p>
+
+  <h2>Situation</h2>
+  <div class="seg" id="segState">
+    <button data-v="next" class="on">Registered</button>
+    <button data-v="code">Start window</button>
+    <button data-v="live">Playing</button>
+    <button data-v="none">Not registered</button>
+  </div>
+
+  <h2>Animation</h2>
+  <div class="seg" id="segAnim">
+    <button data-v="key" class="on">From the key</button>
+    <button data-v="map">Map unfolds</button>
+    <button data-v="deck">Draw a card</button>
+  </div>
+  <label class="chk"><input type="checkbox" id="calm"> Reduced motion (plain fade)</label>
+
+  <h2>How it behaves</h2>
+  <ul class="notes mut">
+    <li>The key turns like in a lock, then becomes an X. Tap the X, the dimmed area, or drag the card down to close.</li>
+    <li><b>Registered:</b> a ticket with a live countdown, your team and the meeting point.</li>
+    <li><b>Start window:</b> the same ticket, now with the minutes left to enter and the start-code button.</li>
+    <li><b>Playing:</b> mission progress, time left, your place, and Continue. The key has a red ring while you play.</li>
+    <li><b>Not registered:</b> a suggested event. "Alt joc" rolls the dice and flips to a random one.</li>
+    <li><b>From the key:</b> the card grows out of the button with a small bounce.</li>
+    <li><b>Map unfolds:</b> the card opens like a folded map, the folds fade.</li>
+    <li><b>Draw a card:</b> three cards fan out, shuffle, and the middle one flips over.</li>
+    <li>The phone gives a short buzz when the card opens.</li>
+  </ul>
+</div>
+
+<div class="ph" id="phone">
+  <div class="sb">20:32<span><i class="ti ti-wifi"></i><i class="ti ti-battery-3"></i>56%</span></div>
+  <div class="ab">Acasă</div>
+  <div class="home">
+    <div class="hero"><div style="font-size:13px;opacity:.75">Bun venit</div><div style="font-size:19px;font-weight:600">Salut, Ana</div><div class="bar" style="width:70%"></div><div class="bar" style="width:45%"></div></div>
+    <div class="blk"><div class="bar" style="width:50%"></div><div class="bar" style="width:80%"></div></div>
+    <div class="blk"><div class="bar" style="width:40%"></div><div class="bar" style="width:70%"></div></div>
+    <div class="blk"><div class="bar" style="width:60%"></div><div class="bar" style="width:30%"></div></div>
+  </div>
+
+  <div class="ov" id="ov"><div id="stage"></div></div>
+  <div class="toast" id="toast"></div>
+
+  <nav class="nav">
+    <div class="ni act"><i class="ti ti-home"></i>Acasă</div>
+    <div class="ni"><i class="ti ti-map-2"></i>Evenimente</div>
+    <div class="kc"><button class="key" id="key" aria-label="Joacă"><i class="ti ti-key" id="keyIcon"></i></button><span id="keyLabel">Joacă</span></div>
+    <div class="ni"><i class="ti ti-users-group"></i>Echipe</div>
+    <div class="ni"><i class="ti ti-user"></i>Profil</div>
+  </nav>
+</div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+let state = 'next', anim = 'key', isOpen = false, busy = false, recIdx = 0, timer = null;
+const target = (() => { const t = new Date(2026, 10, 30, 22, 55); return t > new Date() ? t : new Date(Date.now() + 20 * 864e5 + 2 * 36e5); })();
+let codeEnd = Date.now() + 42 * 6e4;
+
+const RECS = [
+  {t:'Moștenirea Cartografului', when:'Sâm 14 nov · 11:00', meta:['Sibiu','2 h','Mediu','9 echipe'], bg:'#EADBC0', fg:'#8A3B12', icon:'ti-compass'},
+  {t:'Protocolul Cerber', when:'Vin 20 nov · 19:00', meta:['Sibiu','1 h 30','Greu','14 echipe'], bg:'#0B1410', fg:'#3DFF8A', icon:'ti-terminal-2'},
+  {t:'Misterul Turnului Sfatului', when:'Dum 22 nov · 11:00', meta:['Sibiu','2 h','Ușor','6 echipe'], bg:'linear-gradient(135deg,#222F62,#167A7E)', fg:'#fff', icon:'ti-building-castle'},
+  {t:'Vânătoarea de Lumini', when:'Sâm 28 nov · 17:30', meta:['Sibiu','1 h 45','Mediu','11 echipe'], bg:'linear-gradient(135deg,#0C092A,#B7791F)', fg:'#F2A93B', icon:'ti-bulb'},
+];
+
+const team = `<div class="row st"><div class="avs"><span class="av" style="background:#53C4C7">AN</span><span class="av" style="background:#F2A93B">MI</span><span class="av" style="background:#DDF3F3">RA</span><span class="av empty"></span></div><div><b>Echipa Vulpile</b><br><span class="mut" style="font-size:13px">3 din 4 membri</span></div></div>`;
+
+function cardHTML() {
+  if (state === 'next') return `<div class="card ticket">
+    <div class="top" style="background:#222F62"><div class="handle"></div>
+      <div class="small st">Următorul tău joc</div>
+      <div class="ttl st">Harta Pierdută</div>
+      <div class="line st">Luni 30 nov · 22:55 · fii acolo la 22:40</div>
+      <div class="cdrow st"><div class="cd"><span class="n" data-k="d">0</span><small>zile</small></div><div class="cd"><span class="n" data-k="h">0</span><small>ore</small></div><div class="cd"><span class="n" data-k="m">0</span><small>min</small></div><div class="cd"><span class="n" data-k="s">0</span><small>sec</small></div></div>
+    </div>
+    <div class="bot">${team}
+      <div class="row st"><i class="ti ti-map-pin"></i><span>Start la <b>Piața Mare</b>, lângă fântână</span></div>
+      <button class="btn b-navy st" data-msg="Deschide pagina evenimentului">Vezi evenimentul</button>
+      <button class="btn b-out st" data-msg="Deschide echipa">Echipa mea</button>
+    </div></div>`;
+  if (state === 'code') return `<div class="card ticket">
+    <div class="top" style="background:#222F62"><div class="handle"></div>
+      <div class="st"><span class="pill" style="background:#F2A93B;color:#0C092A"><i class="ti ti-clock"></i>A început</span></div>
+      <div class="ttl st" style="margin-top:8px">Harta Pierdută</div>
+      <div class="line st">Mai ai timp să intri în joc</div>
+      <div class="cdrow st"><div class="cd"><span class="n" data-k="cm">42</span><small>min</small></div><div class="cd"><span class="n" data-k="cs">00</span><small>sec</small></div></div>
+    </div>
+    <div class="bot">${team.replace('3 din 4 membri','3 din 4 sunt aici')}
+      <div class="row st"><i class="ti ti-message-circle"></i><span>Codul îl primești de la organizator la <b>Piața Mare</b></span></div>
+      <button class="btn b-tick st" data-msg="Deschide codul de start"><i class="ti ti-key"></i>Introdu codul de start</button>
+    </div></div>`;
+  if (state === 'live') return `<div class="card ticket">
+    <div class="top" style="background:#0C092A"><div class="handle"></div>
+      <div class="st"><span class="pill" style="background:#E5484D;color:#fff"><i class="ti ti-player-play"></i>În joc</span></div>
+      <div class="ttl st" style="margin-top:8px">Harta Pierdută</div>
+      <div class="line st">Misiunea 4 din 6 · Fântâna cu lei</div>
+      <div class="prog st"><span class="d"></span><span class="d"></span><span class="d"></span><span class="c"></span><span></span><span></span></div>
+      <div class="stats st"><div><b>1 h 12 min</b><small>rămase</small></div><div><b>Locul 2</b><small>din 12 echipe</small></div></div>
+    </div>
+    <div class="bot">
+      <div class="row st"><i class="ti ti-circle-check"></i><span>Ultima rezolvată: <b>Turnul Sfatului</b>, acum 6 min</span></div>
+      <button class="btn b-tick st" data-msg="Deschide jocul"><i class="ti ti-player-play"></i>Continuă jocul</button>
+      <button class="btn b-out st" data-msg="Deschide chatul"><i class="ti ti-message-circle"></i>Scrie organizatorului</button>
+    </div></div>`;
+  const r = RECS[recIdx % RECS.length];
+  const tag = recIdx === 0 ? '<i class="ti ti-sparkles"></i>Recomandat pentru tine' : '<i class="ti ti-dice-5"></i>La întâmplare';
+  return `<div class="card">
+    <div style="padding:10px 18px 12px"><div class="handle" style="background:#CFD8E4"></div>
+      <div class="st" style="font-size:15px;font-weight:600">Nu ești înscris la niciun joc</div>
+      <div class="st mut" style="font-size:13px">Ce zici de acesta?</div></div>
+    <div class="cover st" style="background:${r.bg};color:${r.fg}"><span class="pill" style="background:rgba(255,255,255,.92);color:#0C092A">${tag}</span><i class="ti ${r.icon}"></i></div>
+    <div class="bot nocut">
+      <div class="ttl st" style="margin:0">${r.t}</div>
+      <div class="st mut">${r.when}</div>
+      <div class="meta st">${r.meta.map(m => `<span>${m}</span>`).join('')}</div>
+      <div class="two st"><button class="btn b-navy" data-msg="Deschide pagina evenimentului">Vezi evenimentul</button><button class="btn b-out" id="reroll"><i class="ti ti-dice-5 dice"></i>Alt joc</button></div>
+      <button class="btn b-link st" data-msg="Deschide Evenimente">Toate evenimentele</button>
+    </div></div>`;
+}
+
+function prep(card) {
+  card.querySelectorAll('.st').forEach((e, i) => e.style.setProperty('--i', i));
+  const top = card.querySelector('.top');
+  if (card.classList.contains('ticket') && top) {
+    const cut = () => card.style.setProperty('--cut', top.offsetHeight + 'px');
+    cut(); new ResizeObserver(cut).observe(top);
+  }
+  tick(true);
+}
+
+function pad(n) { return String(n).padStart(2, '0'); }
+function setNum(k, v) {
+  const el = document.querySelector(`.n[data-k="${k}"]`);
+  if (!el || el.textContent === v) return;
+  el.textContent = v; el.classList.remove('roll'); void el.offsetWidth; el.classList.add('roll');
+}
+function tick(first) {
+  if (state === 'next') {
+    let s = Math.max(0, Math.floor((target - Date.now()) / 1000));
+    setNum('d', String(Math.floor(s / 86400))); setNum('h', pad(Math.floor(s % 86400 / 3600))); setNum('m', pad(Math.floor(s % 3600 / 60))); setNum('s', pad(s % 60));
+  } else if (state === 'code') {
+    let s = Math.max(0, Math.floor((codeEnd - Date.now()) / 1000));
+    setNum('cm', pad(Math.floor(s / 60))); setNum('cs', pad(s % 60));
+  }
+}
+
+const calm = () => $('#calm').checked;
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+async function open() {
+  if (busy) return; busy = true; isOpen = true;
+  const key = $('#key'), ic = $('#keyIcon');
+  navigator.vibrate?.(15);
+  key.classList.add('turn');
+  await wait(calm() ? 0 : 220);
+  ic.className = 'ti ti-x'; key.classList.remove('turn'); key.classList.add('open');
+  $('#ov').classList.add('on');
+  const stage = $('#stage');
+  stage.innerHTML = cardHTML();
+  const card = stage.querySelector('.card');
+  if (calm()) { stage.classList.add('calm'); card.classList.add('a-fade'); prep(card); }
+  else {
+    stage.classList.remove('calm');
+    if (anim === 'deck') { card.style.visibility = 'hidden'; prep(card); await deck(card); }
+    else {
+      if (anim === 'map') { card.insertAdjacentHTML('afterbegin', '<div class="crease"></div>'); }
+      card.classList.add(anim === 'map' ? 'a-map' : 'a-key'); prep(card);
+      await wait(anim === 'map' ? 380 : 260);
+    }
+    card.classList.add('in');
+  }
+  bindCard(card);
+  timer = setInterval(tick, 1000);
+  busy = false;
+}
+
+async function deck(card) {
+  const stage = $('#stage'), h = card.offsetHeight;
+  const gs = [0, 1, 2].map(() => { const g = document.createElement('div'); g.className = 'ghost'; g.style.height = h + 'px'; g.innerHTML = '<div><i class="ti ti-key"></i>TeamXperience</div>'; stage.appendChild(g); return g; });
+  const set = (g, x, y, r, s = 1) => { g.style.opacity = 1; g.style.transform = `translate(${x}px,${y}px) rotate(${r}deg) scale(${s})`; };
+  await wait(20);
+  set(gs[0], -54, 14, -9); set(gs[1], 0, 0, 0); set(gs[2], 54, 14, 9);
+  await wait(420);
+  set(gs[0], 54, 14, 9); set(gs[2], -54, 14, -9); set(gs[1], 0, -16, 0, 1.03);
+  await wait(320);
+  set(gs[0], 0, 0, 0); set(gs[2], 0, 0, 0); set(gs[1], 0, -10, 0, 1.03);
+  await wait(300);
+  gs[0].style.opacity = 0; gs[2].style.opacity = 0;
+  gs[1].style.transition = 'transform .18s ease-in'; gs[1].style.transform = 'rotateY(90deg)';
+  await wait(180);
+  gs.forEach(g => g.remove());
+  card.style.visibility = ''; card.classList.add('a-flip');
+  await wait(120);
+}
+
+async function close() {
+  if (busy || !isOpen) return; busy = true;
+  clearInterval(timer);
+  const card = $('#stage .card');
+  if (card) { card.classList.remove('a-key', 'a-map', 'a-flip', 'a-fade'); card.style.transform = ''; void card.offsetWidth; card.classList.add('a-out'); }
+  $('#ov').classList.remove('on');
+  const key = $('#key'), ic = $('#keyIcon');
+  key.classList.remove('open'); ic.className = 'ti ti-key';
+  await wait(230);
+  $('#stage').innerHTML = ''; isOpen = false; busy = false;
+}
+
+function toast(msg) { const t = $('#toast'); t.textContent = 'În aplicație: ' + msg; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 1600); }
+
+async function reroll(card) {
+  const btn = $('#reroll'); btn.parentElement.classList.add('spin');
+  card.style.transition = 'transform .18s ease-in'; card.style.transform = 'rotateY(90deg)';
+  await wait(190);
+  recIdx = recIdx + 1 + Math.floor(Math.random() * (RECS.length - 1));
+  if (recIdx % RECS.length === 0) recIdx++;
+  const stage = $('#stage'); stage.innerHTML = cardHTML();
+  const c = stage.querySelector('.card'); prep(c);
+  c.classList.add('a-flip', 'in'); bindCard(c);
+  navigator.vibrate?.(10);
+}
+
+function bindCard(card) {
+  card.addEventListener('click', e => {
+    e.stopPropagation();
+    if (e.target.closest('#reroll')) return reroll(card);
+    const b = e.target.closest('[data-msg]'); if (b) toast(b.dataset.msg);
+  });
+  // drag down to close
+  let y0 = null, dy = 0;
+  card.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; y0 = e.clientY; dy = 0; card.style.transition = 'none'; card.setPointerCapture(e.pointerId); });
+  card.addEventListener('pointermove', e => { if (y0 === null) return; dy = Math.max(0, e.clientY - y0); card.style.animation = 'none'; card.style.transform = `translateY(${dy}px)`; });
+  card.addEventListener('pointerup', () => { if (y0 === null) return; y0 = null; card.style.transition = 'transform .2s'; if (dy > 90) { card.style.animation = ''; close(); } else card.style.transform = ''; });
+}
+
+$('#key').addEventListener('click', () => isOpen ? close() : open());
+$('#ov').addEventListener('click', close);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+function seg(id, fn) {
+  $(id).addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    $(id).querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    fn(b.dataset.v);
+  });
+}
+async function replay() { if (isOpen) { await close(); await wait(120); } open(); }
+seg('#segState', v => {
+  state = v; recIdx = 0; codeEnd = Date.now() + 42 * 6e4;
+  $('#key').classList.toggle('live', v === 'live');
+  $('#keyLabel').textContent = v === 'live' ? 'În joc' : 'Joacă';
+  replay();
+});
+seg('#segAnim', v => { anim = v; replay(); });
+</script>
+</body></html>

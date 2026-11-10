@@ -8,7 +8,7 @@ import 'home_preview.dart';
 import 'finish_preview.dart';
 import 'location_puzzle_preview.dart';
 import 'photo_puzzle_preview.dart';
-import 'play_tab_preview.dart';
+import 'play_popup_preview.dart';
 import 'package:teamxperience/features/admin/create_event/common_widgets/pin_picker_screen.dart';
 
 import 'live_room_preview.dart';
@@ -39,7 +39,7 @@ class ShellPreviewsLauncher extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             AppButton(label: 'Evenimente', onPressed: () => _open(context, const EventsTabPreview())),
             const SizedBox(height: AppSpacing.sm),
-            AppButton(label: 'Joacă', onPressed: () => _open(context, const PlayTabPreview())),
+            AppButton(label: 'Joacă', onPressed: () => _open(context, const PlayPopupPreview())),
             const SizedBox(height: AppSpacing.sm),
             AppButton(label: 'Cod de start', onPressed: () => _open(context, const StartCodePreview())),
             const SizedBox(height: AppSpacing.sm),

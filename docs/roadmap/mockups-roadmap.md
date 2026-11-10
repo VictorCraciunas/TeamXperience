@@ -231,7 +231,7 @@ that:
    - active members (`presence`)
    - last mission solved (`missionCompletedAt`)
 3. `LeaderboardService.rank(teams)`: a pure function. Sort by finished first, then missions done, then the time of the last mission. "Locul 2 din 12" and the admin board use the same function.
-4. Joacă tab target, also pure: no event → explain and link to Evenimente; registered event later → countdown; within the enter window → start code; started → the game. The tab label becomes "În joc" while live.
+4. Joacă target, also pure: no event → suggest one ("Alt joc" picks another) and link to Evenimente; registered event later → countdown; within the enter window → start code; started → the game. The tab label becomes "În joc" while live. Since mockup 10 (2026-11-10) Joacă is a pop-up over the current tab, not a page.
 5. User stats (`3 jocuri · 12,4 km · Explorator`) are read from `users/{uid}.stats`, written by L7.
 
 ## L5: Starting the game (mockup 05)

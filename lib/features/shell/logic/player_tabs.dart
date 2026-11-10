@@ -12,7 +12,8 @@ abstract class PlayerTab {
 
 /// The bottom bar of mockups 02, 03 and 08. While a game is on, the middle
 /// tab reads "În joc" with a play icon and turns red.
-List<AppNavItem> playerNavItems({required bool live}) => [
+/// [open] marks the middle tab while the Joacă pop-up is shown.
+List<AppNavItem> playerNavItems({required bool live, bool open = false}) => [
       const AppNavItem(icon: TablerIcons.home, label: 'Acasă'),
       const AppNavItem(icon: TablerIcons.map_2, label: 'Evenimente'),
       AppNavItem(
@@ -20,6 +21,7 @@ List<AppNavItem> playerNavItems({required bool live}) => [
         label: live ? 'În joc' : 'Joacă',
         raised: true,
         live: live,
+        open: open,
       ),
       const AppNavItem(icon: TablerIcons.users_group, label: 'Echipe'),
       const AppNavItem(icon: TablerIcons.user, label: 'Profil'),
