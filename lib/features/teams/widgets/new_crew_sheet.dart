@@ -114,7 +114,7 @@ class _NewCrewSheetState extends State<NewCrewSheet> {
                 InviteCodeCard(
                   code: code,
                   caption: 'Gata. Trimite codul coechipierilor',
-                  shareLabel: 'WhatsApp',
+                  shareLabel: 'Trimite',
                   copyLabel: 'Copiază',
                   onShare: () => widget.onShare(_madeName, code),
                   onCopy: () => widget.onCopy(code),

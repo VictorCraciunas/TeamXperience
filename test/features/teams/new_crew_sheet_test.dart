@@ -52,7 +52,7 @@ void main() {
     expect(find.text('VLP-482'), findsOneWidget);
     expect(find.text('Vulpile Argintii'), findsOneWidget);
 
-    await tester.tap(find.text('WhatsApp'));
+    await tester.tap(find.text('Trimite'));
     expect(shared, ['Vulpile Argintii VLP-482']);
   });
 

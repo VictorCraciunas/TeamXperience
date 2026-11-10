@@ -481,7 +481,7 @@ void main() {
       expect(h.routes, ['pop register']);
     });
 
-    testWidgets('after the team is made it opens the event page afresh', (
+    testWidgets('after the team is made it goes back to the event page, which reloads', (
       tester,
     ) async {
       final h = _Harness(tester);
@@ -493,7 +493,7 @@ void main() {
       h.controller.close();
       await tester.pumpAndSettle();
 
-      expect(h.routes, ['pop register', 'push ${Routes.eventDetails}']);
+      expect(h.routes, ['pop register']);
     });
   });
 }

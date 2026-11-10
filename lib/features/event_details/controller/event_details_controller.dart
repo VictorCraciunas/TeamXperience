@@ -73,11 +73,21 @@ class EventDetailsController extends ChangeNotifier {
     if (!_disposed) notifyListeners();
   }
 
+  /// Looks the team up again, keeping the bar from offering sign-up meanwhile.
+  Future<void> reload() async {
+    if (_disposed) return;
+    user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    _teamLoading = !isAdmin && (user?.isRegisterToEvent(event.eventId) ?? false);
+    notifyListeners();
+    await load();
+  }
+
   void onSignupAction(SignupAction action) {
     final team = _team;
     switch (action) {
       case SignupAction.register:
-        Navigator.pushNamed(context, Routes.registerTeam, arguments: event);
+        // Back from sign-up the team may exist now: look it up again.
+        Navigator.pushNamed(context, Routes.registerTeam, arguments: event).then((_) => reload());
       case SignupAction.teamDetails:
         Navigator.pushNamed(context, Routes.registerTeamDetails, arguments: {'event': event, 'user': user});
       case SignupAction.enterCode:

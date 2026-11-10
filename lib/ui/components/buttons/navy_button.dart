@@ -40,28 +40,32 @@ class NavyButton extends StatelessWidget {
           child: InkWell(
             borderRadius: radius,
             onTap: isLoading ? null : onPressed,
-            child: Padding(
-              padding: const EdgeInsets.all(11),
-              child: Center(
-                heightFactor: 1,
-                child:
-                    isLoading
-                        ? SizedBox(
-                          width: 17,
-                          height: 17,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: foreground,
+            // At least 44 px tall, the app's smallest main control.
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 44),
+              child: Padding(
+                padding: const EdgeInsets.all(11),
+                child: Center(
+                  heightFactor: 1,
+                  child:
+                      isLoading
+                          ? SizedBox(
+                            width: 17,
+                            height: 17,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: foreground,
+                            ),
+                          )
+                          : Text(
+                            label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTextStyles.cardTitle(
+                              context,
+                            ).copyWith(color: foreground),
                           ),
-                        )
-                        : Text(
-                          label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.cardTitle(
-                            context,
-                          ).copyWith(color: foreground),
-                        ),
+                ),
               ),
             ),
           ),
