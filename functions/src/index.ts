@@ -11,7 +11,7 @@ if (getApps().length === 0) {
   initializeApp();
 }
 
-export {checkTeamName, createCrew, joinTeam, previewInvite, registerTeam} from "./teams/callables";
+export {checkTeamName, createCrew, joinTeam, previewInvite, registerTeam, renameTeam} from "./teams/callables";
 export {closeExpiredEvents, onEventStopped} from "./results/on_event_finished";
 export {sendNotification} from "./notifications/callables";
 

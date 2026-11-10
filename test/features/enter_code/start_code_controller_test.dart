@@ -51,6 +51,29 @@ void main() {
     c.dispose();
   });
 
+  test('when the team is renamed under it, it finds the team again and follows that', () async {
+    final c = make();
+    await c.load();
+    found = Team(name: 'Lupii', teamMembers: '', captainName: 'Victor', phoneNumber: '', captainEmail: '');
+    stream.addError(StateError('the team document is gone'));
+    await Future<void>.delayed(Duration.zero);
+    await Future<void>.delayed(Duration.zero);
+    expect(c.team?.name, 'Lupii');
+    expect(log, ['watch:Vulpile', 'watch:Lupii']);
+    c.dispose();
+  });
+
+  test('a stream error with the team unchanged does not loop', () async {
+    final c = make();
+    await c.load();
+    stream.addError(StateError('offline'));
+    await Future<void>.delayed(Duration.zero);
+    await Future<void>.delayed(Duration.zero);
+    expect(log, ['watch:Vulpile']);
+    expect(c.team?.name, 'Vulpile');
+    c.dispose();
+  });
+
   test('a wrong code is refused and kept', () async {
     final c = make();
     await c.load();

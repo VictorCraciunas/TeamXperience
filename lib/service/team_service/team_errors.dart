@@ -1,6 +1,6 @@
 import 'package:cloud_functions/cloud_functions.dart';
 
-/// Why a team callable failed. The first 14 are the `reason` values the
+/// Why a team callable failed. The first 16 are the `reason` values the
 /// functions send; `network` and `unknown` are made on the app side.
 enum TeamError {
   notSignedIn,
@@ -17,6 +17,8 @@ enum TeamError {
   teamFull,
   alreadyMember,
   rulesNotAccepted,
+  teamNotFound,
+  gameStarted,
   network,
   unknown;
 
@@ -75,6 +77,10 @@ String teamErrorText(TeamError e, {String? teamName}) {
       return 'Evenimentul nu mai există';
     case TeamError.rulesNotAccepted:
       return 'Acceptă regulamentul ca să continui';
+    case TeamError.teamNotFound:
+      return 'Echipa nu mai există';
+    case TeamError.gameStarted:
+      return 'Jocul a început, numele nu se mai schimbă';
     case TeamError.notSignedIn:
       return 'Intră în cont din nou';
     case TeamError.network:

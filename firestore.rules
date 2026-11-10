@@ -192,10 +192,14 @@ service cloud.firestore {
           }
 
           allow read: if inThisTeam() || isAdmin();
-          allow create: if isAdmin()
-            || (inThisTeam()
-                && request.resource.data.sender == 'USER'
-                && !('announcement' in request.resource.data));
+          // Only into a team that exists: a renamed team's old chat is never
+          // read. 'moved' is the server's mark for copied messages.
+          allow create: if exists(/databases/$(database)/documents/events/$(eventId)/teams/$(teamId))
+            && (isAdmin()
+              || (inThisTeam()
+                  && request.resource.data.sender == 'USER'
+                  && !('announcement' in request.resource.data)
+                  && !('moved' in request.resource.data)));
           allow update, delete: if isAdmin();
         }
       }

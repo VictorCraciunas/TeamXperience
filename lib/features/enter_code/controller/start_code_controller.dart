@@ -62,7 +62,12 @@ class StartCodeController extends ChangeNotifier {
     _team = found;
     notifyListeners();
     if (found == null) return;
-    _subscription = _watchTeam(found.name).listen(
+    _follow(found.name);
+  }
+
+  void _follow(String name) {
+    _subscription?.cancel();
+    _subscription = _watchTeam(name).listen(
       (team) {
         if (_disposed) return;
         final startedNow = team.hasStarted && !started;
@@ -73,8 +78,26 @@ class StartCodeController extends ChangeNotifier {
         }
         notifyListeners();
       },
-      onError: (Object e) => debugPrint('Start code: team stream failed: $e'),
+      onError: (Object e) {
+        debugPrint('Start code: team stream failed: $e');
+        _findAgain(name);
+      },
     );
+  }
+
+  /// The followed team is gone, most likely renamed by its captain: looks it
+  /// up again by the player and follows the new one.
+  Future<void> _findAgain(String lost) async {
+    Team? found;
+    try {
+      found = await _findTeam();
+    } catch (e) {
+      debugPrint('Start code: team lookup failed: $e');
+    }
+    if (_disposed || found == null || found.name == lost) return;
+    _team = found;
+    notifyListeners();
+    _follow(found.name);
   }
 
   void setCode(String code) {

@@ -71,10 +71,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     final uid = _uid;
     try {
       switch (target) {
-        case OpenChat(:final eventId, :final teamName):
+        case OpenChat(:final eventId):
           if (uid == null) return;
           final team = await TeamService().getUserTeamForEvent(eventId, uid);
-          if (!mounted || team == null || team.name != teamName) return;
+          // By the player, not the name: the team may have been renamed since.
+          if (!mounted || team == null) return;
           await Navigator.pushNamed(context, Routes.chatScreen, arguments: {'eventId': eventId, 'team': team});
         case OpenMemory(:final eventId):
           if (uid == null) return;

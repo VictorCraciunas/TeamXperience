@@ -1,3 +1,4 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/features/team_details/controller/team_details_controller.dart';
 import 'package:teamxperience/model/event.dart';
@@ -8,11 +9,16 @@ import 'package:teamxperience/service/team_service/team_service.dart';
 
 class _FakeTeams extends Fake implements TeamService {
   String phone = '0722 000 000';
+  String name = 'Vulpile';
+  bool started = false;
+  Object? renameFailure;
+  final renamed = <({String eventId, String from, String to})>[];
   Object? saveFailure;
   final saved = <({String eventId, String teamName, String phone})>[];
 
   Team get team => Team(
-    name: 'Vulpile',
+    name: name,
+    hasStarted: started,
     teamMembers: '',
     captainName: 'Victor C',
     phoneNumber: phone,
@@ -39,6 +45,15 @@ class _FakeTeams extends Fake implements TeamService {
 
   @override
   Future<List<Team>> getTeams(String eventId) async => [team];
+
+  @override
+  Future<String> renameTeam(String eventId, String teamName, String newName) async {
+    final error = renameFailure;
+    if (error != null) throw error;
+    renamed.add((eventId: eventId, from: teamName, to: newName));
+    name = newName;
+    return newName;
+  }
 
   @override
   Future<void> updateTeamPhone(
@@ -73,9 +88,100 @@ Future<TeamControllerDetails> _controller(_FakeTeams teams) async {
 }
 
 void main() {
-  test('editing fills in only the phone', () async {
+  group('renaming', () {
+    test('the captain renames the team', () async {
+      final teams = _FakeTeams();
+      final controller = await _controller(teams);
+      controller.nameController.text = '  Lupii ';
+
+      expect(await controller.save(), isNull);
+
+      expect(teams.renamed, [(eventId: 'e1', from: 'Vulpile', to: 'Lupii')]);
+      expect(teams.saved, isEmpty, reason: 'the phone did not change');
+      expect(controller.team?.name, 'Lupii');
+      controller.disposeControllers();
+    });
+
+    test('a refused name says why and saves nothing', () async {
+      final teams = _FakeTeams()
+        ..renameFailure = FirebaseFunctionsException(message: 'nameTaken', code: 'failed-precondition', details: {'reason': 'nameTaken'});
+      final controller = await _controller(teams);
+      controller.nameController.text = 'Ursii';
+
+      expect(await controller.save(), 'Numele e luat');
+      expect(teams.saved, isEmpty);
+      controller.disposeControllers();
+    });
+
+    test('a rename that went through before an error shows the new name, so a retry does not resend the old one', () async {
+      final teams = _FakeTeams();
+      final controller = await _controller(teams);
+      teams.name = 'Lupii';
+      teams.renameFailure = FirebaseFunctionsException(message: 'deadline', code: 'deadline-exceeded');
+      controller.nameController.text = 'Lupii';
+
+      expect(await controller.save(), isNotNull);
+      expect(controller.team?.name, 'Lupii');
+      controller.disposeControllers();
+    });
+
+    test('a new name with the phone unchanged writes only the name', () async {
+      final teams = _FakeTeams();
+      final controller = await _controller(teams);
+      controller.nameController.text = 'Lupii';
+
+      expect(await controller.save(), isNull);
+      expect(teams.renamed, hasLength(1));
+      expect(teams.saved, isEmpty);
+      controller.disposeControllers();
+    });
+
+    test('the name saved but the phone not: it says so', () async {
+      final teams = _FakeTeams()..saveFailure = Exception('offline');
+      final controller = await _controller(teams);
+      controller.nameController.text = 'Lupii';
+      controller.phoneController.text = '0733 111 111';
+
+      expect(await controller.save(), 'Numele s-a schimbat, dar telefonul nu s-a salvat.');
+      expect(controller.team?.name, 'Lupii');
+      controller.disposeControllers();
+    });
+
+    test('a name that is not valid is not sent', () async {
+      final teams = _FakeTeams();
+      final controller = await _controller(teams);
+      controller.nameController.text = 'x';
+
+      expect(await controller.save(), 'Numele are 2–30 de litere, fără /');
+      expect(teams.renamed, isEmpty);
+      controller.disposeControllers();
+    });
+
+    test('only the captain, and only before the game starts', () async {
+      final captain = await _controller(_FakeTeams());
+      expect(captain.canRename(DateTime(2029)), isTrue);
+      expect(captain.canRename(DateTime(2030, 1, 1)), isFalse, reason: 'the event has started');
+      captain.disposeControllers();
+
+      final started = await _controller(_FakeTeams()..started = true);
+      expect(started.canRename(DateTime(2029)), isFalse);
+      started.disposeControllers();
+
+      final other = TeamControllerDetails(
+        AppUser(email: 'a@example.com', firstName: 'Ana', lastName: 'M', uid: 'u2', fcmToken: ''),
+        Event(eventId: 'e1', name: 'Eveniment', dateEvent: DateTime(2030, 1, 1)),
+        teamService: _FakeTeams(),
+      );
+      await other.initializeTeam();
+      expect(other.canRename(DateTime(2029)), isFalse);
+      other.disposeControllers();
+    });
+  });
+
+  test('editing fills in the name and the phone', () async {
     final controller = await _controller(_FakeTeams());
     expect(controller.phoneController.text, '0722 000 000');
+    expect(controller.nameController.text, 'Vulpile');
     controller.disposeControllers();
   });
 
@@ -86,7 +192,8 @@ void main() {
       final controller = await _controller(teams);
       controller.phoneController.text = ' 0733 111 111 ';
 
-      expect(await controller.savePhone(), isTrue);
+      expect(await controller.save(), isNull);
+      expect(teams.renamed, isEmpty, reason: 'the name did not change');
 
       expect(teams.saved, [
         (eventId: 'e1', teamName: 'Vulpile', phone: '0733 111 111'),
@@ -101,7 +208,7 @@ void main() {
     final controller = await _controller(teams);
     controller.phoneController.text = '0733 111 111';
 
-    expect(await controller.savePhone(), isFalse);
+    expect(await controller.save(), 'Nu s-au putut salva modificările.');
 
     expect(teams.saved, isEmpty);
     expect(controller.team?.phoneNumber, '0722 000 000');

@@ -58,6 +58,7 @@ class _HomeState extends State<Home> {
 
   /// The team of the next game, loaded once per hero event.
   String? _extrasFor;
+  bool _wasVisible = false;
   Team? _heroTeam;
 
   @override
@@ -156,6 +157,10 @@ class _HomeState extends State<Home> {
     // On screen: Acasă is the current tab and no page is pushed over the shell.
     final visible =
         context.watch<ShellController>().index == PlayerTab.home && (ModalRoute.of(context)?.isCurrent ?? true);
+    // Back on Acasă: the team may have changed meanwhile (a rename), so the
+    // next-game card looks it up again.
+    if (visible && !_wasVisible) _extrasFor = null;
+    _wasVisible = visible;
     return Scaffold(
       backgroundColor: context.colors.page,
       body: Consumer3<EventList, NewsList, UserEventsProvider>(

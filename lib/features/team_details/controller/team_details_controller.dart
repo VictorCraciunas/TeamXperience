@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:teamxperience/model/user.dart';
+import 'package:teamxperience/service/team_service/team_errors.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
 import 'package:teamxperience/ui/components/feedback/snackbars.dart';
 import 'package:teamxperience/utils/invite_code.dart';
+import 'package:teamxperience/utils/team_names.dart';
 
 import '../../../model/event.dart';
 import '../../../model/team.dart';
@@ -21,14 +23,14 @@ class TeamControllerDetails {
   bool isEditing = false;
   bool isSaving = false;
 
-  /// The only thing that can be edited here: the captain's phone. The name
-  /// and the members belong to the team's document, which is not renamed or
-  /// rewritten from the app.
+  /// The captain's phone, and the team's name while [canRename].
   late TextEditingController phoneController;
+  late TextEditingController nameController;
 
   TeamControllerDetails(this.user, this.event, {TeamService? teamService})
     : teamService = teamService ?? TeamService() {
     phoneController = TextEditingController();
+    nameController = TextEditingController();
     initializeTeam();
   }
 
@@ -60,27 +62,64 @@ class TeamControllerDetails {
     final currentTeam = team;
     if (currentTeam == null) return;
     phoneController.text = currentTeam.phoneNumber;
+    nameController.text = currentTeam.name;
   }
 
   void disposeControllers() {
     phoneController.dispose();
+    nameController.dispose();
   }
 
-  /// Saves the phone. False when it could not be saved.
-  Future<bool> savePhone() async {
-    final currentTeam = team;
-    if (currentTeam == null) return false;
+  /// The captain may rename the team until the game starts.
+  bool canRename([DateTime? now]) {
+    final current = team;
+    final player = user;
+    if (current == null || player == null || current.captainUid != player.uid || current.hasStarted) return false;
+    final start = event.dateEvent;
+    return start == null || (now ?? DateTime.now()).isBefore(start);
+  }
 
+  /// Saves the edits: a new name first (the server moves the team), then the
+  /// phone under the name the team has now. Null once saved, else what to say.
+  Future<String?> save() async {
+    final currentTeam = team;
+    if (currentTeam == null) return 'Nu s-au putut salva modificările.';
+
+    var name = currentTeam.name;
+    var renamed = false;
+    final wanted = cleanTeamName(nameController.text);
+    if (canRename() && wanted != name) {
+      if (teamNameProblem(wanted) != null) return teamErrorText(TeamError.nameInvalid);
+      try {
+        name = await teamService.renameTeam(event.eventId, name, wanted);
+        renamed = true;
+      } catch (e) {
+        // It may have gone through before the answer was lost: show the team
+        // as it is now, so a retry starts from the right name.
+        team = await _fresh(currentTeam);
+        return teamErrorText(TeamError.fromException(e));
+      }
+    }
+
+    final phone = phoneController.text.trim();
+    if (phone != currentTeam.phoneNumber) {
+      try {
+        await teamService.updateTeamPhone(event.eventId, name, phone);
+      } catch (e) {
+        team = await _fresh(currentTeam);
+        return renamed ? 'Numele s-a schimbat, dar telefonul nu s-a salvat.' : 'Nu s-au putut salva modificările.';
+      }
+    }
+    team = await _fresh(currentTeam);
+    return null;
+  }
+
+  /// The team as saved now, or [fallback] when it cannot be read.
+  Future<Team> _fresh(Team fallback) async {
     try {
-      await teamService.updateTeamPhone(
-        event.eventId,
-        currentTeam.name,
-        phoneController.text.trim(),
-      );
-      team = await _getTeam() ?? currentTeam;
-      return true;
-    } catch (e) {
-      return false;
+      return await _getTeam() ?? fallback;
+    } catch (_) {
+      return fallback;
     }
   }
 

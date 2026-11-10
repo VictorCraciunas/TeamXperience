@@ -5,6 +5,7 @@ import {createCrew as createCrewHandler} from "./create_crew";
 import {joinTeam as joinTeamHandler} from "./join_team";
 import {previewInvite as previewInviteHandler} from "./preview_invite";
 import {registerTeam as registerTeamHandler} from "./register_team";
+import {renameTeam as renameTeamHandler} from "./rename_team";
 import {refuse} from "./shared";
 
 /** The caller's uid; a signed-out call is refused. */
@@ -28,3 +29,6 @@ export const previewInvite = onCall((request) =>
 
 export const joinTeam = onCall((request) =>
   joinTeamHandler(getFirestore(), callerOf(request), request.data ?? {}));
+
+export const renameTeam = onCall((request) =>
+  renameTeamHandler(getFirestore(), callerOf(request), request.data ?? {}));
