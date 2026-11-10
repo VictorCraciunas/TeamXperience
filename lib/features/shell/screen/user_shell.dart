@@ -10,7 +10,10 @@ import 'package:teamxperience/features/events_tab/screen/events_tab_screen.dart'
 import 'package:teamxperience/features/home/logic/hero_from_providers.dart';
 import 'package:teamxperience/features/home/screen/home.dart';
 import 'package:teamxperience/features/play_tab/logic/play_tab_state.dart';
-import 'package:teamxperience/features/play_tab/screen/play_tab_screen.dart';
+import 'package:teamxperience/features/play_tab/controller/play_popup_controller.dart';
+import 'package:teamxperience/features/play_tab/widgets/play_popup.dart';
+import 'package:teamxperience/features/shell/logic/play_popup_routes.dart';
+import 'package:teamxperience/service/team_service/team_service.dart';
 import 'package:teamxperience/features/profile/screen/profile_screen.dart';
 import 'package:teamxperience/features/shell/logic/player_tabs.dart';
 import 'package:teamxperience/features/teams/screen/teams_screen.dart';
@@ -20,7 +23,8 @@ import 'package:teamxperience/ui/components/navigation/app_shell.dart';
 import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 
 /// The player's tab shell of the mockups: Acasă, Evenimente, Joacă (raised,
-/// "În joc" while a game is on), Echipe and Profil.
+/// "În joc" while a game is on), Echipe and Profil. Joacă is not a page: it
+/// opens the Joacă pop-up over the current tab (mockup 10).
 class UserShell extends StatefulWidget {
   const UserShell({super.key});
 
@@ -31,14 +35,42 @@ class UserShell extends StatefulWidget {
 class _UserShellState extends State<UserShell> {
   final ShellController _controller = ShellController(5);
   UserDocWatch? _userWatch;
+  PlayPopupController? _popup;
+  (bool, bool) _popupShown = (false, false);
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _popup ??= _makePopup();
     if (_userWatch != null) return;
     final users = context.read<UserProvider>();
     final uid = profileDocId(users.firebaseUser?.uid, users.currentUser?.uid ?? '');
     if (uid != null) _userWatch = UserDocWatch(UserRepo().streamUser(uid), users.updateProfile);
+  }
+
+  PlayPopupController _makePopup() {
+    final teams = TeamService();
+    final users = context.read<UserProvider>();
+    return PlayPopupController(
+      userEvents: context.read<UserEventsProvider>(),
+      eventList: context.read<EventList>(),
+      teamFor: (event) async {
+        final uid = users.currentUser?.uid;
+        return uid == null ? null : teams.getUserTeamForEvent(event.eventId, uid);
+      },
+      teams: teams.getStreamTeams,
+      countTeams: teams.countTeams,
+    )..addListener(_popupChanged);
+  }
+
+  /// The pop-up ticks every second; the shell only rebuilds when it opens,
+  /// starts closing or closes.
+  void _popupChanged() {
+    final popup = _popup;
+    if (popup == null || !mounted) return;
+    final shown = (popup.isOpen, popup.isClosing);
+    if (shown == _popupShown) return;
+    setState(() => _popupShown = shown);
   }
 
   /// The game's end is time-based, so the live flag is re-read every 30 s.
@@ -50,12 +82,18 @@ class _UserShellState extends State<UserShell> {
   void initState() {
     super.initState();
     _tick;
+    _controller.addListener(_tabChanged);
   }
+
+  /// Another tab closes the pop-up.
+  void _tabChanged() => _popup?.requestClose();
 
   @override
   void dispose() {
     _tick.cancel();
     _userWatch?.cancel();
+    _popup?.dispose();
+    _controller.removeListener(_tabChanged);
     _controller.dispose();
     super.dispose();
   }
@@ -71,11 +109,14 @@ class _UserShellState extends State<UserShell> {
         ),
       ),
     );
-    final items = playerNavItems(live: live);
-    final screens = <WidgetBuilder>[
+    final popup = _popup;
+    if (popup == null) return const SizedBox.shrink();
+    final (open, closing) = _popupShown;
+    final items = playerNavItems(live: live, open: open && !closing);
+    final screens = <WidgetBuilder?>[
       (_) => const Home(),
       (_) => const EventsTabScreen(),
-      (_) => const PlayTabScreen(),
+      null,
       (_) => const TeamsScreen(),
       (_) => const ProfileScreen(),
     ];
@@ -84,7 +125,23 @@ class _UserShellState extends State<UserShell> {
       value: _controller,
       child: AppShell(
         controller: _controller,
-        tabs: [for (var i = 0; i < items.length; i++) AppShellTab(item: items[i], builder: screens[i])],
+        overlay: open
+            ? PlayPopup(
+                controller: popup,
+                actions: playPopupRoutes(
+                  navigator: Navigator.of(context),
+                  user: () => context.read<UserProvider>().currentUser,
+                  browseAll: () => _controller.select(PlayerTab.events),
+                ),
+              )
+            : null,
+        onOverlayBack: popup.requestClose,
+        tabs: [
+          for (var i = 0; i < items.length; i++)
+            i == PlayerTab.play
+                ? AppShellTab(item: items[i], onTap: popup.toggle)
+                : AppShellTab(item: items[i], builder: screens[i]),
+        ],
       ),
     );
   }

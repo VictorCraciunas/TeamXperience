@@ -86,9 +86,16 @@ class _AppShellState extends State<AppShell> {
             resizeToAvoidBottomInset: false,
             // A raised tab sticks up above the bar: the pages end above it, so
             // their last row is never under it.
-            body: Padding(
-              padding: EdgeInsets.only(bottom: raised ? AppBottomNav.raisedRise : 0),
-              child: overlay == null ? pages : Stack(fit: StackFit.expand, children: [pages, overlay]),
+            // The overlay reaches down to the bar; the raised circle stays on top.
+            body: Stack(
+              fit: StackFit.expand,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(bottom: raised ? AppBottomNav.raisedRise : 0),
+                  child: pages,
+                ),
+                if (overlay != null) overlay,
+              ],
             ),
             bottomNavigationBar: AppBottomNav(
               currentIndex: _controller.index,
