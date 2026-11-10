@@ -21,7 +21,7 @@ Verify before fixing; none of these were reproduced. Roughly ordered by impact.
 - `SignUpService.register/signInGoogle` don't await `saveUser`.
 - `TeamService.updateTeamLocation` doesn't await; `LocationService` swallows all errors; tracking only while the game screen is alive and app in foreground.
 - `UserEventsProvider.loadActiveEvent` runs one Firestore query per past registered event on every `UserProvider`/`EventList` notification.
-- `EventList.liveEvents` / `Event.isOver` don't trigger rebuilds when the 3 h mark passes.
+- `EventList.liveEvents` / `Event.isOver` don't trigger rebuilds when the event's end passes.
 - Facebook sign-in buttons are non-functional placeholders.
 - Errors: repos throw generic `Exception('Failed to …')` and drop the cause; some controllers show raw `e.toString()` to users.
 - Stray debug `print`s remain in files this redesign did not touch (`avoid_print` lint, e.g. `AuthUtil`, `EventGameController`, `AddMissionsController`).

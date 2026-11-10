@@ -48,17 +48,24 @@ export function memberOf(uid: string, user: DocumentData | undefined): Member {
   };
 }
 
-export const MAX_DURATION_MS = 3 * 60 * 60 * 1000;
+/** How long a game lasts when the event has no duration (older events). */
+export const DEFAULT_PLAY_MS = 3 * 60 * 60 * 1000;
+
+/** How long the game lasts: the event's duration in minutes, else three hours. */
+export function playTimeMs(event: DocumentData | undefined): number {
+  const minutes = event?.durationMinutes;
+  return typeof minutes === "number" && minutes > 0 ? minutes * 60000 : DEFAULT_PLAY_MS;
+}
 
 export function toDate(value: unknown): Date | null {
   return value instanceof Timestamp ? value.toDate() : null;
 }
 
-/** Stopped, or three hours after its start. */
+/** Stopped, or its duration has passed since the start. */
 export function eventIsOver(event: DocumentData, now: Date): boolean {
   if (event.isStopped === true) return true;
   const start = toDate(event.dateEvent);
-  return start !== null && now.getTime() > start.getTime() + MAX_DURATION_MS;
+  return start !== null && now.getTime() > start.getTime() + playTimeMs(event);
 }
 
 /** Hour, minute and second of [date] in Romania, whatever the server's zone. */

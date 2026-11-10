@@ -325,6 +325,13 @@ describe("results", () => {
       await event("ancient", 24 * 8);
       assert.deepEqual(await expiredEventIds(db, NOW), ["ran-out"]);
     });
+
+    test("each event ends after its own duration", async () => {
+      await event("short-over", 2, {durationMinutes: 60});
+      await event("long-running", 4, {durationMinutes: 300});
+      await event("long-over", 6, {durationMinutes: 300});
+      assert.deepEqual((await expiredEventIds(db, NOW)).sort(), ["long-over", "short-over"]);
+    });
   });
 
   describe("teamFacts", () => {

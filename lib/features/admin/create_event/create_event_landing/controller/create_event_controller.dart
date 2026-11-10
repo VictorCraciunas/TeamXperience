@@ -177,6 +177,13 @@ class CreateEventController {
   static String? hintsProblem(String text) =>
       text.trim().isEmpty || _inRange(text, 0, 5) != null ? null : 'Între 0 și 5';
 
+  /// The message for a duration that is not 10 to 600 minutes, or null. The
+  /// game ends for everyone this long after the start.
+  static String? durationProblem(String text) {
+    if (int.tryParse(text.trim()) == null) return 'Introdu durata în minute';
+    return _inRange(text, 10, 600) == null ? 'Între 10 și 600 de minute' : null;
+  }
+
   /// The message for minutes that are not 10 to 180, or null.
   static String? enterWindowProblem(String text) =>
       text.trim().isEmpty || _inRange(text, 10, 180) != null ? null : 'Între 10 și 180 de minute';

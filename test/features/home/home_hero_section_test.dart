@@ -100,12 +100,12 @@ void main() {
   });
 
   group('live', () {
-    final live = DateTime(2026, 11, 14, 11, 42, 18); // 1:17:42 before 10:00 + 3 h
+    final live = DateTime(2026, 11, 14, 11, 42, 18); // 0:17:42 before 10:00 + 2 h, the sample's duration
 
     testWidgets('LIVE, the time left, the team and mission, the progress line', (tester) async {
       await _pump(tester, LiveHero(event, _team(progress: 3, started: true)), now: live);
       expect(find.text('LIVE'), findsOneWidget);
-      expect(find.text('1:17:42'), findsOneWidget);
+      expect(find.text('0:17:42'), findsOneWidget);
       expect(find.text('rămase'), findsOneWidget);
       expect(find.text('Echipa Vulpile · misiunea 4 din 6'), findsOneWidget);
       expect(find.text('4'), findsOneWidget);
@@ -200,6 +200,6 @@ void main() {
     expect(event.nrMissions, 6);
     expect(event.punctDeStart, 'Piața Mare');
     expect(event.dateEvent, DateTime(2026, 11, 14, 10));
-    expect(Event.maxDuration, const Duration(hours: 3));
+    expect(Event.defaultPlayTime, const Duration(hours: 3));
   });
 }

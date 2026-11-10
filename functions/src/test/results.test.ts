@@ -4,6 +4,8 @@ import {sendsPush} from "../chat/sends_push";
 import {EventFacts, levelName, playerResult, Previous, TeamFacts} from "../results/player";
 import {rankTeams} from "../results/ranking";
 import {seasonOf, seasonPoints} from "../results/season";
+import {eventIsOver, playTimeMs} from "../teams/shared";
+import {Timestamp} from "firebase-admin/firestore";
 
 // 14:00 in Romania.
 const T0 = new Date("2026-11-14T12:00:00Z");
@@ -290,6 +292,28 @@ describe("playerResult", () => {
     test("no more than the game's three hours; no start time uses the event's", () => {
       assert.equal(playerResult(team({finishedAt: after(500)}), 2, EVENT, FRESH).memory.totalTime, 180);
       assert.equal(playerResult(team({startedAt: null}), 2, EVENT, FRESH).memory.totalTime, 60);
+    });
+
+    test("no more than the event's own duration", () => {
+      const short = {...EVENT, playMs: 90 * 60000};
+      assert.equal(playerResult(team({finishedAt: after(500)}), 2, short, FRESH).memory.totalTime, 90);
+    });
+  });
+
+  describe("the game's length", () => {
+    test("the event's duration in minutes, else three hours", () => {
+      assert.equal(playTimeMs({durationMinutes: 90}), 90 * 60000);
+      assert.equal(playTimeMs({}), 3 * 60 * 60000);
+      assert.equal(playTimeMs({durationMinutes: 0}), 3 * 60 * 60000);
+      assert.equal(playTimeMs({durationMinutes: "90"}), 3 * 60 * 60000);
+    });
+
+    test("over once its duration has passed, or when stopped", () => {
+      const event = {dateEvent: Timestamp.fromDate(T0), durationMinutes: 90};
+      assert.equal(eventIsOver(event, after(90)), false);
+      assert.equal(eventIsOver(event, after(91)), true);
+      assert.equal(eventIsOver({dateEvent: Timestamp.fromDate(T0)}, after(91)), false);
+      assert.equal(eventIsOver({...event, isStopped: true}, after(1)), true);
     });
   });
 
