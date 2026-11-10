@@ -85,7 +85,9 @@ export async function registerTeam(
       players = members.filter((m) => !skippedUids.includes(m.uid));
       crewId = data.crewId;
       inviteCode = String(crew.inviteCode ?? "");
-      writeCrew = () => tx.update(crewRef, {teams: FieldValue.arrayUnion(link)});
+      // Signed up under a new name, the crew takes it too, as a rename does.
+      const renamed = String(crew.name ?? "") !== name ? {name} : {};
+      writeCrew = () => tx.update(crewRef, {teams: FieldValue.arrayUnion(link), ...renamed});
     } else {
       const made = await addNewCrew(db, tx, name, captain);
       crewId = made.crewId;

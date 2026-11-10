@@ -27,6 +27,7 @@ Widget _form({
   VoidCallback? onSubmit,
   bool sending = false,
   bool locked = false,
+  bool fieldsLocked = false,
 }) {
   return SingleChildScrollView(
     child: RegisterForm(
@@ -49,6 +50,7 @@ Widget _form({
       onSubmit: onSubmit,
       sending: sending,
       locked: locked,
+      fieldsLocked: fieldsLocked,
     ),
   );
 }
@@ -224,6 +226,34 @@ void main() {
     );
     await tester.tap(find.text(_rules));
     expect(rules, isNull);
+  });
+
+  testWidgets('fields locked: name, size and phone are greyed out; consents and the button still work', (
+    tester,
+  ) async {
+    int? picked;
+    bool? rules;
+    var submitted = 0;
+    await pumpUi(
+      tester,
+      _form(
+        fieldsLocked: true,
+        onSize: (n) => picked = n,
+        onRules: (v) => rules = v,
+        onSubmit: () => submitted++,
+      ),
+    );
+    for (final i in [0, 1]) {
+      expect(tester.widget<TextField>(find.byType(TextField).at(i)).readOnly, isTrue);
+    }
+    await tester.tap(find.text('5'));
+    expect(picked, isNull);
+    await tester.tap(find.text(_rules));
+    expect(rules, isTrue);
+    await tester.ensureVisible(find.text('Înscrie echipa'));
+    await tester.pump();
+    await tester.tap(find.text('Înscrie echipa'));
+    expect(submitted, 1);
   });
 
   testWidgets('lays out at 320 wide and 1.3x text without an exception', (
