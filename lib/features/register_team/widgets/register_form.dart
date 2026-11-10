@@ -14,7 +14,9 @@ import 'team_name_field.dart';
 /// name, the size, the captain's phone, two consents and the button. [onSubmit]
 /// null greys the button out. [locked] makes the form read-only and hides the
 /// button, for after the team is registered; while [sending] it is read-only
-/// too, with the button shown as busy.
+/// too, with the button shown as busy. [fieldsLocked] greys out the name, the
+/// size and the phone (a team signing up again) but leaves the consents and the
+/// button.
 /// The organiser's consent texts. All three are needed to sign up.
 const rulesConsentText = 'Sunt de acord cu Regulamentul Specific al activității.';
 const dataConsentText = 'Sunt de acord cu folosirea datelor cu caracter personal.';
@@ -42,6 +44,7 @@ class RegisterForm extends StatelessWidget {
     required this.onSubmit,
     this.sending = false,
     this.locked = false,
+    this.fieldsLocked = false,
   });
 
   final TextEditingController nameController;
@@ -63,12 +66,14 @@ class RegisterForm extends StatelessWidget {
   final VoidCallback? onSubmit;
   final bool sending;
   final bool locked;
+  final bool fieldsLocked;
 
   static const double _gap = 12;
 
   @override
   Widget build(BuildContext context) {
     final readOnly = locked || sending;
+    final fieldsReadOnly = readOnly || fieldsLocked;
 
     return Padding(
       padding: const EdgeInsets.all(14),
@@ -82,16 +87,20 @@ class RegisterForm extends StatelessWidget {
             status: nameStatus,
             statusText: nameStatusText,
             readOnly: readOnly,
+            dimmed: fieldsLocked,
           ),
           const SizedBox(height: _gap),
           const FieldLabel('Câți veți fi?'),
           IgnorePointer(
-            ignoring: readOnly,
-            child: SizePicker(
-              min: sizeMin,
-              max: sizeMax,
-              value: size,
-              onChanged: onSizeChanged,
+            ignoring: fieldsReadOnly,
+            child: Opacity(
+              opacity: fieldsLocked ? 0.55 : 1,
+              child: SizePicker(
+                min: sizeMin,
+                max: sizeMax,
+                value: size,
+                onChanged: onSizeChanged,
+              ),
             ),
           ),
           const SizedBox(height: _gap),
@@ -99,7 +108,8 @@ class RegisterForm extends StatelessWidget {
           RegisterInput(
             controller: phoneController,
             onChanged: onPhoneChanged,
-            readOnly: readOnly,
+            readOnly: fieldsReadOnly,
+            dimmed: fieldsLocked,
             hint: '0722 123 456',
             keyboardType: TextInputType.phone,
             textInputAction: TextInputAction.done,

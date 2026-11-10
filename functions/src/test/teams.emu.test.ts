@@ -211,6 +211,29 @@ describe("team functions", () => {
         assert.deepEqual(after?.teams, [{eventId: "e1", teamName: "Vulpile"}]);
       });
 
+      test("signed up under a new name, the crew takes the name; earlier teams keep theirs", async () => {
+        const crewId = await crewOfTwo();
+        await register("u1", {crewId});
+        await seedEvent("other");
+        await register("u1", {crewId, eventId: "other", name: "Bufnițele"});
+        const crew = (await db.collection("crews").doc(crewId).get()).data();
+        assert.equal(crew?.name, "Bufnițele");
+        assert.deepEqual(crew?.teams, [
+          {eventId: "e1", teamName: "Vulpile"},
+          {eventId: "other", teamName: "Bufnițele"},
+        ]);
+        assert.equal((await team("Vulpile"))?.name, "Vulpile");
+      });
+
+      test("a refused sign-up leaves the crew's name", async () => {
+        const crewId = await crewOfTwo();
+        await register("u1", {crewId});
+        await refused(register("u1", {crewId, name: "Alt nume"}), "alreadyInTeam");
+        await db.collection("events").doc("e1").collection("teams").doc("Vulpile").update({userIds: ["u3"]});
+        await refused(register("u1", {crewId, name: "Alt nume"}), "crewAlreadyRegistered");
+        assert.equal((await db.collection("crews").doc(crewId).get()).data()?.name, "Vulpile");
+      });
+
       test("signing a crew up tells the other players, not the captain", async () => {
         const crewId = await crewOfTwo();
         const told: Array<{uids: string[]; item: InboxItem}> = [];

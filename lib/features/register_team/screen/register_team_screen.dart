@@ -89,6 +89,12 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                             crews: controller.crews,
                             chosen: controller.chosenCrew,
                             onChoose: controller.chooseCrew,
+                            editing: controller.editing,
+                            onToggleEdit: controller.sending
+                                ? null
+                                : (controller.editing
+                                    ? controller.cancelEditing
+                                    : controller.startEditing),
                           ),
                         RegisterForm(
                           nameController: controller.nameController,
@@ -111,6 +117,7 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                               controller.canSubmit ? controller.submit : null,
                           sending: controller.sending,
                           locked: controller.registered,
+                          fieldsLocked: controller.fieldsLocked,
                         ),
                         if (controller.registered)
                           InviteResultSection(

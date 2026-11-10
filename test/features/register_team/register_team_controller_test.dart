@@ -1,6 +1,8 @@
 import 'package:teamxperience/model/team_member.dart';
 import 'package:teamxperience/model/user.dart';
 import 'package:teamxperience/model/crew.dart';
+import 'package:teamxperience/model/crew_team.dart';
+import 'package:teamxperience/model/team.dart';
 import 'dart:async';
 
 import 'package:cloud_functions/cloud_functions.dart';
@@ -8,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/register_team/controller/register_team_controller.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/service/share_service.dart';
@@ -25,8 +26,20 @@ class _FakeTeams extends Fake implements TeamService {
   final registered = <Map<String, Object?>>[];
   List<Crew> crews = const [];
 
+  /// Past teams by "event/name".
+  final saved = <String, Team>{};
+
+  /// Holds the past-team read back until completed.
+  Completer<void>? holdTeam;
+
   @override
   Stream<List<Crew>> streamUserCrews(String uid) => Stream.value(crews);
+
+  @override
+  Future<Team?> getTeam(String eventId, String teamName) async {
+    await holdTeam?.future;
+    return saved['$eventId/$teamName'];
+  }
 
   @override
   Future<bool?> isTeamNameFree(String eventId, String name) async => free;
@@ -89,7 +102,7 @@ class _RecordingUser extends UserProvider {
       AppUser(email: 'a@b.ro', firstName: 'A', lastName: 'B', uid: 'u1', fcmToken: '');
 }
 
-Crew _crew(String id, {String captain = 'u1', int members = 2}) => Crew(
+Crew _crew(String id, {String captain = 'u1', int members = 2, List<CrewTeam> teams = const []}) => Crew(
   id: id,
   name: 'Crew $id',
   captainUid: captain,
@@ -99,6 +112,7 @@ Crew _crew(String id, {String captain = 'u1', int members = 2}) => Crew(
       TeamMember(uid: 'u$i', displayName: 'P $i', initials: 'P'),
   ],
   inviteCode: 'VLP482',
+  teams: teams,
 );
 
 Event _event({int min = 2, int max = 6}) => Event(
@@ -321,6 +335,8 @@ void main() {
       expect(h.controller.nameController.text, 'Crew mine');
       expect(h.controller.sizeMin, 3);
       expect(h.controller.size, greaterThanOrEqualTo(3));
+      h.controller.phoneController.text = '0722 123 456';
+      h.controller.onPhoneChanged('');
       await h.controller.submit();
       expect(h.teams.registered.single['crewId'], 'mine');
     });
@@ -405,6 +421,169 @@ void main() {
       expect(h.controller.nameStatus, FieldStatus.problem);
       expect(h.controller.nameStatusText, 'Numele e luat');
       await tester.pumpAndSettle(const Duration(seconds: 4));
+    });
+  });
+
+  group('a team signing up again', () {
+    const past = CrewTeam(eventId: 'e0', teamName: 'Crew mine');
+
+    Future<_Harness> chosen(WidgetTester tester, {bool withPast = true, int members = 3}) async {
+      final h = _Harness(tester);
+      h.teams.crews = [_crew('mine', members: members, teams: withPast ? const [past] : const [])];
+      h.teams.saved['e0/Crew mine'] = Team.fromMap({'name': 'Crew mine', 'numberOfMembers': 5, 'phoneNumber': '0744 000 111'});
+      await h.pump();
+      await tester.pumpAndSettle();
+      h.controller.chooseCrew(h.controller.crews.single);
+      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pumpAndSettle();
+      return h;
+    }
+
+    void tickAll(RegisterTeamController c) {
+      c.setRulesAccepted(true);
+      c.setDataAccepted(true);
+      c.setPhotoConsent(true);
+    }
+
+    testWidgets('everything is filled in from the last sign-up and locked; the consents are left', (tester) async {
+      final h = await chosen(tester);
+      final c = h.controller;
+      expect(c.nameController.text, 'Crew mine');
+      expect(c.size, 5);
+      expect(c.phoneController.text, '0744 000 111');
+      expect(c.fieldsLocked, isTrue);
+      expect(c.editing, isFalse);
+      expect(c.blocker, 'Acceptă regulamentul');
+
+      tickAll(c);
+      await c.submit();
+      expect(h.teams.registered.single, {
+        'eventId': 'e1',
+        'name': 'Crew mine',
+        'size': 5,
+        'phone': '0744 000 111',
+        'rules': true,
+        'data': true,
+        'photo': true,
+        'crewId': 'mine',
+      });
+    });
+
+    testWidgets('Editează opens the name, the phone and more players; never fewer than the team', (tester) async {
+      final h = await chosen(tester);
+      final c = h.controller;
+      c.startEditing();
+      expect(c.fieldsLocked, isFalse);
+      expect(c.sizeMin, 3);
+
+      c.setSize(6);
+      c.phoneController.text = '0755 222 333';
+      c.onPhoneChanged('');
+      c.nameController.text = 'Bufnițele';
+      c.onNameChanged('Bufnițele');
+      await tester.pump(const Duration(milliseconds: 400));
+      tickAll(c);
+      await c.submit();
+      final sent = h.teams.registered.single;
+      expect(sent['name'], 'Bufnițele');
+      expect(sent['size'], 6);
+      expect(sent['phone'], '0755 222 333');
+      expect(sent['crewId'], 'mine');
+    });
+
+    testWidgets('Anulează puts the filled-in values back and locks again', (tester) async {
+      final h = await chosen(tester);
+      final c = h.controller;
+      c.startEditing();
+      c.setSize(6);
+      c.phoneController.text = '0755';
+      c.nameController.text = 'Alt nume';
+      c.onNameChanged('Alt nume');
+      c.cancelEditing();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(c.fieldsLocked, isTrue);
+      expect(c.nameController.text, 'Crew mine');
+      expect(c.size, 5);
+      expect(c.phoneController.text, '0744 000 111');
+      expect(c.nameStatus, FieldStatus.ok);
+    });
+
+    testWidgets('with no phone from before, edit mode opens by itself', (tester) async {
+      final h = await chosen(tester, withPast: false);
+      final c = h.controller;
+      expect(c.phoneController.text, isEmpty);
+      expect(c.size, 4);
+      expect(c.editing, isTrue);
+      expect(c.fieldsLocked, isFalse);
+    });
+
+    testWidgets('a name taken in this event opens edit mode by itself', (tester) async {
+      final h = _Harness(tester);
+      h.teams.free = false;
+      h.teams.crews = [_crew('mine', teams: const [past])];
+      h.teams.saved['e0/Crew mine'] = Team.fromMap({'name': 'Crew mine', 'numberOfMembers': 4, 'phoneNumber': '0744'});
+      await h.pump();
+      await tester.pumpAndSettle();
+      h.controller.chooseCrew(h.controller.crews.single);
+      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pumpAndSettle();
+      expect(h.controller.nameStatusText, 'Numele e luat');
+      expect(h.controller.editing, isTrue);
+    });
+
+    testWidgets('a name found taken before the last sign-up is read still gets its phone and size', (tester) async {
+      final h = _Harness(tester);
+      h.teams.free = false;
+      h.teams.holdTeam = Completer<void>();
+      h.teams.crews = [_crew('mine', teams: const [past])];
+      h.teams.saved['e0/Crew mine'] = Team.fromMap({'name': 'Crew mine', 'numberOfMembers': 5, 'phoneNumber': '0744 000 111'});
+      await h.pump();
+      await tester.pumpAndSettle();
+      h.controller.chooseCrew(h.controller.crews.single);
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(h.controller.editing, isTrue);
+      h.teams.holdTeam?.complete();
+      await tester.pumpAndSettle();
+      expect(h.controller.phoneController.text, '0744 000 111');
+      expect(h.controller.size, 5);
+    });
+
+    testWidgets('Anulează locks again even while the name is taken', (tester) async {
+      final h = _Harness(tester);
+      h.teams.free = false;
+      h.teams.crews = [_crew('mine', teams: const [past])];
+      h.teams.saved['e0/Crew mine'] = Team.fromMap({'name': 'Crew mine', 'numberOfMembers': 4, 'phoneNumber': '0744'});
+      await h.pump();
+      await tester.pumpAndSettle();
+      h.controller.chooseCrew(h.controller.crews.single);
+      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pumpAndSettle();
+      expect(h.controller.editing, isTrue);
+      h.controller.cancelEditing();
+      expect(h.controller.fieldsLocked, isTrue);
+      expect(h.controller.blocker, 'Numele e luat');
+    });
+
+    testWidgets('Echipă nouă empties the form and unlocks it', (tester) async {
+      final h = await chosen(tester);
+      final c = h.controller;
+      c.chooseCrew(null);
+      expect(c.fieldsLocked, isFalse);
+      expect(c.editing, isFalse);
+      expect(c.nameController.text, isEmpty);
+      expect(c.phoneController.text, isEmpty);
+      expect(c.size, 4);
+    });
+
+    testWidgets('a read for an earlier choice does not fill the form', (tester) async {
+      final h = await chosen(tester);
+      final c = h.controller;
+      c.chooseCrew(null);
+      c.chooseCrew(c.crews.single);
+      c.chooseCrew(null);
+      await tester.pumpAndSettle();
+      expect(c.phoneController.text, isEmpty);
+      expect(c.chosenCrew, isNull);
     });
   });
 

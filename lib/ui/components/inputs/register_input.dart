@@ -6,6 +6,8 @@ import '../../theme/theme_context.dart';
 /// The mockups' `.in` as a text field: a panel with a 1 px border, a 12
 /// radius and 9 / 12 of padding (the border adds 1). [borderColor] replaces
 /// the grey border, [trailing] sits at the right end inside the field.
+/// [dimmed] shows a value that cannot be changed here: an inset fill and
+/// muted text (pair it with [readOnly]).
 class RegisterInput extends StatelessWidget {
   const RegisterInput({
     super.key,
@@ -20,6 +22,7 @@ class RegisterInput extends StatelessWidget {
     this.borderColor,
     this.trailing,
     this.verticalPadding = 10,
+    this.dimmed = false,
   });
 
   final TextEditingController controller;
@@ -33,6 +36,7 @@ class RegisterInput extends StatelessWidget {
   final Color? borderColor;
   final Widget? trailing;
   final double verticalPadding;
+  final bool dimmed;
 
   static const double _textSize = 14;
 
@@ -56,11 +60,11 @@ class RegisterInput extends StatelessWidget {
       textCapitalization: textCapitalization,
       inputFormatters: inputFormatters,
       cursorColor: colors.accent,
-      style: TextStyle(fontSize: _textSize, height: 1.45, color: colors.text),
+      style: TextStyle(fontSize: _textSize, height: 1.45, color: dimmed ? colors.muted : colors.text),
       decoration: InputDecoration(
         isDense: true,
         filled: true,
-        fillColor: colors.panel,
+        fillColor: dimmed ? colors.inset : colors.panel,
         hintText: hint,
         hintStyle: TextStyle(
           fontSize: _textSize,
