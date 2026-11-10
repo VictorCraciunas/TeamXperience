@@ -3,6 +3,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 
 import '../../theme/theme_context.dart';
 import 'app_nav_item.dart';
+import 'sonar_rings.dart';
 
 /// The round tab in the middle of the bar: a 50 px circle in a 4 px page ring
 /// (58 across), pulled 26 px up
@@ -10,6 +11,7 @@ import 'app_nav_item.dart';
 ///
 /// When its pop-up opens ([AppNavItem.open]) the icon turns a quarter, like a
 /// key in a lock, then becomes an X and the circle darkens (mockup 10).
+/// While live, two sonar rings leave it every 2 s (mockup 11).
 class RaisedNavButton extends StatefulWidget {
   const RaisedNavButton({super.key, required this.item, required this.onTap});
 
@@ -58,6 +60,9 @@ class _RaisedNavButtonState extends State<RaisedNavButton> with SingleTickerProv
     final showX = item.open && _turn.isCompleted;
     final fill = item.live ? colors.live : (item.open ? colors.liveCard : colors.navy);
     final label = item.live ? colors.live : colors.navy;
+    // While live, rings leave the circle (mockup 11); not while its pop-up is
+    // open, nor when the phone asks for less motion.
+    final sonar = item.live && !item.open && !MediaQuery.disableAnimationsOf(context);
 
     return Semantics(
       button: true,
@@ -78,25 +83,33 @@ class _RaisedNavButtonState extends State<RaisedNavButton> with SingleTickerProv
                 maxWidth: RaisedNavButton.size,
                 minHeight: RaisedNavButton.size,
                 maxHeight: RaisedNavButton.size,
-                child: Container(
-                  key: const ValueKey('nav-raised-circle'),
-                  width: RaisedNavButton.size,
-                  height: RaisedNavButton.size,
-                  decoration: BoxDecoration(
-                    color: fill,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: colors.page, width: 4),
-                  ),
-                  child: showX
-                      ? Icon(TablerIcons.x, size: 22, color: colors.onNavy)
-                      : AnimatedBuilder(
-                          animation: _turn,
-                          builder: (context, child) => Transform.rotate(
-                            angle: Curves.easeOutBack.transform(_turn.value) * 1.5708,
-                            child: child,
-                          ),
-                          child: Icon(item.icon, size: 22, color: colors.onNavy),
-                        ),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    if (sonar) SonarRings(size: RaisedNavButton.size, color: colors.live),
+                    Container(
+                      key: const ValueKey('nav-raised-circle'),
+                      width: RaisedNavButton.size,
+                      height: RaisedNavButton.size,
+                      decoration: BoxDecoration(
+                        color: fill,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: colors.page, width: 4),
+                      ),
+                      child:
+                          showX
+                              ? Icon(TablerIcons.x, size: 22, color: colors.onNavy)
+                              : AnimatedBuilder(
+                                animation: _turn,
+                                builder:
+                                    (context, child) => Transform.rotate(
+                                      angle: Curves.easeOutBack.transform(_turn.value) * 1.5708,
+                                      child: child,
+                                    ),
+                                child: Icon(item.icon, size: 22, color: colors.onNavy),
+                              ),
+                    ),
+                  ],
                 ),
               ),
             ),

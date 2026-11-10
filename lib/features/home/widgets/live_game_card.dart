@@ -7,6 +7,7 @@ import 'package:teamxperience/ui/components/route/mission_progress_line.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 import 'game_badge.dart';
+import 'live_halo.dart';
 import 'game_card_button.dart';
 import 'navy_game_card.dart';
 
@@ -46,7 +47,7 @@ class LiveGameCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                GameBadge(label: 'LIVE', fill: colors.live, text: onNavy),
+                LiveHalo(color: colors.live, child: GameBadge(label: 'LIVE', fill: colors.live, text: onNavy)),
                 const SizedBox(width: 6),
                 // Shrinks rather than overflowing with very large text.
                 Expanded(
