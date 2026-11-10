@@ -240,22 +240,28 @@ export async function applyResults(db: Firestore, eventId: string, options: Appl
 const LOOK_BACK_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
- * Events whose time ran out (their duration, else three hours) in about the
- * past week and that have no results. The week keeps a first deploy from
- * scoring every game ever played.
+ * Events whose time ran out (their duration, else three hours) and that have
+ * no results: those that started in the past week, and those whose saved
+ * `endsAt` is in the past week (games longer than a week; older app
+ * versions do not save it). The week keeps a first deploy from scoring every
+ * game ever played.
  */
 export async function expiredEventIds(db: Firestore, now: Date): Promise<string[]> {
-  const from = new Date(now.getTime() - LOOK_BACK_MS);
-  const events = await db.collection("events")
-    .where("dateEvent", ">=", Timestamp.fromDate(from))
-    .where("dateEvent", "<", Timestamp.fromDate(now))
-    .get();
-  return events.docs
-    .filter((doc) => {
-      const data = doc.data();
-      const start = toDate(data.dateEvent);
-      return data.resultsComputedAt === undefined && data.status !== "draft" &&
-        start !== null && now.getTime() > start.getTime() + playTimeMs(data);
-    })
-    .map((doc) => doc.id);
+  const from = Timestamp.fromDate(new Date(now.getTime() - LOOK_BACK_MS));
+  const until = Timestamp.fromDate(now);
+  const events = db.collection("events");
+  const [started, ended] = await Promise.all([
+    events.where("dateEvent", ">=", from).where("dateEvent", "<", until).get(),
+    events.where("endsAt", ">=", from).where("endsAt", "<", until).get(),
+  ]);
+  const ids = new Set<string>();
+  for (const doc of [...started.docs, ...ended.docs]) {
+    const data = doc.data();
+    const start = toDate(data.dateEvent);
+    if (data.resultsComputedAt === undefined && data.status !== "draft" &&
+      start !== null && now.getTime() > start.getTime() + playTimeMs(data)) {
+      ids.add(doc.id);
+    }
+  }
+  return [...ids];
 }

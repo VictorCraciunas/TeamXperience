@@ -93,6 +93,14 @@ void main() {
       expect(e.whatToBring, isEmpty);
     });
 
+    test('any whole duration above zero, short or long', () {
+      final short = _import(_event(extra: {'durationMinutes': 5}));
+      expect(short.errors, isEmpty);
+      expect(short.event?.durationMinutes, 5);
+      expect(_import(_event(extra: {'durationMinutes': 2000})).event?.durationMinutes, 2000);
+      expect(_import(_event(extra: {'durationMinutes': 0})).errors.join(), allOf(contains('durationMinutes'), contains('cel puțin 1')));
+    });
+
     test('a difficulty that does not exist names the field', () {
       final result = _import(_event(extra: {'difficulty': 'medie'}));
       expect(result.errors.join(), contains('difficulty'));
