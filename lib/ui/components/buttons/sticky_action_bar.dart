@@ -76,9 +76,14 @@ class StickyActionBar extends StatelessWidget {
                 if (label != null) ...[
                   const SizedBox(width: 10),
                   Flexible(
-                    child: prominent
-                        ? StickyBarButton(label: label, icon: actionIcon, onTap: onAction)
-                        : StickyBarLink(label: label, onTap: onAction),
+                    // At the right end of the bar, however short the label.
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      heightFactor: 1,
+                      child: prominent
+                          ? StickyBarButton(label: label, icon: actionIcon, onTap: onAction)
+                          : StickyBarLink(label: label, onTap: onAction),
+                    ),
                   ),
                 ],
               ],

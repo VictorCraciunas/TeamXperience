@@ -206,7 +206,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                       InviteCodeCard(
                         code: controller.displayInviteCode ?? '',
                         caption: 'Codul echipei',
-                        shareLabel: 'WhatsApp',
+                        shareLabel: 'Trimite',
                         copyLabel: 'Copiază',
                         onShare: () => controller.shareInvite(context),
                         onCopy: () => controller.copyInvite(context),

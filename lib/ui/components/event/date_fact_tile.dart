@@ -18,8 +18,9 @@ class DateFactTile extends StatelessWidget {
       decoration: BoxDecoration(color: colors.navy, borderRadius: BorderRadius.circular(AppRadius.button)),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 6),
+        // Centred in the row's height, like the other fact tiles.
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(day, style: AppTextStyles.factValue(context).copyWith(color: colors.onNavy)),
             Text(
