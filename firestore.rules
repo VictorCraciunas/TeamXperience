@@ -56,9 +56,14 @@ service cloud.firestore {
             || request.resource.data.resultsComputedAt == resource.data.get('resultsComputedAt', null));
       allow delete: if isAdmin();
 
+      // A player's stars at the finish; organisers see them in the live room.
       match /feedback/{uid} {
         allow read: if request.auth.uid == uid || isAdmin();
-        allow create, update: if request.auth.uid == uid;
+        allow create, update: if request.auth.uid == uid
+          && request.resource.data.keys().hasOnly(['rating', 'teamName', 'at'])
+          && request.resource.data.rating is int
+          && request.resource.data.rating >= 1
+          && request.resource.data.rating <= 5;
       }
 
       match /teams/{teamId} {

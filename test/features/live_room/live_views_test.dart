@@ -6,6 +6,7 @@ import 'package:teamxperience/features/admin/home/logic/admin_event_stats.dart';
 import 'package:teamxperience/features/live_room/logic/attention_queue.dart';
 import 'package:teamxperience/features/live_room/logic/live_board.dart';
 import 'package:teamxperience/features/live_room/logic/live_map_points.dart';
+import 'package:teamxperience/features/live_room/logic/rating_summary.dart';
 import 'package:teamxperience/features/live_room/widgets/board_view.dart';
 import 'package:teamxperience/features/live_room/widgets/live_room_view.dart';
 import 'package:teamxperience/features/live_room/widgets/team_sheet.dart';
@@ -79,8 +80,9 @@ class _Calls {
   void add(String s) => list.add(s);
 }
 
-Widget _room(List<Team> teams, _Calls calls, {Event? event}) => LiveRoomView(
+Widget _room(List<Team> teams, _Calls calls, {Event? event, RatingSummary? ratings}) => LiveRoomView(
       event: event ?? _event(),
+      ratings: ratings,
       stats: AdminEventStats.fromTeams(teams),
       items: _items(teams),
       map: const SizedBox.shrink(),
@@ -117,6 +119,23 @@ void _bigScreen(WidgetTester tester) {
 
 void main() {
   group('LiveRoomView', () {
+    testWidgets('the players stars: average, count and breakdown, no overflow', (tester) async {
+      _bigScreen(tester);
+      await tester.pumpWidget(_frame(_room(_mockupTeams(), _Calls(), ratings: ratingSummary(const [5, 5, 5, 4, 3])), textScale: 1.3));
+      expect(find.text('Părerea jucătorilor'), findsOneWidget);
+      expect(find.text('4,4'), findsOneWidget);
+      expect(find.text('din 5 note'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('no stars: the section is hidden, or says nobody rated', (tester) async {
+      _bigScreen(tester);
+      await tester.pumpWidget(_frame(_room(_mockupTeams(), _Calls())));
+      expect(find.text('Părerea jucătorilor'), findsNothing);
+      await tester.pumpWidget(_frame(_room(_mockupTeams(), _Calls(), ratings: ratingSummary(const []))));
+      expect(find.text('Nimeni nu a dat încă o notă.'), findsOneWidget);
+    });
+
     testWidgets('the mockup: the header, the counts, the queue and its count', (tester) async {
       _bigScreen(tester);
       await tester.pumpWidget(_frame(_room(_mockupTeams(), _Calls())));

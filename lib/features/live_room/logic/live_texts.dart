@@ -80,3 +80,9 @@ String teamInitial(String name) {
   if (trimmed.isEmpty) return '?';
   return String.fromCharCode(trimmed.runes.first).toUpperCase();
 }
+
+/// "4,6": the average, one decimal, with a comma.
+String ratingAverageText(double average) => ((average * 10).round() / 10).toStringAsFixed(1).replaceAll('.', ',');
+
+/// "o notă", "3 note", "20 de note".
+String ratingCountLine(int n) => _count(n, 'o notă', 'note');

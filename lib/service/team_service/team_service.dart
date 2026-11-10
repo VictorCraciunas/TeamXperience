@@ -155,6 +155,9 @@ class TeamService {
     return teamRepo.saveRating(eventId, uid, teamName: teamName, rating: rating);
   }
 
+  /// Every player's rating of the event, as they come (organisers only).
+  Stream<List<int>> streamRatings(String eventId) => teamRepo.streamRatings(eventId);
+
   /// The teams for a screen that lists them; throws when they cannot be read,
   /// also offline with nothing cached.
   Future<List<Team>> getTeamsOrFail(String eventId) => teamRepo.getTeamsOrFail(eventId);

@@ -154,6 +154,14 @@ class TeamRepo {
     });
   }
 
+  /// Every player's rating of the event, as they come (organisers only).
+  Stream<List<int>> streamRatings(String eventId) {
+    return _firestore.collection('events').doc(eventId).collection('feedback').snapshots().map((snapshot) => [
+          for (final doc in snapshot.docs)
+            if (doc.data()['rating'] case final num rating) rating.toInt(),
+        ]);
+  }
+
   /// Counts one wrong answer on the puzzle [key] ("3_0"). An increment, so two
   /// phones answering at once both count.
   Future<void> addWrongAttempt(String eventId, String teamName, String key) {

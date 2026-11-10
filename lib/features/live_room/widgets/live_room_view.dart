@@ -11,10 +11,12 @@ import '../logic/attention_queue.dart';
 import '../logic/live_board.dart';
 import '../logic/live_status.dart';
 import '../logic/live_texts.dart';
+import '../logic/rating_summary.dart';
 import 'attention_section.dart';
 import 'live_count_card.dart';
 import 'live_header.dart';
 import 'live_header_action.dart';
+import 'rating_section.dart';
 
 /// The live room (mockup 09, left): the dark bar, the map, the counts and the
 /// queue.
@@ -28,6 +30,7 @@ class LiveRoomView extends StatelessWidget {
     this.loading = false,
     this.failed = false,
     this.announcing = false,
+    this.ratings,
     this.clock,
     required this.isDeciding,
     required this.onBoard,
@@ -52,6 +55,9 @@ class LiveRoomView extends StatelessWidget {
 
   /// An announcement is on its way: its button rests.
   final bool announcing;
+
+  /// The players' stars; null hides the section.
+  final RatingSummary? ratings;
 
   /// Overrides the header's clock (for tests).
   final DateTime Function()? clock;
@@ -153,6 +159,7 @@ class LiveRoomView extends StatelessWidget {
                     onTeam: onTeam,
                     onChat: onChat,
                   ),
+                  if (ratings case final shown?) RatingSection(ratings: shown),
                 ],
               ],
             ),

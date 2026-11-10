@@ -46,6 +46,7 @@ class _LiveRoomScreenState extends State<LiveRoomScreen> {
             event: controller.event,
             stats: controller.stats(now),
             announcing: controller.announcing,
+            ratings: controller.shownRatings(now),
             items: controller.attention(now),
             loading: controller.loading,
             failed: controller.error != null,
