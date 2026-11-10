@@ -19,8 +19,11 @@ class StickyBarLink extends StatelessWidget {
       borderRadius: BorderRadius.circular(AppRadius.button),
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 48),
+        // Both factors: without heightFactor the link grows as tall as the
+        // page, and as a bottom bar it covers the whole screen.
         child: Center(
           widthFactor: 1,
+          heightFactor: 1,
           child: Text(
             label,
             maxLines: 1,
