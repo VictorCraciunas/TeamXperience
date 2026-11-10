@@ -1,4 +1,4 @@
-import 'package:teamxperience/enums/event_type.dart';
+import 'package:teamxperience/features/play_tab/logic/play_suggestions.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 
@@ -150,13 +150,7 @@ HomeHero? _recommended(DateTime now, List<Event> allEvents, Set<String> register
   Event? earliest;
   for (final event in allEvents) {
     final start = event.dateEvent;
-    if (start == null || !start.isAfter(now)) continue;
-    if (event.type != EventType.PUBLIC) continue;
-    if (registeredIds.contains(event.eventId)) continue;
-    final opens = event.dateStartEnrollment;
-    final closes = event.dateDeadlineEnrollment;
-    if (opens != null && opens.isAfter(now)) continue;
-    if (closes != null && closes.isBefore(now)) continue;
+    if (start == null || !isOpenSuggestion(event, registeredIds, now)) continue;
     final current = earliest?.dateEvent;
     if (current == null || start.isBefore(current)) earliest = event;
   }
