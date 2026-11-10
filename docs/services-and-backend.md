@@ -73,6 +73,7 @@ Callables in `functions/src/teams/` (region `us-central1`). A refusal is `HttpsE
 | `registerTeam` | `{eventId, name, size, phone, rulesAccepted, photoConsent, crewId?}` | `{teamName, crewId, inviteCode, skippedUids}` |
 | `previewInvite` | `{code}` | `{crewId, crewName, captainName, members, alreadyMember, event?}` |
 | `joinTeam` | `{code}` | `{crewId, eventIds}`; joining again returns the player's events |
+| `renameTeam` | `{eventId, teamName, newName}` | `{teamName}`; only the captain, before the event or the team starts; the name must be free at the event (`nameInvalid`, `nameTaken`, `notCaptain`, `gameStarted`, `teamNotFound`); moves the team and its messages (marked `moved`, not pushed again) and renames the crew |
 
 ## Results
 

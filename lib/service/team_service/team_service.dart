@@ -49,6 +49,13 @@ class TeamService {
     return RegisterResult.fromMap(data);
   }
 
+  /// The captain renames their team before the game starts; its chat and its
+  /// crew take the new name too. Returns the name as saved.
+  Future<String> renameTeam(String eventId, String teamName, String newName) async {
+    final data = await _functions.renameTeam(eventId: eventId, teamName: teamName, newName: newName);
+    return data['teamName'] as String? ?? newName;
+  }
+
   /// Whether no other team of the event has this name. Null when the check
   /// could not reach the server.
   Future<bool?> isTeamNameFree(String eventId, String name) async {

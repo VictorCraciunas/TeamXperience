@@ -65,14 +65,15 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
   Future<void> _saveChanges() async {
     setState(() => controller.isSaving = true);
 
-    final success = await controller.savePhone();
+    final problem = await controller.save();
+    final success = problem == null;
 
     if (mounted) {
-      if (!success) {
+      if (problem != null) {
         MySnackBars.errorSnackBar(
           context,
           title: 'Eroare la salvare',
-          message: 'Nu s-au putut salva modificările.',
+          message: problem,
         );
       }
       setState(() {
@@ -177,7 +178,13 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    TeamDetailWidget(text1: "Nume echipă", text2: team.name),
+                    // The captain renames the team until the game starts.
+                    TeamDetailWidget(
+                      text1: "Nume echipă",
+                      text2: team.name,
+                      isEditing: controller.isEditing && controller.canRename(),
+                      editingController: controller.nameController,
+                    ),
                     const SizedBox(height: 15),
                     TeamMembersRow(
                       title: "Componență echipă",

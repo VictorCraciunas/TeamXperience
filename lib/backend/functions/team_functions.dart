@@ -49,6 +49,10 @@ class TeamFunctions {
     return _call('joinTeam', {'code': code});
   }
 
+  Future<Map<String, dynamic>> renameTeam({required String eventId, required String teamName, required String newName}) {
+    return _call('renameTeam', {'eventId': eventId, 'teamName': teamName, 'newName': newName});
+  }
+
   Future<Map<String, dynamic>> _call(
     String name,
     Map<String, dynamic> input,

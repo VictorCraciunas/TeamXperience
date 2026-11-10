@@ -18,7 +18,9 @@ export type Reason =
   | "rulesNotAccepted"
   | "notOrganiser"
   | "notificationInvalid"
-  | "noRecipients";
+  | "noRecipients"
+  | "teamNotFound"
+  | "gameStarted";
 
 /** The error the app maps to text; `extra` carries e.g. the team's name. */
 export function refuse(reason: Reason, extra: Record<string, unknown> = {}): HttpsError {

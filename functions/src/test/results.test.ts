@@ -36,6 +36,8 @@ describe("sendsPush", () => {
     assert.equal(sendsPush({announcement: true}), false);
     assert.equal(sendsPush({}), true);
     assert.equal(sendsPush({announcement: false}), true);
+    // Copied over when a team is renamed: already sent once.
+    assert.equal(sendsPush({moved: true}), false);
   });
 });
 
