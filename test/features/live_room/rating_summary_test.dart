@@ -35,12 +35,12 @@ void main() {
       expect(ratingAverageText(5), '5,0');
     });
 
-    test('the count in Romanian', () {
-      expect(ratingCountLine(1), 'o notă');
-      expect(ratingCountLine(3), '3 note');
-      expect(ratingCountLine(19), '19 note');
-      expect(ratingCountLine(20), '20 de note');
-      expect(ratingCountLine(101), '101 note');
+    test('how many rated, in Romanian', () {
+      expect(ratingCountLine(1), 'dintr-o notă');
+      expect(ratingCountLine(3), 'din 3 note');
+      expect(ratingCountLine(19), 'din 19 note');
+      expect(ratingCountLine(20), 'din 20 de note');
+      expect(ratingCountLine(101), 'din 101 note');
     });
   });
 }

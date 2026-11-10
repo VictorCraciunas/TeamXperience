@@ -84,5 +84,5 @@ String teamInitial(String name) {
 /// "4,6": the average, one decimal, with a comma.
 String ratingAverageText(double average) => ((average * 10).round() / 10).toStringAsFixed(1).replaceAll('.', ',');
 
-/// "o notă", "3 note", "20 de note".
-String ratingCountLine(int n) => _count(n, 'o notă', 'note');
+/// "dintr-o notă", "din 3 note", "din 20 de note".
+String ratingCountLine(int n) => n == 1 ? 'dintr-o notă' : 'din ${_count(n, 'o notă', 'note')}';

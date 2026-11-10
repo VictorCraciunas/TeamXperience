@@ -128,6 +128,17 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('the stars fit with very large text and many ratings', (tester) async {
+      _bigScreen(tester);
+      final many = [for (var i = 0; i < 1000; i++) 1 + i % 5];
+      for (final scale in [1.0, 1.4, 2.0]) {
+        await tester.pumpWidget(_frame(_room(_mockupTeams(), _Calls(), ratings: ratingSummary(many)), textScale: scale));
+        expect(tester.takeException(), isNull, reason: 'at ${scale}x');
+        final count = tester.getSize(find.text('200').first);
+        expect(count.height, lessThan(scale * 12 * 1.45 * 1.5), reason: 'one line at ${scale}x');
+      }
+    });
+
     testWidgets('no stars: the section is hidden, or says nobody rated', (tester) async {
       _bigScreen(tester);
       await tester.pumpWidget(_frame(_room(_mockupTeams(), _Calls())));

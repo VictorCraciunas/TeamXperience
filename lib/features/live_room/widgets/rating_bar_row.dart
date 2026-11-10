@@ -19,7 +19,10 @@ class RatingBarRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 1),
       child: Row(
         children: [
-          SizedBox(width: 10, child: Text('$stars', style: label, textAlign: TextAlign.right)),
+          ConstrainedBox(
+            constraints: const BoxConstraints(minWidth: 10),
+            child: Text('$stars', style: label, textAlign: TextAlign.right, maxLines: 1, softWrap: false),
+          ),
           const SizedBox(width: 2),
           Icon(TablerIcons.star_filled, size: 11, color: colors.amber),
           const SizedBox(width: 6),
@@ -42,7 +45,10 @@ class RatingBarRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 6),
-          SizedBox(width: 26, child: Text('$count', style: label, textAlign: TextAlign.right)),
+          ConstrainedBox(
+            constraints: const BoxConstraints(minWidth: 26),
+            child: Text('$count', style: label, textAlign: TextAlign.right, maxLines: 1, softWrap: false),
+          ),
         ],
       ),
     );
