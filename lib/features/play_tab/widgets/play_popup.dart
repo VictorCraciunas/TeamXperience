@@ -147,7 +147,20 @@ class _PlayPopupState extends State<PlayPopup> with TickerProviderStateMixin {
     setState(() => _drag = max(0, _drag + d.delta.dy));
   }
 
-  void _dragEnd(DragEndDetails _) {
+  /// A card taller than the space scrolls; pulling it down past its top
+  /// drags the card, as on a short card.
+  bool _scrolled(ScrollNotification n) {
+    if (_exiting) return false;
+    if (n is OverscrollNotification && n.dragDetails != null && n.overscroll < 0) {
+      _dragBack.stop();
+      setState(() => _drag = max(0, _drag - n.overscroll));
+    } else if (n is ScrollEndNotification && _drag > 0) {
+      _dragEnd(null);
+    }
+    return false;
+  }
+
+  void _dragEnd(DragEndDetails? _) {
     if (_exiting) return;
     if (_drag > 90) {
       _c.requestClose();
@@ -224,7 +237,8 @@ class _PlayPopupState extends State<PlayPopup> with TickerProviderStateMixin {
             Positioned(
               left: 14,
               right: 14,
-              top: 20,
+              // Under the status bar, never behind it.
+              top: 20 + MediaQuery.paddingOf(context).top,
               bottom: 20,
               child: LayoutBuilder(
                 builder: (context, box) => Align(
@@ -253,14 +267,21 @@ class _PlayPopupState extends State<PlayPopup> with TickerProviderStateMixin {
                                 onVerticalDragEnd: _dragEnd,
                                 child: ConstrainedBox(
                                   constraints: BoxConstraints(maxHeight: box.maxHeight),
-                                  child: SingleChildScrollView(
-                                    child: MeasureSize(
-                                      onChange: (size) {
-                                        if (mounted && size.height != _cardHeight) {
-                                          setState(() => _cardHeight = size.height);
-                                        }
-                                      },
-                                      child: card,
+                                  child: NotificationListener<ScrollNotification>(
+                                    onNotification: _scrolled,
+                                    // No bounce and no scrolling while the card fits, so
+                                    // the drag reaches the card on every platform.
+                                    child: SingleChildScrollView(
+                                      primary: false,
+                                      physics: const ClampingScrollPhysics(),
+                                      child: MeasureSize(
+                                        onChange: (size) {
+                                          if (mounted && size.height != _cardHeight) {
+                                            setState(() => _cardHeight = size.height);
+                                          }
+                                        },
+                                        child: card,
+                                      ),
                                     ),
                                   ),
                                 ),

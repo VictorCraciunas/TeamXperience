@@ -6,6 +6,7 @@ import 'package:teamxperience/enums/event_type.dart';
 import 'package:teamxperience/features/play_tab/controller/play_popup_controller.dart';
 import 'package:teamxperience/features/play_tab/widgets/play_popup.dart';
 import 'package:teamxperience/features/play_tab/widgets/play_popup_actions.dart';
+import 'package:teamxperience/features/play_tab/widgets/suggestion_shell.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/team.dart';
@@ -75,7 +76,7 @@ Event _public(String id, String name, int days) => Event(
     );
 
 class _Rig {
-  _Rig({Team? fetched, this.size = const Size(400, 800), this.textScale = 1, this.reduced = false})
+  _Rig({Team? fetched, this.size = const Size(400, 800), this.textScale = 1, this.reduced = false, this.padding = EdgeInsets.zero, this.platform})
       : _fetched = fetched;
 
   final events = _Events();
@@ -84,6 +85,8 @@ class _Rig {
   final Size size;
   final double textScale;
   final bool reduced;
+  final EdgeInsets padding;
+  final TargetPlatform? platform;
   final taps = <String>[];
   late final controller = PlayPopupController(
     userEvents: userEvents,
@@ -100,9 +103,14 @@ class _Rig {
     addTearDown(tester.view.reset);
     controller.open();
     await tester.pumpWidget(MaterialApp(
-      theme: AppTheme.light,
+      theme: AppTheme.light.copyWith(platform: platform),
       home: MediaQuery(
-        data: MediaQueryData(size: size, textScaler: TextScaler.linear(textScale), disableAnimations: reduced),
+        data: MediaQueryData(
+          size: size,
+          padding: padding,
+          textScaler: TextScaler.linear(textScale),
+          disableAnimations: reduced,
+        ),
         child: Scaffold(
           body: PlayPopup(
             controller: controller,
@@ -286,5 +294,33 @@ void main() {
       ..active = _game(DateTime.now().subtract(const Duration(minutes: 40)))
       ..team = _team);
     await check((r) => r.events.list = [_public('a', 'Moștenirea Cartografului', 4), _public('b', 'Protocolul Cerber', 10)]);
+  });
+
+  testWidgets('dragging the card down closes it on iPhone too', (tester) async {
+    final rig = _Rig(fetched: _team, platform: TargetPlatform.iOS);
+    rig.userEvents.upcoming = [_game(DateTime.now().add(const Duration(days: 20)))];
+    await rig.pump(tester);
+    await tester.drag(find.text('Următorul tău joc'), const Offset(0, 160));
+    await tester.pump();
+    expect(rig.controller.isClosing, isTrue);
+    await rig.done(tester);
+  });
+
+  testWidgets('a tall card stays below the status bar', (tester) async {
+    final rig = _Rig(size: const Size(320, 480), textScale: 1.3, padding: const EdgeInsets.only(top: 40));
+    rig.events.list = [_public('a', 'Moștenirea Cartografului', 4), _public('b', 'Protocolul Cerber', 10)];
+    await rig.pump(tester);
+    expect(tester.getTopLeft(find.byType(SuggestionShell)).dy, greaterThanOrEqualTo(60));
+    await rig.done(tester);
+  });
+
+  testWidgets('dragging down from the top of a tall, scrolling card still closes it', (tester) async {
+    final rig = _Rig(fetched: _team, size: const Size(320, 480), textScale: 1.3, platform: TargetPlatform.iOS);
+    rig.userEvents.upcoming = [_game(DateTime.now().add(const Duration(days: 20)))];
+    await rig.pump(tester);
+    await tester.drag(find.text('Următorul tău joc'), const Offset(0, 160));
+    await tester.pump();
+    expect(rig.controller.isClosing, isTrue);
+    await rig.done(tester);
   });
 }
