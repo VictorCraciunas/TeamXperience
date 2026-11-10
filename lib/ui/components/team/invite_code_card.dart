@@ -90,7 +90,7 @@ class InviteCodeCard extends StatelessWidget {
                 Expanded(
                   child: InviteCodeButton(
                     label: shareLabel,
-                    icon: TablerIcons.brand_whatsapp,
+                    icon: TablerIcons.share,
                     highlighted: true,
                     onTap: onShare,
                   ),

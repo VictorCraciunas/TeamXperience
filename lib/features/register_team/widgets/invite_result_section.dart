@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/ui/components/buttons/navy_button.dart';
 import 'package:teamxperience/ui/components/misc/avatar_stack.dart';
 import 'package:teamxperience/ui/components/team/invite_code_card.dart';
 import 'package:teamxperience/ui/theme/theme_context.dart';
 
 /// What the register screen shows under the form once the team is made: the
 /// navy invite card with the code to send on, and "1 din 4 în echipă" under
-/// the buttons. [code] is shown as given ("VLP-482").
+/// the buttons, then "Gata" back to the event. [code] is shown as given
+/// ("VLP-482").
 class InviteResultSection extends StatelessWidget {
   const InviteResultSection({
     super.key,
@@ -15,6 +17,7 @@ class InviteResultSection extends StatelessWidget {
     this.leftOut = const [],
     required this.onShare,
     required this.onCopy,
+    required this.onDone,
   });
 
   final String code;
@@ -30,15 +33,22 @@ class InviteResultSection extends StatelessWidget {
   final VoidCallback onShare;
   final VoidCallback onCopy;
 
+  /// "Gata": leaves the sign-up for the event page.
+  final VoidCallback onDone;
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.fromLTRB(14, 4, 14, 14),
-      child: InviteCodeCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          InviteCodeCard(
         code: code,
         caption: 'Gata. Trimite codul coechipierilor',
-        shareLabel: 'WhatsApp',
+        shareLabel: 'Trimite',
         copyLabel: 'Copiază',
         onShare: onShare,
         onCopy: onCopy,
@@ -69,6 +79,10 @@ class InviteResultSection extends StatelessWidget {
               ),
           ],
         ),
+      ),
+          const SizedBox(height: 12),
+          NavyButton(label: 'Gata', onPressed: onDone),
+        ],
       ),
     );
   }

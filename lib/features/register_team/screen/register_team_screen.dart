@@ -66,73 +66,69 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
     return ListenableBuilder(
       listenable: controller,
       builder: (context, _) {
-        return PopScope(
-          canPop: !controller.registered,
-          onPopInvokedWithResult: (didPop, _) {
-            if (!didPop) controller.close();
-          },
-          child: Scaffold(
-            body: Column(
-              children: [
-                ScreenBar(
-                  leadingIcon: TablerIcons.x,
-                  onLeading: controller.close,
-                  title: 'Înscrie echipa',
-                  subtitle: subtitle.isEmpty ? null : subtitle,
-                ),
-                Expanded(
-                  child: SafeArea(
-                    top: false,
-                    child: SingleChildScrollView(
-                      keyboardDismissBehavior:
-                          ScrollViewKeyboardDismissBehavior.onDrag,
-                      child: Column(
-                        children: [
-                          if (controller.crews.isNotEmpty && !controller.registered)
-                            CrewChoice(
-                              crews: controller.crews,
-                              chosen: controller.chosenCrew,
-                              onChoose: controller.chooseCrew,
-                            ),
-                          RegisterForm(
-                            nameController: controller.nameController,
-                            phoneController: controller.phoneController,
-                            onNameChanged: controller.onNameChanged,
-                            onPhoneChanged: controller.onPhoneChanged,
-                            nameStatus: controller.nameStatus,
-                            nameStatusText: controller.nameStatusText,
-                            sizeMin: controller.sizeMin,
-                            sizeMax: event.teamSizeMax,
-                            size: controller.size,
-                            onSizeChanged: controller.setSize,
-                            rulesAccepted: controller.rulesAccepted,
-                            onRulesChanged: controller.setRulesAccepted,
-                            dataAccepted: controller.dataAccepted,
-                            onDataChanged: controller.setDataAccepted,
-                            photoConsent: controller.photoConsent,
-                            onPhotoChanged: controller.setPhotoConsent,
-                            onSubmit:
-                                controller.canSubmit ? controller.submit : null,
-                            sending: controller.sending,
-                            locked: controller.registered,
+        return Scaffold(
+          body: Column(
+            children: [
+              ScreenBar(
+                leadingIcon: TablerIcons.x,
+                onLeading: controller.close,
+                title: 'Înscrie echipa',
+                subtitle: subtitle.isEmpty ? null : subtitle,
+              ),
+              Expanded(
+                child: SafeArea(
+                  top: false,
+                  child: SingleChildScrollView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    child: Column(
+                      children: [
+                        if (controller.crews.isNotEmpty &&
+                            !controller.registered)
+                          CrewChoice(
+                            crews: controller.crews,
+                            chosen: controller.chosenCrew,
+                            onChoose: controller.chooseCrew,
                           ),
-                          if (controller.registered)
-                            InviteResultSection(
-                              key: _resultKey,
-                              code: controller.displayInviteCode,
-                              size: controller.size,
-                              initials: controller.teamInitials,
-                              leftOut: controller.leftOutNames,
-                              onShare: controller.shareInvite,
-                              onCopy: controller.copyInvite,
-                            ),
-                        ],
-                      ),
+                        RegisterForm(
+                          nameController: controller.nameController,
+                          phoneController: controller.phoneController,
+                          onNameChanged: controller.onNameChanged,
+                          onPhoneChanged: controller.onPhoneChanged,
+                          nameStatus: controller.nameStatus,
+                          nameStatusText: controller.nameStatusText,
+                          sizeMin: controller.sizeMin,
+                          sizeMax: event.teamSizeMax,
+                          size: controller.size,
+                          onSizeChanged: controller.setSize,
+                          rulesAccepted: controller.rulesAccepted,
+                          onRulesChanged: controller.setRulesAccepted,
+                          dataAccepted: controller.dataAccepted,
+                          onDataChanged: controller.setDataAccepted,
+                          photoConsent: controller.photoConsent,
+                          onPhotoChanged: controller.setPhotoConsent,
+                          onSubmit:
+                              controller.canSubmit ? controller.submit : null,
+                          sending: controller.sending,
+                          locked: controller.registered,
+                        ),
+                        if (controller.registered)
+                          InviteResultSection(
+                            key: _resultKey,
+                            code: controller.displayInviteCode,
+                            size: controller.size,
+                            initials: controller.teamInitials,
+                            leftOut: controller.leftOutNames,
+                            onShare: controller.shareInvite,
+                            onCopy: controller.copyInvite,
+                            onDone: controller.close,
+                          ),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },

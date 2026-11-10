@@ -261,7 +261,9 @@ void main() {
       await pumpUi(tester, _inviteCard(caption: 'Gata. Trimite codul coechipierilor'));
       expect(find.text('VLP-482'), findsOneWidget);
       expect(find.text('Gata. Trimite codul coechipierilor'), findsOneWidget);
-      expect(find.byIcon(TablerIcons.brand_whatsapp), findsOneWidget);
+      // The phone's share sheet, not WhatsApp itself, so a share icon.
+      expect(find.byIcon(TablerIcons.share), findsOneWidget);
+      expect(find.byIcon(TablerIcons.brand_whatsapp), findsNothing);
       expect(find.byIcon(TablerIcons.copy), findsOneWidget);
     });
 

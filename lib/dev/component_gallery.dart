@@ -214,7 +214,7 @@ class _TeamsGalleryState extends State<_TeamsGallery> {
           InviteCodeCard(
             code: 'VLP-482',
             caption: 'Gata. Trimite codul coechipierilor',
-            shareLabel: 'WhatsApp',
+            shareLabel: 'Trimite',
             copyLabel: 'Copiază',
             onShare: () {},
             onCopy: () {},

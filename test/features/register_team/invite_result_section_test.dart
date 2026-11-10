@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/features/register_team/widgets/invite_result_section.dart';
+import 'package:teamxperience/ui/components/buttons/navy_button.dart';
 import 'package:teamxperience/ui/components/misc/avatar_stack.dart';
 import 'package:teamxperience/ui/theme/app_colors.dart';
 
@@ -9,7 +10,7 @@ import '../../ui/pump_ui.dart';
 Widget _section({
   List<String> initials = const ['VC'],
   List<String> leftOut = const [],
-VoidCallback? onShare, VoidCallback? onCopy, int size = 4}) =>
+VoidCallback? onShare, VoidCallback? onCopy, VoidCallback? onDone, int size = 4}) =>
     InviteResultSection(
       code: 'VLP-482',
       size: size,
@@ -17,9 +18,18 @@ VoidCallback? onShare, VoidCallback? onCopy, int size = 4}) =>
       leftOut: leftOut,
       onShare: onShare ?? () {},
       onCopy: onCopy ?? () {},
+      onDone: onDone ?? () {},
     );
 
 void main() {
+  testWidgets('"Gata" leaves the sign-up, big enough to tap', (tester) async {
+    var done = 0;
+    await pumpUi(tester, _section(onDone: () => done++));
+    expect(tester.getSize(find.ancestor(of: find.text('Gata'), matching: find.byType(NavyButton))).height, greaterThanOrEqualTo(44));
+    await tester.tap(find.text('Gata'));
+    expect(done, 1);
+  });
+
   testWidgets('a crew signed up: everyone who came, and who did not', (tester) async {
     await pumpUi(tester, _section(initials: const ['VC', 'AP'], leftOut: const ['Dan Ion']));
     expect(find.text('2 din 4 în echipă'), findsOneWidget);
@@ -32,7 +42,7 @@ void main() {
     await pumpUi(tester, _section());
     expect(find.text('Gata. Trimite codul coechipierilor'), findsOneWidget);
     expect(find.text('VLP-482'), findsOneWidget);
-    expect(find.text('WhatsApp'), findsOneWidget);
+    expect(find.text('Trimite'), findsOneWidget);
     expect(find.text('Copiază'), findsOneWidget);
   });
 
@@ -43,7 +53,7 @@ void main() {
       tester,
       _section(onShare: () => shared++, onCopy: () => copied++),
     );
-    await tester.tap(find.text('WhatsApp'));
+    await tester.tap(find.text('Trimite'));
     await tester.tap(find.text('Copiază'));
     expect((shared, copied), (1, 1));
   });

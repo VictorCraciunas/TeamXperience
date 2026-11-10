@@ -2,7 +2,6 @@ import 'package:teamxperience/model/crew.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/register_team/logic/team_name_check.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/service/share_service.dart';
@@ -227,20 +226,9 @@ class RegisterTeamController extends ChangeNotifier {
     }
   }
 
-  /// The cross in the bar and the back button. Once the team is made the
-  /// event page underneath is out of date, so it is opened afresh.
-  void close() {
-    final navigator = Navigator.of(context);
-    if (!registered) {
-      navigator.maybePop();
-      return;
-    }
-    navigator.popUntil((route) => route.isFirst);
-    navigator.pushNamed(
-      Routes.eventDetails,
-      arguments: {'event': event, 'isAdmin': false},
-    );
-  }
+  /// The cross in the bar and "Gata": back to the event page, which
+  /// reloads the team when sign-up closes.
+  void close() => Navigator.of(context).maybePop();
 
   @override
   void dispose() {

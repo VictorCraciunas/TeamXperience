@@ -66,7 +66,7 @@ class _TeamsPreviewState extends State<TeamsPreview> {
         myUid: 'u1',
         onNewCrew: () => _say('echipă nouă'),
         onJoin: () => _say('intră cu un cod'),
-        onShare: (_) => _say('WhatsApp'),
+        onShare: (_) => _say('Trimite'),
         onCopy: (_) => _say('copiază'),
         onRetry: () => _say('încearcă din nou'),
       ),
