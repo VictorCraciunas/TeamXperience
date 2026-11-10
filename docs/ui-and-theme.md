@@ -78,5 +78,6 @@ The same converter is used both in the **admin builder preview** (`PuzzleControl
 
 - `TapArea` (`misc/`): a control's tap area, at least 48 px, with the drawing centred; its parent gives the extra room back in its own padding.
 - `LoadFailed` (`feedback/`): stands in for a list that could not be loaded, with "Încearcă din nou".
+- `revealFormError` (`inputs/`): checks a form, scrolls to the highest wrong field and returns its message (null when all is right), for a snackbar.
 - `PulseDot` (`misc/`): a dot that breathes for what is happening now; still under reduced motion. `CodeBoxesInput` shakes once when `error` turns on; `CountdownBox` slides its new value in.
 - `AppColors.amber`: the mockups' #F2A93B. `OutlineCard.borderColor`, `SectionHeader.trailingChild`.

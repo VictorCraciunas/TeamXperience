@@ -19,12 +19,9 @@ void main() {
       expect(_event(minutes: -5).playTime, const Duration(hours: 3));
     });
 
-    test('a duration that cannot be a game limit: under 10 min is none, over 600 is 600', () {
-      expect(_event(minutes: 2).playTime, const Duration(hours: 3));
-      expect(_event(minutes: 9).playTime, const Duration(hours: 3));
-      expect(_event(minutes: 10).playTime, const Duration(minutes: 10));
-      expect(_event(minutes: 600).playTime, const Duration(minutes: 600));
-      expect(_event(minutes: 20000).playTime, const Duration(minutes: 600));
+    test('any duration above zero, short or long, is the game’s length', () {
+      expect(_event(minutes: 2).playTime, const Duration(minutes: 2));
+      expect(_event(minutes: 20000).playTime, const Duration(minutes: 20000));
     });
 
     test('no date, no end', () {

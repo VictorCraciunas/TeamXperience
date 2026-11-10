@@ -78,7 +78,7 @@ Event _readEvent(Map<String, dynamic> map, List<String> errors) {
     area: reader.text('area'),
     finishPoint: reader.text('finishPoint'),
     routeLengthKm: reader.decimal('routeLengthKm', min: 0.1, max: 100),
-    durationMinutes: reader.whole('durationMinutes', min: 10, max: 600),
+    durationMinutes: reader.whole('durationMinutes', min: 1),
     difficulty: reader.option('difficulty', Difficulty.values),
     teamSizeMin: reader.whole('teamSizeMin', min: 1, max: 20) ?? 2,
     teamSizeMax: reader.whole('teamSizeMax', min: 1, max: 20) ?? 6,
@@ -277,7 +277,14 @@ class _Reader {
     final value = map[key];
     if (value == null) return null;
     if (value is! num || value != value.roundToDouble()) {
-      _fail(key, min == null ? 'trebuie să fie un număr întreg.' : 'trebuie să fie un număr întreg între $min și $max.');
+      _fail(
+        key,
+        min == null
+            ? 'trebuie să fie un număr întreg.'
+            : max == null
+            ? 'trebuie să fie un număr întreg de cel puțin $min.'
+            : 'trebuie să fie un număr întreg între $min și $max.',
+      );
       return null;
     }
     if (!_inRange(value, min, max)) {

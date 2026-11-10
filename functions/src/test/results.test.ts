@@ -308,12 +308,11 @@ describe("playerResult", () => {
       assert.equal(playTimeMs({durationMinutes: "90"}), 3 * 60 * 60000);
     });
 
-    test("as the app reads it: whole minutes, under 10 is none, over 600 is 600", () => {
-      assert.equal(playTimeMs({durationMinutes: 2}), 3 * 60 * 60000);
+    test("as the app reads it: whole minutes above zero, short or long", () => {
+      assert.equal(playTimeMs({durationMinutes: 2}), 2 * 60000);
+      assert.equal(playTimeMs({durationMinutes: 20000}), 20000 * 60000);
       assert.equal(playTimeMs({durationMinutes: 0.5}), 3 * 60 * 60000);
       assert.equal(playTimeMs({durationMinutes: 90.7}), 90 * 60000);
-      assert.equal(playTimeMs({durationMinutes: 10}), 10 * 60000);
-      assert.equal(playTimeMs({durationMinutes: 20000}), 600 * 60000);
     });
 
     test("over once its duration has passed, or when stopped", () => {
