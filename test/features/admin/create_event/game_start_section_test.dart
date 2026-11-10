@@ -69,6 +69,16 @@ void main() {
       expect(CreateEventController.enterWindowProblem('9'), isNotNull);
       expect(CreateEventController.enterWindowProblem('o oră'), isNotNull);
     });
+
+    test('the duration ends the game, so it must be 10 to 600 minutes', () {
+      expect(CreateEventController.durationProblem('120'), isNull);
+      expect(CreateEventController.durationProblem('10'), isNull);
+      expect(CreateEventController.durationProblem('600'), isNull);
+      expect(CreateEventController.durationProblem('2'), 'Între 10 și 600 de minute');
+      expect(CreateEventController.durationProblem('601'), 'Între 10 și 600 de minute');
+      expect(CreateEventController.durationProblem(''), 'Introdu durata în minute');
+      expect(CreateEventController.durationProblem('2 ore'), 'Introdu durata în minute');
+    });
   });
 
   testWidgets('the section shows the four fields', (tester) async {

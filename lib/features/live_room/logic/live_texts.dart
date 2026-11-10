@@ -33,7 +33,7 @@ String liveHeaderLine(Event event, DateTime now) {
     if (left.inMinutes < 1) return 'Începe acum';
     return 'Începe în ${_minutes(left.inMinutes)}';
   }
-  return '${formatRemaining(start.add(Event.maxDuration).difference(now))} rămase';
+  return '${formatRemaining(start.add(event.playTime).difference(now))} rămase';
 }
 
 /// "12 echipe · 6 misiuni".

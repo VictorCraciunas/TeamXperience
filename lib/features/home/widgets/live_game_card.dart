@@ -34,7 +34,7 @@ class LiveGameCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final start = event.dateEvent;
-    final left = start == null ? Duration.zero : start.add(Event.maxDuration).difference(now);
+    final left = start == null ? Duration.zero : start.add(event.playTime).difference(now);
     final onNavy = colors.onNavy;
 
     return NavyGameCard(

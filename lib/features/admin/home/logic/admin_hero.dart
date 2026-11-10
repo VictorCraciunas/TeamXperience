@@ -38,7 +38,7 @@ AdminHero resolveAdminHero({
     if (start == null) continue;
 
     if (!start.isAfter(now)) {
-      final over = event.isStopped || now.isAfter(start.add(Event.maxDuration));
+      final over = event.isStopped || now.isAfter(start.add(event.playTime));
       if (over) continue;
       final current = live?.dateEvent;
       if (current == null || start.isBefore(current)) live = event;

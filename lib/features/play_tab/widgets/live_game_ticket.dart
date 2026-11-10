@@ -42,7 +42,7 @@ class LiveGameTicket extends StatelessWidget {
     final colors = context.colors;
     final start = event.dateEvent;
     // The game's end, as Home's live card counts it.
-    final left = start == null ? Duration.zero : start.add(Event.maxDuration).difference(now);
+    final left = start == null ? Duration.zero : start.add(event.playTime).difference(now);
     final own = ranked.where((r) => r.team.name == team.name).firstOrNull;
     final solved = lastSolved(event, team, now);
     var i = 0;

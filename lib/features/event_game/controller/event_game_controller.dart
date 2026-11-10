@@ -143,13 +143,30 @@ class EventGameController extends ChangeNotifier {
       return;
     }
 
-    final remaining = start.add(Event.maxDuration).difference(DateTime.now());
-    _deadlineTimer = Timer(remaining, _triggerEventEnded);
+    _setDeadline(start);
     _eventSubscription = _eventService.streamEvent(event.eventId).listen((
       updatedEvent,
     ) {
-      if (updatedEvent.isStopped) _triggerEventEnded();
+      if (updatedEvent.isStopped) {
+        _triggerEventEnded();
+        return;
+      }
+      // The organiser changed the duration or the start mid-game: the end
+      // moves with it.
+      final start = updatedEvent.dateEvent;
+      if (start != null && updatedEvent.endsAt != event.endsAt) {
+        event.durationMinutes = updatedEvent.durationMinutes;
+        event.dateEvent = start;
+        _setDeadline(start);
+        notifyListeners();
+      }
     });
+  }
+
+  /// Ends the game when the event's time runs out from [start].
+  void _setDeadline(DateTime start) {
+    _deadlineTimer?.cancel();
+    _deadlineTimer = Timer(start.add(event.playTime).difference(DateTime.now()), _triggerEventEnded);
   }
 
   void _triggerEventEnded() {
