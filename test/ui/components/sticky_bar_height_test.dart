@@ -25,4 +25,25 @@ void main() {
       expect(tester.getSize(find.byKey(const ValueKey('page'))).height, greaterThan(400));
     });
   }
+
+  testWidgets('the link sits at the right end of the bar', (tester) async {
+    await pumpUi(
+      tester,
+      Scaffold(
+        body: const SizedBox.expand(),
+        bottomNavigationBar: StickyActionBar(
+          title: 'ECHIPA 1',
+          detail: '3 membri',
+          inlineDetail: true,
+          leadingIcon: Icons.check_circle_outline,
+          prominent: false,
+          actionLabel: 'Echipa ta',
+          onAction: () {},
+        ),
+      ),
+    );
+    final bar = tester.getRect(find.byType(StickyActionBar));
+    final link = tester.getRect(find.text('Echipa ta'));
+    expect(bar.right - link.right, lessThanOrEqualTo(16));
+  });
 }
