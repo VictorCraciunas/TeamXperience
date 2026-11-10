@@ -22,6 +22,7 @@ Verify before fixing; none of these were reproduced. Roughly ordered by impact.
 - `TeamService.updateTeamLocation` doesn't await; `LocationService` swallows all errors; tracking only while the game screen is alive and app in foreground.
 - `UserEventsProvider.loadActiveEvent` runs one Firestore query per past registered event on every `UserProvider`/`EventList` notification.
 - `EventList.liveEvents` / `Event.isOver` don't trigger rebuilds when the event's end passes.
+- A duration changed mid-game reaches the game screen at once (`EventGameController` streams the event), but Home and the Joacă pop-up keep the cached event until a refresh (at most 5 min, or pull to refresh), so their clock can reach 0:00 early. Once a phone's game has ended, extending the duration does not reopen it.
 - Facebook sign-in buttons are non-functional placeholders.
 - Errors: repos throw generic `Exception('Failed to …')` and drop the cause; some controllers show raw `e.toString()` to users.
 - Stray debug `print`s remain in files this redesign did not touch (`avoid_print` lint, e.g. `AuthUtil`, `EventGameController`, `AddMissionsController`).

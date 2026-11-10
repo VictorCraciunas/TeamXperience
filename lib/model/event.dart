@@ -108,11 +108,18 @@ class Event {
   /// How long a game lasts when the event has no duration (older events).
   static const Duration defaultPlayTime = Duration(hours: 3);
 
+  /// The durations the form takes; the server reads them the same way.
+  static const int minPlayMinutes = 10;
+  static const int maxPlayMinutes = 600;
+
   /// How long the game lasts: the event's duration; the game ends for every
-  /// team that long after the start.
+  /// team that long after the start. A duration saved before it ended games
+  /// may be anything: under [minPlayMinutes] counts as none, over
+  /// [maxPlayMinutes] as the most.
   Duration get playTime {
     final minutes = durationMinutes;
-    return minutes != null && minutes > 0 ? Duration(minutes: minutes) : defaultPlayTime;
+    if (minutes == null || minutes < minPlayMinutes) return defaultPlayTime;
+    return Duration(minutes: minutes > maxPlayMinutes ? maxPlayMinutes : minutes);
   }
 
   /// When the game ends; null without a date.
@@ -131,8 +138,6 @@ class Event {
     final end = endsAt;
     return end != null && now.isAfter(end);
   }
-
-  bool get hasExpired => !isStopped && isOverAt(DateTime.now());
 
   bool get isOver => isOverAt(DateTime.now());
 

@@ -15,7 +15,7 @@ export const onEventStopped = onDocumentUpdated({document: "events/{eventId}", t
   await applyResults(getFirestore(), event.params.eventId);
 });
 
-/** Events nobody stopped: the results once their three hours ran out. */
+/** Events nobody stopped: the results once their time ran out. */
 export const closeExpiredEvents = onSchedule({schedule: "every 15 minutes", timeoutSeconds: TIMEOUT}, async () => {
   const db = getFirestore();
   for (const eventId of await expiredEventIds(db, new Date())) {

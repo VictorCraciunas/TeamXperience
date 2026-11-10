@@ -181,7 +181,7 @@ class CreateEventController {
   /// game ends for everyone this long after the start.
   static String? durationProblem(String text) {
     if (int.tryParse(text.trim()) == null) return 'Introdu durata în minute';
-    return _inRange(text, 10, 600) == null ? 'Între 10 și 600 de minute' : null;
+    return _inRange(text, Event.minPlayMinutes, Event.maxPlayMinutes) == null ? 'Între 10 și 600 de minute' : null;
   }
 
   /// The message for minutes that are not 10 to 180, or null.

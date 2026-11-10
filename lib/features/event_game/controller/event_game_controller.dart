@@ -151,11 +151,13 @@ class EventGameController extends ChangeNotifier {
         _triggerEventEnded();
         return;
       }
-      // The organiser changed the duration mid-game: the end moves with it.
-      if (updatedEvent.durationMinutes != event.durationMinutes) {
+      // The organiser changed the duration or the start mid-game: the end
+      // moves with it.
+      final start = updatedEvent.dateEvent;
+      if (start != null && updatedEvent.endsAt != event.endsAt) {
         event.durationMinutes = updatedEvent.durationMinutes;
-        final fresh = event.dateEvent;
-        if (fresh != null) _setDeadline(fresh);
+        event.dateEvent = start;
+        _setDeadline(start);
         notifyListeners();
       }
     });
