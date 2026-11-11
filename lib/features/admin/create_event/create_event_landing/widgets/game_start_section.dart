@@ -54,7 +54,8 @@ class GameStartSection extends StatelessWidget {
         AppTextField(
           controller: enterWindow,
           label: 'Minute pentru codul de start',
-          hint: 'Gol = 60',
+          hint: 'Ex. 60',
+          helper: 'Cât timp după start pot echipele introduce codul.',
           keyboardType: TextInputType.number,
           validator: (text) => CreateEventController.enterWindowProblem(text ?? ''),
         ),

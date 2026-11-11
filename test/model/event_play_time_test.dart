@@ -60,6 +60,10 @@ void main() {
       expect(_event(minutes: 120, window: 60).enterWindow, const Duration(minutes: 60));
     });
 
+    test('a huge number: until the end of the game, without breaking', () {
+      expect(_event(minutes: 90, window: 9223372036854775807 ~/ 2).enterWindow, const Duration(minutes: 90));
+    });
+
     test('never past the end of the game', () {
       expect(_event(minutes: 45, window: 60).enterWindow, const Duration(minutes: 45));
     });
