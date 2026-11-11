@@ -185,9 +185,12 @@ class CreateEventController {
     return minutes == null || minutes <= 0 ? 'Introdu durata în minute' : null;
   }
 
-  /// The message for minutes that are not 10 to 180, or null.
-  static String? enterWindowProblem(String text) =>
-      text.trim().isEmpty || _inRange(text, 10, 180) != null ? null : 'Între 10 și 180 de minute';
+  /// The message for start code minutes that are not a whole number above
+  /// zero, or null. Required; the code never works past the end of the game.
+  static String? enterWindowProblem(String text) {
+    final minutes = int.tryParse(text.trim());
+    return minutes == null || minutes <= 0 ? 'Introdu minutele' : null;
+  }
 
   static String? _textOrNull(TextEditingController c) {
     final text = c.text.trim();
@@ -195,6 +198,12 @@ class CreateEventController {
   }
 
   static int? _whole(TextEditingController c) => int.tryParse(c.text.trim());
+
+  /// A whole number above zero, else null.
+  static int? _positive(String text) {
+    final value = int.tryParse(text.trim());
+    return value != null && value > 0 ? value : null;
+  }
 
   static String _format(DateTime date) =>
       DateFormat('yyyy-MM-dd HH:mm').format(date);
@@ -252,7 +261,7 @@ class CreateEventController {
       ..finishTitle = _textOrNull(finishTitleController)
       ..finishMessage = _textOrNull(finishMessageController)
       ..hintsPerMission = _inRange(hintsPerMissionController.text, 0, 5) ?? 1
-      ..enterWindowMinutes = _inRange(enterWindowController.text, 10, 180) ?? 60
+      ..enterWindowMinutes = _positive(enterWindowController.text) ?? 60
       // Cards and older screens still read the text fields. An empty number
       // keeps the old text, so text the form could not read is not lost.
       ..lungimeTraseu = km == null ? (event.lungimeTraseu ?? '') : formatKm(km)

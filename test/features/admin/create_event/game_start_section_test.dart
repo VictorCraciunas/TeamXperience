@@ -52,11 +52,15 @@ void main() {
       expect((c.hintsPerMissionController.text, c.enterWindowController.text), ('1', '60'));
       c
         ..hintsPerMissionController.text = ''
-        ..enterWindowController.text = '5';
+        ..enterWindowController.text = '0';
       final e = c.buildNewEvent();
       expect(e.introLetter, isNull);
       expect(e.hintsPerMission, 1);
       expect(e.enterWindowMinutes, 60);
+      c.enterWindowController.text = '5';
+      expect(c.buildNewEvent().enterWindowMinutes, 5);
+      c.enterWindowController.text = '1000';
+      expect(c.buildNewEvent().enterWindowMinutes, 1000);
       c.hintsPerMissionController.text = '9';
       expect(c.buildNewEvent().hintsPerMission, 1);
     });
@@ -66,8 +70,11 @@ void main() {
       expect(CreateEventController.hintsProblem('3'), isNull);
       expect(CreateEventController.hintsProblem('6'), isNotNull);
       expect(CreateEventController.enterWindowProblem('180'), isNull);
-      expect(CreateEventController.enterWindowProblem('9'), isNotNull);
-      expect(CreateEventController.enterWindowProblem('o oră'), isNotNull);
+      expect(CreateEventController.enterWindowProblem('5'), isNull);
+      expect(CreateEventController.enterWindowProblem('1000'), isNull);
+      expect(CreateEventController.enterWindowProblem(''), 'Introdu minutele');
+      expect(CreateEventController.enterWindowProblem('0'), 'Introdu minutele');
+      expect(CreateEventController.enterWindowProblem('o oră'), 'Introdu minutele');
     });
 
     test('the duration: any whole number of minutes above zero', () {
