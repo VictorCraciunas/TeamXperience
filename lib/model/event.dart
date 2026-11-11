@@ -126,8 +126,9 @@ class Event {
   /// How long after the start teams can still type the start code, never
   /// past the end of the game.
   Duration get enterWindow {
-    final window = Duration(minutes: enterWindowMinutes);
-    return window > playTime ? playTime : window;
+    final game = playTime;
+    // Compared in minutes first: a huge number would overflow a Duration.
+    return enterWindowMinutes >= game.inMinutes ? game : Duration(minutes: enterWindowMinutes);
   }
 
   /// Stopped, or its time ran out by [now].

@@ -741,6 +741,11 @@ void main() {
       expect(puzzle?.wrongAnswerMessage, 'Nu e anul ăsta.');
     });
 
+    test('the start code minutes: any whole number above zero', () {
+      expect(_import(_event(extra: {'enterWindowMinutes': 1000})).event?.enterWindowMinutes, 1000);
+      expect(_import(_event(extra: {'enterWindowMinutes': 0})).errors.join(), contains('enterWindowMinutes'));
+    });
+
     test('left out, the defaults apply', () {
       final event = _import(_event()).event;
       expect(event?.hintsPerMission, 1);
@@ -773,7 +778,7 @@ void main() {
     test('out of range is refused, with where it is', () {
       final json = withRules();
       json['hintsPerMission'] = 9;
-      json['enterWindowMinutes'] = 5;
+      json['enterWindowMinutes'] = 0;
       ((json['missions'] as List).single as Map)['latitude'] = 120;
       (((json['missions'] as List).single as Map)['puzzles'] as List).single['maxAttempts'] = 50;
       final errors = _import(json).errors.join(' | ');

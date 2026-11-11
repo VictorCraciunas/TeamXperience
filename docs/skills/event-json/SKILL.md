@@ -203,7 +203,7 @@ A one-mission event with a code puzzle. The coordinates only show the format. (A
 | `startLatitude`, `startLongitude` | Numbers, the start pin (latitude −90 to 90, longitude −180 to 180). "Hartă" on the event page opens it in Google Maps. Copy them from Google Maps: right-click the place, click the numbers. |
 | `finishLatitude`, `finishLongitude` | Numbers, the finish pin (same ranges). Optional, but write both or neither. With the start pin it turns on the route map on the event page: only those two get a pin, and the line bends towards the missions without reaching them. Without it the page keeps a plain drawing of the route. |
 | `routeLengthKm` | Number from 0.1 to 100, the route in km, for example `4.5`. Shown as "4,5 km". |
-| `durationMinutes` | Whole number from 10 to 600, for example `120`. Shown as "2 h", `90` as "1 h 30". The game still ends 3 hours after `dateEvent`, so keep it at `180` or less. |
+| `durationMinutes` | Whole number above 0, for example `120`. Shown as "2 h", `90` as "1 h 30". The game ends for every team this long after `dateEvent`, so it is the time limit, not a rough estimate. |
 | `difficulty` | `"easy"`, `"medium"` or `"hard"`, shown as one, two or three dots with "Ușoară", "Medie", "Grea". |
 | `teamSizeMin`, `teamSizeMax` | Whole numbers from 1 to 20, how many people a team can have. Default 2 and 6, shown as "Echipe de 2–6". `teamSizeMin` must not be larger than `teamSizeMax`: the import lets it through, but the event cannot be published that way. |
 | `maxTeams` | Whole number from 1 to 500, how many teams can register. Leave it out for no limit. |
@@ -216,7 +216,7 @@ A one-mission event with a code puzzle. The coordinates only show the format. (A
 | `introSignature` | Who signs the letter, for example `"Cartograful"` (shown as "— Cartograful"). |
 | `hintsPerMission` | Whole number from 0 to 5, default 1: how many puzzle hints a team may open in each mission. `0` hides "Indiciu". |
 | `finishTitle`, `finishMessage` | Free text: what the finish screen says once a team solves the last mission, for example `"Harta e completă"` and `"{team} au moștenit secretul cartografului."` (`{team}` becomes each team's name). Optional; without them the app says "Ați terminat traseul!" and how many missions the team solved. |
-| `enterWindowMinutes` | Whole number from 10 to 180, default 60: how long after the start teams can still type the start code. |
+| `enterWindowMinutes` | Whole number above 0, default 60: how long after the start teams can still type the start code. It never runs past the end of the game. |
 | `lungimeTraseu`, `durata`, `dificultate` | Text from older events, still read when the number fields are missing. Write `routeLengthKm`, `durationMinutes` and `difficulty` instead. |
 | `landingImageUrl` | A link starting with `https://`, or `null`. The event's cover picture. Files cannot be put in the JSON. |
 | `taskBackgroundImageUrl` | A link starting with `https://`, or `null`. Background behind every puzzle. Pictures are not kept inside the app: host the picture somewhere and paste its link. A dark picture needs light text (the hacker examples use light green). A sample dark picture is in `docs/event-examples/images/hacker_background.jpg`. |
@@ -411,7 +411,7 @@ The third is the one to avoid, because text and typed characters without a `text
 - [ ] For the route map: `finishLatitude` and `finishLongitude` are there, and every mission has a place of its own or a `geolocation` puzzle.
 - [ ] No coordinate or answer is made up. One you do not have is left out and listed in the notes after the JSON, even where another item here asks for it.
 - [ ] Every pair of coordinates is complete: both numbers or neither.
-- [ ] `teamSizeMin` is not larger than `teamSizeMax`, and `durationMinutes` is at most `180`.
+- [ ] `teamSizeMin` is not larger than `teamSizeMax`, and `durationMinutes` is the real time limit of the game.
 - [ ] Every mission has a `title`; one or two have `isTeaserPublic: true` and a `teaser`.
 - [ ] Every puzzle `type` is one of `code`, `imageToUpload`, `geolocation` (avoid `redirect` and `ar`).
 - [ ] Every `code` puzzle has `code` (at most 10 characters, no diacritics), a `code` component with `inputType` written and a matching `codeLength`, and a `button` component.
