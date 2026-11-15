@@ -37,7 +37,7 @@ Event
   finishLatitude?: Number                (with the start pin, turns on the route map)
   finishLongitude?: Number               (with the start pin, turns on the route map)
   routeLengthKm: Number                  (needed to publish, or lungimeTraseu)
-  durationMinutes: Whole number          (needed to publish, or durata)
+  durationMinutes: Whole number          (always write it: the game ends this long after dateEvent)
   difficulty: "easy" | "medium" | "hard" (needed to publish, or dificultate)
   area?: String
   teamSizeMin?: Whole number             (default 2)
@@ -55,7 +55,7 @@ Event
   finishTitle?: String
   finishMessage?: String
   lungimeTraseu?: String                 (older events; write routeLengthKm instead)
-  durata?: String                        (older events; write durationMinutes instead)
+  durata?: String                        (older events; shown on cards, but does not set the game's length)
   dificultate?: String                   (older events; write difficulty instead)
   landingImageUrl?: String | null
   taskBackgroundImageUrl?: String | null
@@ -217,7 +217,7 @@ A one-mission event with a code puzzle. The coordinates only show the format. (A
 | `hintsPerMission` | Whole number from 0 to 5, default 1: how many puzzle hints a team may open in each mission. `0` hides "Indiciu". |
 | `finishTitle`, `finishMessage` | Free text: what the finish screen says once a team solves the last mission, for example `"Harta e completă"` and `"{team} au moștenit secretul cartografului."` (`{team}` becomes each team's name). Optional; without them the app says "Ați terminat traseul!" and how many missions the team solved. |
 | `enterWindowMinutes` | Whole number above 0, default 60: how long after the start teams can still type the start code. It never runs past the end of the game. |
-| `lungimeTraseu`, `durata`, `dificultate` | Text from older events, still read when the number fields are missing. Write `routeLengthKm`, `durationMinutes` and `difficulty` instead. |
+| `lungimeTraseu`, `durata`, `dificultate` | Text from older events, still read when the number fields are missing. Write `routeLengthKm`, `durationMinutes` and `difficulty` instead. `durata` alone does not end the game: an event without `durationMinutes` runs for 3 hours. |
 | `landingImageUrl` | A link starting with `https://`, or `null`. The event's cover picture. Files cannot be put in the JSON. |
 | `taskBackgroundImageUrl` | A link starting with `https://`, or `null`. Background behind every puzzle. Pictures are not kept inside the app: host the picture somewhere and paste its link. A dark picture needs light text (the hacker examples use light green). A sample dark picture is in `docs/event-examples/images/hacker_background.jpg`. |
 | `screenAnimation` | How the components of a puzzle come in when it opens. The components come one after another, from top to bottom: `"fade"` (default) fades each in; `"slideFromLeft"`, `"slideFromRight"`, `"slideFromBottom"`, `"slideFromTop"` slide each in from that side while fading in; `"zoom"` grows each from small to full size; `"bounce"` brings each up from below, a little past its place, and settles it back. `"none"`: no animation, everything is there at once. A text with `"typewriter"`, and the glow of a button, still work with `"none"`. Pick one kind for the whole event and keep it calm: `"fade"` or `"slideFromBottom"` suit most games, `"bounce"` a playful one, `"slideFromLeft"` a terminal or hacker one. |
