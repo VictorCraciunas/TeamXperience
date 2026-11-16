@@ -1,7 +1,45 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:teamxperience/service/location_filter.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
 import 'package:teamxperience/service/walk_tracker.dart';
+
+/// How often Android is asked for a fix while the game follows the phone.
+const Duration fixInterval = Duration(seconds: 2);
+
+/// The one place the app's location settings are chosen; every stream and
+/// one-off fix uses them. Only while the app is open: no background updates
+/// and no new permissions.
+///
+/// - Android: best accuracy (GPS through the fused provider) and a fix every
+///   [fixInterval] instead of the default 5 s.
+/// - iOS/macOS: best accuracy (`high` there is only "nearest ten metres"),
+///   walking as the activity, and updates never paused automatically.
+/// - Elsewhere (web, tests): plain settings with best accuracy.
+LocationSettings positionSettings({
+  int distanceFilter = 0,
+  TargetPlatform? platform,
+  bool web = kIsWeb,
+}) {
+  if (web) return LocationSettings(accuracy: LocationAccuracy.best, distanceFilter: distanceFilter);
+  return switch (platform ?? defaultTargetPlatform) {
+    TargetPlatform.android => AndroidSettings(
+        accuracy: LocationAccuracy.best,
+        distanceFilter: distanceFilter,
+        intervalDuration: fixInterval,
+      ),
+    TargetPlatform.iOS || TargetPlatform.macOS => AppleSettings(
+        accuracy: LocationAccuracy.best,
+        distanceFilter: distanceFilter,
+        activityType: ActivityType.fitness,
+        pauseLocationUpdatesAutomatically: false,
+        allowBackgroundLocationUpdates: false,
+        showBackgroundLocationIndicator: false,
+      ),
+    _ => LocationSettings(accuracy: LocationAccuracy.best, distanceFilter: distanceFilter),
+  };
+}
 
 class LocationService {
   static final LocationService _instance = LocationService._internal();
@@ -36,13 +74,35 @@ class LocationService {
     return true;
   }
 
-  /// Returns a position stream with configurable distance filter.
+  /// Every position the phone reports (unfiltered), with [positionSettings].
   Stream<Position> getPositionStream({int distanceFilter = 10}) {
-    final locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: distanceFilter,
-    );
-    return Geolocator.getPositionStream(locationSettings: locationSettings);
+    return Geolocator.getPositionStream(locationSettings: positionSettings(distanceFilter: distanceFilter));
+  }
+
+  /// Positions without the poor readings ([LocationFilter]: one worse than
+  /// 30 m is skipped while a better one is under 10 s old). With
+  /// [withCurrentFix], a one-off fix is asked for at once too, so the first
+  /// position does not wait for the stream; its errors are ignored.
+  Stream<Position> accuratePositions({int distanceFilter = 10, bool withCurrentFix = false}) {
+    final stream = getPositionStream(distanceFilter: distanceFilter);
+    final source = withCurrentFix ? _withCurrentFix(stream) : stream;
+    return filterFixes<Position>(source, accuracyOf: (position) => position.accuracy);
+  }
+
+  /// [stream] plus one fix from `getCurrentPosition`, whichever comes first.
+  Stream<Position> _withCurrentFix(Stream<Position> stream) {
+    final out = StreamController<Position>();
+    StreamSubscription<Position>? subscription;
+    out.onListen = () {
+      subscription = stream.listen(out.add, onError: out.addError, onDone: out.close);
+      Geolocator.getCurrentPosition(locationSettings: positionSettings()).then((position) {
+        if (!out.isClosed && out.hasListener) out.add(position);
+      }, onError: (Object _) {});
+    };
+    out.onPause = () => subscription?.pause();
+    out.onResume = () => subscription?.resume();
+    out.onCancel = () => subscription?.cancel();
+    return out.stream;
   }
 
   // Start location tracking for a team
@@ -66,7 +126,7 @@ class LocationService {
       return;
     }
 
-    _positionStream = getPositionStream(distanceFilter: 10).listen(
+    _positionStream = accuratePositions(distanceFilter: 10).listen(
       (Position position) async {
         _countWalk(position);
         await _updateTeamLocation(position);
