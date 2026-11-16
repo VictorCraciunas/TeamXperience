@@ -176,6 +176,7 @@ class MessagesStream extends StatelessWidget {
             return Expanded(
               child: ListView(
                 reverse: true,
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                 padding: const EdgeInsets.symmetric(
                     horizontal: 18, vertical: 10),
                 children: reversed,

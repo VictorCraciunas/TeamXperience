@@ -59,6 +59,7 @@ import 'firebase_options.dart';
 // Add these imports for your services and state management
 import 'package:teamxperience/service/event_service/event_service.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
+import 'package:teamxperience/ui/components/inputs/tap_outside_closes_keyboard.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -136,6 +137,8 @@ class MyApp extends StatelessWidget {
               darkTheme: AppTheme.dark,
               themeMode: themeController.mode,
               title: 'Treasure Hunt',
+              // A tap outside a text field, or a drag, closes the keyboard.
+              builder: (context, app) => TapOutsideClosesKeyboard(child: app ?? const SizedBox.shrink()),
               initialRoute: Routes.redirect,
               routes: {
                 Routes.redirect:
