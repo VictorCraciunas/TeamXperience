@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -83,9 +85,9 @@ class AuthenticationRepository {
     }
   }
 
-  /// Signs out. This device's push token comes off the account first, and a
-  /// new one is made after, so the next account here never gets this one's
-  /// pushes; neither step can block or fail the sign-out.
+  /// Signs out. This device comes off the account first (3 s at most), and
+  /// a new token is made after, not waited on, so the next account here never
+  /// gets this one's pushes; neither step can block or fail the sign-out.
   Future<void> logout() async {
     final uid = _auth.currentUser?.uid;
     if (uid != null) await FCMService.forgetTokenOf(uid);
@@ -106,7 +108,7 @@ class AuthenticationRepository {
 
     // Finally sign out from Firebase
     await _auth.signOut();
-    await FCMService.dropDeviceToken();
+    unawaited(FCMService.dropDeviceToken());
   }
 
 

@@ -27,20 +27,17 @@ class LogInService {
     final lastName = profile?['family_name'];
 
     if (await userRepo.findByEmail(userCredential.user!.email!) == null) {
-      String? token = await FCMService.getFCMToken();
-
-      //save the user into database
+      //save the user into database (no push token: those go to pushTokens)
       AppUser appUser = AppUser(
           email: userCredential.user!.email!,
           firstName: firstName,
           lastName: lastName,
           uid: userCredential.user!.uid,
-          fcmToken: token  ?? ""
+          fcmToken: ""
       );
       await userRepo.saveUser(appUser);
-    }else{
-      final user = userCredential.user;
-      if (user != null) await FCMService.saveTokenAsking(user.uid);
     }
+    final user = userCredential.user;
+    if (user != null) await FCMService.saveTokenAsking(user.uid);
   }
 }

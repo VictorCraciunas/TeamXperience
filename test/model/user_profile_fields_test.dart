@@ -56,11 +56,10 @@ void main() {
       expect(json.containsKey('badges'), isFalse);
     });
 
-    test("a new user's token starts the list of devices; no token, no list", () {
-      final withToken = AppUser.fromFirestore({..._base(), 'fcmToken': 't'}).toJson();
-      expect(withToken['fcmToken'], 't');
-      expect(withToken['fcmTokens'], ['t']);
-      expect(AppUser.fromFirestore(_base()).toJson().containsKey('fcmTokens'), isFalse);
+    test('a user doc never carries push tokens: they live in pushTokens, unreadable to others', () {
+      final json = AppUser.fromFirestore({..._base(), 'fcmToken': 't', 'fcmTokens': ['t']}).toJson();
+      expect(json.containsKey('fcmToken'), isFalse);
+      expect(json.containsKey('fcmTokens'), isFalse);
     });
 
     test('copyWith changes xp, stats and badges and keeps the rest', () {
