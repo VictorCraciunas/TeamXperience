@@ -27,6 +27,7 @@ class TeamPhotoController extends ChangeNotifier {
         _save = save ?? ((url) => TeamService().setTeamPhoto(eventId, teamName, slot, url, uid));
 
   static const String failedLine = 'Poza nu s-a trimis. Încearcă din nou.';
+  static const String cameraRefusedLine = 'Camera nu e permisă. Pornește-o din setările telefonului.';
 
   final String eventId;
   final String teamName;
@@ -67,6 +68,8 @@ class TeamPhotoController extends ChangeNotifier {
         return;
       }
       await _save(url);
+    } on CameraAccessDenied {
+      _error = cameraRefusedLine;
     } catch (_) {
       _error = failedLine;
     } finally {
