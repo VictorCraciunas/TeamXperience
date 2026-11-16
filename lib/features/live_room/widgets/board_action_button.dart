@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 
 /// An outlined action on the board's bar and the team sheet: "Anunț",
-/// "Oprește", "Sună căpitanul". It stays silent without [onTap].
+/// "Oprește", "Sună căpitanul", "Hartă". It stays silent without [onTap].
 class BoardActionButton extends StatelessWidget {
   const BoardActionButton({super.key, required this.label, required this.icon, required this.colour, this.onTap});
+
+  /// What the button adds around its label: border, padding, icon and gap.
+  static const double chromeWidth = 1.5 * 2 + 10 * 2 + 14 + 4;
+
+  static TextStyle labelStyle(Color colour) =>
+      TextStyle(fontSize: 14, height: 1.45, fontWeight: FontWeight.w500, color: colour);
 
   final String label;
   final IconData icon;
@@ -40,7 +46,7 @@ class BoardActionButton extends StatelessWidget {
                         label,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 14, height: 1.45, fontWeight: FontWeight.w500, color: colour),
+                        style: labelStyle(colour),
                       ),
                     ),
                   ],

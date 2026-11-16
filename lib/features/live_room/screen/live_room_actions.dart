@@ -10,6 +10,7 @@ import 'package:teamxperience/ui/components/feedback/text_input_dialog.dart';
 import '../controller/live_room_controller.dart';
 import '../logic/attention_queue.dart';
 import '../logic/live_board.dart';
+import '../logic/live_map_focus.dart';
 import '../logic/live_map_points.dart';
 import '../logic/live_status.dart';
 import '../logic/live_texts.dart';
@@ -31,11 +32,20 @@ class LiveRoomActions {
 
   void openBigMap() => Navigator.pushNamed(context, Routes.map, arguments: controller.event);
 
+  /// The big map, centred on [team] with its pin marked.
+  void openTeamOnMap(Team team) {
+    Navigator.pushNamed(context, Routes.map, arguments: LiveMapArgs(controller.event, focusTeam: team.name));
+  }
+
   void openChat(Team team) {
     Navigator.pushNamed(context, Routes.chatScreen, arguments: {'eventId': controller.event.eventId, 'team': team});
   }
 
-  void openTeam(Team team, DateTime now) {
+  /// The team's sheet. Its "Hartă" opens the big map on the team, or does
+  /// [showOnMap] instead (the big map itself centres on it); it is greyed out
+  /// while the team has no position.
+  void openTeam(Team team, DateTime now, {ValueChanged<Team>? showOnMap}) {
+    final onMap = showOnMap ?? openTeamOnMap;
     final over = eventEnded(controller.event, now);
     final missions = controller.missionCount;
     final row = boardRows([team], missionCount: missions, now: now, eventOver: over).single;
@@ -46,6 +56,7 @@ class LiveRoomActions {
       status: boardStatusText(row, now),
       onCall: () => call(team),
       onMessage: () => openChat(team),
+      onMap: hasPin(team) ? () => onMap(team) : null,
     );
   }
 

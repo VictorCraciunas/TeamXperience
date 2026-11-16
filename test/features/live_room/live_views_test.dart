@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
@@ -7,9 +8,11 @@ import 'package:teamxperience/features/live_room/logic/attention_queue.dart';
 import 'package:teamxperience/features/live_room/logic/live_board.dart';
 import 'package:teamxperience/features/live_room/logic/live_map_points.dart';
 import 'package:teamxperience/features/live_room/logic/rating_summary.dart';
+import 'package:teamxperience/features/live_room/widgets/board_action_button.dart';
 import 'package:teamxperience/features/live_room/widgets/board_view.dart';
 import 'package:teamxperience/features/live_room/widgets/live_room_view.dart';
 import 'package:teamxperience/features/live_room/widgets/team_sheet.dart';
+import 'package:teamxperience/features/live_room/widgets/team_sheet_actions.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/mission.dart';
 import 'package:teamxperience/model/photo_detail.dart';
@@ -360,28 +363,88 @@ void main() {
     }
   });
 
-  testWidgets('the team sheet closes, then acts', (tester) async {
-    final calls = _Calls();
-    await tester.pumpWidget(_frame(Builder(
-      builder: (context) => TextButton(
-        onPressed: () => showTeamSheet(
-          context,
-          team: _team('Lupii'),
-          tone: PinTone.playing,
-          status: 'acum 2 min',
-          onCall: () => calls.add('call'),
-          onMessage: () => calls.add('message'),
-        ),
-        child: const Text('deschide'),
-      ),
-    )));
-    await tester.tap(find.text('deschide'));
-    await tester.pumpAndSettle();
-    expect(find.text('Lupii'), findsOneWidget);
-    expect(find.text('Ana · acum 2 min'), findsOneWidget);
-    await tester.tap(find.text('Sună căpitanul'));
-    await tester.pumpAndSettle();
-    expect(find.text('Lupii'), findsNothing);
-    expect(calls.list, ['call']);
+  group('the team sheet', () {
+    Widget opener(_Calls calls, {String name = 'Lupii', bool onMap = true}) => Builder(
+          builder: (context) => TextButton(
+            onPressed: () => showTeamSheet(
+              context,
+              team: _team(name),
+              tone: PinTone.playing,
+              status: 'acum 2 min',
+              onCall: () => calls.add('call'),
+              onMessage: () => calls.add('message'),
+              onMap: onMap ? () => calls.add('map') : null,
+            ),
+            child: const Text('deschide'),
+          ),
+        );
+
+    testWidgets('closes, then acts', (tester) async {
+      final calls = _Calls();
+      await tester.pumpWidget(_frame(opener(calls)));
+      await tester.tap(find.text('deschide'));
+      await tester.pumpAndSettle();
+      expect(find.text('Lupii'), findsOneWidget);
+      expect(find.text('Ana · acum 2 min'), findsOneWidget);
+      await tester.tap(find.text('Sună căpitanul'));
+      await tester.pumpAndSettle();
+      expect(find.text('Lupii'), findsNothing);
+      expect(calls.list, ['call']);
+    });
+
+    testWidgets('shows call, message and map; the map one closes it and opens the map', (tester) async {
+      final calls = _Calls();
+      await tester.pumpWidget(_frame(opener(calls)));
+      await tester.tap(find.text('deschide'));
+      await tester.pumpAndSettle();
+      expect(find.text('Sună căpitanul'), findsOneWidget);
+      expect(find.text('Mesaj'), findsOneWidget);
+      expect(find.text('Hartă'), findsOneWidget);
+      await tester.tap(find.text('Hartă'));
+      await tester.pumpAndSettle();
+      expect(find.text('Lupii'), findsNothing);
+      expect(calls.list, ['map']);
+    });
+
+    testWidgets('a team with no position has the map button greyed out', (tester) async {
+      final calls = _Calls();
+      await tester.pumpWidget(_frame(opener(calls, onMap: false)));
+      await tester.tap(find.text('deschide'));
+      await tester.pumpAndSettle();
+      final map = tester.widget<BoardActionButton>(find.widgetWithText(BoardActionButton, 'Hartă'));
+      expect(map.onTap, isNull);
+      await tester.tap(find.text('Hartă'));
+      await tester.pumpAndSettle();
+      expect(find.text('Lupii'), findsOneWidget);
+      expect(calls.list, isEmpty);
+    });
+
+    testWidgets('the three sit side by side when their labels fit', (tester) async {
+      // The test font draws every letter a full em wide, so it needs room.
+      tester.view.physicalSize = const Size(1000, 600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(_frame(
+        Center(child: SizedBox(width: 900, child: TeamSheetActions(onCall: () {}, onMessage: () {}, onMap: () {}))),
+        width: 1000,
+      ));
+      final call = tester.getCenter(find.text('Sună căpitanul'));
+      final map = tester.getCenter(find.text('Hartă'));
+      expect(map.dy, call.dy);
+    });
+
+    for (final theme in [AppTheme.light, AppTheme.dark]) {
+      testWidgets('fits 320 px at 1.3x text, labels whole (${theme.brightness.name})', (tester) async {
+        await tester.pumpWidget(_frame(opener(_Calls(), name: _long), theme: theme, width: 320, textScale: 1.3));
+        await tester.tap(find.text('deschide'));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        for (final label in ['Sună căpitanul', 'Mesaj', 'Hartă']) {
+          final text = tester.renderObject<RenderParagraph>(find.text(label));
+          expect(text.didExceedMaxLines, isFalse, reason: label);
+          expect(tester.getSize(find.widgetWithText(BoardActionButton, label)).height, greaterThanOrEqualTo(44));
+        }
+      });
+    }
   });
 }
