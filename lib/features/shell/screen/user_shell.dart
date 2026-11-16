@@ -13,6 +13,7 @@ import 'package:teamxperience/features/play_tab/logic/play_tab_state.dart';
 import 'package:teamxperience/features/play_tab/controller/play_popup_controller.dart';
 import 'package:teamxperience/features/play_tab/widgets/play_popup.dart';
 import 'package:teamxperience/features/shell/logic/play_popup_routes.dart';
+import 'package:teamxperience/service/startup_permissions.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
 import 'package:teamxperience/features/profile/screen/profile_screen.dart';
 import 'package:teamxperience/features/shell/logic/player_tabs.dart';
@@ -26,7 +27,11 @@ import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 /// "În joc" while a game is on), Echipe and Profil. Joacă is not a page: it
 /// opens the Joacă pop-up over the current tab (mockup 10).
 class UserShell extends StatefulWidget {
-  const UserShell({super.key});
+  const UserShell({super.key, this.askPermissions});
+
+  /// The first-run permission prompts; [StartupPermissions.shared] unless
+  /// replaced (tests).
+  final Future<void> Function()? askPermissions;
 
   @override
   State<UserShell> createState() => _UserShellState();
@@ -83,6 +88,9 @@ class _UserShellState extends State<UserShell> {
     super.initState();
     _tick;
     _controller.addListener(_tabChanged);
+    // The phone's own prompts, the first time a player signs in on it.
+    final ask = widget.askPermissions ?? StartupPermissions.shared.askOnce;
+    WidgetsBinding.instance.addPostFrameCallback((_) => ask());
   }
 
   /// Another tab closes the pop-up.
