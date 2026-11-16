@@ -95,7 +95,7 @@ class _StiriDashboardState extends State<StiriDashboard> {
   void _share(Stire stire) {
     ShareService().shareText(
       context,
-      subject: stire.title ?? 'Știre',
+      subject: newsShareSubject(stire),
       text: newsShareText(stire),
     );
   }
