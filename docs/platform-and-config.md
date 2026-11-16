@@ -10,7 +10,10 @@
 - Maps/location: `flutter_map`, `latlong2`, `geolocator`.
 - UI: `lottie`, `flutter_svg`, `cached_network_image`, `flutter_cache_manager`, `flutter_colorpicker`, `cupertino_icons`.
 - Utilities: `intl`, `image_picker`, `url_launcher`, `share_plus`.
-- Dev: `flutter_test`, `flutter_lints ^5` (`analysis_options.yaml` adds `prefer_const_constructors`).
+- Dev: `flutter_test`, `flutter_lints ^5` (`analysis_options.yaml` adds `prefer_const_constructors`), `flutter_launcher_icons` (app icon, below).
+
+## App icon
+- Sources in `assets/icon/`: `app_icon.png` (1024, navy #222F62 with a white T, yellow X and teal dashed route; legacy Android mipmaps and the iOS AppIcon set, alpha removed) and `app_icon_foreground.png` (same artwork on transparent, scaled to 68% so it sits inside the adaptive icon's 66/108 safe circle; Android 8+ draws it over `ic_launcher_background` #222F62 with no extra inset). Config in `flutter_launcher_icons.yaml`; regenerate with `dart run flutter_launcher_icons`, then revert its change to `ios/Runner.xcodeproj/project.pbxproj` (v0.14.4 wrongly sets `ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = AppIcon`). The launch screens are separate and stay navy.
 
 ## Android (`android/`)
 - Gradle Kotlin DSL; AGP 8.7.0, Kotlin 2.1.0, google-services plugin 4.3.15; Java 11; NDK 27.0.12077973; core library desugaring enabled (required by flutter_local_notifications).
