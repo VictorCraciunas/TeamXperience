@@ -58,10 +58,35 @@ void main() {
     expect(tester.testTextInput.isVisible, isTrue);
   });
 
-  testWidgets('dragging a list closes the keyboard', (tester) async {
+  testWidgets('scrolling the text of a multi-line field keeps the keyboard up', (tester) async {
+    // As the reason box of the photo refusal: 3 lines inside a scroll view.
+    final text = TextEditingController(text: List.filled(20, 'rând').join('\n'));
     await _pump(
       tester,
       ListView(
+        children: [
+          TextField(key: const ValueKey('a'), controller: text, maxLines: 3, minLines: 1),
+          for (var i = 0; i < 30; i++) SizedBox(height: 60, child: Text('rând $i')),
+        ],
+      ),
+    );
+    await tester.tap(find.byKey(const ValueKey('a')));
+    await tester.pump();
+
+    await tester.drag(find.byKey(const ValueKey('a')), const Offset(0, -40));
+    await tester.pump();
+    final inner = tester.state<ScrollableState>(
+      find.descendant(of: find.byKey(const ValueKey('a')), matching: find.byType(Scrollable)),
+    );
+    expect(inner.position.pixels, greaterThan(0));
+    expect(tester.testTextInput.isVisible, isTrue);
+  }, variant: TargetPlatformVariant.mobile());
+
+  testWidgets('a form that asks for onDrag closes the keyboard when the page is dragged', (tester) async {
+    await _pump(
+      tester,
+      ListView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         children: [
           const TextField(key: ValueKey('a')),
           for (var i = 0; i < 30; i++) SizedBox(height: 60, child: Text('rând $i')),
@@ -76,5 +101,23 @@ void main() {
     await tester.drag(find.byKey(const ValueKey('a')), const Offset(0, -300));
     await tester.pump();
     expect(tester.testTextInput.isVisible, isFalse);
+  });
+
+  testWidgets('without onDrag, dragging a list from a field leaves the keyboard alone', (tester) async {
+    await _pump(
+      tester,
+      ListView(
+        children: [
+          const TextField(key: ValueKey('a')),
+          for (var i = 0; i < 30; i++) SizedBox(height: 60, child: Text('rând $i')),
+        ],
+      ),
+    );
+    await tester.tap(find.byKey(const ValueKey('a')));
+    await tester.pump();
+
+    await tester.drag(find.byKey(const ValueKey('a')), const Offset(0, -300));
+    await tester.pump();
+    expect(tester.testTextInput.isVisible, isTrue);
   });
 }
