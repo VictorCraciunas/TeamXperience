@@ -23,6 +23,7 @@ class AppTextField extends StatefulWidget {
     this.inputFormatters,
     this.textInputAction,
     this.onChanged,
+    this.autofillHints,
   });
 
   final TextEditingController? controller;
@@ -41,6 +42,11 @@ class AppTextField extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onChanged;
+
+  /// What the field holds for the phone's password manager ([AutofillHints]),
+  /// so it can fill it and offer to save it. Put the fields of one form in an
+  /// [AutofillGroup].
+  final Iterable<String>? autofillHints;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -148,6 +154,7 @@ class _AppTextFieldState extends State<AppTextField> {
           inputFormatters: widget.inputFormatters,
           textInputAction: widget.textInputAction,
           onChanged: widget.onChanged,
+          autofillHints: widget.autofillHints,
           validator: _validate,
           style: TextStyle(color: colors.text, fontSize: 16),
           decoration: InputDecoration(
