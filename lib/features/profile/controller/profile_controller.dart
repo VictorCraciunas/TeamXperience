@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/backend/authentication/AuthenticationRepository.dart';
+import 'package:teamxperience/utils/one_at_a_time.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/profile/logic/notification_access.dart';
 import 'package:teamxperience/model/event.dart';
@@ -55,6 +56,7 @@ class ProfileController extends ChangeNotifier {
   late final AppLifecycleListener _lifecycle;
   bool _tokenSent = false;
   late final AuthenticationRepository _authRepo = AuthenticationRepository();
+  final OneAtATime _logout = OneAtATime();
   StreamSubscription<AppUser?>? _userWatch;
   StreamSubscription<List<Memory>>? _memoriesWatch;
   bool _disposed = false;
@@ -171,19 +173,19 @@ class ProfileController extends ChangeNotifier {
     return null;
   }
 
-  /// Signs out (this phone's push token comes off the account first), then
-  /// opens the start.
-  Future<void> logout() async {
-    context.read<EventList>().clear();
-    context.read<NewsList>().clear();
-    await _authRepo.logout();
-    if (!context.mounted) return;
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      Routes.splash,
-      (Route<dynamic> route) => false,
-    );
-  }
+  /// Signs out, then opens the start: this phone comes off the account
+  /// first (3 s at most, offline). A second tap while it runs is ignored.
+  Future<void> logout() => _logout.run(() async {
+        context.read<EventList>().clear();
+        context.read<NewsList>().clear();
+        await _authRepo.logout();
+        if (!context.mounted) return;
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.splash,
+          (Route<dynamic> route) => false,
+        );
+      });
 
   @override
   void dispose() {

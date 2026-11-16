@@ -1,9 +1,8 @@
-import {onDocumentCreated, onDocumentWritten} from "firebase-functions/v2/firestore";
+import {onDocumentCreated} from "firebase-functions/v2/firestore";
 import * as logger from "firebase-functions/logger";
 import {initializeApp, getApps} from "firebase-admin/app";
 import {getFirestore} from "firebase-admin/firestore";
 import {sendChatPush} from "./chat/chat_push";
-import {claimTokens} from "./notifications/tokens";
 
 // Initialize Firebase Admin SDK (only once)
 if (getApps().length === 0) {
@@ -31,13 +30,3 @@ export const onChatMessage = onDocumentCreated(
     }
   }
 );
-
-// A device's token saved on a user comes off any other account that still has
-// it (the phone's previous account), so it only gets this user's pushes.
-export const onUserTokens = onDocumentWritten("users/{uid}", async (event) => {
-  try {
-    await claimTokens(getFirestore(), event.params.uid, event.data?.before.data(), event.data?.after.data());
-  } catch (error) {
-    logger.warn("Could not claim the push tokens", {uid: event.params.uid, error: String(error)});
-  }
-});

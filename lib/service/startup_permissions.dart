@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'FCMService.dart';
 
 /// The phone's own permission prompts, shown one after another the first
 /// time a signed-in screen opens on this phone (the player's shell or the
@@ -68,9 +72,11 @@ class StartupPermissions {
     await (await SharedPreferences.getInstance()).setBool(flagKey, true);
   }
 
-  /// Shows nothing when the phone already has an answer.
+  /// Shows nothing when the phone already has an answer. A yes here is saved
+  /// for the signed-in user at once, not waited on.
   static Future<void> _askNotifications() async {
     await FirebaseMessaging.instance.requestPermission();
+    unawaited(FCMService.saveTokenAfterPrompt());
   }
 
   /// While in use only: the manifest and Info.plist declare no background

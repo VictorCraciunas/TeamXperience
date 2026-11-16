@@ -102,34 +102,60 @@ describe("firestore.rules", () => {
     });
   });
 
+  describe("pushTokens", () => {
+    const device = (uid: string) => ({uid, updatedAt: FieldValue.serverTimestamp()});
+
+    test("a device saved for yourself, and saved again", async () => {
+      await assertSucceeds(as("u1").doc("pushTokens/phone").set(device("u1")));
+      await assertSucceeds(as("u1").doc("pushTokens/phone").set(device("u1")));
+    });
+
+    test("a phone that changes hands: the next account overwrites it", async () => {
+      await assertSucceeds(as("u1").doc("pushTokens/phone").set(device("u1")));
+      await assertSucceeds(as("u2").doc("pushTokens/phone").set(device("u2")));
+    });
+
+    test("never saved for someone else, or with anything more", async () => {
+      await assertFails(as("u1").doc("pushTokens/phone").set(device("u2")));
+      await assertFails(as("u1").doc("pushTokens/phone").set({...device("u1"), role: "ADMIN"}));
+      await assertFails(as("u1").doc("pushTokens/phone").set({uid: "u1"}));
+      await assertFails(as("u1").doc("pushTokens/phone").set({uid: "u1", updatedAt: Timestamp.fromDate(new Date(0))}));
+      await assertFails(signedOut().doc("pushTokens/phone").set(device("u1")));
+    });
+
+    test("only your own is read or deleted", async () => {
+      await env.withSecurityRulesDisabled(async (context) => {
+        const db = context.firestore();
+        await db.doc("pushTokens/boss-phone").set({uid: "admin", updatedAt: Timestamp.now()});
+        await db.doc("pushTokens/my-phone").set({uid: "u1", updatedAt: Timestamp.now()});
+      });
+      await assertFails(as("u1").doc("pushTokens/boss-phone").get());
+      await assertFails(as("u1").collection("pushTokens").where("uid", "==", "admin").get());
+      await assertFails(as("u1").doc("pushTokens/boss-phone").delete());
+      await assertSucceeds(as("u1").doc("pushTokens/my-phone").get());
+      await assertSucceeds(as("u1").doc("pushTokens/my-phone").delete());
+    });
+  });
+
   describe("users", () => {
     test("own doc: profile fields and the push token", async () => {
       await assertSucceeds(as("u1").doc("users/u1").update({firstName: "Anna", fcmToken: "t"}));
       await assertSucceeds(as("u1").doc("users/u1").update({registeredEventIds: FieldValue.arrayUnion("e1")}));
     });
 
-    test("own doc: a device's token added and taken off, as the app does it", async () => {
-      const me = as("u1").doc("users/u1");
-      await assertSucceeds(me.update({fcmTokens: FieldValue.arrayUnion("t1"), fcmToken: "t1"}));
-      await assertSucceeds(me.update({fcmTokens: FieldValue.arrayUnion("t2"), fcmToken: "t2"}));
-      await assertSucceeds(me.update({fcmTokens: FieldValue.arrayRemove("t2"), fcmToken: ""}));
-      await assertSucceeds(me.update({fcmTokens: FieldValue.arrayRemove("t1")}));
-    });
-
-    test("the device list is always a list", async () => {
-      await assertFails(as("u1").doc("users/u1").update({fcmTokens: "t1"}));
-    });
-
-    test("not someone else's devices", async () => {
-      await assertFails(as("u2").doc("users/u1").update({fcmTokens: FieldValue.arrayUnion("t-u2")}));
-      await assertFails(as("u2").doc("users/u1").update({fcmTokens: FieldValue.arrayRemove("t1")}));
-      await assertFails(as("u2").doc("users/u1").update({fcmToken: "t-u2"}));
-    });
-
-    test("a new user may start with this device's token", async () => {
-      await assertSucceeds(as("u9").doc("users/u9").set({
-        uid: "u9", role: "USER", email: "u9@x.ro", fcmToken: "t", fcmTokens: ["t"],
+    test("own doc: the older push tokens can be deleted (the new app's first start)", async () => {
+      await env.withSecurityRulesDisabled(async (context) => {
+        await context.firestore().doc("users/u1").update({fcmToken: "old", fcmTokens: ["old"]});
+      });
+      await assertSucceeds(as("u1").doc("users/u1").update({
+        fcmToken: FieldValue.delete(),
+        fcmTokens: FieldValue.delete(),
       }));
+    });
+
+    test("not someone else's older push tokens", async () => {
+      await assertFails(as("u2").doc("users/u1").update({fcmTokens: FieldValue.delete()}));
+      await assertFails(as("u2").doc("users/u1").update({fcmToken: "t-u2"}));
     });
 
     test("not someone else's", async () => {

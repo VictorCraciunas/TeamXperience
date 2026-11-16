@@ -68,7 +68,12 @@ void main() async {
   FirebaseFirestore.instance.settings = const Settings(
     persistenceEnabled: true,
   );
-  await FCMService.initNotifications();
+  try {
+    await FCMService.initNotifications();
+  } catch (e) {
+    // Pushes not set up is no reason for the app not to start.
+    debugPrint('Could not set up notifications: $e');
+  }
   final themeController = ThemeController(SharedPrefsThemeModeStore());
   await themeController.load();
   runApp(MyApp(themeController: themeController));
