@@ -24,8 +24,8 @@ service cloud.firestore {
         && request.resource.data.email.lower() == request.auth.token.email.lower()
         && request.resource.data.role == 'USER'
         && !request.resource.data.keys().hasAny(['xp', 'level', 'stats', 'badges']);
-      // fcmTokens: this user's devices, added to and taken from one by one
-      // (arrayUnion / arrayRemove), always a list.
+      // fcmToken / fcmTokens: push tokens of older app versions (the new app
+      // keeps them in pushTokens and deletes these two from its own doc).
       allow update: if (request.auth.uid == uid
           && !request.resource.data.diff(resource.data).affectedKeys()
               .hasAny(['role', 'uid', 'email', 'xp', 'level', 'stats', 'badges'])
@@ -47,6 +47,18 @@ service cloud.firestore {
         allow read: if request.auth.uid == uid || isAdmin();
         allow write: if false;
       }
+    }
+
+    // One doc per device, the push token as the id: the account last signed
+    // in on it (`uid`) and when. Only that account can read or delete it, so
+    // nobody learns anyone else's token; a sign-in overwrites it (the phone
+    // changed hands), and the functions read it to send pushes.
+    match /pushTokens/{token} {
+      allow read, delete: if signedIn() && resource.data.uid == request.auth.uid;
+      allow create, update: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid', 'updatedAt'])
+        && request.resource.data.updatedAt == request.time;
     }
 
     match /events/{eventId} {

@@ -1,13 +1,10 @@
 import {DocumentData, Firestore} from "firebase-admin/firestore";
 import * as logger from "firebase-functions/logger";
 import {addToInboxes, chatInboxItem} from "../notifications/inbox";
-import {SendPush, sendToDevices, sendWithFcm, tokensOfAll} from "../notifications/tokens";
+import {SendPush, sendToDevices, sendWithFcm, tokensOfUsers} from "../notifications/tokens";
 import {sendsPush} from "./sends_push";
 
 const PREVIEW_LENGTH = 100;
-
-/** Firestore's `in` takes at most 30 values. */
-const IN_SIZE = 30;
 
 /**
  * A new chat message: the organiser's reaches every device of the team's
@@ -36,14 +33,10 @@ export async function sendChatPush(
     const userIds: string[] = team.data()?.userIds ?? [];
     // Kept in each player's list, whether or not their phone gets the push.
     await addToInboxes(db, userIds, chatInboxItem(eventId, teamName, text));
-    const docs = [];
-    for (let i = 0; i < userIds.length; i += IN_SIZE) {
-      const batch = userIds.slice(i, i + IN_SIZE);
-      docs.push(...(await db.collection("users").where("uid", "in", batch).get()).docs);
-    }
-    tokens = tokensOfAll(docs);
+    tokens = await tokensOfUsers(db, userIds.map((uid) => ({uid})));
   } else {
-    tokens = tokensOfAll((await db.collection("users").where("role", "==", "ADMIN").get()).docs);
+    const organisers = await db.collection("users").where("role", "==", "ADMIN").get();
+    tokens = await tokensOfUsers(db, organisers.docs.map((doc) => ({uid: doc.id, data: doc.data()})));
   }
   if (tokens.length === 0) {
     logger.info("No valid FCM tokens found for notification");

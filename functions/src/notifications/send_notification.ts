@@ -2,7 +2,7 @@ import {Firestore} from "firebase-admin/firestore";
 import * as logger from "firebase-functions/logger";
 import {refuse} from "../teams/shared";
 import {addToInboxes} from "./inbox";
-import {SendPush, sendToDevices, sendWithFcm, tokensOfAll} from "./tokens";
+import {SendPush, sendToDevices, sendWithFcm, tokensOfUsers} from "./tokens";
 
 export type {PushMessage, SendPush} from "./tokens";
 
@@ -38,7 +38,7 @@ export async function sendNotification(
   const users = db.collection("users");
   const recipients = await (eventId ? users.where("registeredEventIds", "array-contains", eventId) : users).get();
   // Every device of each, once: a phone or tablet each, and the older single token.
-  const tokens = tokensOfAll(recipients.docs);
+  const tokens = await tokensOfUsers(db, recipients.docs.map((doc) => ({uid: doc.id, data: doc.data()})));
   if (tokens.length === 0) throw refuse("noRecipients");
 
   // Everyone it is meant for keeps it, a player without a token too.

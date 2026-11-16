@@ -1,6 +1,6 @@
 import {DocumentData, FieldValue, Firestore} from "firebase-admin/firestore";
 import * as logger from "firebase-functions/logger";
-import {SendPush, sendToDevices, sendWithFcm, tokensOf} from "./tokens";
+import {SendPush, sendToDevices, sendWithFcm, tokensOfUser} from "./tokens";
 
 /** What a notification is about, which decides its icon and where a tap goes. */
 export type InboxKind = "announcement" | "chat" | "team" | "results";
@@ -73,7 +73,7 @@ export async function pushToUser(
   send: SendPush = sendWithFcm,
 ): Promise<void> {
   try {
-    const tokens = tokensOf((await db.collection("users").doc(uid).get()).data());
+    const tokens = await tokensOfUser(db, uid);
     if (tokens.length === 0) return;
     await sendToDevices(db, {tokens, notification: {title, body}, data}, send);
   } catch (error) {

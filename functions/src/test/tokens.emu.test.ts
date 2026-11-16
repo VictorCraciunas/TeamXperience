@@ -1,16 +1,17 @@
 import {beforeEach, describe, test} from "node:test";
 import * as assert from "node:assert/strict";
-import {Firestore} from "firebase-admin/firestore";
+import {Firestore, Timestamp} from "firebase-admin/firestore";
 import {sendChatPush} from "../chat/chat_push";
 import {pushData, pushToUser} from "../notifications/inbox";
 import {
-  claimTokens,
   forgetTokens,
   goneTokens,
+  legacyTokensOf,
   PushMessage,
   PushResponse,
   sendToDevices,
-  tokensOf,
+  tokensOfUser,
+  tokensOfUsers,
 } from "../notifications/tokens";
 import {clearDb, emulatorDb} from "./helpers";
 
@@ -38,12 +39,19 @@ async function seedUser(uid: string, extra: Record<string, unknown> = {}): Promi
   await db.collection("users").doc(uid).set({uid, role: "USER", ...extra});
 }
 
-describe("a user's devices", () => {
-  test("the list and the older single token, once each, blanks left out", () => {
-    assert.deepEqual(tokensOf({fcmTokens: ["a", "b", "", 5, "  "], fcmToken: "a"}), ["a", "b"]);
-    assert.deepEqual(tokensOf({fcmToken: "old"}), ["old"]);
-    assert.deepEqual(tokensOf({fcmTokens: "not a list", fcmToken: " "}), []);
-    assert.deepEqual(tokensOf(undefined), []);
+/** A device signed in to [uid], as the app saves it. */
+async function seedDevice(token: string, uid: string): Promise<void> {
+  await db.collection("pushTokens").doc(token).set({uid, updatedAt: Timestamp.now()});
+}
+
+const sorted = (tokens: string[]) => [...tokens].sort();
+
+describe("the tokens a user doc still holds from older versions", () => {
+  test("the list and the single token, once each, blanks left out", () => {
+    assert.deepEqual(legacyTokensOf({fcmTokens: ["a", "b", "", 5, "  "], fcmToken: "a"}), ["a", "b"]);
+    assert.deepEqual(legacyTokensOf({fcmToken: "old"}), ["old"]);
+    assert.deepEqual(legacyTokensOf({fcmTokens: "not a list", fcmToken: " "}), []);
+    assert.deepEqual(legacyTokensOf(undefined), []);
   });
 
   test("only tokens FCM calls gone are dropped, not those that failed for a while", () => {
@@ -65,6 +73,58 @@ describe("a user's devices", () => {
   });
 });
 
+describe("a user's devices", () => {
+  beforeEach(async () => {
+    db = emulatorDb();
+    await clearDb();
+  });
+
+  test("every device signed in to the user: phone and tablet", async () => {
+    await seedDevice("phone", "ana");
+    await seedDevice("tablet", "ana");
+    await seedDevice("other", "dan");
+    assert.deepEqual(sorted(await tokensOfUser(db, "ana")), ["phone", "tablet"]);
+  });
+
+  test("an older user's token on their doc still counts, once", async () => {
+    await seedDevice("phone", "ana");
+    assert.deepEqual(sorted(await tokensOfUser(db, "ana", {fcmTokens: ["phone", "old-tablet"], fcmToken: "phone"})),
+      ["old-tablet", "phone"]);
+  });
+
+  test("Rareș's case: the phone signs out of the organiser and in as Rareș", async () => {
+    // Signed in as the organiser, the phone was saved for them...
+    await seedDevice("rares-phone", "admin");
+    await seedUser("admin", {role: "ADMIN", fcmToken: "rares-phone"});
+    // ...then signed in as Rareș: the same token now belongs to him.
+    await seedDevice("rares-phone", "rares");
+    assert.deepEqual(await tokensOfUser(db, "admin", await userDoc("admin")), []);
+    assert.deepEqual(await tokensOfUser(db, "rares"), ["rares-phone"]);
+  });
+
+  test("a token left on an older doc but claimed by someone else is not used", async () => {
+    await seedDevice("shared", "rares");
+    assert.deepEqual(await tokensOfUser(db, "admin", {fcmToken: "shared", fcmTokens: ["shared"]}), []);
+  });
+
+  test("many users at once, past Firestore's 30 per query", async () => {
+    const uids = Array.from({length: 31}, (_, i) => `p${i}`);
+    for (const uid of uids) await seedDevice(`t-${uid}`, uid);
+    const tokens = await tokensOfUsers(db, uids.map((uid) => ({uid})));
+    assert.equal(tokens.length, 31);
+  });
+
+  test("forgetting a token deletes its device and pulls it off older docs", async () => {
+    await seedDevice("dead", "ana");
+    await seedUser("ana", {fcmTokens: ["dead", "live"], fcmToken: "dead"});
+    await forgetTokens(db, ["dead", "nobody"]);
+    assert.equal((await db.collection("pushTokens").doc("dead").get()).exists, false);
+    const ana = await userDoc("ana");
+    assert.deepEqual(ana?.fcmTokens, ["live"]);
+    assert.equal(ana?.fcmToken, "");
+  });
+});
+
 describe("pushes to every device", () => {
   beforeEach(async () => {
     db = emulatorDb();
@@ -73,10 +133,12 @@ describe("pushes to every device", () => {
   });
 
   test("one player's push reaches their phone and tablet, with its data", async () => {
-    await seedUser("ana", {fcmTokens: ["phone", "tablet"], fcmToken: "phone"});
+    await seedUser("ana");
+    await seedDevice("phone", "ana");
+    await seedDevice("tablet", "ana");
     await pushToUser(db, "ana", "Rezultate", "Locul 1", {type: "results", eventId: "e1"}, send);
     assert.equal(sent.length, 1);
-    assert.deepEqual([...sent[0].tokens].sort(), ["phone", "tablet"]);
+    assert.deepEqual(sorted(sent[0].tokens), ["phone", "tablet"]);
     assert.deepEqual(sent[0].notification, {title: "Rezultate", body: "Locul 1"});
     assert.deepEqual(sent[0].data, {type: "results", eventId: "e1"});
   });
@@ -89,12 +151,14 @@ describe("pushes to every device", () => {
     assert.deepEqual(sent.map((m) => m.tokens), [["legacy"]]);
   });
 
-  test("a token FCM calls gone comes off the user, the list and the single one", async () => {
-    await seedUser("ana", {fcmTokens: ["phone", "dead"], fcmToken: "dead"});
-    await pushToUser(db, "ana", "T", "B", {}, sendSaying(["dead"]));
-    const ana = await userDoc("ana");
-    assert.deepEqual(ana?.fcmTokens, ["phone"]);
-    assert.equal(ana?.fcmToken, "");
+  test("a token FCM calls gone is deleted, as a device and on the older doc", async () => {
+    await seedUser("ana", {fcmToken: "dead-old"});
+    await seedDevice("phone", "ana");
+    await seedDevice("dead", "ana");
+    await pushToUser(db, "ana", "T", "B", {}, sendSaying(["dead", "dead-old"]));
+    assert.equal((await db.collection("pushTokens").doc("dead").get()).exists, false);
+    assert.equal((await db.collection("pushTokens").doc("phone").get()).exists, true);
+    assert.equal((await userDoc("ana"))?.fcmToken, "");
   });
 
   test("more than 500 devices go in several sends", async () => {
@@ -105,65 +169,26 @@ describe("pushes to every device", () => {
   });
 });
 
-describe("one device, one account", () => {
-  beforeEach(async () => {
-    db = emulatorDb();
-    await clearDb();
-  });
-
-  test("a token another account gains comes off the one that had it", async () => {
-    // Rareș's phone was signed in as the organiser, then as Rareș.
-    await seedUser("admin", {role: "ADMIN", fcmTokens: ["rares-phone", "office"], fcmToken: "rares-phone"});
-    await seedUser("rares", {fcmTokens: ["rares-phone"], fcmToken: "rares-phone"});
-    await claimTokens(db, "rares", {fcmTokens: []}, await userDoc("rares"));
-    const admin = await userDoc("admin");
-    assert.deepEqual(admin?.fcmTokens, ["office"]);
-    assert.equal(admin?.fcmToken, "");
-    assert.deepEqual((await userDoc("rares"))?.fcmTokens, ["rares-phone"]);
-  });
-
-  test("the first start of the new app moves the old single token into the list, and claims it", async () => {
-    // Before the update both accounts held the phone's token as fcmToken.
-    await seedUser("admin", {role: "ADMIN", fcmToken: "rares-phone"});
-    const before = {uid: "rares", fcmToken: "rares-phone"};
-    await seedUser("rares", {fcmToken: "rares-phone", fcmTokens: ["rares-phone"]});
-    await claimTokens(db, "rares", before, await userDoc("rares"));
-    assert.equal((await userDoc("admin"))?.fcmToken, "");
-  });
-
-  test("an older account holding it only as the single token loses it too", async () => {
-    await seedUser("old", {fcmToken: "shared"});
-    await claimTokens(db, "new", undefined, {fcmTokens: ["shared"]});
-    assert.equal((await userDoc("old"))?.fcmToken, "");
-  });
-
-  test("a write that gains no token changes nobody", async () => {
-    await seedUser("admin", {fcmTokens: ["t"]});
-    await claimTokens(db, "ana", {fcmTokens: ["t"], xp: 1}, {fcmTokens: ["t"], xp: 2});
-    assert.deepEqual((await userDoc("admin"))?.fcmTokens, ["t"]);
-  });
-
-  test("forgetting a token nobody has does no harm", async () => {
-    await forgetTokens(db, ["nobody"]);
-  });
-});
-
 describe("chat pushes", () => {
   beforeEach(async () => {
     db = emulatorDb();
     await clearDb();
     sent = [];
-    await seedUser("boss", {role: "ADMIN", fcmTokens: ["boss-phone", "boss-tablet"]});
-    await seedUser("ana", {fcmTokens: ["ana-phone"], fcmToken: "ana-old"});
+    await seedUser("boss", {role: "ADMIN"});
+    await seedDevice("boss-phone", "boss");
+    await seedDevice("boss-tablet", "boss");
+    await seedUser("ana", {fcmToken: "ana-old"});
+    await seedDevice("ana-phone", "ana");
     await seedUser("dan", {fcmToken: "dan-phone"});
-    await seedUser("ion", {fcmTokens: ["ion-phone"]});
+    await seedUser("ion");
+    await seedDevice("ion-phone", "ion");
     await db.doc("events/e1/teams/Vulpile").set({name: "Vulpile", userIds: ["ana", "dan"]});
   });
 
   test("the organiser's message reaches every device of the team, and opens its chat", async () => {
     await sendChatPush(db, "e1", "Vulpile", {sender: "ADMIN", text: "Salut"}, send);
     assert.equal(sent.length, 1);
-    assert.deepEqual([...sent[0].tokens].sort(), ["ana-old", "ana-phone", "dan-phone"]);
+    assert.deepEqual(sorted(sent[0].tokens), ["ana-old", "ana-phone", "dan-phone"]);
     assert.deepEqual(sent[0].data, {type: "chat_message", eventId: "e1", teamName: "Vulpile"});
     assert.deepEqual(sent[0].notification, {title: "Mesaj nou de la Admin", body: "Salut"});
     const inbox = await db.collection("users").doc("ana").collection("notifications").get();
@@ -172,10 +197,16 @@ describe("chat pushes", () => {
 
   test("a player's message reaches every organiser device", async () => {
     await sendChatPush(db, "e1", "Vulpile", {sender: "USER", text: "x".repeat(150)}, send);
-    assert.deepEqual([...sent[0].tokens].sort(), ["boss-phone", "boss-tablet"]);
+    assert.deepEqual(sorted(sent[0].tokens), ["boss-phone", "boss-tablet"]);
     assert.equal(sent[0].notification.title, "Mesaj nou de la echipa Vulpile");
     assert.equal(sent[0].notification.body.length, 103);
     assert.deepEqual(sent[0].data, {type: "chat_message", eventId: "e1", teamName: "Vulpile"});
+  });
+
+  test("an organiser's phone now signed in as a player gets the player's chat, not the organisers'", async () => {
+    await seedDevice("boss-tablet", "ion");
+    await sendChatPush(db, "e1", "Vulpile", {sender: "USER", text: "Alo"}, send);
+    assert.deepEqual(sent[0].tokens, ["boss-phone"]);
   });
 
   test("an announcement's copy or a moved message sends nothing", async () => {

@@ -24,8 +24,27 @@ export type SendPush = (message: PushMessage) => Promise<{
 
 export const sendWithFcm: SendPush = (message) => getMessaging().sendEachForMulticast(message);
 
+/** A user whose devices are wanted, with their document when it is read already. */
+export interface UserRef {
+  uid: string;
+  data?: DocumentData;
+}
+
+/**
+ * The devices: `pushTokens/{token}` = `{uid, updatedAt}`, the token as the
+ * id, so a phone belongs to the one account last signed in on it. Only the
+ * app of that account writes it, and nobody else can read it.
+ */
+const DEVICES = "pushTokens";
+
 /** FCM takes at most this many tokens in one multicast. */
 const MULTICAST_SIZE = 500;
+
+/** Firestore's `in` takes at most 30 values. */
+const IN_SIZE = 30;
+
+/** Documents read in one `getAll`. */
+const READ_SIZE = 300;
 
 /** The answers that mean a token is gone for good (app removed, token deleted at sign-out). */
 const GONE = new Set([
@@ -36,10 +55,11 @@ const GONE = new Set([
 const isToken = (value: unknown): value is string => typeof value === "string" && value.trim() !== "";
 
 /**
- * Every device a user's pushes go to: the list `fcmTokens` (one per phone or
- * tablet) and the older single `fcmToken`, once each.
+ * The tokens older app versions left on a user's own document: the list
+ * `fcmTokens` and the single `fcmToken`, once each. The new app deletes them
+ * at its first start.
  */
-export function tokensOf(data: DocumentData | undefined): string[] {
+export function legacyTokensOf(data: DocumentData | undefined): string[] {
   const tokens = new Set<string>();
   const list = data?.fcmTokens;
   if (Array.isArray(list)) list.filter(isToken).forEach((token) => tokens.add(token));
@@ -48,9 +68,51 @@ export function tokensOf(data: DocumentData | undefined): string[] {
   return [...tokens];
 }
 
-/** The devices of all these users, once each (one phone may hold two accounts' tokens). */
-export function tokensOfAll(docs: Array<{data(): DocumentData | undefined}>): string[] {
-  return [...new Set(docs.flatMap((doc) => tokensOf(doc.data())))];
+/**
+ * Every device of these users, once each: their `pushTokens`, and the tokens
+ * still on their documents unless another account has signed in on that
+ * device since. Users whose [UserRef.data] is missing are read.
+ */
+export async function tokensOfUsers(db: Firestore, users: UserRef[]): Promise<string[]> {
+  const uids = [...new Set(users.map((user) => user.uid).filter((uid) => uid !== "" && !uid.includes("/")))];
+  const owner = new Map<string, string>();
+  for (let i = 0; i < uids.length; i += IN_SIZE) {
+    const devices = await db.collection(DEVICES).where("uid", "in", uids.slice(i, i + IN_SIZE)).get();
+    devices.docs.forEach((doc) => owner.set(doc.id, doc.data().uid));
+  }
+  const tokens = new Set(owner.keys());
+
+  // The older tokens, each with the uid whose document holds it.
+  const known = new Map(users.filter((user) => user.data !== undefined).map((user) => [user.uid, user.data]));
+  const unread = uids.filter((uid) => !known.has(uid));
+  for (let i = 0; i < unread.length; i += READ_SIZE) {
+    const refs = unread.slice(i, i + READ_SIZE).map((uid) => db.collection("users").doc(uid));
+    (await db.getAll(...refs)).forEach((doc) => known.set(doc.id, doc.data()));
+  }
+  const legacy = new Map<string, Set<string>>();
+  for (const uid of uids) {
+    for (const token of legacyTokensOf(known.get(uid))) {
+      if (owner.has(token)) continue;
+      legacy.set(token, (legacy.get(token) ?? new Set()).add(uid));
+    }
+  }
+
+  // An older token is used only while no other account has claimed its device.
+  const candidates = [...legacy.keys()];
+  for (let i = 0; i < candidates.length; i += READ_SIZE) {
+    const refs = candidates.slice(i, i + READ_SIZE).map((token) => db.collection(DEVICES).doc(token));
+    for (const doc of await db.getAll(...refs)) {
+      const claimedBy: unknown = doc.data()?.uid;
+      const holders = legacy.get(doc.id) ?? new Set();
+      if (!doc.exists || (typeof claimedBy === "string" && holders.has(claimedBy))) tokens.add(doc.id);
+    }
+  }
+  return [...tokens];
+}
+
+/** Every device of one user; their document is read when [data] is not given. */
+export function tokensOfUser(db: Firestore, uid: string, data?: DocumentData): Promise<string[]> {
+  return tokensOfUsers(db, [{uid, data}]);
 }
 
 /** The tokens FCM said no longer exist. */
@@ -63,33 +125,32 @@ export function goneTokens(tokens: string[], responses: PushResponse[] | undefin
 }
 
 /**
- * Takes [tokens] off every user who holds them, except [keepUid]. Never
- * throws: a list left as it is only costs a failed send later.
+ * Deletes [tokens]' devices and pulls them off the user documents of older
+ * versions. Never throws: a token left behind only costs a failed send later.
  */
-export async function forgetTokens(db: Firestore, tokens: string[], keepUid?: string): Promise<void> {
+export async function forgetTokens(db: Firestore, tokens: string[]): Promise<void> {
   const users = db.collection("users");
   for (const token of new Set(tokens)) {
     try {
+      await db.collection(DEVICES).doc(token).delete();
       const [inList, single] = await Promise.all([
         users.where("fcmTokens", "array-contains", token).get(),
         users.where("fcmToken", "==", token).get(),
       ]);
       const holders = new Map([...inList.docs, ...single.docs].map((doc) => [doc.id, doc]));
-      await Promise.all([...holders.values()]
-        .filter((doc) => doc.id !== keepUid)
-        .map((doc) => doc.ref.update({
-          fcmTokens: FieldValue.arrayRemove(token),
-          ...(doc.data().fcmToken === token ? {fcmToken: ""} : {}),
-        })));
+      await Promise.all([...holders.values()].map((doc) => doc.ref.update({
+        fcmTokens: FieldValue.arrayRemove(token),
+        ...(doc.data().fcmToken === token ? {fcmToken: ""} : {}),
+      })));
     } catch (error) {
-      logger.warn("Could not take a push token off its users", {error: String(error)});
+      logger.warn("Could not forget a push token", {error: String(error)});
     }
   }
 }
 
 /**
- * Sends [message] to its tokens, at most 500 at a time, then takes the tokens
- * FCM says are gone off their users. Returns the counts.
+ * Sends [message] to its tokens, at most 500 at a time, then forgets the
+ * tokens FCM says are gone. Returns the counts.
  */
 export async function sendToDevices(
   db: Firestore,
@@ -108,29 +169,4 @@ export async function sendToDevices(
   }
   if (gone.length > 0) await forgetTokens(db, gone);
   return {successCount, failureCount};
-}
-
-/**
- * A user's document changed: a token it gained belongs to this user only now,
- * so it comes off anyone else (the phone's previous account, signed out
- * before sign-out cleaned up after itself).
- */
-export async function claimTokens(
-  db: Firestore,
-  uid: string,
-  before: DocumentData | undefined,
-  after: DocumentData | undefined,
-): Promise<void> {
-  // Each field on its own: an older user whose single token moves into the
-  // list gains it too, so the account it was left on loses it at the
-  // first start of the new app.
-  const listOf = (data: DocumentData | undefined) => tokensOf({fcmTokens: data?.fcmTokens});
-  const singleOf = (data: DocumentData | undefined) => tokensOf({fcmToken: data?.fcmToken});
-  const hadList = new Set(listOf(before));
-  const hadSingle = new Set(singleOf(before));
-  const gained = [
-    ...listOf(after).filter((token) => !hadList.has(token)),
-    ...singleOf(after).filter((token) => !hadSingle.has(token)),
-  ];
-  if (gained.length > 0) await forgetTokens(db, gained, uid);
 }

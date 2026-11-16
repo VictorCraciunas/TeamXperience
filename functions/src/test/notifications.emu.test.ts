@@ -52,9 +52,21 @@ describe("sendNotification", () => {
   });
 
   test("every device of a player, once, and the older single token too", async () => {
-    await seedUser("eva", {fcmTokens: ["t-eva-phone", "t-eva-tablet"], fcmToken: "t-eva-phone", registeredEventIds: ["e1"]});
+    await seedUser("eva", {fcmToken: "t-eva-phone", registeredEventIds: ["e1"]});
+    for (const token of ["t-eva-phone", "t-eva-tablet"]) {
+      await db.collection("pushTokens").doc(token).set({uid: "eva", updatedAt: new Date()});
+    }
     await sendNotification(db, "boss", {...NEWS, eventId: "e1"}, send);
     assert.deepEqual([...sent[0].tokens].sort(), ["t-ana", "t-eva-phone", "t-eva-tablet"]);
+  });
+
+  test("a phone now signed in to another account is not reached for the old one", async () => {
+    // Ana's old doc still says t-ana, but Dan signed in on that phone since.
+    await db.collection("pushTokens").doc("t-ana").set({uid: "dan", updatedAt: new Date()});
+    await sendNotification(db, "boss", {...NEWS, eventId: "e2"}, send);
+    assert.deepEqual([...sent[0].tokens].sort(), ["t-ana", "t-dan"]);
+    await sendNotification(db, "boss", {...NEWS, eventId: "e1"}, send).catch(() => undefined);
+    assert.equal(sent.length, 1);
   });
 
   test("an event's push says so in its data, for the app to open the event", async () => {
