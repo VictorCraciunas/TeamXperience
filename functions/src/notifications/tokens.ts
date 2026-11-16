@@ -121,7 +121,16 @@ export async function claimTokens(
   before: DocumentData | undefined,
   after: DocumentData | undefined,
 ): Promise<void> {
-  const had = new Set(tokensOf(before));
-  const gained = tokensOf(after).filter((token) => !had.has(token));
+  // Each field on its own: an older user whose single token moves into the
+  // list gains it too, so the account it was left on loses it at the
+  // first start of the new app.
+  const listOf = (data: DocumentData | undefined) => tokensOf({fcmTokens: data?.fcmTokens});
+  const singleOf = (data: DocumentData | undefined) => tokensOf({fcmToken: data?.fcmToken});
+  const hadList = new Set(listOf(before));
+  const hadSingle = new Set(singleOf(before));
+  const gained = [
+    ...listOf(after).filter((token) => !hadList.has(token)),
+    ...singleOf(after).filter((token) => !hadSingle.has(token)),
+  ];
   if (gained.length > 0) await forgetTokens(db, gained, uid);
 }

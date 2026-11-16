@@ -122,6 +122,15 @@ describe("one device, one account", () => {
     assert.deepEqual((await userDoc("rares"))?.fcmTokens, ["rares-phone"]);
   });
 
+  test("the first start of the new app moves the old single token into the list, and claims it", async () => {
+    // Before the update both accounts held the phone's token as fcmToken.
+    await seedUser("admin", {role: "ADMIN", fcmToken: "rares-phone"});
+    const before = {uid: "rares", fcmToken: "rares-phone"};
+    await seedUser("rares", {fcmToken: "rares-phone", fcmTokens: ["rares-phone"]});
+    await claimTokens(db, "rares", before, await userDoc("rares"));
+    assert.equal((await userDoc("admin"))?.fcmToken, "");
+  });
+
   test("an older account holding it only as the single token loses it too", async () => {
     await seedUser("old", {fcmToken: "shared"});
     await claimTokens(db, "new", undefined, {fcmTokens: ["shared"]});
