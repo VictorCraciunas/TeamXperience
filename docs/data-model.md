@@ -47,7 +47,7 @@ All models live in `lib/model/`. Pattern: plain mutable classes, `fromMap`/`from
 ## Firestore
 
 ```
-users/{uid}                                  AppUser
+users/{uid}                                  AppUser; push devices in `fcmTokens` (list, one token per phone or tablet: `UserRepo.addFcmToken` with arrayUnion at sign-in and each start, `removeFcmToken` with arrayRemove at sign-out) and the older single `fcmToken` (still written with the latest device, cleared at sign-out when it is this one's). The functions send to both, once each (`tokensOf`), and take off tokens FCM calls gone and tokens another account has gained (`onUserTokens`). A new user's `toJson` starts `fcmTokens` with this device; the model itself keeps only `fcmToken`.
 users/{uid}/notifications/{id}   {kind: announcement|chat|team|results, title, body, eventId?, teamName?, read, createdAt}; written only by the functions, a player may only set read to true (the bell's list)
 users/{uid}/memories/{eventId}               Memory (written by 7c; `date` is required: the query orders by it)
 events/{eventId}                             Event (missions→puzzles→components embedded)

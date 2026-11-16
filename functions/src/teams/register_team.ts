@@ -2,7 +2,7 @@ import {FieldValue, Firestore} from "firebase-admin/firestore";
 import {cleanTeamName, nameKey, teamNameProblem} from "./names";
 import {addNewCrew} from "./new_crew";
 import * as logger from "firebase-functions/logger";
-import {addToInboxes, InboxItem, pushToUser} from "../notifications/inbox";
+import {addToInboxes, InboxItem, pushData, pushToUser} from "../notifications/inbox";
 import {enrolmentOpen, Member, memberOf, refuse, shortDate, teamsOf, toDate} from "./shared";
 
 export interface RegisterInput {
@@ -148,6 +148,6 @@ export async function registerTeam(
 function tellPlayers(db: Firestore): (uids: string[], item: InboxItem) => Promise<void> {
   return async (uids, item) => {
     await addToInboxes(db, uids, item);
-    await Promise.all(uids.map((other) => pushToUser(db, other, item.title, item.body)));
+    await Promise.all(uids.map((other) => pushToUser(db, other, item.title, item.body, pushData(item))));
   };
 }

@@ -134,16 +134,25 @@ class UserRepo{
     }
   }
 
-  Future<void> updateFCMToken(String uid, String fcmToken) async {
-    try {
-      await _firestore.collection('users').doc(uid).update({
-        'fcmToken': fcmToken,
-      });
-      print('FCM token updated for user: $uid');
-    } catch (e) {
-      print('Error updating FCM token: $e');
-      throw e;
-    }
+  /// Adds this device's push token to the user's list (`fcmTokens`, one per
+  /// phone or tablet), and keeps it as `fcmToken` for older function versions.
+  Future<void> addFcmToken(String uid, String token) {
+    return _firestore.collection('users').doc(uid).update({
+      'fcmTokens': FieldValue.arrayUnion([token]),
+      'fcmToken': token,
+    });
+  }
+
+  /// Takes this device's token off the user (at sign-out), so the next account
+  /// on it does not get their pushes. `fcmToken` is cleared only when it is
+  /// this device's.
+  Future<void> removeFcmToken(String uid, String token) async {
+    final doc = _firestore.collection('users').doc(uid);
+    final legacy = (await doc.get()).data()?['fcmToken'];
+    await doc.update({
+      'fcmTokens': FieldValue.arrayRemove([token]),
+      if (legacy == token) 'fcmToken': '',
+    });
   }
 
 }

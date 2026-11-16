@@ -141,12 +141,13 @@ class ProfileController extends ChangeNotifier {
     if (status == NotifStatus.allowed) _sendToken();
   }
 
-  /// The token is only fetched at sign-in, and only if notifications were
-  /// allowed then: a player who allows them later must get one now, or no push
-  /// ever reaches them. Sent at most once; a failure is tried at the next sign-in.
+  /// The token is saved at sign-in and at each start, only when notifications
+  /// are allowed: a player who allows them here must have this device's saved
+  /// now, even when another phone's is there already. Sent at most once; a
+  /// failure is tried at the next start.
   Future<void> _sendToken() async {
     final save = _saveToken;
-    if (save == null || _tokenSent || _user.fcmToken.isNotEmpty) return;
+    if (save == null || _tokenSent) return;
     _tokenSent = true;
     try {
       await save();
@@ -170,10 +171,13 @@ class ProfileController extends ChangeNotifier {
     return null;
   }
 
-  void logout() {
+  /// Signs out (this phone's push token comes off the account first), then
+  /// opens the start.
+  Future<void> logout() async {
     context.read<EventList>().clear();
     context.read<NewsList>().clear();
-    _authRepo.logout();
+    await _authRepo.logout();
+    if (!context.mounted) return;
     Navigator.pushNamedAndRemoveUntil(
       context,
       Routes.splash,

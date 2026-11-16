@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../service/FCMService.dart';
+
 class AuthenticationRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -81,7 +83,13 @@ class AuthenticationRepository {
     }
   }
 
+  /// Signs out. This device's push token comes off the account first, and a
+  /// new one is made after, so the next account here never gets this one's
+  /// pushes; neither step can block or fail the sign-out.
   Future<void> logout() async {
+    final uid = _auth.currentUser?.uid;
+    if (uid != null) await FCMService.forgetTokenOf(uid);
+
     // If the current user signed in with Google, sign out from Google first:
     try {
       // Check the list of linked providers for “google.com”
@@ -98,6 +106,7 @@ class AuthenticationRepository {
 
     // Finally sign out from Firebase
     await _auth.signOut();
+    await FCMService.dropDeviceToken();
   }
 
 

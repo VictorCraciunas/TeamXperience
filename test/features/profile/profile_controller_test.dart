@@ -205,10 +205,13 @@ void main() {
         c.dispose();
       });
 
-      testWidgets('a token already there, or refused: nothing is saved', (tester) async {
+      testWidgets("another device's token there: this one is saved too", (tester) async {
         final (a, savedA) = await withToken(tester, start: NotifStatus.allowed, token: 'tok');
-        expect(savedA, isEmpty);
+        expect(savedA, ['saved']);
         a.dispose();
+      });
+
+      testWidgets('refused: nothing is saved', (tester) async {
         final (b, savedB) = await withToken(tester, start: NotifStatus.refused);
         expect(savedB, isEmpty);
         b.dispose();

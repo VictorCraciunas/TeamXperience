@@ -24,10 +24,13 @@ class AdminHomeController extends ChangeNotifier {
 
   AdminHomeController(this.context);
 
-  void logout() {
+  /// Signs out (this phone's push token comes off the account first), then
+  /// opens the start.
+  Future<void> logout() async {
     context.read<EventList>().clear();
     context.read<NewsList>().clear(); // Clear news as well
-    _authRepo.logout();
+    await _authRepo.logout();
+    if (!context.mounted) return;
     Navigator.pushNamedAndRemoveUntil(
       context,
       Routes.splash,
