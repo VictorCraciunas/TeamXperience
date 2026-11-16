@@ -40,6 +40,7 @@ import 'package:teamxperience/state_management/news_state_management.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
 import 'package:teamxperience/service/FCMService.dart';
+import 'package:teamxperience/service/push/push_opener.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/features/shell/screen/user_shell.dart';
 import 'package:teamxperience/utils/auth_util.dart';
@@ -132,6 +133,8 @@ class MyApp extends StatelessWidget {
       child: Consumer<ThemeController>(
         builder:
             (context, themeController, _) => MaterialApp(
+              // Tapped pushes open their page from here (PushOpener).
+              navigatorKey: PushOpener.navigatorKey,
               theme: AppTheme.light,
               darkTheme: AppTheme.dark,
               themeMode: themeController.mode,

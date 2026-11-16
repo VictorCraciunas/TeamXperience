@@ -50,10 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       findTeam: uid == null ? null : (eventId) => TeamService().getUserTeamForEvent(eventId, uid),
       saveToken: uid == null
           ? null
-          : () async {
-              final token = await FCMService.getFCMToken();
-              if (token != null) await repo.updateFCMToken(uid, token);
-            },
+          : () => FCMService.saveTokenAsking(uid),
     );
   }
 

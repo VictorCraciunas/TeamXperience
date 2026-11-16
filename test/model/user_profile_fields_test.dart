@@ -56,6 +56,13 @@ void main() {
       expect(json.containsKey('badges'), isFalse);
     });
 
+    test("a new user's token starts the list of devices; no token, no list", () {
+      final withToken = AppUser.fromFirestore({..._base(), 'fcmToken': 't'}).toJson();
+      expect(withToken['fcmToken'], 't');
+      expect(withToken['fcmTokens'], ['t']);
+      expect(AppUser.fromFirestore(_base()).toJson().containsKey('fcmTokens'), isFalse);
+    });
+
     test('copyWith changes xp, stats and badges and keeps the rest', () {
       final user = AppUser.fromFirestore({..._base(), 'registeredEventIds': ['e1'], 'fcmToken': 't'});
       final fresh = user.copyWith(xp: 640, stats: const UserStats(games: 3), badges: ['km10']);

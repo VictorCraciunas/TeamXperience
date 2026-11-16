@@ -82,7 +82,10 @@ class AppUser {
       "uid": uid,
       "role": role.name,
       "registeredEventIds": registeredEventIds,
-      "fcmToken":fcmToken
+      "fcmToken":fcmToken,
+      // The devices pushes go to (`fcmTokens`); added to and taken from one at
+      // a time by `UserRepo`. Only a new user is saved whole, with this device.
+      if (fcmToken.isNotEmpty) "fcmTokens": [fcmToken],
     };
   }
 

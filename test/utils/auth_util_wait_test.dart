@@ -43,4 +43,28 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('splash'), findsOneWidget);
   });
+
+  testWidgets('a start with nobody signed in says so once the start is shown', (tester) async {
+    final landed = <bool>[];
+    final auth = AuthUtil(
+      _NoUsers(),
+      _SignedOut(),
+      UserProvider(),
+      saveDeviceToken: (_) async => fail('no token for nobody'),
+      landed: ({required bool signedIn}) => landed.add(signedIn),
+    );
+    await tester.pumpWidget(MaterialApp(
+      routes: {Routes.splash: (_) => const Text('splash')},
+      home: Builder(
+        builder: (context) => TextButton(
+          onPressed: () => auth.checkUserAndRedirect(context),
+          child: const Text('start'),
+        ),
+      ),
+    ));
+    await tester.tap(find.text('start'));
+    await tester.pumpAndSettle();
+    expect(find.text('splash'), findsOneWidget);
+    expect(landed, [false]);
+  });
 }
