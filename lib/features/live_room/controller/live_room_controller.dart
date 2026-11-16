@@ -13,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../logic/attention_queue.dart';
 import '../logic/live_board.dart';
+import '../logic/live_map_focus.dart';
 import '../logic/live_status.dart';
 import '../logic/rating_summary.dart';
 
@@ -39,6 +40,7 @@ Uri? phoneUri(String phone) {
 class LiveRoomController extends ChangeNotifier {
   LiveRoomController({
     required Event event,
+    String? focusTeam,
     Stream<Event>? eventStream,
     Stream<List<Team>>? teamStream,
     Stream<List<int>>? ratingStream,
@@ -51,6 +53,7 @@ class LiveRoomController extends ChangeNotifier {
     Duration sendTimeout = const Duration(seconds: 15),
   })  : _event = event,
         _given = event,
+        _focus = focusTeam == null ? null : TeamFocus(focusTeam),
         _sendTimeout = sendTimeout,
         _now = now ?? DateTime.now,
         _writeApproval = writeApproval ??
@@ -162,6 +165,17 @@ class LiveRoomController extends ChangeNotifier {
         eventOver: eventEnded(_event, now),
         filter: _filter,
       );
+
+  TeamFocus? _focus;
+
+  /// The team the big map centres on and marks, if any.
+  TeamFocus? get focus => _focus;
+
+  /// Centres the big map on [team] (again, if it already was).
+  void focusOn(Team team) {
+    _focus = TeamFocus(team.name);
+    notifyListeners();
+  }
 
   void setFilter(BoardFilter filter) {
     if (filter == _filter) return;

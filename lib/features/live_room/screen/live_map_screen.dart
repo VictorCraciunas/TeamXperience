@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/components/misc/clock_builder.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 
 import '../controller/live_room_controller.dart';
+import '../logic/live_map_focus.dart';
 import '../widgets/live_map.dart';
 import 'live_room_actions.dart';
 
 /// "Hartă mare": the teams on a full-screen map the organiser can move
-/// (argument: the `Event`).
+/// (argument: the `Event`, or [LiveMapArgs] to open it centred on one team).
+/// A team sheet's "Hartă" opened here centres this map on the team.
 class LiveMapScreen extends StatefulWidget {
   const LiveMapScreen({super.key});
 
@@ -23,8 +24,8 @@ class _LiveMapScreenState extends State<LiveMapScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_controller != null) return;
-    final event = ModalRoute.of(context)?.settings.arguments;
-    if (event is Event) _controller = LiveRoomController(event: event);
+    final args = liveMapArgsOf(ModalRoute.of(context)?.settings.arguments);
+    if (args != null) _controller = LiveRoomController(event: args.event, focusTeam: args.focusTeam);
   }
 
   @override
@@ -53,7 +54,8 @@ class _LiveMapScreenState extends State<LiveMapScreen> {
                   teams: controller.teams,
                   now: now,
                   interactive: true,
-                  onTeam: (team) => actions.openTeam(team, now),
+                  focus: controller.focus,
+                  onTeam: (team) => actions.openTeam(team, now, showOnMap: controller.focusOn),
                 ),
         ),
       ),
