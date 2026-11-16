@@ -2,7 +2,7 @@ import {DocumentData, DocumentReference, FieldValue, Firestore, Timestamp, Write
 import * as logger from "firebase-functions/logger";
 import {playTimeMs, teamsOf, toDate} from "../teams/shared";
 import {EventFacts, isCompleted, playerResult, Previous, TeamFacts} from "./player";
-import {inboxEntry, InboxItem, pushToUser} from "../notifications/inbox";
+import {inboxEntry, InboxItem, pushData, pushToUser} from "../notifications/inbox";
 import {rankTeams} from "./ranking";
 import {seasonOf, seasonPoints} from "./season";
 
@@ -142,7 +142,7 @@ export interface ApplyOptions {
   /** Called before each player's transaction (for tests). */
   beforePlayer?: (uid: string) => void;
   /** Sends a player's results push; by default to their phone. */
-  push?: (uid: string, title: string, body: string) => Promise<void>;
+  push?: (uid: string, title: string, body: string, data: Record<string, string>) => Promise<void>;
 }
 
 /**
@@ -202,11 +202,12 @@ export async function applyResults(db: Firestore, eventId: string, options: Appl
     }, {merge: true});
   }
 
-  const push = options.push ?? ((uid: string, title: string, body: string) => pushToUser(db, uid, title, body));
+  const push = options.push ??
+    ((uid: string, title: string, body: string, data: Record<string, string>) => pushToUser(db, uid, title, body, data));
   // A push that fails is only logged: the player is counted already.
   const sendResultsPush = async (uid: string, item: InboxItem) => {
     try {
-      await push(uid, item.title, item.body);
+      await push(uid, item.title, item.body, pushData(item));
     } catch (error) {
       logger.warn("Could not send the results push", {eventId, uid, error: String(error)});
     }

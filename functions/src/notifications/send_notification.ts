@@ -1,24 +1,16 @@
 import {Firestore} from "firebase-admin/firestore";
-import {getMessaging} from "firebase-admin/messaging";
 import * as logger from "firebase-functions/logger";
 import {refuse} from "../teams/shared";
 import {addToInboxes} from "./inbox";
+import {SendPush, sendToDevices, sendWithFcm, tokensOfAll} from "./tokens";
 
-export interface PushMessage {
-  tokens: string[];
-  notification: {title: string; body: string};
-  data: Record<string, string>;
-}
-
-export type SendPush = (message: PushMessage) => Promise<{successCount: number; failureCount: number}>;
+export type {PushMessage, SendPush} from "./tokens";
 
 export interface NotificationResult {
   recipients: number;
   sent: number;
   failed: number;
 }
-
-const sendWithFcm: SendPush = (message) => getMessaging().sendEachForMulticast(message);
 
 function textOf(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
@@ -45,9 +37,8 @@ export async function sendNotification(
 
   const users = db.collection("users");
   const recipients = await (eventId ? users.where("registeredEventIds", "array-contains", eventId) : users).get();
-  const tokens = recipients.docs
-    .map((doc) => doc.data().fcmToken)
-    .filter((token): token is string => typeof token === "string" && token.trim() !== "");
+  // Every device of each, once: a phone or tablet each, and the older single token.
+  const tokens = tokensOfAll(recipients.docs);
   if (tokens.length === 0) throw refuse("noRecipients");
 
   // Everyone it is meant for keeps it, a player without a token too.
@@ -58,11 +49,18 @@ export async function sendNotification(
     ...(typeof eventId === "string" ? {eventId} : {}),
   });
 
-  const result = await send({
+  const result = await sendToDevices(db, {
     tokens,
     notification: {title, body: description},
-    data: {title, body: description, timestamp: new Date().toISOString(), type: "admin_notification"},
-  });
+    data: {
+      title,
+      body: description,
+      timestamp: new Date().toISOString(),
+      type: "admin_notification",
+      // A tap opens the event's page.
+      ...(typeof eventId === "string" ? {eventId} : {}),
+    },
+  }, send);
   logger.info("Notification sent", {
     eventId: eventId ?? null,
     recipients: tokens.length,

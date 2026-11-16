@@ -108,6 +108,30 @@ describe("firestore.rules", () => {
       await assertSucceeds(as("u1").doc("users/u1").update({registeredEventIds: FieldValue.arrayUnion("e1")}));
     });
 
+    test("own doc: a device's token added and taken off, as the app does it", async () => {
+      const me = as("u1").doc("users/u1");
+      await assertSucceeds(me.update({fcmTokens: FieldValue.arrayUnion("t1"), fcmToken: "t1"}));
+      await assertSucceeds(me.update({fcmTokens: FieldValue.arrayUnion("t2"), fcmToken: "t2"}));
+      await assertSucceeds(me.update({fcmTokens: FieldValue.arrayRemove("t2"), fcmToken: ""}));
+      await assertSucceeds(me.update({fcmTokens: FieldValue.arrayRemove("t1")}));
+    });
+
+    test("the device list is always a list", async () => {
+      await assertFails(as("u1").doc("users/u1").update({fcmTokens: "t1"}));
+    });
+
+    test("not someone else's devices", async () => {
+      await assertFails(as("u2").doc("users/u1").update({fcmTokens: FieldValue.arrayUnion("t-u2")}));
+      await assertFails(as("u2").doc("users/u1").update({fcmTokens: FieldValue.arrayRemove("t1")}));
+      await assertFails(as("u2").doc("users/u1").update({fcmToken: "t-u2"}));
+    });
+
+    test("a new user may start with this device's token", async () => {
+      await assertSucceeds(as("u9").doc("users/u9").set({
+        uid: "u9", role: "USER", email: "u9@x.ro", fcmToken: "t", fcmTokens: ["t"],
+      }));
+    });
+
     test("not someone else's", async () => {
       await assertFails(as("u2").doc("users/u1").update({firstName: "X"}));
     });
