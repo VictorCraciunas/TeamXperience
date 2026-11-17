@@ -18,17 +18,18 @@ DateTime? newestOrganiserAt(List<Message> messages) {
   return newest;
 }
 
-/// The seen time once [messages] have been on screen: up to the newest of
-/// them (whoever wrote it, so a message stamped by a phone whose clock runs
-/// ahead is read too), [now] for an empty chat, never earlier than
-/// [previous].
+/// The seen time once [messages] have been on screen: up to the organiser's
+/// newest message, never earlier than [previous]. Only the organiser's
+/// messages move it: they are what unread counts, and a teammate whose phone
+/// clock runs ahead would otherwise hide the organiser's next message. Not
+/// [now] either, so an organiser phone running behind cannot hide one. A chat
+/// with no organiser message keeps [previous], or is read up to [now] if it
+/// has none.
 DateTime seenAfterViewing(List<Message> messages, DateTime now, DateTime? previous) {
-  var seen = messages.isEmpty ? now : messages.first.timestamp;
-  for (final m in messages) {
-    if (m.timestamp.isAfter(seen)) seen = m.timestamp;
-  }
-  if (previous != null && previous.isAfter(seen)) return previous;
-  return seen;
+  final newest = newestOrganiserAt(messages);
+  if (newest == null) return previous ?? now;
+  if (previous != null && previous.isAfter(newest)) return previous;
+  return newest;
 }
 
 /// The newest unread organiser message written after [lastKnown], the newest

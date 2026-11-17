@@ -69,17 +69,26 @@ void main() {
       expect(newestOrganiserAt([_msg(Role.USER, 9)]), isNull);
     });
 
-    test('viewing a chat moves the seen time to its newest message and never back', () {
-      final messages = [_msg(Role.ADMIN, 1), _msg(Role.USER, 8)];
-      // The newest message, whoever sent it.
-      expect(seenAfterViewing(messages, _t0, null), _t0.add(const Duration(minutes: 8)));
-      // A message stamped ahead of this phone's clock still counts as read.
-      expect(seenAfterViewing(messages, _t0, _t0), _t0.add(const Duration(minutes: 8)));
+    test('viewing a chat moves the seen time to the organiser\'s newest message and never back', () {
+      final messages = [_msg(Role.ADMIN, 1), _msg(Role.ADMIN, 4), _msg(Role.USER, 3)];
+      expect(seenAfterViewing(messages, _t0, null), _t0.add(const Duration(minutes: 4)));
+      // An organiser message stamped ahead of this phone's clock still counts as read.
+      expect(seenAfterViewing(messages, _t0, _t0), _t0.add(const Duration(minutes: 4)));
       // Never earlier than before.
       final later = _t0.add(const Duration(hours: 1));
       expect(seenAfterViewing(messages, _t0, later), later);
-      // An empty chat is read up to now.
+      // No organiser message: the seen time stays, or is now for a chat never seen.
+      expect(seenAfterViewing([_msg(Role.USER, 8)], _t0.add(const Duration(minutes: 9)), _t0), _t0);
       expect(seenAfterViewing(const [], _t0, null), _t0);
+    });
+
+    test('a teammate whose clock runs ahead cannot hide a later organiser message', () {
+      // The teammate's phone stamps its message an hour ahead.
+      final viewed = [_msg(Role.ADMIN, 1), _msg(Role.USER, 60)];
+      final seen = seenAfterViewing(viewed, _t0.add(const Duration(minutes: 2)), _t0);
+      expect(seen, _t0.add(const Duration(minutes: 1)));
+      // The organiser writes again ten minutes later: unread.
+      expect(unreadCount([...viewed, _msg(Role.ADMIN, 10)], seen), 1);
     });
 
     test('a fresh organiser message is the newest unread one past the last known', () {
@@ -183,10 +192,36 @@ void main() {
         expect(shown(route: route), isFalse, reason: route);
       }
       expect(shown(page: false, route: null), isFalse);
+      // The chat's full-screen photo, an unnamed page above it.
+      expect(
+        chatButtonShown(
+          player: true,
+          unread: 1,
+          top: const TopRoute(name: null, isPage: true, aboveChat: true),
+          keyboardOpen: false,
+          hiddenByPage: false,
+        ),
+        isFalse,
+      );
       expect(
         chatButtonShown(player: true, unread: 1, top: null, keyboardOpen: false, hiddenByPage: false),
         isFalse,
       );
+    });
+  });
+
+  group('above the chat', () {
+    test('unnamed routes over the chat are part of it', () {
+      expect(aboveChat([Routes.home, Routes.chatScreen, null]), isTrue);
+      expect(aboveChat([Routes.home, Routes.chatScreen, null, null]), isTrue);
+    });
+
+    test('the chat itself, a named page over it, or an unnamed page elsewhere are not', () {
+      expect(aboveChat([Routes.home, Routes.chatScreen]), isFalse);
+      expect(aboveChat([Routes.chatScreen, Routes.eventDetails, null]), isFalse);
+      expect(aboveChat([Routes.home, null]), isFalse);
+      expect(aboveChat([null]), isFalse);
+      expect(aboveChat(const []), isFalse);
     });
   });
 

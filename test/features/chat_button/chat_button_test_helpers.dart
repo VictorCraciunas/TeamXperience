@@ -34,12 +34,21 @@ class MemoryChatSeenStore implements ChatSeenStore {
 class FakeChats {
   final Map<ChatKey, StreamController<List<Message>>> _controllers = {};
 
+  /// The bound each chat was last asked from.
+  final Map<ChatKey, DateTime> since = {};
+
   StreamController<List<Message>> of(ChatKey chat) =>
       _controllers.putIfAbsent(chat, () => StreamController<List<Message>>.broadcast());
 
-  Stream<List<Message>> stream(ChatKey chat) => of(chat).stream;
+  Stream<List<Message>> stream(ChatKey chat, DateTime after) {
+    since[chat] = after;
+    return of(chat).stream;
+  }
 
   void send(ChatKey chat, List<Message> messages) => of(chat).add(messages);
+
+  /// The chat can no longer be read (a renamed team's old chat).
+  void fail(ChatKey chat) => of(chat).addError(StateError('permission-denied'));
 
   bool listened(ChatKey chat) => _controllers[chat]?.hasListener ?? false;
 }
@@ -52,10 +61,12 @@ class ControllerRig {
       store: store,
       now: () => now,
       previewFor: previewFor,
+      onLost: lost.add,
     );
   }
 
   final chats = FakeChats();
+  final lost = <ChatKey>[];
   final store = MemoryChatSeenStore();
   DateTime now = t0;
   late final ChatButtonController controller;

@@ -7,7 +7,9 @@ import 'package:teamxperience/features/chat_button/logic/chat_on_top.dart';
 import 'package:teamxperience/features/chat_button/logic/watched_chat.dart';
 import 'package:teamxperience/features/chat_button/widgets/chat_button_clearance.dart';
 import 'package:teamxperience/features/chat_button/widgets/chat_button_overlay.dart';
+import 'package:teamxperience/features/chat_button/widgets/chat_button_room.dart';
 import 'package:teamxperience/features/chat_button/widgets/chat_button_scope.dart';
+import 'package:teamxperience/features/chat_button/widgets/chat_float_button.dart';
 import 'package:teamxperience/ui/theme/app_theme.dart';
 
 import 'chat_button_test_helpers.dart';
@@ -48,6 +50,7 @@ class _Harness {
           data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(textScale)),
           child: ChatButtonScope(
             spots: spots,
+            controller: rig.controller,
             child: ChatButtonOverlay(
               controller: rig.controller,
               routes: routes,
@@ -136,6 +139,63 @@ void main() {
     navigator.pop();
     await tester.pumpAndSettle();
     expect(_button, findsNothing);
+    rig.controller.dispose();
+  });
+
+  testWidgets('a photo opened from the chat hides the button too', (tester) async {
+    final rig = await watching(tester);
+    await _Harness(rig).pump(tester, home: const Scaffold(body: Text('Acasă')));
+    final navigator = tester.state<NavigatorState>(find.byType(Navigator));
+    navigator.pushNamed(Routes.chatScreen, arguments: vulpile.routeArguments);
+    await tester.pumpAndSettle();
+    navigator.push(MaterialPageRoute<void>(builder: (_) => const Scaffold(body: Text('Poza'))));
+    await tester.pumpAndSettle();
+    rig.chats.send(vulpile.key, [organiser(1)]);
+    await _flush(tester);
+    expect(rig.controller.unread, 1);
+    expect(_button, findsNothing);
+
+    // Back on the chat, then on the page before it.
+    navigator.pop();
+    await tester.pumpAndSettle();
+    expect(rig.controller.unread, 0);
+    navigator.pop();
+    await tester.pumpAndSettle();
+    rig.chats.send(vulpile.key, [organiser(1), organiser(2)]);
+    await _flush(tester);
+    expect(_button, findsOneWidget);
+    rig.controller.dispose();
+  });
+
+  testWidgets('a page with no bar keeps room under its last button while the button shows', (tester) async {
+    final rig = await watching(tester);
+    await _Harness(rig).pump(
+      tester,
+      home: Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 1200),
+                SizedBox(height: 50, width: double.infinity, child: ElevatedButton(onPressed: () {}, child: const Text('Salvează'))),
+                const ChatButtonRoom(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    final room = find.byType(ChatButtonRoom);
+    expect(tester.getSize(room).height, 0);
+
+    rig.chats.send(vulpile.key, [organiser(1)]);
+    await _flush(tester);
+    expect(tester.getSize(room).height, ChatButtonOverlay.side + ChatFloatButton.size);
+
+    // Scrolled to the end, the page's button is clear of the chat button.
+    await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -2000));
+    await tester.pumpAndSettle();
+    expect(tester.getBottomLeft(find.byType(ElevatedButton)).dy, lessThanOrEqualTo(tester.getTopLeft(_button).dy));
     rig.controller.dispose();
   });
 

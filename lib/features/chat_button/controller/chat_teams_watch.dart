@@ -11,9 +11,11 @@ import '../logic/watched_events.dart';
 
 /// Finds the chats the button watches: for a signed-in player, their team in
 /// each registered event that is not over. Organisers and signed-out users
-/// watch none. Looked up again when the user or their events change, each
-/// minute for events that end, and every few minutes for teams joined or
-/// renamed meanwhile.
+/// watch none. Looked up when the user or their registered events change
+/// (signing up or joining a team changes them), and when asked to
+/// ([lookAgain]: the app comes back, the team page is left, a chat can no
+/// longer be read), which catches renamed teams. Nothing is read on a timer:
+/// the minute tick only drops events that ended, which needs no lookup.
 class ChatTeamsWatch {
   ChatTeamsWatch({
     required AppUser? Function() user,
@@ -23,7 +25,7 @@ class ChatTeamsWatch {
     required void Function(List<WatchedChat> chats) onChats,
     DateTime Function()? now,
     this.tick = const Duration(minutes: 1),
-    this.lookAgainEvery = 3,
+    this.minGap = const Duration(minutes: 1),
   })  : _user = user,
         _registered = registered,
         _changes = changes,
@@ -41,20 +43,26 @@ class ChatTeamsWatch {
   /// How often the events are checked for one that ended.
   final Duration tick;
 
-  /// Every this many ticks the teams are looked up again.
-  final int lookAgainEvery;
+  /// [lookAgain] looks the teams up at most once in this long; a call sooner
+  /// is done at the first tick after it.
+  final Duration minGap;
 
   Timer? _timer;
-  int _ticks = 0;
   String? _lastAsked;
+  DateTime? _lastLookup;
+  bool _pending = false;
   int _generation = 0;
   bool _stopped = false;
 
   void start() {
     _changes.addListener(_changed);
     _timer = Timer.periodic(tick, (_) {
-      _ticks++;
-      refresh(force: _ticks % lookAgainEvery == 0);
+      if (_pending && _gapPassed()) {
+        _pending = false;
+        refresh(force: true);
+      } else {
+        refresh();
+      }
     });
     scheduleMicrotask(() => refresh(force: true));
   }
@@ -62,6 +70,24 @@ class ChatTeamsWatch {
   // Providers may notify while a frame builds; the chats are handed over
   // after it, never in the middle.
   void _changed() => scheduleMicrotask(refresh);
+
+  bool _gapPassed() {
+    final last = _lastLookup;
+    return last == null || _now().difference(last) >= minGap;
+  }
+
+  /// Looks the teams up again (one may have been renamed or left): now, or
+  /// once at a later tick when the last lookup is under [minGap] old (the
+  /// app comes back after every photo taken with the camera).
+  void lookAgain() {
+    if (_stopped) return;
+    if (_gapPassed()) {
+      _pending = false;
+      refresh(force: true);
+    } else {
+      _pending = true;
+    }
+  }
 
   /// Looks the teams up when the user or their events changed, or always
   /// with [force].
@@ -80,6 +106,7 @@ class ChatTeamsWatch {
     final asked = '${user.uid}|${ids.join(',')}';
     if (!force && asked == _lastAsked) return;
     _lastAsked = asked;
+    _lastLookup = _now();
     final generation = ++_generation;
     final chats = <WatchedChat>[];
     for (final event in events) {

@@ -115,6 +115,44 @@ void main() {
       rig.controller.dispose();
     });
 
+    test('only messages after the seen time are asked for', () async {
+      final rig = ControllerRig()..now = t0.add(const Duration(minutes: 10));
+      rig.store.values[lupii.key] = t0.add(const Duration(minutes: 3));
+      rig.controller.watch([vulpile, lupii]);
+      await settle();
+      // A chat new to this phone from now, one seen before from its seen time.
+      expect(rig.chats.since[vulpile.key], t0.add(const Duration(minutes: 10)));
+      expect(rig.chats.since[lupii.key], t0.add(const Duration(minutes: 3)));
+      rig.controller.dispose();
+    });
+
+    test('a chat that can no longer be read is dropped, reported once and listened again when watched', () async {
+      final rig = ControllerRig();
+      rig.store.values[vulpile.key] = t0;
+      rig.controller.watch([vulpile]);
+      await settle();
+      rig.chats.send(vulpile.key, [organiser(1)]);
+      await settle();
+      expect(rig.controller.unread, 1);
+
+      rig.chats.fail(vulpile.key);
+      await settle();
+      expect(rig.controller.unread, 0);
+      expect(rig.controller.chatToOpen, isNull);
+      expect(rig.chats.listened(vulpile.key), isFalse);
+      expect(rig.lost, [vulpile.key]);
+
+      // The next lookup still finds the team: it is watched again.
+      rig.controller.watch([vulpile]);
+      await settle();
+      expect(rig.chats.listened(vulpile.key), isTrue);
+      rig.chats.fail(vulpile.key);
+      await settle();
+      // Not reported twice, so a chat that keeps failing cannot loop lookups.
+      expect(rig.lost, [vulpile.key]);
+      rig.controller.dispose();
+    });
+
     test('a chat no longer watched stops counting and listening', () async {
       final rig = ControllerRig();
       rig.store.values[vulpile.key] = t0;
@@ -159,6 +197,66 @@ void main() {
       // Nothing changed: no new lookups.
       await watch.refresh();
       expect(asked, hasLength(2));
+      watch.stop();
+    });
+
+    test('no lookups on a timer: only when asked again, at most once a minute', () async {
+      var now = t0;
+      var lookups = 0;
+      final watch = ChatTeamsWatch(
+        user: () => user(Role.USER),
+        registered: () => [Event(eventId: 'soon', name: 'A', dateEvent: t0.add(const Duration(days: 1)))],
+        changes: ChangeNotifier(),
+        teamFor: (eventId, uid) async {
+          lookups++;
+          return team('Vulpile');
+        },
+        onChats: (_) {},
+        now: () => now,
+        tick: const Duration(milliseconds: 10),
+      )..start();
+      await Future<void>.delayed(const Duration(milliseconds: 60));
+      expect(lookups, 1);
+
+      // The app comes back, a minute later: looked up straight away.
+      now = t0.add(const Duration(minutes: 1));
+      watch.lookAgain();
+      await settle();
+      expect(lookups, 2);
+
+      // Asked again within the minute: done once, at a tick after the minute is up.
+      now = t0.add(const Duration(minutes: 1, seconds: 20));
+      watch.lookAgain();
+      watch.lookAgain();
+      await settle();
+      expect(lookups, 2);
+      now = t0.add(const Duration(minutes: 2));
+      await Future<void>.delayed(const Duration(milliseconds: 30));
+      expect(lookups, 3);
+      await Future<void>.delayed(const Duration(milliseconds: 40));
+      expect(lookups, 3);
+      watch.stop();
+    });
+
+    test('a renamed team is found when looked up again', () async {
+      var name = 'Vulpile';
+      var now = t0;
+      List<WatchedChat>? got;
+      final watch = ChatTeamsWatch(
+        user: () => user(Role.USER),
+        registered: () => [Event(eventId: 'soon', name: 'A', dateEvent: t0.add(const Duration(days: 1)))],
+        changes: ChangeNotifier(),
+        teamFor: (eventId, uid) async => team(name),
+        onChats: (chats) => got = chats,
+        now: () => now,
+      );
+      await watch.refresh(force: true);
+      expect(got?.single.key.teamName, 'Vulpile');
+      name = 'Lupii';
+      now = t0.add(const Duration(minutes: 5));
+      watch.lookAgain();
+      await settle();
+      expect(got?.single.key.teamName, 'Lupii');
       watch.stop();
     });
 
