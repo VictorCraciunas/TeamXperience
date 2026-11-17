@@ -6,6 +6,16 @@ import 'package:teamxperience/model/user.dart';
 import '../backend/repo/messages_repo.dart';
 import '../model/message.dart';
 
+/// What a player's message says about who wrote it: their uid (the rules
+/// check it is the writer's own) and first name. Empty values are left out.
+({String? uid, String? name}) senderOf(AppUser user) {
+  final uid = user.uid.trim();
+  final first = user.firstName.trim();
+  final full = '${user.firstName} ${user.lastName}'.trim();
+  final name = first.isNotEmpty ? first : full;
+  return (uid: uid.isEmpty ? null : uid, name: name.isEmpty ? null : name);
+}
+
 class MessageService{
   MessageRepo repo = MessageRepo();
 
@@ -16,7 +26,14 @@ class MessageService{
       await repo.sendMessage(message, eventId, teamName);
     }
     else{
-      message = Message(sender: Role.USER, text: text, timestamp: DateTime.now());
+      final from = senderOf(user);
+      message = Message(
+        sender: Role.USER,
+        text: text,
+        timestamp: DateTime.now(),
+        senderUid: from.uid,
+        senderName: from.name,
+      );
       await repo.sendPlayerMessage(message, eventId, teamName);
     }
   }
@@ -27,20 +44,28 @@ class MessageService{
     return repo.sendToTeams(message, eventId, teamNames);
   }
 
+  /// A picture in the team's chat: a photo puzzle's (with its [approvalKey],
+  /// waiting for the organiser) or one sent from the chat's photo button
+  /// (without a key, with [text] as the push's words).
   Future<void> sendImageMessage(
     String eventId,
     String teamName,
     String imageUrl,
     AppUser user, {
     String? approvalKey,
+    String text = 'Fotografie încărcată pentru aprobare',
   }) async {
+    final isAdmin = user.role == Role.ADMIN;
+    final from = isAdmin ? (uid: null, name: null) : senderOf(user);
     final message = Message(
-      sender: user.role == Role.ADMIN ? Role.ADMIN : Role.USER,
-      text: 'Fotografie încărcată pentru aprobare',
+      sender: isAdmin ? Role.ADMIN : Role.USER,
+      text: text,
       timestamp: DateTime.now(),
       type: MessageType.image,
       imageUrl: imageUrl,
       approvalKey: approvalKey,
+      senderUid: from.uid,
+      senderName: from.name,
     );
     await repo.sendMessage(message, eventId, teamName);
   }

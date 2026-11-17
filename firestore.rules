@@ -223,6 +223,9 @@ service cloud.firestore {
             && (isAdmin()
               || (inThisTeam()
                   && request.resource.data.sender == 'USER'
+                  // A player signs only as themselves (older apps sign nothing).
+                  && (!('senderUid' in request.resource.data)
+                      || request.resource.data.senderUid == request.auth.uid)
                   && !('announcement' in request.resource.data)
                   && !('moved' in request.resource.data)));
           allow update, delete: if isAdmin();

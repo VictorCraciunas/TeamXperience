@@ -476,6 +476,15 @@ describe("firestore.rules", () => {
       await assertFails(as("u1").collection(`${TEAM}/messages`).add({sender: "USER", text: "Hei", moved: true}));
     });
 
+    test("a player signs a message only as themselves", async () => {
+      const messages = () => as("u1").collection(`${TEAM}/messages`);
+      await assertSucceeds(messages().add({sender: "USER", text: "Hei", senderUid: "u1", senderName: "Ana"}));
+      await assertSucceeds(messages().add({sender: "USER", type: "image", imageUrl: "a", senderUid: "u1"}));
+      await assertFails(messages().add({sender: "USER", text: "Hei", senderUid: "u2", senderName: "Dan"}));
+      await assertFails(messages().add({sender: "USER", text: "Hei", senderUid: ""}));
+      await assertFails(messages().add({sender: "USER", text: "Hei", senderUid: null}));
+    });
+
     test("nobody writes to a team that is gone (renamed): it would never be read", async () => {
       await assertFails(as("admin").collection("events/e1/teams/Nimeni/messages").add({sender: "ADMIN", text: "Hei"}));
     });
