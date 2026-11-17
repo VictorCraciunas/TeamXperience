@@ -1,13 +1,15 @@
-import 'package:teamxperience/ui/components/feedback/load_failed.dart';
-import 'package:teamxperience/ui/theme/contrast.dart';
 import 'package:flutter/material.dart';
-import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/features/team_chats/controller/team_chats_controller.dart';
-import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
+import 'package:teamxperience/features/team_chats/logic/chat_texts.dart';
+import 'package:teamxperience/features/team_chats/widgets/team_chats_view.dart';
+import 'package:teamxperience/model/team.dart';
+import 'package:teamxperience/ui/components/misc/clock_builder.dart';
 
 import '../../../constants/routes.dart';
 import '../../../model/event.dart';
 
+/// The organiser's conversations with the teams of one event (argument: the
+/// [Event]); the chats with something to read come first.
 class TeamChatsScreen extends StatefulWidget {
   const TeamChatsScreen({super.key});
 
@@ -16,123 +18,49 @@ class TeamChatsScreen extends StatefulWidget {
 }
 
 class _TeamChatsScreenState extends State<TeamChatsScreen> {
-  late TeamChatsController controller;
-  late Event event;
-
-  bool _initialized = false;
+  TeamChatsController? _controller;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_initialized) {
-      event = ModalRoute
-          .of(context)!
-          .settings
-          .arguments as Event;
-      controller = TeamChatsController(event: event);
-      _loadTeams();
-      _initialized = true;
-
-    }
+    if (_controller != null) return;
+    final event = ModalRoute.of(context)?.settings.arguments;
+    if (event is Event) _controller = TeamChatsController(event: event)..start();
   }
 
-  Future<void> _loadTeams() async {
-    setState(() => controller.isLoading = true);
-    await controller.loadTeams();
-    if (mounted) setState(() {});
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
   }
 
-  void _navigateToChat(int index) {
-    final team = controller.teams[index];
-    Navigator.pushNamed(
-      context,
-      Routes.chatScreen, // Make sure you have this route defined
-      arguments: {
-        'eventId': event.eventId,
-        'team': team,
-      },
-    );
+  void _openChat(Event event, Team team) {
+    Navigator.pushNamed(context, Routes.chatScreen, arguments: {'eventId': event.eventId, 'team': team});
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = _controller;
+    if (controller == null) return const Scaffold();
     return Scaffold(
-      appBar: MyAppBar(appBarText: "Conversații"),
-      body: controller.isLoading
-          ? const Center(
-        child: CircularProgressIndicator(),
-      )
-          : controller.failed
-          ? LoadFailed(message: 'Nu am putut încărca echipele.', onRetry: _loadTeams)
-          : controller.teams.isEmpty
-          ? const Center(
-        child: Text(
-          "Nicio echipă înscrisă.",
-          style: TextStyle(fontSize: 20),
-        ),
-      )
-          : Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: controller.teams.length,
-          itemBuilder: (context, index) {
-            final team = controller.teams[index];
-            return Card(
-              margin: const EdgeInsets.only(bottom: 12.0),
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(16.0),
-                leading: CircleAvatar(
-                  backgroundColor: context.colors.accent,
-                  child: Text(
-                    team.name.isNotEmpty ? team.name[0].toUpperCase() : 'T',
-                    style: TextStyle(
-                      color: readableOn([context.colors.accent]),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                title: Text(
-                  team.name,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 4),
-                    Text(
-                      "Căpitan: ${team.captainName}",
-                      style: TextStyle(
-                        color: context.colors.muted,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      "Membri: ${team.memberList.map((member) => member.displayName).join(', ')}",
-                      style: TextStyle(
-                        color: context.colors.muted,
-                        fontSize: 14,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-                trailing: Icon(
-                  Icons.chat_bubble_outline,
-                  color: context.colors.accent,
-                ),
-                onTap: () => _navigateToChat(index),
-              ),
-            );
-          },
+      body: ListenableBuilder(
+        listenable: controller,
+        builder: (context, _) => ClockBuilder(
+          interval: const Duration(seconds: 30),
+          builder: (context, now) => TeamChatsView(
+            subtitle: chatsHeaderLine(controller.event.name, controller.teamCount),
+            loading: controller.isLoading,
+            failed: controller.failed,
+            teamCount: controller.teamCount,
+            unreadCount: controller.unreadCount,
+            filter: controller.filter,
+            sections: controller.sections,
+            now: now,
+            onBack: () => Navigator.maybePop(context),
+            onFilter: controller.setFilter,
+            onOpen: (team) => _openChat(controller.event, team),
+            onRetry: controller.retry,
+          ),
         ),
       ),
     );

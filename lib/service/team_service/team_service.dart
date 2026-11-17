@@ -6,6 +6,7 @@ import 'package:teamxperience/backend/repo/teamRepo.dart';
 import 'package:teamxperience/backend/repo/user_repo.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
 import 'package:teamxperience/model/crew.dart';
+import 'package:teamxperience/model/message.dart';
 import 'package:teamxperience/enums/team_photo_slot.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/service/team_service/invite_preview.dart';
@@ -189,6 +190,10 @@ class TeamService {
 
   /// The organiser has read the team's messages.
   Future<void> clearUnread(String eventId, String teamName) => teamRepo.clearUnread(eventId, teamName);
+
+  /// The newest message of the team's chat, or null while it has none.
+  Stream<Message?> streamLastMessage(String eventId, String teamName) =>
+      teamRepo.streamLastMessage(eventId, teamName);
 
   /// Sets one photo try's status, with the organiser's [reason] for a
   /// rejection and the picture's [url] when it is sent; the time is the
