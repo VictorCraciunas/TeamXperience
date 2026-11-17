@@ -1,7 +1,10 @@
 import 'package:teamxperience/features/game_intro/logic/game_door.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:teamxperience/features/event_details/logic/event_menu_action.dart';
 import 'package:teamxperience/features/event_details/logic/event_page_content.dart';
+import 'package:teamxperience/features/event_details/widgets/event_menu_sheet.dart';
+import 'package:teamxperience/ui/components/feedback/app_dialog.dart';
 import 'package:teamxperience/features/event_details/logic/event_page_data.dart';
 import 'package:teamxperience/features/event_details/logic/signup_bar_state.dart';
 import 'package:teamxperience/features/feed/logic/post_text.dart';
@@ -125,4 +128,56 @@ class EventDetailsController extends ChangeNotifier {
     return () => Navigator.pushNamed(context, Routes.chatScreen, arguments: {'eventId': event.eventId, 'team': team});
   }
 
+  /// The organiser's ⋮: opens the sheet, with the teams followed live, then
+  /// acts on what was picked once it has closed.
+  Future<void> openMenu() async {
+    final action = await showEventMenuSheet(
+      context,
+      event: event,
+      teams: service.getStreamTeams(event.eventId),
+      initialTeams: teams,
+    );
+    if (action == null || _disposed) return;
+    await onMenuAction(action);
+  }
+
+  /// Each choice of the ⋮ sheet; the arguments are the ones these screens
+  /// have always been opened with.
+  Future<void> onMenuAction(EventMenuAction action) async {
+    switch (action) {
+      case EventMenuAction.liveRoom:
+        Navigator.pushNamed(context, Routes.eventManagement, arguments: event);
+      case EventMenuAction.registeredTeams:
+        Navigator.pushNamed(context, Routes.eventRegisteredTeams, arguments: event);
+      case EventMenuAction.conversations:
+        Navigator.pushNamed(context, Routes.teamConversations, arguments: event);
+      case EventMenuAction.edit:
+        Navigator.pushNamed(context, Routes.createEvent, arguments: {'event': event, 'isBlueprint': false});
+      case EventMenuAction.tryAsPlayer:
+        // The organiser's preview: the game with no team.
+        Navigator.pushNamed(context, Routes.eventGame, arguments: {'event': event});
+      case EventMenuAction.duplicate:
+        Navigator.pushNamed(context, Routes.createEvent, arguments: {'event': event, 'isBlueprint': true});
+      case EventMenuAction.delete:
+        await _confirmDelete();
+    }
+  }
+
+  Future<void> _confirmDelete() async {
+    final confirmed = await showAppDialog(
+      context,
+      title: 'Confirmare ștergere',
+      message: 'Ești sigur că vrei să ștergi acest eveniment?',
+      confirmLabel: 'Șterge',
+      cancelLabel: 'Anulează',
+      destructive: true,
+    );
+    if (!confirmed || _disposed || !context.mounted) return;
+    final eventList = context.read<EventList>();
+    eventList.deleteEvent(event.eventId).catchError((Object e) => debugPrint('Event details: delete failed: $e'));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Evenimentul a fost șters')),
+    );
+    Navigator.pop(context);
+  }
 }
