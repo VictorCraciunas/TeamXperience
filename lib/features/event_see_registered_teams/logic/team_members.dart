@@ -34,10 +34,3 @@ String memberInitials(TeamMember member) {
   final made = initialsOf(member.displayName);
   return made.isEmpty ? '?' : made;
 }
-
-/// "V" for "vulpile"; "?" for an empty name.
-String teamInitial(String name) {
-  final trimmed = name.trim();
-  if (trimmed.isEmpty) return '?';
-  return String.fromCharCode(trimmed.runes.first).toUpperCase();
-}

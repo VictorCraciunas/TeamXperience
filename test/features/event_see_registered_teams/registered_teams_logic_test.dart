@@ -1,3 +1,4 @@
+import 'package:teamxperience/features/live_room/logic/live_texts.dart' show teamInitial;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/features/event_see_registered_teams/logic/registered_teams_texts.dart';
 import 'package:teamxperience/features/event_see_registered_teams/logic/team_members.dart';

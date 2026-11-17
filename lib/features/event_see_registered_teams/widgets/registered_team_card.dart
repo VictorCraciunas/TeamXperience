@@ -1,10 +1,10 @@
+import 'package:teamxperience/features/live_room/logic/live_texts.dart' show teamInitial;
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 import '../logic/registered_teams_texts.dart';
-import '../logic/team_members.dart';
 import 'team_avatar.dart';
 import 'team_card_details.dart';
 
