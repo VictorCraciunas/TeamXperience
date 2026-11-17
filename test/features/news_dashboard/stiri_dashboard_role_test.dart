@@ -46,11 +46,11 @@ Future<void> _pump(WidgetTester tester, Role role) async {
 void main() {
   testWidgets('admins can create news', (tester) async {
     await _pump(tester, Role.ADMIN);
-    expect(find.text('Creează știre'), findsOneWidget);
+    expect(find.text('Știre nouă'), findsOneWidget);
   });
 
   testWidgets('players cannot create news', (tester) async {
     await _pump(tester, Role.USER);
-    expect(find.text('Creează știre'), findsNothing);
+    expect(find.text('Știre nouă'), findsNothing);
   });
 }
