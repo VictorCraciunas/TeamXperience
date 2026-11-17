@@ -52,10 +52,9 @@ Moved from `lib/widgets/` (and `utils/snackbars.dart`) in UI redesign phase 1: `
 | `InviteCodeCard` | Navy card for a team's invite code: caption, the code in a dashed box (mono 26), a teal share button (the phone's share sheet) and a faint-white copy button, and an optional `footer` (the avatar row) |
 | `FieldStatusLine` (+ `FieldStatus` neutral / checking / ok / problem) | The 11 px line under a field: a hint, a spinner while checking, a green check ("Numele e liber") or a red alert |
 | `showAppDialog`, `MySnackBars` | Confirm dialog (destructive uses `danger`), semantic snackbars |
-| `MyAppBar` | App bar with title, optional icon, `showDropdown` + `event` → shows `MenuWidget` |
+| `MyAppBar` | App bar with title, optional subtitle, and either a `trailing` widget or a round `iconString` button calling `onIconTap` (`iconLabel` for screen readers) |
 | `ScreenBar` | Bar of a short task screen (mockup 04 `.bar`): leading icon (× or ←), title, optional subtitle, panel fill with a 1 px line under it; keeps clear of the status bar |
 | `NavyButton` | Mockup `.btn`: full-width navy button, 12 radius, 11 padding, medium 12 px label; greyed out with `onPressed` null, spinner with `isLoading` |
-| `MenuWidget` (`menu.dart`) | Admin event actions overlay (edit / duplicate / start) |
 | `EventCard`, `EventsList` | Event presentation (admin variant shows `nrTeams`/`nrPerson`) |
 | `RegisteredEventCard/Carousel/List` | Player's registered events |
 | `StireCard`, `StiriCarousel` | News presentation (`showBadge` for type) |

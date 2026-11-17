@@ -21,4 +21,19 @@ void main() {
     expect(find.text('Puzzle 1'), findsOneWidget);
     expect(find.text('Cod'), findsOneWidget);
   });
+
+  testWidgets('the icon button calls what the page gives it', (tester) async {
+    var taps = 0;
+    await _pump(
+      tester,
+      MyAppBar(
+        appBarText: 'Detalii Eveniment',
+        iconString: 'assets/images/menu.svg',
+        iconLabel: 'Mai multe acțiuni',
+        onIconTap: () => taps++,
+      ),
+    );
+    await tester.tap(find.bySemanticsLabel('Mai multe acțiuni'));
+    expect(taps, 1);
+  });
 }

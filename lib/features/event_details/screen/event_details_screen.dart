@@ -69,8 +69,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               ? MyAppBar(
                   appBarText: 'Detalii Eveniment',
                   iconString: 'assets/images/menu.svg',
-                  showDropdown: true,
-                  event: event,
+                  iconLabel: 'Mai multe acțiuni',
+                  onIconTap: controller.openMenu,
                 )
               : null,
         );
