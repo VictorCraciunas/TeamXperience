@@ -13,6 +13,8 @@ import 'package:teamxperience/features/admin/create_news/screen/create_news_scre
 import 'package:teamxperience/features/admin/shell/screen/admin_shell.dart';
 import 'package:teamxperience/features/calendar/screen/calendar_screen.dart';
 import 'package:teamxperience/features/chat/screen/chat_screen.dart';
+import 'package:teamxperience/features/chat_button/controller/chat_route_watch.dart';
+import 'package:teamxperience/features/chat_button/widgets/chat_button_layer.dart';
 import 'package:teamxperience/features/enter_code/screen/enter_code.dart';
 import 'package:teamxperience/features/live_room/screen/live_board_screen.dart';
 import 'package:teamxperience/features/live_room/screen/live_map_screen.dart';
@@ -145,8 +147,13 @@ class MyApp extends StatelessWidget {
               darkTheme: AppTheme.dark,
               themeMode: themeController.mode,
               title: 'Treasure Hunt',
+              // Knows the page on top, for the player's floating chat button.
+              navigatorObservers: [ChatRouteWatch.shared],
               // A tap outside a text field, or a drag, closes the keyboard.
-              builder: (context, app) => TapOutsideClosesKeyboard(child: app ?? const SizedBox.shrink()),
+              // The player's floating chat button is drawn over every page.
+              builder: (context, app) => TapOutsideClosesKeyboard(
+                child: ChatButtonLayer(routes: ChatRouteWatch.shared, child: app ?? const SizedBox.shrink()),
+              ),
               initialRoute: Routes.redirect,
               routes: {
                 Routes.redirect:

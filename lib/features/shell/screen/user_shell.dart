@@ -20,6 +20,8 @@ import 'package:teamxperience/features/shell/logic/player_tabs.dart';
 import 'package:teamxperience/features/teams/screen/teams_screen.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
+import 'package:teamxperience/features/chat_button/widgets/chat_button_clearance.dart';
+import 'package:teamxperience/ui/components/navigation/app_bottom_nav.dart';
 import 'package:teamxperience/ui/components/navigation/app_shell.dart';
 import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 
@@ -121,25 +123,31 @@ class _UserShellState extends State<UserShell> {
     if (popup == null) return const SizedBox.shrink();
     final (open, closing) = _popupShown;
     final items = playerNavItems(live: live, open: open && !closing);
+    // The floating chat button sits above the bottom bar; the pages end
+    // where the raised Joacă circle starts.
+    Widget aboveBar(Widget page) => ChatButtonClearance.above(overlap: AppBottomNav.raisedRise, child: page);
     final screens = <WidgetBuilder?>[
-      (_) => const Home(),
-      (_) => const EventsTabScreen(),
+      (_) => aboveBar(const Home()),
+      (_) => aboveBar(const EventsTabScreen()),
       null,
-      (_) => const TeamsScreen(),
-      (_) => const ProfileScreen(),
+      (_) => aboveBar(const TeamsScreen()),
+      (_) => aboveBar(const ProfileScreen()),
     ];
 
     return ChangeNotifierProvider<ShellController>.value(
       value: _controller,
       child: AppShell(
         controller: _controller,
+        // The pop-up has its own chat link; the floating button hides over it.
         overlay: open
-            ? PlayPopup(
-                controller: popup,
-                actions: playPopupRoutes(
-                  navigator: Navigator.of(context),
-                  user: () => context.read<UserProvider>().currentUser,
-                  browseAll: () => _controller.select(PlayerTab.events),
+            ? ChatButtonClearance.hide(
+                child: PlayPopup(
+                  controller: popup,
+                  actions: playPopupRoutes(
+                    navigator: Navigator.of(context),
+                    user: () => context.read<UserProvider>().currentUser,
+                    browseAll: () => _controller.select(PlayerTab.events),
+                  ),
                 ),
               )
             : null,
