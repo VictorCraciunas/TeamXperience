@@ -28,7 +28,9 @@ class MessageRepo {
     final team = _team(eventId, teamName);
     final sent = team.collection('messages').add(message.toJson());
     team.update({
-      'unreadByAdmin': {'text': message.text, 'at': FieldValue.serverTimestamp()},
+      'unreadByAdmin.text': message.text,
+      'unreadByAdmin.at': FieldValue.serverTimestamp(),
+      'unreadByAdmin.count': FieldValue.increment(1),
     }).catchError((Object _) {});
     return sent;
   }

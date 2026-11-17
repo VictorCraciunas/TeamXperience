@@ -416,6 +416,40 @@ describe("firestore.rules", () => {
       await assertSucceeds(as("admin").doc(TEAM).update({unreadByAdmin: FieldValue.delete()}));
     });
 
+    test("the unread count: each send adds exactly one", async () => {
+      const at = FieldValue.serverTimestamp();
+      const send = (text: string) => member().update({
+        "unreadByAdmin.text": text,
+        "unreadByAdmin.at": at,
+        "unreadByAdmin.count": FieldValue.increment(1),
+      });
+      await assertSucceeds(send("Alo"));
+      await assertSucceeds(send("Mai e cineva?"));
+      const saved = (await as("admin").doc(TEAM).get()).data()?.unreadByAdmin;
+      if (saved?.count !== 2 || saved?.text !== "Mai e cineva?") throw new Error(`count ${saved?.count}`);
+      await assertFails(member().update({"unreadByAdmin.text": "x", "unreadByAdmin.at": at, "unreadByAdmin.count": 5}));
+      await assertFails(member().update({
+        "unreadByAdmin.text": "x", "unreadByAdmin.at": at, "unreadByAdmin.count": FieldValue.increment(2),
+      }));
+      await assertFails(member().update({"unreadByAdmin.text": "x", "unreadByAdmin.at": at, "unreadByAdmin.count": "3"}));
+    });
+
+    test("the unread count: a fresh mark starts at one, an old app's mark stays allowed", async () => {
+      const at = FieldValue.serverTimestamp();
+      await assertFails(member().update({unreadByAdmin: {text: "Alo", at, count: 2}}));
+      await assertSucceeds(member().update({unreadByAdmin: {text: "Alo", at, count: 1}}));
+      // An older app replaces the whole mark, dropping the count.
+      await assertSucceeds(member().update({unreadByAdmin: {text: "Alo", at}}));
+      // A newer app then counts on from a mark without a count.
+      await assertSucceeds(member().update({
+        "unreadByAdmin.text": "Hei", "unreadByAdmin.at": at, "unreadByAdmin.count": FieldValue.increment(1),
+      }));
+      await assertSucceeds(as("admin").doc(TEAM).update({unreadByAdmin: FieldValue.delete()}));
+      await assertSucceeds(member().update({
+        "unreadByAdmin.text": "Iar", "unreadByAdmin.at": at, "unreadByAdmin.count": FieldValue.increment(1),
+      }));
+    });
+
     test("the phone: the captain, or anyone on an old team", async () => {
       await assertSucceeds(as("u1").doc(TEAM).update({phoneNumber: "0733"}));
       await assertFails(as("u2").doc(TEAM).update({phoneNumber: "0744"}));

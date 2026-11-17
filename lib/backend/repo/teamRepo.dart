@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../enums/photo_approval_status.dart';
 import '../../enums/team_photo_slot.dart';
+import '../../model/message.dart';
 import '../../model/team.dart';
 
 class TeamRepo {
@@ -138,6 +139,24 @@ class TeamRepo {
   /// The organiser has read the team's messages.
   Future<void> clearUnread(String eventId, String teamName) {
     return _team(eventId, teamName).update({'unreadByAdmin': FieldValue.delete()});
+  }
+
+  /// The newest message of the team's chat (one document read, then one per
+  /// new message), or null while the chat is empty or the newest is broken.
+  Stream<Message?> streamLastMessage(String eventId, String teamName) {
+    return _team(eventId, teamName)
+        .collection('messages')
+        .orderBy('timestamp', descending: true)
+        .limit(1)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.docs.isEmpty) return null;
+      try {
+        return Message.fromFirestore(snapshot.docs.first.data());
+      } catch (_) {
+        return null;
+      }
+    });
   }
 
   /// Adds [meters] to the walk of the phone signed in as [uid].

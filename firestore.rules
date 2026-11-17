@@ -154,11 +154,16 @@ service cloud.firestore {
                 : teamPhotoOk(after('teamPhotos').finish));
         }
 
+        // The latest unread text, its time, and how many there are: each send
+        // adds exactly one to the count (1 on a fresh mark). A mark without a
+        // count (older apps) stays allowed.
         function unreadOk() {
           let unread = request.resource.data.unreadByAdmin;
-          return unread.keys().hasOnly(['text', 'at'])
+          return unread.keys().hasOnly(['text', 'at', 'count'])
             && unread.text is string
-            && unread.at == request.time;
+            && unread.at == request.time
+            && (!('count' in unread)
+                || (unread.count is int && unread.count == before('unreadByAdmin').get('count', 0) + 1));
         }
 
         function captainOrOldTeam() {
