@@ -78,7 +78,6 @@ PlayerNewsView _player(StiriDashboardController c, {void Function(Stire)? onOpen
   news: _news,
   now: _now,
   onOpen: onOpen ?? (_) {},
-  onPickPeriod: () {},
 );
 
 void main() {
@@ -113,6 +112,13 @@ void main() {
 
       await tester.tap(find.byType(NewsFeaturedCard));
       expect(opened?.id, 'b');
+    });
+
+    testWidgets('no search or period buttons, as in the design', (tester) async {
+      final c = await _controller();
+      await _pump(tester, _player, controller: c);
+      expect(find.byTooltip('Caută'), findsNothing);
+      expect(find.byTooltip('Alege perioada'), findsNothing);
     });
 
     testWidgets('a back arrow only when the page was pushed', (tester) async {

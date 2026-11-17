@@ -16,14 +16,14 @@ class NewsChipsBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 8, right: 12),
+      padding: EdgeInsets.only(top: 8, right: trailing.isEmpty ? 0 : 12),
       child: Row(
         children: [
           Expanded(
             child: SingleChildScrollView(
               key: const ValueKey('news-chips'),
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(left: 16, right: 8),
+              padding: EdgeInsets.only(left: 16, right: trailing.isEmpty ? 16 : 8),
               child: Row(
                 children: [
                   for (final (i, chip) in chips.indexed) ...[

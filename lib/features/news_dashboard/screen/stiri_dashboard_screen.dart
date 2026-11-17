@@ -14,7 +14,6 @@ import 'package:teamxperience/ui/components/feedback/snackbars.dart';
 import 'package:teamxperience/ui/components/feedback/text_input_dialog.dart';
 import 'package:teamxperience/ui/components/misc/filter_sheet.dart';
 import 'package:teamxperience/ui/components/misc/period_selection.dart';
-import 'package:teamxperience/ui/components/misc/period_sheet.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 /// The Știri list: [PlayerNewsView] for players (pushed from Acasă's news),
@@ -64,13 +63,6 @@ class _StiriDashboardState extends State<StiriDashboard> {
   Future<void> _openCategories() async {
     await Navigator.pushNamed(context, Routes.chooseNewsType);
     await controller.loadCategories(force: true);
-  }
-
-  Future<void> _pickPeriod() async {
-    final query = controller.query;
-    final picked = await showPeriodSheet(context, initial: PeriodSelection(start: query.start, end: query.end));
-    if (picked == null) return;
-    controller.setPeriod(picked.start, picked.end);
   }
 
   /// The organiser's filter sheet: period and category (the type is the
@@ -238,7 +230,6 @@ class _StiriDashboardState extends State<StiriDashboard> {
                 now: now,
                 status: status,
                 onOpen: _open,
-                onPickPeriod: _pickPeriod,
               );
             },
           );
