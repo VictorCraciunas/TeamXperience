@@ -67,7 +67,13 @@ class MessageService{
       senderUid: from.uid,
       senderName: from.name,
     );
-    await repo.sendMessage(message, eventId, teamName);
+    // A player's chat photo marks the chat unread like a text does; a puzzle
+    // photo doesn't, since its pending approval already flags the team.
+    if (!isAdmin && approvalKey == null) {
+      await repo.sendPlayerMessage(message, eventId, teamName);
+    } else {
+      await repo.sendMessage(message, eventId, teamName);
+    }
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>>  getMessages(String eventId, String teamId) {
