@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:teamxperience/features/chat_button/widgets/chat_button_clearance.dart';
 import 'package:teamxperience/features/game_intro/logic/intro_texts.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/ui/theme/event_theme_scope.dart';
@@ -94,35 +95,37 @@ class GameIntroView extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Material(
-                    color: palette.accent,
-                    borderRadius: BorderRadius.circular(12),
-                    child: InkWell(
-                      onTap: onStart,
+            ChatButtonClearance.bar(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Material(
+                      color: palette.accent,
                       borderRadius: BorderRadius.circular(12),
-                      child: Padding(
-                        padding: const EdgeInsets.all(11),
-                        child: Text(
-                          'Spre prima misiune',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.45, color: palette.surface),
+                      child: InkWell(
+                        onTap: onStart,
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.all(11),
+                          child: Text(
+                            'Spre prima misiune',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.45, color: palette.surface),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Cronometrul pornește acum pentru toată echipa.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 13, height: 1.45, color: palette.ink.withValues(alpha: .75)),
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    Text(
+                      'Cronometrul pornește acum pentru toată echipa.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 13, height: 1.45, color: palette.ink.withValues(alpha: .75)),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

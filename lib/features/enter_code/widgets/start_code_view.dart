@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:teamxperience/features/chat_button/widgets/chat_button_clearance.dart';
 import 'package:teamxperience/features/enter_code/logic/start_code_check.dart';
 import 'package:teamxperience/features/enter_code/logic/start_texts.dart';
 import 'package:teamxperience/features/home/logic/live_texts.dart';
@@ -215,22 +216,24 @@ class StartCodeView extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  StartButton(
-                    label: started ? 'Intră în joc' : 'Pornește jocul',
-                    busy: busy,
-                    onTap: onSubmit,
-                  ),
-                  if (chat != null) ...[
-                    const SizedBox(height: 4),
-                    StartChatLink(onTap: chat),
+            ChatButtonClearance.bar(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    StartButton(
+                      label: started ? 'Intră în joc' : 'Pornește jocul',
+                      busy: busy,
+                      onTap: onSubmit,
+                    ),
+                    if (chat != null) ...[
+                      const SizedBox(height: 4),
+                      StartChatLink(onTap: chat),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ],
