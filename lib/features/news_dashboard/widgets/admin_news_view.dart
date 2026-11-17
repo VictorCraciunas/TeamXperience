@@ -15,9 +15,9 @@ import 'package:teamxperience/features/news_dashboard/widgets/news_tool_button.d
 import 'package:teamxperience/model/stire.dart';
 
 /// The organiser's Știri: how many news and categories, the Toate / Publice /
-/// Private chips, a row per news with an edit button, and "Știre nouă" at
-/// the bottom. Search and the filter sheet (category, period) are the two
-/// round buttons by the chips; a long press on a row deletes the news.
+/// Private chips, a row per news with edit and delete buttons, and "Știre
+/// nouă" at the bottom. Search and the filter sheet (category, period) are the
+/// two round buttons by the chips; a long press on a row also deletes the news.
 class AdminNewsView extends StatelessWidget {
   const AdminNewsView({
     super.key,

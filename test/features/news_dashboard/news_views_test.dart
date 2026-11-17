@@ -54,6 +54,7 @@ Future<StiriDashboardController> _controller() async {
 Future<void> _pump(WidgetTester tester, Widget Function(StiriDashboardController) view, {
   double textScale = 1,
   Size size = const Size(390, 844),
+  ThemeData? theme,
   required StiriDashboardController controller,
 }) async {
   tester.view.physicalSize = size * 3;
@@ -61,7 +62,7 @@ Future<void> _pump(WidgetTester tester, Widget Function(StiriDashboardController
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
     MaterialApp(
-      theme: AppTheme.light,
+      theme: theme ?? AppTheme.light,
       builder: (context, app) => MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(textScale)),
         child: app ?? const SizedBox.shrink(),
@@ -145,16 +146,21 @@ void main() {
       onFilter: () {},
     );
 
-    testWidgets('fits a small phone at text size 2.0', (tester) async {
-      final c = await _controller();
-      await _pump(tester, admin, controller: c, textScale: 2, size: const Size(320, 640));
-      expect(tester.takeException(), isNull);
-      await tester.drag(find.byType(ListView), const Offset(0, -2000));
-      await tester.pump();
-      expect(tester.takeException(), isNull);
-    });
+    for (final (name, theme) in [('light', AppTheme.light), ('dark', AppTheme.dark)]) {
+      testWidgets('fits a small phone at text size 2.0 with edit and delete on every row ($name)', (tester) async {
+        final c = await _controller();
+        await _pump(tester, admin, controller: c, textScale: 2, size: const Size(320, 640), theme: theme);
+        expect(tester.takeException(), isNull);
+        expect(find.byTooltip('Editează știrea'), findsWidgets);
+        expect(find.byTooltip('Șterge știrea'), findsWidgets);
+        expect(tester.getSize(find.byTooltip('Șterge știrea').first), const Size(44, 44));
+        await tester.drag(find.byType(ListView), const Offset(0, -2000));
+        await tester.pump();
+        expect(tester.takeException(), isNull);
+      });
+    }
 
-    testWidgets('counts, type chips, edit, long-press delete, new news and categories', (tester) async {
+    testWidgets('counts, type chips, edit, delete (trash and long press), new news and categories', (tester) async {
       final c = await _controller();
       final edited = <String?>[];
       final deleted = <String?>[];
@@ -186,8 +192,11 @@ void main() {
       await tester.tap(find.byTooltip('Editează știrea'));
       expect(edited, ['c']);
 
-      await tester.longPress(find.text(_news[2].title ?? ''));
+      await tester.tap(find.byTooltip('Șterge știrea'));
       expect(deleted, ['c']);
+
+      await tester.longPress(find.text(_news[2].title ?? ''));
+      expect(deleted, ['c', 'c']);
 
       await tester.tap(find.text('Știre nouă'));
       await tester.tap(find.text('Categorii'));

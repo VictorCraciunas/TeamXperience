@@ -132,7 +132,7 @@ class _StiriDashboardState extends State<StiriDashboard> {
     return null;
   }
 
-  /// Long press on a row: confirm, then delete the news.
+  /// A row's trash button or long press: confirm, then delete the news.
   Future<void> _deleteStire(Stire stire) async {
     final id = stire.id;
     if (id == null) return;
