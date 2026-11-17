@@ -149,7 +149,6 @@ void main() {
       onDelete: onDelete ?? (_) {},
       onCreate: onCreate ?? () {},
       onCategories: onCategories ?? () {},
-      onFilter: () {},
     );
 
     for (final (name, theme) in [('light', AppTheme.light), ('dark', AppTheme.dark)]) {
@@ -165,6 +164,13 @@ void main() {
         expect(tester.takeException(), isNull);
       });
     }
+
+    testWidgets('no search or filter buttons, as in the design', (tester) async {
+      final c = await _controller();
+      await _pump(tester, admin, controller: c);
+      expect(find.byTooltip('Caută'), findsNothing);
+      expect(find.byTooltip('Filtrează'), findsNothing);
+    });
 
     testWidgets('counts, type chips, edit, delete (trash and long press), new news and categories', (tester) async {
       final c = await _controller();

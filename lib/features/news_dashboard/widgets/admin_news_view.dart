@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:teamxperience/features/news_dashboard/controller/stiri_dashboard_controller.dart';
 import 'package:teamxperience/features/news_dashboard/logic/news_filters.dart';
 import 'package:teamxperience/features/news_dashboard/logic/news_texts.dart';
-import 'package:teamxperience/features/news_dashboard/widgets/active_news_filters.dart';
 import 'package:teamxperience/features/news_dashboard/widgets/admin_news_row.dart';
 import 'package:teamxperience/features/news_dashboard/widgets/categories_button.dart';
 import 'package:teamxperience/features/news_dashboard/widgets/new_news_bar.dart';
 import 'package:teamxperience/features/news_dashboard/widgets/news_chips_bar.dart';
 import 'package:teamxperience/features/news_dashboard/widgets/news_empty.dart';
 import 'package:teamxperience/features/news_dashboard/widgets/news_header.dart';
-import 'package:teamxperience/features/news_dashboard/widgets/news_search_field.dart';
-import 'package:teamxperience/features/news_dashboard/widgets/news_tool_button.dart';
 import 'package:teamxperience/model/stire.dart';
 
 /// The organiser's Știri: how many news and categories, the Toate / Publice /
 /// Private chips, a row per news with edit and delete buttons, and "Știre
-/// nouă" at the bottom. Search and the filter sheet (category, period) are the
-/// two round buttons by the chips; a long press on a row also deletes the news.
+/// nouă" at the bottom, as in the News-Admin design (no search or filter
+/// sheet). A long press on a row also deletes the news.
 class AdminNewsView extends StatelessWidget {
   const AdminNewsView({
     super.key,
@@ -29,7 +25,6 @@ class AdminNewsView extends StatelessWidget {
     required this.onDelete,
     required this.onCreate,
     required this.onCategories,
-    required this.onFilter,
     this.status,
   });
 
@@ -43,7 +38,6 @@ class AdminNewsView extends StatelessWidget {
   final void Function(Stire stire) onDelete;
   final VoidCallback onCreate;
   final VoidCallback onCategories;
-  final VoidCallback onFilter;
 
   /// Shown instead of the list (loading, failed to load).
   final Widget? status;
@@ -78,35 +72,13 @@ class AdminNewsView extends StatelessWidget {
                 onTap: () => controller.setType(type),
               ),
           ],
-          trailing: [
-            NewsToolButton(
-              icon: TablerIcons.search,
-              tooltip: 'Caută',
-              active: controller.searchOpen,
-              onTap: controller.toggleSearch,
-            ),
-            NewsToolButton(
-              icon: TablerIcons.adjustments_horizontal,
-              tooltip: 'Filtrează',
-              active: query.hasCategory || query.hasPeriod,
-              onTap: onFilter,
-            ),
-          ],
-        ),
-        if (controller.searchOpen) NewsSearchField(initial: query.search, onChanged: controller.setSearch),
-        ActiveNewsFilters(
-          query: query,
-          onClearPeriod: controller.clearPeriod,
-          onClearCategory: () => controller.setCategory(null),
         ),
         Expanded(
           child:
               body ??
               (shown.isEmpty
                   ? ListView(
-                    children: [
-                      NewsEmpty(message: query.hasSearch ? 'Nu s-au găsit știri' : 'Nu există știri'),
-                    ],
+                    children: const [NewsEmpty(message: 'Nu există știri')],
                   )
                   : ListView.separated(
                     padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),

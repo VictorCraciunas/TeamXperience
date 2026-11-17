@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:provider/provider.dart';
+import 'package:teamxperience/state_management/news_state_management.dart';
+import 'package:teamxperience/ui/components/feedback/app_dialog.dart';
+import 'package:teamxperience/ui/components/feedback/snackbars.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
@@ -43,6 +48,36 @@ class _NewsCategoryManipulationScreenState
     setState(() {
       _isLoading = false;
     });
+  }
+
+  /// The row's trash: confirm, then delete, unless news still use it.
+  Future<void> _delete(NewsCategory category) async {
+    final confirmed = await showAppDialog(
+      context,
+      title: 'Șterge categoria',
+      message: 'Vrei să ștergi categoria "${category.name}"?',
+      confirmLabel: 'Șterge',
+      cancelLabel: 'Anulează',
+      destructive: true,
+    );
+    if (!confirmed || !mounted) return;
+
+    final news = context.read<NewsList>().stireList;
+    final result = await controller.deleteCategory(category, news);
+    if (!mounted) return;
+    setState(() {});
+    switch (result.status) {
+      case DeleteCategoryStatus.deleted:
+        MySnackBars.successSnackBar(context, title: 'Categoria a fost ștearsă');
+      case DeleteCategoryStatus.inUse:
+        MySnackBars.warningSnackBar(
+          context,
+          title: 'Categoria nu poate fi ștearsă',
+          message: result.newsCount == 1 ? 'O știre încă o folosește.' : '${result.newsCount} știri încă o folosesc.',
+        );
+      case DeleteCategoryStatus.failed:
+        MySnackBars.errorSnackBar(context, title: 'Nu am putut șterge categoria');
+    }
   }
 
   @override
@@ -151,6 +186,12 @@ class _NewsCategoryManipulationScreenState
                                             color: context.colors.accent,
                                           ),
                                         ),
+                                      ),
+                                      trailing: IconButton(
+                                        tooltip: 'Șterge categoria',
+                                        constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                                        icon: Icon(TablerIcons.trash, color: context.colors.danger),
+                                        onPressed: () => _delete(category),
                                       ),
                                       title: Text(
                                         category.name,

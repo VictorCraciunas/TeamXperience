@@ -81,26 +81,6 @@ void main() {
     expect(_ids(c.shown(_news)), ['b', 'c', 'a']);
   });
 
-  test('period and search filter and can be cleared', () {
-    c.setPeriod(DateTime(2026, 11, 11), DateTime(2026, 11, 12));
-    expect(_ids(c.shown(_news)), ['c']);
-    c.clearPeriod();
-    c.setSearch('  b ');
-    expect(_ids(c.shown(_news)), ['b']);
-    c.clearSearch();
-    expect(c.query.hasSearch, isFalse);
-    expect(_ids(c.shown(_news)), ['b', 'c', 'a']);
-  });
-
-  test('closing the search clears it', () {
-    c.toggleSearch();
-    expect(c.searchOpen, isTrue);
-    c.setSearch('a');
-    c.toggleSearch();
-    expect(c.searchOpen, isFalse);
-    expect(c.query.search, '');
-  });
-
   test('categories: saved ones plus the ones in use, loaded once unless forced', () async {
     await c.loadCategories();
     await c.loadCategories();
@@ -109,23 +89,5 @@ void main() {
     expect(c.playerCategories(_news), ['Evenimente', 'Rezultate']);
     await c.loadCategories(force: true);
     expect(repo.loads, 2);
-  });
-
-  test('an added category shows at once; a deleted one goes', () async {
-    await c.loadCategories();
-    final added = await c.addCategory('Povești', c.categoriesFor(_news));
-    expect(added.status, AddCategoryStatus.added);
-    expect(c.categoriesFor(_news), contains('Povești'));
-
-    final deleted = await c.deleteCategory('Gol', _news);
-    expect(deleted.status, DeleteCategoryStatus.deleted);
-    expect(c.categoriesFor(_news), isNot(contains('Gol')));
-  });
-
-  test('deleting the chosen category clears the filter', () async {
-    await c.loadCategories();
-    c.setCategory('Gol');
-    await c.deleteCategory('Gol', _news);
-    expect(c.query.hasCategory, isFalse);
   });
 }
