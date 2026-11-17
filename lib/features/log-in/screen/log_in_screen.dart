@@ -11,13 +11,31 @@ import 'package:teamxperience/ui/components/misc/tap_area.dart';
 import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
 
-class LogInScreen extends StatelessWidget {
+class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    LogInController controller = LogInController();
+  State<LogInScreen> createState() => _LogInScreenState();
+}
 
+class _LogInScreenState extends State<LogInScreen> {
+  // Kept across rebuilds, so what is typed (and the remembered email) stays.
+  final LogInController controller = LogInController();
+
+  @override
+  void initState() {
+    super.initState();
+    controller.prefillEmail();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.colors.page,
       appBar: const MyAppBar(appBarText: "Logare"),
