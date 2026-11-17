@@ -46,4 +46,9 @@ void main() {
     expect(newsShareText(stire), contains('Rezultate'));
     expect(newsShareText(stire), contains('Vulturii au câștigat.'));
   });
+
+  test('news share subject is the title, or "Știre" without one', () {
+    expect(newsShareSubject(Stire(title: 'Rezultate')), 'Rezultate');
+    expect(newsShareSubject(Stire()), 'Știre');
+  });
 }

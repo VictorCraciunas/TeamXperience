@@ -14,13 +14,8 @@ class LogInService {
     await authenticationRepository.loginWithEmailAndPassword(email, password);
 
 
-    String? token = await FCMService.getFCMToken();
-    if (token != null) {
-      User? currentUser = authenticationRepository.authUser;
-      if (currentUser != null) {
-        await userRepo.updateFCMToken(currentUser.uid, token);
-      }
-    }
+    User? currentUser = authenticationRepository.authUser;
+    if (currentUser != null) await FCMService.saveTokenAsking(currentUser.uid);
   }
 
   Future<void> logInGoogle() async {
@@ -32,22 +27,17 @@ class LogInService {
     final lastName = profile?['family_name'];
 
     if (await userRepo.findByEmail(userCredential.user!.email!) == null) {
-      String? token = await FCMService.getFCMToken();
-
-      //save the user into database
+      //save the user into database (no push token: those go to pushTokens)
       AppUser appUser = AppUser(
           email: userCredential.user!.email!,
           firstName: firstName,
           lastName: lastName,
           uid: userCredential.user!.uid,
-          fcmToken: token  ?? ""
+          fcmToken: ""
       );
       await userRepo.saveUser(appUser);
-    }else{
-      String? token = await FCMService.getFCMToken();
-      if (token != null) {
-        await userRepo.updateFCMToken(userCredential.user!.uid, token);
-      }
     }
+    final user = userCredential.user;
+    if (user != null) await FCMService.saveTokenAsking(user.uid);
   }
 }

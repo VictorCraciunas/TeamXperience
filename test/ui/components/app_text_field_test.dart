@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/ui/components/inputs/app_text_field.dart';
+import 'package:teamxperience/ui/components/inputs/register_input.dart';
 
 import '../pump_ui.dart';
 
@@ -83,5 +84,21 @@ void main() {
     await pumpUi(tester, const AppTextField(hint: 'Caută eveniment'));
     expect(find.byKey(const ValueKey('app-text-field-label')), findsNothing);
     expect(find.byType(TextField), findsOneWidget);
+  });
+
+  testWidgets('hands its autofill hints to the field, so a password manager can fill it', (tester) async {
+    await pumpUi(tester, const AppTextField(label: 'Parola', obscure: true, autofillHints: [AutofillHints.password]));
+    expect(tester.widget<TextField>(find.byType(TextField)).autofillHints, [AutofillHints.password]);
+
+    await pumpUi(tester, const AppTextField(label: 'Nume'));
+    expect(tester.widget<TextField>(find.byType(TextField)).autofillHints, isNull);
+  });
+
+  testWidgets('RegisterInput hands its autofill hints to the field', (tester) async {
+    await pumpUi(
+      tester,
+      RegisterInput(controller: TextEditingController(), onChanged: (_) {}, autofillHints: const [AutofillHints.email]),
+    );
+    expect(tester.widget<TextField>(find.byType(TextField)).autofillHints, [AutofillHints.email]);
   });
 }

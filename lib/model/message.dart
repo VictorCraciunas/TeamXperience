@@ -14,6 +14,12 @@ class Message {
   /// Posted to every team by the organiser's "Anunț"; that sends its own push.
   final bool announcement;
 
+  /// The player who wrote it (their uid and first name), set on every
+  /// player's message since the chat redesign; null on older messages and on
+  /// the organiser's. The rules make [senderUid] the writer's own uid.
+  final String? senderUid;
+  final String? senderName;
+
   Message({
     required this.sender,
     required this.text,
@@ -22,7 +28,11 @@ class Message {
     this.imageUrl,
     this.approvalKey,
     this.announcement = false,
+    this.senderUid,
+    this.senderName,
   });
+
+  static String? _filled(Object? value) => value is String && value.trim().isNotEmpty ? value : null;
 
   factory Message.fromFirestore(Map<String, dynamic> data) {
     final raw = data['sender'] as String? ?? Role.USER.name;
@@ -31,15 +41,18 @@ class Message {
     final type = rawType != null
         ? MessageType.values.byName(rawType)
         : MessageType.text;
+    final time = data['timestamp'];
 
     return Message(
       sender: sender,
       text: data['text'] as String? ?? '',
-      timestamp: (data['timestamp'] as Timestamp).toDate(),
+      timestamp: time is Timestamp ? time.toDate() : DateTime.now(),
       type: type,
       imageUrl: data['imageUrl'] as String?,
       approvalKey: data['approvalKey'] as String?,
       announcement: data['announcement'] == true,
+      senderUid: _filled(data['senderUid']),
+      senderName: _filled(data['senderName']),
     );
   }
 
@@ -52,6 +65,8 @@ class Message {
       if (imageUrl != null) 'imageUrl': imageUrl,
       if (approvalKey != null) 'approvalKey': approvalKey,
       if (announcement) 'announcement': true,
+      if (senderUid != null) 'senderUid': senderUid,
+      if (senderName != null) 'senderName': senderName,
     };
   }
 }

@@ -33,7 +33,6 @@ class ProfileView extends StatelessWidget {
     this.onAllMemories,
     this.albumOf,
     this.pictureOf,
-    this.settingsKey,
   });
 
   final bool player;
@@ -55,9 +54,6 @@ class ProfileView extends StatelessWidget {
   final List<AlbumPhoto> Function(String eventId)? albumOf;
   final String? Function(String eventId)? pictureOf;
 
-  /// On the settings card, so the header's gear can scroll to it.
-  final Key? settingsKey;
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -77,7 +73,6 @@ class ProfileView extends StatelessWidget {
           ),
         ],
         ProfileSettingsCard(
-          key: settingsKey,
           themeLabel: themeLabel,
           notificationsLabel: notificationsLabel,
           onTheme: onTheme,

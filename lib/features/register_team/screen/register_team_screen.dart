@@ -1,6 +1,7 @@
 import 'package:teamxperience/features/register_team/widgets/crew_choice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:teamxperience/features/chat_button/widgets/chat_button_room.dart';
 import 'package:teamxperience/features/register_team/controller/register_team_controller.dart';
 import 'package:teamxperience/features/register_team/widgets/invite_result_section.dart';
 import 'package:teamxperience/features/register_team/widgets/register_form.dart';
@@ -131,6 +132,7 @@ class _RegisterTeamScreenState extends State<RegisterTeamScreen> {
                             onCopy: controller.copyInvite,
                             onDone: controller.close,
                           ),
+                        const ChatButtonRoom(),
                       ],
                     ),
                   ),

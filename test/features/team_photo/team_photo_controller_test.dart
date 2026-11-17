@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/enums/team_photo_slot.dart';
 import 'package:teamxperience/features/team_photo/controller/team_photo_controller.dart';
+import 'package:teamxperience/utils/image_helper.dart';
 
 void main() {
   final file = File('poza.jpg');
@@ -64,6 +65,21 @@ void main() {
     final c = controller(take: () async => throw Exception('no camera'));
     await c.takeAndSend();
     expect(c.error, TeamPhotoController.failedLine);
+    expect(c.busy, isFalse);
+  });
+
+  test('a refused camera says where to allow it, and uploads nothing', () async {
+    var uploads = 0;
+    final c = controller(
+      take: () async => throw const CameraAccessDenied(),
+      upload: (_, __) async {
+        uploads++;
+        return 'link';
+      },
+    );
+    await c.takeAndSend();
+    expect(uploads, 0);
+    expect(c.error, TeamPhotoController.cameraRefusedLine);
     expect(c.busy, isFalse);
   });
 

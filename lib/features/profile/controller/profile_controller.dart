@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/backend/authentication/AuthenticationRepository.dart';
+import 'package:teamxperience/utils/one_at_a_time.dart';
 import 'package:teamxperience/constants/routes.dart';
 import 'package:teamxperience/features/profile/logic/notification_access.dart';
 import 'package:teamxperience/model/event.dart';
@@ -55,6 +56,7 @@ class ProfileController extends ChangeNotifier {
   late final AppLifecycleListener _lifecycle;
   bool _tokenSent = false;
   late final AuthenticationRepository _authRepo = AuthenticationRepository();
+  final OneAtATime _logout = OneAtATime();
   StreamSubscription<AppUser?>? _userWatch;
   StreamSubscription<List<Memory>>? _memoriesWatch;
   bool _disposed = false;
@@ -141,12 +143,13 @@ class ProfileController extends ChangeNotifier {
     if (status == NotifStatus.allowed) _sendToken();
   }
 
-  /// The token is only fetched at sign-in, and only if notifications were
-  /// allowed then: a player who allows them later must get one now, or no push
-  /// ever reaches them. Sent at most once; a failure is tried at the next sign-in.
+  /// The token is saved at sign-in and at each start, only when notifications
+  /// are allowed: a player who allows them here must have this device's saved
+  /// now, even when another phone's is there already. Sent at most once; a
+  /// failure is tried at the next start.
   Future<void> _sendToken() async {
     final save = _saveToken;
-    if (save == null || _tokenSent || _user.fcmToken.isNotEmpty) return;
+    if (save == null || _tokenSent) return;
     _tokenSent = true;
     try {
       await save();
@@ -170,16 +173,19 @@ class ProfileController extends ChangeNotifier {
     return null;
   }
 
-  void logout() {
-    context.read<EventList>().clear();
-    context.read<NewsList>().clear();
-    _authRepo.logout();
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      Routes.splash,
-      (Route<dynamic> route) => false,
-    );
-  }
+  /// Signs out, then opens the start: this phone comes off the account
+  /// first (3 s at most, offline). A second tap while it runs is ignored.
+  Future<void> logout() => _logout.run(() async {
+        context.read<EventList>().clear();
+        context.read<NewsList>().clear();
+        await _authRepo.logout();
+        if (!context.mounted) return;
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.splash,
+          (Route<dynamic> route) => false,
+        );
+      });
 
   @override
   void dispose() {

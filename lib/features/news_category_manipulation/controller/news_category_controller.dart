@@ -2,9 +2,25 @@ import 'package:flutter/material.dart';
 
 import '../../../backend/repo/news_category_repo.dart';
 import '../../../model/newsCategory.dart';
+import '../../../model/stire.dart';
+
+/// How deleting a category went.
+enum DeleteCategoryStatus { deleted, inUse, failed }
+
+class DeleteCategoryResult {
+  const DeleteCategoryResult(this.status, [this.newsCount = 0]);
+
+  final DeleteCategoryStatus status;
+
+  /// How many news use the category when [status] is [DeleteCategoryStatus.inUse].
+  final int newsCount;
+}
 
 class NewsCategoryController {
-  final NewsCategoryRepo _categoryRepo = NewsCategoryRepo();
+  NewsCategoryController({NewsCategoryRepo? categoryRepo}) : _injectedRepo = categoryRepo;
+
+  final NewsCategoryRepo? _injectedRepo;
+  late final NewsCategoryRepo _categoryRepo = _injectedRepo ?? NewsCategoryRepo();
   final TextEditingController searchController = TextEditingController();
   final TextEditingController newCategoryController = TextEditingController();
 
@@ -67,6 +83,26 @@ class NewsCategoryController {
       print('Error adding category: $e');
       return false;
     }
+  }
+
+  /// Deletes [category] unless [news] still use it (those news would bring
+  /// it back, so they have to change category first).
+  Future<DeleteCategoryResult> deleteCategory(NewsCategory category, Iterable<Stire> news) async {
+    final lower = category.name.trim().toLowerCase();
+    final using = news.where((s) => (s.category?.name ?? '').trim().toLowerCase() == lower).length;
+    if (using > 0) return DeleteCategoryResult(DeleteCategoryStatus.inUse, using);
+
+    final id = category.id;
+    if (id == null) return const DeleteCategoryResult(DeleteCategoryStatus.failed);
+    try {
+      await _categoryRepo.deleteCategory(id);
+    } catch (_) {
+      return const DeleteCategoryResult(DeleteCategoryStatus.failed);
+    }
+    _allCategories.removeWhere((c) => c.id == id);
+    if (_selectedCategory?.id == id) _selectedCategory = null;
+    filterCategories(searchController.text);
+    return const DeleteCategoryResult(DeleteCategoryStatus.deleted);
   }
 
   void dispose() {

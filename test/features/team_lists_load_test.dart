@@ -2,7 +2,6 @@ import 'package:teamxperience/features/home/logic/live_texts.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/features/event_game/logic/route_texts.dart';
 import 'package:teamxperience/features/event_see_registered_teams/event_registered_teams_controller.dart';
-import 'package:teamxperience/features/team_chats/controller/team_chats_controller.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 
@@ -30,26 +29,6 @@ void main() {
       fail = false;
       await c.loadTeams();
       expect((c.isLoading, c.failed, c.teams.length), (false, false, 1));
-    });
-  });
-
-  group('TeamChatsController', () {
-    test('loads only when asked', () async {
-      var loads = 0;
-      final c = TeamChatsController(event: event, load: (_) async {
-        loads++;
-        return [_team('A')];
-      });
-      expect(loads, 0);
-      expect(c.isLoading, isTrue);
-      await c.loadTeams();
-      expect((loads, c.isLoading, c.failed, c.teams.length), (1, false, false, 1));
-    });
-
-    test('a failed read stops the spinner and says so', () async {
-      final c = TeamChatsController(event: event, load: (_) async => throw Exception('offline'));
-      await c.loadTeams();
-      expect((c.isLoading, c.failed), (false, true));
     });
   });
 

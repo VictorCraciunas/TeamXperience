@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 import '../logic/live_map_points.dart';
 import '../logic/live_texts.dart';
-import 'board_action_button.dart';
 import 'team_pin.dart';
+import 'team_sheet_actions.dart';
 
-/// Opens the sheet of one team. The actions close it first.
+/// Opens the sheet of one team. The actions close it first. [onMap] is null
+/// for a team with no position yet, which greys "Hartă" out.
 Future<void> showTeamSheet(
   BuildContext context, {
   required Team team,
@@ -16,6 +16,7 @@ Future<void> showTeamSheet(
   required String status,
   required VoidCallback onCall,
   required VoidCallback onMessage,
+  required VoidCallback? onMap,
 }) {
   return showModalBottomSheet<void>(
     context: context,
@@ -32,6 +33,12 @@ Future<void> showTeamSheet(
         Navigator.pop(sheet);
         onMessage();
       },
+      onMap: onMap == null
+          ? null
+          : () {
+              Navigator.pop(sheet);
+              onMap();
+            },
     ),
   );
 }
@@ -46,6 +53,7 @@ class TeamSheet extends StatelessWidget {
     required this.status,
     required this.onCall,
     required this.onMessage,
+    required this.onMap,
   });
 
   final Team team;
@@ -53,6 +61,7 @@ class TeamSheet extends StatelessWidget {
   final String status;
   final VoidCallback onCall;
   final VoidCallback onMessage;
+  final VoidCallback? onMap;
 
   @override
   Widget build(BuildContext context) {
@@ -77,27 +86,7 @@ class TeamSheet extends StatelessWidget {
               style: TextStyle(fontSize: 13, height: 1.45, color: colors.muted),
             ),
             const SizedBox(height: 14),
-            Row(
-              children: [
-                Expanded(
-                  child: BoardActionButton(
-                    label: 'Sună căpitanul',
-                    icon: TablerIcons.phone,
-                    colour: colors.accent,
-                    onTap: onCall,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: BoardActionButton(
-                    label: 'Mesaj',
-                    icon: TablerIcons.message_circle,
-                    colour: colors.accent,
-                    onTap: onMessage,
-                  ),
-                ),
-              ],
-            ),
+            TeamSheetActions(onCall: onCall, onMessage: onMessage, onMap: onMap),
           ],
         ),
       ),

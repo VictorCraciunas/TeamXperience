@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/routes.dart';
+import 'package:teamxperience/features/chat_button/widgets/chat_button_clearance.dart';
 import 'package:teamxperience/features/event_game/logic/route_texts.dart';
 import 'package:teamxperience/features/event_game/logic/style_hints.dart';
 import 'package:teamxperience/features/event_game/widgets/frame_band.dart';
@@ -267,23 +268,25 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> with SingleTickerPr
                     if (puzzle?.type == PuzzleType.geolocation || puzzle?.type == PuzzleType.imageToUpload) {
                       return const SizedBox.shrink();
                     }
-                    return FrameBand(
-                      onPicture: controller.background != null,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (isCode)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 14),
-                              child: PuzzleFeedback(
-                                wrong: controller.wrongMessage.value,
-                                maxAttempts: puzzle?.maxAttempts,
-                                attemptsLeft: controller.currentAttemptsLeft,
-                                lockLeft: controller.currentLock,
+                    return ChatButtonClearance.bar(
+                      child: FrameBand(
+                        onPicture: controller.background != null,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (isCode)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 14),
+                                child: PuzzleFeedback(
+                                  wrong: controller.wrongMessage.value,
+                                  maxAttempts: puzzle?.maxAttempts,
+                                  attemptsLeft: controller.currentAttemptsLeft,
+                                  lockLeft: controller.currentLock,
+                                ),
                               ),
-                            ),
-                          PuzzleBottomBar(onHint: controller.canUseHint ? _openHint : null, onChat: _openChat),
-                        ],
+                            PuzzleBottomBar(onHint: controller.canUseHint ? _openHint : null, onChat: _openChat),
+                          ],
+                        ),
                       ),
                     );
                   },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:teamxperience/features/chat_button/widgets/chat_button_clearance.dart';
 import 'package:teamxperience/features/event_game/logic/location_texts.dart';
 import 'package:teamxperience/ui/components/game/distance_compass.dart';
 import 'package:teamxperience/ui/components/game/game_filled_button.dart';
@@ -165,25 +166,27 @@ class LocationPuzzleView extends StatelessWidget {
     return Column(
       children: [
         Expanded(child: SingleChildScrollView(child: Column(children: [if (top != null) top, ...body]))),
-        FrameBand(
-          onPicture: onPicture,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(14, 8, 14, 10),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 10,
-                  child: GameOutlineButton(label: 'Indiciu', icon: TablerIcons.bulb, onTap: onHint),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  flex: 14,
-                  child: GameFilledButton(
-                    label: state == LocationViewState.done ? 'Continuă' : 'Intră în cerc',
-                    onTap: _canEnter ? onEnter : null,
+        ChatButtonClearance.bar(
+          child: FrameBand(
+            onPicture: onPicture,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 8, 14, 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 10,
+                    child: GameOutlineButton(label: 'Indiciu', icon: TablerIcons.bulb, onTap: onHint),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 8),
+                  Expanded(
+                    flex: 14,
+                    child: GameFilledButton(
+                      label: state == LocationViewState.done ? 'Continuă' : 'Intră în cerc',
+                      onTap: _canEnter ? onEnter : null,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

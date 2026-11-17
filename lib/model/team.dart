@@ -78,6 +78,11 @@ class Team {
   /// When [unreadText] was sent; null while the server time is on its way.
   final DateTime? unreadAt;
 
+  /// How many messages the organiser has not read (`unreadByAdmin.count`,
+  /// added to by each player's send): 0 with no [unreadText], at least 1 with
+  /// one (a mark from before the count counts as one).
+  final int unreadCount;
+
   Team({
     required this.name,
     required this.teamMembers,
@@ -111,6 +116,7 @@ class Team {
     Map<String, DateTime>? lockedUntil,
     this.unreadText,
     this.unreadAt,
+    this.unreadCount = 0,
   })  : userIds = userIds ?? [],
         photoApprovals = photoApprovals ?? {},
         photoDetails = photoDetails ?? {},
@@ -266,6 +272,8 @@ class Team {
     final rawUnread = map['unreadByAdmin'];
     final unread = rawUnread is Map ? rawUnread : const {};
     final unreadText = unread['text'];
+    final rawCount = unread['count'];
+    final storedCount = rawCount is num && rawCount == rawCount.roundToDouble() ? rawCount.toInt() : 0;
 
     final rawMembers = map['members'] as List<dynamic>? ?? [];
     final membersList = rawMembers
@@ -306,6 +314,7 @@ class Team {
       lockedUntil: _timesByKey(map['lockedUntil']),
       unreadText: unreadText is String ? unreadText : null,
       unreadAt: _time(unread['at']),
+      unreadCount: unreadText is String ? (storedCount < 1 ? 1 : storedCount) : 0,
     );
   }
 

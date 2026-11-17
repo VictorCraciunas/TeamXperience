@@ -5,12 +5,14 @@ import 'package:teamxperience/ui/ui.dart';
 import '../logic/live_map_points.dart';
 
 /// A team on the map (mockup 09 `.pin`): its initial in a circle coloured by
-/// how the team stands, with a white ring.
+/// how the team stands, with a white ring; a [selected] one (the team the big
+/// map was opened on) gets a thick ring in the text colour.
 class TeamPin extends StatelessWidget {
-  const TeamPin({super.key, required this.initial, required this.tone, this.size = 24, this.onTap});
+  const TeamPin({super.key, required this.initial, required this.tone, this.size = 24, this.selected = false, this.onTap});
 
   final String initial;
   final PinTone tone;
+  final bool selected;
 
   /// Across, ring included.
   final double size;
@@ -32,7 +34,7 @@ class TeamPin extends StatelessWidget {
         decoration: BoxDecoration(
           color: fill,
           shape: BoxShape.circle,
-          border: Border.all(color: colors.panel, width: 2),
+          border: Border.all(color: selected ? colors.text : colors.panel, width: selected ? 3 : 2),
         ),
         child: SizedBox.square(
           dimension: size,

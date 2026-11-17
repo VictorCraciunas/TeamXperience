@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teamxperience/features/chat_button/widgets/chat_button_clearance.dart';
 import 'package:teamxperience/features/join_team/logic/join_state.dart';
 import 'package:teamxperience/features/join_team/widgets/invite_preview_card.dart';
 import 'package:teamxperience/features/join_team/widgets/join_bottom_block.dart';
@@ -67,11 +68,13 @@ class JoinTeamBody extends StatelessWidget {
             ),
           ),
         ),
-        JoinBottomBlock(
-          label:
-              shown == null ? 'Intră în echipă' : 'Intră în ${shown.crewName}',
-          onJoin: current is Found ? onJoin : null,
-          joining: current is Joining,
+        ChatButtonClearance.bar(
+          child: JoinBottomBlock(
+            label:
+                shown == null ? 'Intră în echipă' : 'Intră în ${shown.crewName}',
+            onJoin: current is Found ? onJoin : null,
+            joining: current is Joining,
+          ),
         ),
       ],
     );

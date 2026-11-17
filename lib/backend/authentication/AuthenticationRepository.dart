@@ -1,5 +1,10 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+import '../../service/FCMService.dart';
+import '../../service/last_email_store.dart';
 
 class AuthenticationRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -81,7 +86,23 @@ class AuthenticationRepository {
     }
   }
 
+  /// Signs out. This device comes off the account first (3 s at most), and
+  /// a new token is made after, not waited on, so the next account here never
+  /// gets this one's pushes; neither step can block or fail the sign-out.
   Future<void> logout() async {
+    final uid = _auth.currentUser?.uid;
+    if (uid != null) await FCMService.forgetTokenOf(uid);
+
+    // The log-in form starts with this email next time (any sign-in kind).
+    final email = _auth.currentUser?.email;
+    if (email != null) {
+      try {
+        await LastEmailStore().save(email);
+      } catch (_) {
+        // Never let remembering the email stop a logout.
+      }
+    }
+
     // If the current user signed in with Google, sign out from Google first:
     try {
       // Check the list of linked providers for “google.com”
@@ -98,6 +119,7 @@ class AuthenticationRepository {
 
     // Finally sign out from Firebase
     await _auth.signOut();
+    unawaited(FCMService.dropDeviceToken());
   }
 
 

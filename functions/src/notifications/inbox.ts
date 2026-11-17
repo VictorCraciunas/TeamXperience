@@ -1,6 +1,6 @@
 import {DocumentData, FieldValue, Firestore} from "firebase-admin/firestore";
-import {getMessaging} from "firebase-admin/messaging";
 import * as logger from "firebase-functions/logger";
+import {SendPush, sendToDevices, sendWithFcm, tokensOfUser} from "./tokens";
 
 /** What a notification is about, which decides its icon and where a tap goes. */
 export type InboxKind = "announcement" | "chat" | "team" | "results";
@@ -51,12 +51,31 @@ export async function addToInboxes(db: Firestore, uids: string[], item: InboxIte
   }
 }
 
-/** One push to one player's phone, when it has a token. Never throws. */
-export async function pushToUser(db: Firestore, uid: string, title: string, body: string): Promise<void> {
+/**
+ * What a push about [item] carries, for the app to open the right page on a
+ * tap: its kind as `type`, and the event and team when it has them.
+ */
+export function pushData(item: InboxItem): Record<string, string> {
+  return {
+    type: item.kind,
+    ...(item.eventId ? {eventId: item.eventId} : {}),
+    ...(item.teamName ? {teamName: item.teamName} : {}),
+  };
+}
+
+/** One push to each of a player's devices, when they have any. Never throws. */
+export async function pushToUser(
+  db: Firestore,
+  uid: string,
+  title: string,
+  body: string,
+  data: Record<string, string> = {},
+  send: SendPush = sendWithFcm,
+): Promise<void> {
   try {
-    const token = (await db.collection("users").doc(uid).get()).data()?.fcmToken;
-    if (typeof token !== "string" || token.trim() === "") return;
-    await getMessaging().send({token, notification: {title, body}});
+    const tokens = await tokensOfUser(db, uid);
+    if (tokens.length === 0) return;
+    await sendToDevices(db, {tokens, notification: {title, body}, data}, send);
   } catch (error) {
     logger.warn("Could not send a push", {uid, error: String(error)});
   }

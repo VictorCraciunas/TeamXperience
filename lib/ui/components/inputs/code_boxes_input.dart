@@ -151,59 +151,63 @@ class _CodeBoxesInputState extends State<CodeBoxesInput> with SingleTickerProvid
       }
     }
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: _openKeyboard,
-      onLongPress: _paste,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Narrow screens and large text scale the row down rather than overflow.
-          AnimatedBuilder(
-            animation: _shake,
-            builder: (context, child) => Transform.translate(
-              offset: Offset(_shake.isAnimating ? _shakeOffset(_shake.value) : 0, 0),
-              child: child,
-            ),
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Row(mainAxisSize: MainAxisSize.min, children: boxes),
-            ),
-          ),
-          Positioned.fill(
-            child: IgnorePointer(
-              child: TextField(
-                controller: _controller,
-                focusNode: _focus,
-                keyboardType: widget.keyboardType,
-                textCapitalization: TextCapitalization.characters,
-                autocorrect: false,
-                enableSuggestions: false,
-                enableInteractiveSelection: false,
-                showCursor: false,
-                cursorWidth: 0,
-                style: const TextStyle(color: Colors.transparent, fontSize: 1),
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.zero,
-                  isCollapsed: true,
-                ),
-                inputFormatters: [
-                  // Romanian letters become their plain letters before the filter.
-                  TextInputFormatter.withFunction(
-                    (oldValue, newValue) => newValue.copyWith(text: foldLetters(newValue.text)),
-                  ),
-                  FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9]')),
-                  TextInputFormatter.withFunction(
-                    (oldValue, newValue) => newValue.copyWith(text: newValue.text.toUpperCase()),
-                  ),
-                  LengthLimitingTextInputFormatter(widget.length),
-                ],
-                onChanged: _changed,
+    // The boxes count as part of the hidden field, so a tap on them is not a
+    // tap outside that would close the keyboard (TapOutsideClosesKeyboard).
+    return TextFieldTapRegion(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: _openKeyboard,
+        onLongPress: _paste,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Narrow screens and large text scale the row down rather than overflow.
+            AnimatedBuilder(
+              animation: _shake,
+              builder: (context, child) => Transform.translate(
+                offset: Offset(_shake.isAnimating ? _shakeOffset(_shake.value) : 0, 0),
+                child: child,
+              ),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(mainAxisSize: MainAxisSize.min, children: boxes),
               ),
             ),
-          ),
-        ],
+            Positioned.fill(
+              child: IgnorePointer(
+                child: TextField(
+                  controller: _controller,
+                  focusNode: _focus,
+                  keyboardType: widget.keyboardType,
+                  textCapitalization: TextCapitalization.characters,
+                  autocorrect: false,
+                  enableSuggestions: false,
+                  enableInteractiveSelection: false,
+                  showCursor: false,
+                  cursorWidth: 0,
+                  style: const TextStyle(color: Colors.transparent, fontSize: 1),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                    isCollapsed: true,
+                  ),
+                  inputFormatters: [
+                    // Romanian letters become their plain letters before the filter.
+                    TextInputFormatter.withFunction(
+                      (oldValue, newValue) => newValue.copyWith(text: foldLetters(newValue.text)),
+                    ),
+                    FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9]')),
+                    TextInputFormatter.withFunction(
+                      (oldValue, newValue) => newValue.copyWith(text: newValue.text.toUpperCase()),
+                    ),
+                    LengthLimitingTextInputFormatter(widget.length),
+                  ],
+                  onChanged: _changed,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

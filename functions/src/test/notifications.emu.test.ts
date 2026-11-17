@@ -51,6 +51,34 @@ describe("sendNotification", () => {
     assert.deepEqual(sent[0].tokens, ["t-ana"]);
   });
 
+  test("every device of a player, once, and the older single token too", async () => {
+    await seedUser("eva", {fcmToken: "t-eva-phone", registeredEventIds: ["e1"]});
+    for (const token of ["t-eva-phone", "t-eva-tablet"]) {
+      await db.collection("pushTokens").doc(token).set({uid: "eva", updatedAt: new Date()});
+    }
+    await sendNotification(db, "boss", {...NEWS, eventId: "e1"}, send);
+    assert.deepEqual([...sent[0].tokens].sort(), ["t-ana", "t-eva-phone", "t-eva-tablet"]);
+  });
+
+  test("a phone now signed in to another account is not reached for the old one", async () => {
+    // Ana's old doc still says t-ana, but Dan signed in on that phone since.
+    await db.collection("pushTokens").doc("t-ana").set({uid: "dan", updatedAt: new Date()});
+    await sendNotification(db, "boss", {...NEWS, eventId: "e2"}, send);
+    assert.deepEqual([...sent[0].tokens].sort(), ["t-ana", "t-dan"]);
+    await sendNotification(db, "boss", {...NEWS, eventId: "e1"}, send).catch(() => undefined);
+    assert.equal(sent.length, 1);
+  });
+
+  test("an event's push says so in its data, for the app to open the event", async () => {
+    await sendNotification(db, "boss", {...NEWS, eventId: "e1"}, send);
+    assert.equal(sent[0].data.type, "admin_notification");
+    assert.equal(sent[0].data.eventId, "e1");
+    await sendNotification(db, "boss", NEWS, send);
+    assert.equal(sent[1].data.type, "admin_notification");
+    assert.equal("eventId" in sent[1].data, false);
+    for (const value of Object.values(sent[0].data)) assert.equal(typeof value, "string");
+  });
+
   test("the message carries the trimmed title and text", async () => {
     await sendNotification(db, "boss", {title: "  Start ", description: " Ne vedem "}, send);
     assert.deepEqual(sent[0].notification, {title: "Start", body: "Ne vedem"});
