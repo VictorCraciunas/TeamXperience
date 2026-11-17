@@ -35,18 +35,25 @@ class ChatButtonLayer extends StatefulWidget {
 }
 
 class _ChatButtonLayerState extends State<ChatButtonLayer> {
-  late final ChatButtonController _controller =
-      ChatButtonController(messages: _messagesOf, store: SharedPrefsChatSeenStore());
+  late final ChatButtonController _controller = ChatButtonController(
+    messages: _messagesOf,
+    store: SharedPrefsChatSeenStore(),
+    onLost: (_) => _teams?.lookAgain(),
+  );
   final ChatButtonSpots _spots = ChatButtonSpots();
   ChatTeamsWatch? _teams;
+
+  AppLifecycleListener? _lifecycle;
+  String? _lastTopName;
 
   // Made on first use: nothing touches Firestore until a player has a team.
   MessageService? _messageService;
   TeamService? _teamService;
 
-  Stream<List<Message>> _messagesOf(ChatKey chat) {
+  /// Only what is newer than the chat's seen time: never the whole history.
+  Stream<List<Message>> _messagesOf(ChatKey chat, DateTime since) {
     final service = _messageService ??= MessageService();
-    return service.getMessages(chat.eventId, chat.teamName).map(_parse);
+    return service.getMessagesAfter(chat.eventId, chat.teamName, since).map(_parse);
   }
 
   static List<Message> _parse(QuerySnapshot<Map<String, dynamic>> snapshot) {
@@ -65,6 +72,8 @@ class _ChatButtonLayerState extends State<ChatButtonLayer> {
   void initState() {
     super.initState();
     widget.routes.addListener(_routeChanged);
+    // Back in the app, a teammate may have renamed the team meanwhile.
+    _lifecycle = AppLifecycleListener(onResume: () => _teams?.lookAgain());
   }
 
   @override
@@ -85,6 +94,10 @@ class _ChatButtonLayerState extends State<ChatButtonLayer> {
   void _routeChanged() {
     final top = widget.routes.top;
     _controller.chatOnTop(top == null ? null : chatOnTop(top.name, top.arguments));
+    // The team page is where the captain renames the team.
+    final left = _lastTopName;
+    _lastTopName = top?.name;
+    if (left == Routes.registerTeamDetails && top?.name != left) _teams?.lookAgain();
   }
 
   void _open(WatchedChat chat) {
@@ -95,6 +108,7 @@ class _ChatButtonLayerState extends State<ChatButtonLayer> {
   @override
   void dispose() {
     widget.routes.removeListener(_routeChanged);
+    _lifecycle?.dispose();
     _teams?.stop();
     _controller.dispose();
     _spots.dispose();
@@ -106,6 +120,7 @@ class _ChatButtonLayerState extends State<ChatButtonLayer> {
     final player = context.select<UserProvider, bool>((users) => users.currentUser?.role == Role.USER);
     return ChatButtonScope(
       spots: _spots,
+      controller: _controller,
       child: ChatButtonOverlay(
         controller: _controller,
         routes: widget.routes,

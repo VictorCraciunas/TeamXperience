@@ -10,24 +10,35 @@ import '../logic/unread.dart';
 import '../logic/watched_chat.dart';
 import '../service/chat_seen_store.dart';
 
-typedef ChatMessages = Stream<List<Message>> Function(ChatKey chat);
+/// A chat's messages written after [since] (not its whole history).
+typedef ChatMessages = Stream<List<Message>> Function(ChatKey chat, DateTime since);
 
 /// The player's unread organiser messages across their teams' chats, for the
 /// floating chat button. Seen times are kept on this phone ([ChatSeenStore]);
-/// a chat counts as read while it is the page on top ([chatOnTop]).
+/// a chat counts as read while it is the page on top ([chatOnTop]). Each chat
+/// is followed only from its seen time on, since nothing before it can be
+/// unread.
 class ChatButtonController extends ChangeNotifier {
   ChatButtonController({
     required ChatMessages messages,
     required ChatSeenStore store,
     DateTime Function()? now,
     this.previewFor = const Duration(seconds: 6),
+    void Function(ChatKey chat)? onLost,
   })  : _messages = messages,
         _store = store,
-        _now = now ?? DateTime.now;
+        _now = now ?? DateTime.now,
+        _onLost = onLost;
 
   final ChatMessages _messages;
   final ChatSeenStore _store;
   final DateTime Function() _now;
+
+  /// A chat could no longer be read (a renamed team's old chat, a team left):
+  /// it is dropped, and told here once per chat so the teams are looked up
+  /// again.
+  final void Function(ChatKey chat)? _onLost;
+  final Set<ChatKey> _lost = {};
 
   /// How long a new message's preview stays above the button.
   final Duration previewFor;
@@ -85,8 +96,22 @@ class ChatButtonController extends ChangeNotifier {
     }
     if (watch.cancelled) return;
     final marked = watch.seen;
-    watch.seen = marked != null && marked.isAfter(seen) ? marked : seen;
-    watch.sub = _messages(watch.key).listen((list) => _onMessages(watch, list), onError: (Object _) {});
+    final since = marked != null && marked.isAfter(seen) ? marked : seen;
+    watch.seen = since;
+    watch.sub = _messages(watch.key, since).listen(
+      (list) => _onMessages(watch, list),
+      onError: (Object _) => _lose(watch),
+    );
+  }
+
+  void _lose(_Watch watch) {
+    if (watch.cancelled) return;
+    final key = watch.key;
+    watch.cancel();
+    if (_watches[key] == watch) _watches.remove(key);
+    if (_preview?.chat.key == key) _clearPreview();
+    _notify();
+    if (_lost.add(key)) _onLost?.call(key);
   }
 
   void _onMessages(_Watch watch, List<Message> messages) {

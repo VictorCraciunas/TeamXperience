@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:teamxperience/features/chat_button/widgets/chat_button_room.dart';
 import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/model/user.dart';
@@ -240,6 +241,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                         ),
                       ),
                     const SizedBox(height: 30),
+                    const ChatButtonRoom(),
                   ],
                 ),
               ),

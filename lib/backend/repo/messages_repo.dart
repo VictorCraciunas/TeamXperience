@@ -54,4 +54,23 @@ class MessageRepo {
         .orderBy('timestamp', descending: false)
         .snapshots();
   }
+
+  /// The newest [limit] messages of a team's chat written after [since],
+  /// newest first: what the player's floating chat button needs to count
+  /// unread organiser messages without reading the whole history. One range
+  /// filter and the order on the same field, so Firestore's automatic
+  /// single-field index serves it (no composite index).
+  Stream<QuerySnapshot<Map<String, dynamic>>> getMessagesAfter(
+    String eventId,
+    String teamName,
+    DateTime since, {
+    int limit = 100,
+  }) {
+    return _team(eventId, teamName)
+        .collection('messages')
+        .where('timestamp', isGreaterThan: Timestamp.fromDate(since))
+        .orderBy('timestamp', descending: true)
+        .limit(limit)
+        .snapshots();
+  }
 }

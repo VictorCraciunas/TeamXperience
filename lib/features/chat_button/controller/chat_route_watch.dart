@@ -18,7 +18,12 @@ class ChatRouteWatch extends NavigatorObserver with ChangeNotifier {
   TopRoute? get top {
     final route = topRoute;
     if (route == null) return null;
-    return TopRoute(name: route.settings.name, isPage: route is PageRoute, arguments: route.settings.arguments);
+    return TopRoute(
+      name: route.settings.name,
+      isPage: route is PageRoute,
+      arguments: route.settings.arguments,
+      aboveChat: aboveChat([for (final r in _stack) r.settings.name]),
+    );
   }
 
   @override

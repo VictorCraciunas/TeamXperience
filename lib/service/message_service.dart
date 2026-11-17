@@ -80,4 +80,10 @@ class MessageService{
     return repo.getMessages(eventId, teamId);
   }
 
+  /// Only the team chat's messages written after [since] (the newest 100),
+  /// for the floating chat button.
+  Stream<QuerySnapshot<Map<String, dynamic>>> getMessagesAfter(String eventId, String teamName, DateTime since) {
+    return repo.getMessagesAfter(eventId, teamName, since);
+  }
+
 }
