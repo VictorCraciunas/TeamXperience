@@ -1,6 +1,8 @@
 import 'package:teamxperience/enums/photo_approval_status.dart';
 import 'package:teamxperience/model/team.dart';
 
+import 'organiser_unread.dart';
+
 /// The newest message of a team's chat, as much as the list shows of it.
 class LastMessage {
   const LastMessage({required this.fromOrganiser, required this.text, required this.isPhoto, required this.at});
@@ -25,14 +27,13 @@ class ChatRow {
   final LastMessage? last;
   final bool lastLoaded;
 
-  Iterable<MapEntry<String, PhotoApprovalStatus>> get _pending =>
-      team.photoApprovals.entries.where((e) => e.value == PhotoApprovalStatus.pending);
+  Iterable<MapEntry<String, PhotoApprovalStatus>> get _pending => pendingPhotos(team);
 
   /// The red count: messages the organiser has not read plus photos waiting
-  /// for a decision.
-  int get badge => team.unreadCount + _pending.length;
+  /// for a decision ([organiserUnread]).
+  int get badge => organiserUnread(team);
 
-  bool get isUnread => badge > 0;
+  bool get isUnread => needsOrganiser(team);
 
   /// The newest waiting photo's key, or null.
   String? get _newestPendingKey {

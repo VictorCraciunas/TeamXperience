@@ -24,6 +24,9 @@ import '../logic/chat_timeline.dart';
 /// What sending a photo from the chat came to.
 enum ChatPhotoResult { sent, cancelled, failed, busy }
 
+/// What sending the typed text came to.
+enum ChatSendResult { sent, blank, failed }
+
 /// One team's chat, for the organiser or one of its players: the team, the
 /// event and the messages as they change, and what can be done from it.
 /// Dialogs, snackbars and navigation stay in the screen. Every write and
@@ -77,6 +80,7 @@ class ChatController extends ChangeNotifier {
   }
 
   static const String photoFailedLine = 'Poza nu s-a trimis. Încearcă din nou.';
+  static const String sendFailedLine = 'Mesajul nu a putut fi trimis. Încearcă din nou.';
 
   final String eventId;
   final AppUser user;
@@ -147,12 +151,27 @@ class ChatController extends ChangeNotifier {
 
   bool get canCall => phoneUri(_team.phoneNumber) != null;
 
-  /// Sends what is typed and empties the field (the keyboard stays up).
-  Future<void> sendMessage() async {
+  /// Sends what is typed and empties the field (the keyboard stays up). A
+  /// refused send (say the team was renamed meanwhile) puts the text back,
+  /// above anything typed since, for the screen to say so.
+  Future<ChatSendResult> sendMessage() async {
     final text = chatTextField.text;
-    if (text.trim().isEmpty) return;
+    if (text.trim().isEmpty) return ChatSendResult.blank;
     chatTextField.clear();
-    await _sendText(text);
+    try {
+      await _sendText(text);
+      return ChatSendResult.sent;
+    } catch (_) {
+      if (!_disposed) {
+        final typed = chatTextField.text;
+        final restored = typed.isEmpty ? text : '$text\n$typed';
+        chatTextField.value = TextEditingValue(
+          text: restored,
+          selection: TextSelection.collapsed(offset: restored.length),
+        );
+      }
+      return ChatSendResult.failed;
+    }
   }
 
   /// Picks a picture from the gallery and posts it in the chat.

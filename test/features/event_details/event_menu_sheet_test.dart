@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:teamxperience/enums/photo_approval_status.dart';
 import 'package:teamxperience/features/event_details/logic/event_menu_action.dart';
 import 'package:teamxperience/features/event_details/widgets/event_menu_sheet.dart';
 import 'package:teamxperience/model/event.dart';
@@ -9,7 +10,7 @@ import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/model/team_member.dart';
 import 'package:teamxperience/ui/ui.dart';
 
-Team _team(String name, {int members = 3, String? unread}) => Team(
+Team _team(String name, {int members = 3, String? unread, Map<String, PhotoApprovalStatus>? photos}) => Team(
       name: name,
       teamMembers: '',
       captainName: '',
@@ -17,6 +18,7 @@ Team _team(String name, {int members = 3, String? unread}) => Team(
       captainEmail: '',
       members: [for (var i = 0; i < members; i++) TeamMember.fromName('Jucător $i')],
       unreadText: unread,
+      photoApprovals: photos,
     );
 
 final _event = Event(
@@ -99,6 +101,12 @@ void main() {
     await tester.pump();
     expect(find.text('2 echipe · 6 jucători'), findsOneWidget);
     expect(find.text('1'), findsOneWidget);
+
+    // A photo waiting for a decision counts too, as in the conversations list.
+    controller.add([_team('A', photos: {'0_0_0': PhotoApprovalStatus.pending}), _team('B', unread: 'Ajutor')]);
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('2'), findsOneWidget);
   });
 
   testWidgets('a row closes the sheet with its action', (tester) async {

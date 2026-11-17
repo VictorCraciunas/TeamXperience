@@ -1,3 +1,4 @@
+import 'package:teamxperience/features/team_chats/logic/organiser_unread.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 
@@ -46,5 +47,6 @@ String registeredTeamsLine(int teams, int players) {
 /// Everyone in the teams, counting old teams by the names they typed.
 int playersOf(List<Team> teams) => teams.fold(0, (sum, team) => sum + team.memberList.length);
 
-/// Teams whose latest message the organiser has not read.
-int unreadConversations(List<Team> teams) => teams.where((team) => team.unreadText != null).length;
+/// Teams whose chat waits for the organiser (an unread message or a photo to
+/// decide), counted as the conversations list counts them.
+int unreadConversations(List<Team> teams) => teams.where(needsOrganiser).length;
