@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:teamxperience/features/chat_button/widgets/chat_button_clearance.dart';
 import 'package:teamxperience/features/event_game/logic/photo_state.dart';
 import 'package:teamxperience/ui/components/game/game_filled_button.dart';
 import 'package:teamxperience/ui/components/game/game_outline_button.dart';
@@ -108,16 +109,18 @@ class PhotoPuzzleView extends StatelessWidget {
             ),
           ),
         ),
-        FrameBand(
-          onPicture: onPicture,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(14, 8, 14, 10),
-            child: Row(
-              children: [
-                Expanded(flex: 10, child: GameOutlineButton(label: 'Chat', icon: TablerIcons.message_circle, onTap: onChat)),
-                const SizedBox(width: 8),
-                Expanded(flex: 14, child: GameFilledButton(label: label, icon: icon, onTap: action)),
-              ],
+        ChatButtonClearance.bar(
+          child: FrameBand(
+            onPicture: onPicture,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 8, 14, 10),
+              child: Row(
+                children: [
+                  Expanded(flex: 10, child: GameOutlineButton(label: 'Chat', icon: TablerIcons.message_circle, onTap: onChat)),
+                  const SizedBox(width: 8),
+                  Expanded(flex: 14, child: GameFilledButton(label: label, icon: icon, onTap: action)),
+                ],
+              ),
             ),
           ),
         ),

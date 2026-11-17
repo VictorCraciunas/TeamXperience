@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:teamxperience/ui/components/misc/brand_title.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 /// The top of Home: "TeamXperience" as on the website (a yellow X), and the bell
@@ -26,21 +27,7 @@ class HomeHeader extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(14, 8, 14, 9),
           child: Row(
             children: [
-              Expanded(
-                // As on teamxperience.ro: Poppins bold, the X in the brand yellow.
-                child: Text.rich(
-                  TextSpan(
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, height: 1.45, color: colors.text),
-                    children: [
-                      const TextSpan(text: 'Team'),
-                      TextSpan(text: 'X', style: TextStyle(color: colors.brandX)),
-                      const TextSpan(text: 'perience'),
-                    ],
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
+              const Expanded(child: BrandTitle()),
               Semantics(
                 button: true,
                 label: unread ? 'Notificări noi' : 'Notificări',

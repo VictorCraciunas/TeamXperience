@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:teamxperience/constants/routes.dart';
 import '../service/signup_service.dart';
 
@@ -10,7 +11,8 @@ class SignUpController {
   final TextEditingController confirmPasswordController = TextEditingController();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  SignUpService signUpService = SignUpService();
+  // Made on first use, so the screen can be drawn without Firebase (tests).
+  late final SignUpService signUpService = SignUpService();
 
 
 
@@ -19,6 +21,8 @@ class SignUpController {
     if (formKey.currentState!.validate()) {
       try{
         await signUpService.register(emailController.text.trim(), firstNameController.text.trim(), lastNameController.text.trim(),passwordController.text.trim(), context);
+        // The password manager offers to save the new account.
+        TextInput.finishAutofillContext();
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Account created successfully!')),

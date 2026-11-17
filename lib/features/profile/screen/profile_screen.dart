@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:teamxperience/backend/repo/user_repo.dart';
 import 'package:teamxperience/enums/role.dart';
@@ -28,7 +27,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final GlobalKey _settings = GlobalKey();
   ProfileController? _controller;
 
   @override
@@ -50,10 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       findTeam: uid == null ? null : (eventId) => TeamService().getUserTeamForEvent(eventId, uid),
       saveToken: uid == null
           ? null
-          : () async {
-              final token = await FCMService.getFCMToken();
-              if (token != null) await repo.updateFCMToken(uid, token);
-            },
+          : () => FCMService.saveTokenAsking(uid),
     );
   }
 
@@ -61,12 +56,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void dispose() {
     _controller?.dispose();
     super.dispose();
-  }
-
-  void _scrollToSettings() {
-    final target = _settings.currentContext;
-    if (target == null) return;
-    Scrollable.ensureVisible(target, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
   }
 
   @override
@@ -83,24 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: colors.page,
       body: Column(
         children: [
-          TabHeader(
-            title: 'Profil',
-            trailing: Semantics(
-              button: true,
-              label: 'Setări',
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: _scrollToSettings,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(color: colors.iconButtonBg, shape: BoxShape.circle),
-                  child: SizedBox.square(
-                    dimension: 44,
-                    child: Center(child: Icon(TablerIcons.settings, size: 20, color: colors.text)),
-                  ),
-                ),
-              ),
-            ),
-          ),
+          const TabHeader(title: 'Profil'),
           Expanded(
             child: controller == null
                 ? const SizedBox.shrink()
@@ -110,7 +82,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       final user = controller.user;
                       return SingleChildScrollView(
                         child: ProfileView(
-                          settingsKey: _settings,
                           player: user.role != Role.ADMIN,
                           name: '${user.firstName} ${user.lastName}'.trim(),
                           email: user.email,

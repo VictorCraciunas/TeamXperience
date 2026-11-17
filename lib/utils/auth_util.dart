@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:teamxperience/constants/routes.dart';
@@ -6,6 +8,8 @@ import '../backend/authentication/AuthenticationRepository.dart';
 import '../backend/repo/user_repo.dart';
 import '../enums/role.dart';
 import '../model/user.dart';
+import '../service/FCMService.dart';
+import '../service/push/push_opener.dart';
 import '../state_management/user_provider.dart';
 
 class AuthUtil {
@@ -13,7 +17,20 @@ class AuthUtil {
   final AuthenticationRepository authenticationRepository;
   final UserProvider userProvider;
 
-  AuthUtil(this.userRepo, this.authenticationRepository, this.userProvider);
+  /// Keeps this device's push token on the user at each start.
+  final Future<void> Function(String uid) _saveDeviceToken;
+
+  /// Told once the first screen is up, so a tapped push can open over it.
+  final void Function({required bool signedIn}) _landed;
+
+  AuthUtil(
+    this.userRepo,
+    this.authenticationRepository,
+    this.userProvider, {
+    Future<void> Function(String uid)? saveDeviceToken,
+    void Function({required bool signedIn})? landed,
+  })  : _saveDeviceToken = saveDeviceToken ?? FCMService.saveTokenOnStart,
+        _landed = landed ?? PushOpener.instance.landed;
 
   // -------- role based redirect -----------
   /// Loads the user and opens their home, or the start when signed out.
@@ -24,6 +41,7 @@ class AuthUtil {
     await after;
     if (!context.mounted) return;
     Navigator.pushNamedAndRemoveUntil(context, route, (Route<dynamic> route) => false);
+    _landed(signedIn: route != Routes.splash);
   }
 
   /// Where the app opens: the role's home, or the start without a user.
@@ -44,6 +62,8 @@ class AuthUtil {
 
       if(appUser != null){
         userProvider.setUser(appUser, currentUser);
+        // Not waited on: the app opens whether or not it is saved.
+        unawaited(_saveDeviceToken(currentUser.uid));
 
         return appUser.role == Role.ADMIN ? Routes.adminHome : Routes.home;
       }

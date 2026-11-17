@@ -56,6 +56,12 @@ void main() {
       expect(json.containsKey('badges'), isFalse);
     });
 
+    test('a user doc never carries push tokens: they live in pushTokens, unreadable to others', () {
+      final json = AppUser.fromFirestore({..._base(), 'fcmToken': 't', 'fcmTokens': ['t']}).toJson();
+      expect(json.containsKey('fcmToken'), isFalse);
+      expect(json.containsKey('fcmTokens'), isFalse);
+    });
+
     test('copyWith changes xp, stats and badges and keeps the rest', () {
       final user = AppUser.fromFirestore({..._base(), 'registeredEventIds': ['e1'], 'fcmToken': 't'});
       final fresh = user.copyWith(xp: 640, stats: const UserStats(games: 3), badges: ['km10']);

@@ -2,4 +2,6 @@
 <resources>
     <!-- The app navy behind the launch screen, so it runs into the animated logo. -->
     <color name="splash_navy">#222F62</color>
+    <!-- Adaptive app icon background (flutter_launcher_icons.yaml). -->
+    <color name="ic_launcher_background">#222F62</color>
 </resources>

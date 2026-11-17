@@ -58,6 +58,7 @@ class _PuzzlePageState extends State<PuzzlePage> {
                 children: [
                   SingleChildScrollView(
                     padding: _padding,
+                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                     child: PuzzleWidget(
                       key: ValueKey('puzzle-${widget.mission}-${widget.index}'),
                       puzzle: puzzle,
@@ -67,6 +68,7 @@ class _PuzzlePageState extends State<PuzzlePage> {
                   ),
                   SingleChildScrollView(
                     padding: _padding,
+                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                     child: PuzzleRulesForm(
                       puzzle: puzzle,
                       near: widget.controller.placeNearMission(widget.mission),

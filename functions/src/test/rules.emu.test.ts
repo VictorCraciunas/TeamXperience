@@ -102,10 +102,60 @@ describe("firestore.rules", () => {
     });
   });
 
+  describe("pushTokens", () => {
+    const device = (uid: string) => ({uid, updatedAt: FieldValue.serverTimestamp()});
+
+    test("a device saved for yourself, and saved again", async () => {
+      await assertSucceeds(as("u1").doc("pushTokens/phone").set(device("u1")));
+      await assertSucceeds(as("u1").doc("pushTokens/phone").set(device("u1")));
+    });
+
+    test("a phone that changes hands: the next account overwrites it", async () => {
+      await assertSucceeds(as("u1").doc("pushTokens/phone").set(device("u1")));
+      await assertSucceeds(as("u2").doc("pushTokens/phone").set(device("u2")));
+    });
+
+    test("never saved for someone else, or with anything more", async () => {
+      await assertFails(as("u1").doc("pushTokens/phone").set(device("u2")));
+      await assertFails(as("u1").doc("pushTokens/phone").set({...device("u1"), role: "ADMIN"}));
+      await assertFails(as("u1").doc("pushTokens/phone").set({uid: "u1"}));
+      await assertFails(as("u1").doc("pushTokens/phone").set({uid: "u1", updatedAt: Timestamp.fromDate(new Date(0))}));
+      await assertFails(signedOut().doc("pushTokens/phone").set(device("u1")));
+    });
+
+    test("only your own is read or deleted", async () => {
+      await env.withSecurityRulesDisabled(async (context) => {
+        const db = context.firestore();
+        await db.doc("pushTokens/boss-phone").set({uid: "admin", updatedAt: Timestamp.now()});
+        await db.doc("pushTokens/my-phone").set({uid: "u1", updatedAt: Timestamp.now()});
+      });
+      await assertFails(as("u1").doc("pushTokens/boss-phone").get());
+      await assertFails(as("u1").collection("pushTokens").where("uid", "==", "admin").get());
+      await assertFails(as("u1").doc("pushTokens/boss-phone").delete());
+      await assertSucceeds(as("u1").doc("pushTokens/my-phone").get());
+      await assertSucceeds(as("u1").doc("pushTokens/my-phone").delete());
+    });
+  });
+
   describe("users", () => {
     test("own doc: profile fields and the push token", async () => {
       await assertSucceeds(as("u1").doc("users/u1").update({firstName: "Anna", fcmToken: "t"}));
       await assertSucceeds(as("u1").doc("users/u1").update({registeredEventIds: FieldValue.arrayUnion("e1")}));
+    });
+
+    test("own doc: the older push tokens can be deleted (the new app's first start)", async () => {
+      await env.withSecurityRulesDisabled(async (context) => {
+        await context.firestore().doc("users/u1").update({fcmToken: "old", fcmTokens: ["old"]});
+      });
+      await assertSucceeds(as("u1").doc("users/u1").update({
+        fcmToken: FieldValue.delete(),
+        fcmTokens: FieldValue.delete(),
+      }));
+    });
+
+    test("not someone else's older push tokens", async () => {
+      await assertFails(as("u2").doc("users/u1").update({fcmTokens: FieldValue.delete()}));
+      await assertFails(as("u2").doc("users/u1").update({fcmToken: "t-u2"}));
     });
 
     test("not someone else's", async () => {
@@ -366,6 +416,40 @@ describe("firestore.rules", () => {
       await assertSucceeds(as("admin").doc(TEAM).update({unreadByAdmin: FieldValue.delete()}));
     });
 
+    test("the unread count: each send adds exactly one", async () => {
+      const at = FieldValue.serverTimestamp();
+      const send = (text: string) => member().update({
+        "unreadByAdmin.text": text,
+        "unreadByAdmin.at": at,
+        "unreadByAdmin.count": FieldValue.increment(1),
+      });
+      await assertSucceeds(send("Alo"));
+      await assertSucceeds(send("Mai e cineva?"));
+      const saved = (await as("admin").doc(TEAM).get()).data()?.unreadByAdmin;
+      if (saved?.count !== 2 || saved?.text !== "Mai e cineva?") throw new Error(`count ${saved?.count}`);
+      await assertFails(member().update({"unreadByAdmin.text": "x", "unreadByAdmin.at": at, "unreadByAdmin.count": 5}));
+      await assertFails(member().update({
+        "unreadByAdmin.text": "x", "unreadByAdmin.at": at, "unreadByAdmin.count": FieldValue.increment(2),
+      }));
+      await assertFails(member().update({"unreadByAdmin.text": "x", "unreadByAdmin.at": at, "unreadByAdmin.count": "3"}));
+    });
+
+    test("the unread count: a fresh mark starts at one, an old app's mark stays allowed", async () => {
+      const at = FieldValue.serverTimestamp();
+      await assertFails(member().update({unreadByAdmin: {text: "Alo", at, count: 2}}));
+      await assertSucceeds(member().update({unreadByAdmin: {text: "Alo", at, count: 1}}));
+      // An older app replaces the whole mark, dropping the count.
+      await assertSucceeds(member().update({unreadByAdmin: {text: "Alo", at}}));
+      // A newer app then counts on from a mark without a count.
+      await assertSucceeds(member().update({
+        "unreadByAdmin.text": "Hei", "unreadByAdmin.at": at, "unreadByAdmin.count": FieldValue.increment(1),
+      }));
+      await assertSucceeds(as("admin").doc(TEAM).update({unreadByAdmin: FieldValue.delete()}));
+      await assertSucceeds(member().update({
+        "unreadByAdmin.text": "Iar", "unreadByAdmin.at": at, "unreadByAdmin.count": FieldValue.increment(1),
+      }));
+    });
+
     test("the phone: the captain, or anyone on an old team", async () => {
       await assertSucceeds(as("u1").doc(TEAM).update({phoneNumber: "0733"}));
       await assertFails(as("u2").doc(TEAM).update({phoneNumber: "0744"}));
@@ -390,6 +474,15 @@ describe("firestore.rules", () => {
       await assertFails(as("u1").collection(`${TEAM}/messages`).add({sender: "ADMIN", text: "Hei"}));
       await assertFails(as("u1").collection(`${TEAM}/messages`).add({sender: "USER", announcement: true}));
       await assertFails(as("u1").collection(`${TEAM}/messages`).add({sender: "USER", text: "Hei", moved: true}));
+    });
+
+    test("a player signs a message only as themselves", async () => {
+      const messages = () => as("u1").collection(`${TEAM}/messages`);
+      await assertSucceeds(messages().add({sender: "USER", text: "Hei", senderUid: "u1", senderName: "Ana"}));
+      await assertSucceeds(messages().add({sender: "USER", type: "image", imageUrl: "a", senderUid: "u1"}));
+      await assertFails(messages().add({sender: "USER", text: "Hei", senderUid: "u2", senderName: "Dan"}));
+      await assertFails(messages().add({sender: "USER", text: "Hei", senderUid: ""}));
+      await assertFails(messages().add({sender: "USER", text: "Hei", senderUid: null}));
     });
 
     test("nobody writes to a team that is gone (renamed): it would never be read", async () => {

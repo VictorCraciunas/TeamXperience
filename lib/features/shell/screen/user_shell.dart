@@ -13,12 +13,15 @@ import 'package:teamxperience/features/play_tab/logic/play_tab_state.dart';
 import 'package:teamxperience/features/play_tab/controller/play_popup_controller.dart';
 import 'package:teamxperience/features/play_tab/widgets/play_popup.dart';
 import 'package:teamxperience/features/shell/logic/play_popup_routes.dart';
+import 'package:teamxperience/service/startup_permissions.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
 import 'package:teamxperience/features/profile/screen/profile_screen.dart';
 import 'package:teamxperience/features/shell/logic/player_tabs.dart';
 import 'package:teamxperience/features/teams/screen/teams_screen.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
+import 'package:teamxperience/features/chat_button/widgets/chat_button_clearance.dart';
+import 'package:teamxperience/ui/components/navigation/app_bottom_nav.dart';
 import 'package:teamxperience/ui/components/navigation/app_shell.dart';
 import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 
@@ -26,7 +29,11 @@ import 'package:teamxperience/ui/components/navigation/shell_controller.dart';
 /// "În joc" while a game is on), Echipe and Profil. Joacă is not a page: it
 /// opens the Joacă pop-up over the current tab (mockup 10).
 class UserShell extends StatefulWidget {
-  const UserShell({super.key});
+  const UserShell({super.key, this.askPermissions});
+
+  /// The first-run permission prompts; [StartupPermissions.shared] unless
+  /// replaced (tests).
+  final Future<void> Function()? askPermissions;
 
   @override
   State<UserShell> createState() => _UserShellState();
@@ -83,6 +90,9 @@ class _UserShellState extends State<UserShell> {
     super.initState();
     _tick;
     _controller.addListener(_tabChanged);
+    // The phone's own prompts, the first time a player signs in on it.
+    final ask = widget.askPermissions ?? StartupPermissions.shared.askOnce;
+    WidgetsBinding.instance.addPostFrameCallback((_) => ask());
   }
 
   /// Another tab closes the pop-up.
@@ -113,25 +123,31 @@ class _UserShellState extends State<UserShell> {
     if (popup == null) return const SizedBox.shrink();
     final (open, closing) = _popupShown;
     final items = playerNavItems(live: live, open: open && !closing);
+    // The floating chat button sits above the bottom bar; the pages end
+    // where the raised Joacă circle starts.
+    Widget aboveBar(Widget page) => ChatButtonClearance.above(overlap: AppBottomNav.raisedRise, child: page);
     final screens = <WidgetBuilder?>[
-      (_) => const Home(),
-      (_) => const EventsTabScreen(),
+      (_) => aboveBar(const Home()),
+      (_) => aboveBar(const EventsTabScreen()),
       null,
-      (_) => const TeamsScreen(),
-      (_) => const ProfileScreen(),
+      (_) => aboveBar(const TeamsScreen()),
+      (_) => aboveBar(const ProfileScreen()),
     ];
 
     return ChangeNotifierProvider<ShellController>.value(
       value: _controller,
       child: AppShell(
         controller: _controller,
+        // The pop-up has its own chat link; the floating button hides over it.
         overlay: open
-            ? PlayPopup(
-                controller: popup,
-                actions: playPopupRoutes(
-                  navigator: Navigator.of(context),
-                  user: () => context.read<UserProvider>().currentUser,
-                  browseAll: () => _controller.select(PlayerTab.events),
+            ? ChatButtonClearance.hide(
+                child: PlayPopup(
+                  controller: popup,
+                  actions: playPopupRoutes(
+                    navigator: Navigator.of(context),
+                    user: () => context.read<UserProvider>().currentUser,
+                    browseAll: () => _controller.select(PlayerTab.events),
+                  ),
                 ),
               )
             : null,

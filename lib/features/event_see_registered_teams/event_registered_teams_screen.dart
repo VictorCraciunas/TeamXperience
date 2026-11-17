@@ -1,47 +1,54 @@
-import 'package:teamxperience/ui/components/feedback/load_failed.dart';
 import 'package:flutter/material.dart';
-import 'package:teamxperience/ui/ui.dart';
+import 'package:teamxperience/constants/routes.dart';
+import 'package:teamxperience/features/live_room/controller/live_room_controller.dart' show CallResult;
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
 import 'package:teamxperience/ui/components/feedback/app_dialog.dart';
+import 'package:teamxperience/ui/components/feedback/load_failed.dart';
 import 'package:teamxperience/ui/components/feedback/snackbars.dart';
-import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
+import 'package:teamxperience/ui/ui.dart';
 
 import 'event_registered_teams_controller.dart';
-import 'widgets/team_card_widget.dart';
+import 'logic/registered_teams_texts.dart';
+import 'widgets/registered_teams_header.dart';
+import 'widgets/registered_teams_list.dart';
 
+/// The organiser's "Echipe înscrise" for one event (route argument: the
+/// [Event]).
 class EventRegisteredTeams extends StatefulWidget {
-  const EventRegisteredTeams({super.key});
+  const EventRegisteredTeams({super.key, this.createController});
+
+  /// Builds the controller for the event; tests pass one that reads no
+  /// Firebase.
+  final EventRegisteredTeamsController Function(Event event)? createController;
 
   @override
   State<EventRegisteredTeams> createState() => _EventRegisteredTeamsState();
 }
 
 class _EventRegisteredTeamsState extends State<EventRegisteredTeams> {
-  late EventRegisteredTeamsController controller;
-  bool _initialized = false;
+  EventRegisteredTeamsController? _controller;
+  final _search = TextEditingController();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_initialized) {
-      final event = ModalRoute.of(context)?.settings.arguments as Event?;
-      if (event == null) return;
-
-      controller = EventRegisteredTeamsController(event);
-      _initialized = true;
-      _loadTeams();
-    }
+    if (_controller != null) return;
+    final event = ModalRoute.of(context)?.settings.arguments as Event?;
+    if (event == null) return;
+    final controller = widget.createController?.call(event) ?? EventRegisteredTeamsController(event);
+    _controller = controller;
+    controller.loadTeams();
   }
 
-  Future<void> _loadTeams() async {
-    await controller.loadTeams();
-    if (mounted) {
-      setState(() {});
-    }
+  @override
+  void dispose() {
+    _controller?.dispose();
+    _search.dispose();
+    super.dispose();
   }
 
-  Future<void> _confirmDelete(Team team) async {
+  Future<void> _confirmDelete(EventRegisteredTeamsController controller, Team team) async {
     final confirmed = await showAppDialog(
       context,
       title: 'Confirmare',
@@ -50,67 +57,79 @@ class _EventRegisteredTeamsState extends State<EventRegisteredTeams> {
       cancelLabel: 'Anulează',
       destructive: true,
     );
-
     if (!confirmed) return;
 
     try {
       await controller.deleteTeam(team);
       if (!mounted) return;
-      setState(() {});
-      MySnackBars.successSnackBar(
-        context,
-        title: "Echipa a fost ștearsă cu succes",
-      );
+      MySnackBars.successSnackBar(context, title: 'Echipa a fost ștearsă cu succes');
     } catch (e) {
       if (!mounted) return;
-      MySnackBars.errorSnackBar(
-        context,
-        title: "Eroare la ștergerea echipei",
-        message: e.toString(),
-      );
+      MySnackBars.errorSnackBar(context, title: 'Eroare la ștergerea echipei', message: e.toString());
     }
+  }
+
+  Future<void> _call(EventRegisteredTeamsController controller, Team team) async {
+    final result = await controller.callCaptain(team);
+    if (!mounted) return;
+    switch (result) {
+      case CallResult.opened:
+        break;
+      case CallResult.noPhone:
+        MySnackBars.errorSnackBar(context, title: 'Echipa nu are număr de telefon.');
+      case CallResult.failed:
+        MySnackBars.errorSnackBar(context, title: 'Nu am putut deschide telefonul.');
+    }
+  }
+
+  void _message(EventRegisteredTeamsController controller, Team team) {
+    Navigator.pushNamed(
+      context,
+      Routes.chatScreen,
+      arguments: {'eventId': controller.event.eventId, 'team': team},
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_initialized) {
+    final controller = _controller;
+    if (controller == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
-      appBar: const MyAppBar(appBarText: "Echipe înscrise"),
-      body: controller.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : controller.failed
-          ? LoadFailed(
-              message: 'Nu am putut încărca echipele.',
-              onRetry: () {
-                setState(() => controller.isLoading = true);
-                _loadTeams();
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          RegisteredTeamsHeader(
+            subtitle: eventSubtitle(controller.event),
+            onBack: () => Navigator.maybePop(context),
+          ),
+          Expanded(
+            child: ListenableBuilder(
+              listenable: controller,
+              builder: (context, _) {
+                if (controller.isLoading) return const Center(child: CircularProgressIndicator());
+                if (controller.failed) {
+                  return LoadFailed(message: 'Nu am putut încărca echipele.', onRetry: controller.loadTeams);
+                }
+                if (controller.teams.isEmpty) {
+                  return Center(
+                    child: Text('Nicio echipă înscrisă', style: AppTextStyles.bodyMuted(context)),
+                  );
+                }
+                return RegisteredTeamsList(
+                  controller: controller,
+                  searchController: _search,
+                  onCall: (team) => _call(controller, team),
+                  onMessage: (team) => _message(controller, team),
+                  onRemove: (team) => _confirmDelete(controller, team),
+                );
               },
-            )
-          : controller.teams.isEmpty
-              ? Center(
-                  child: Text(
-                    "Nicio echipă înscrisă",
-                    style: TextStyle(fontSize: 18, color: context.colors.muted),
-                  ),
-                )
-              : ListView.separated(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.page,
-                    vertical: 16,
-                  ),
-                  itemCount: controller.teams.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final team = controller.teams[index];
-                    return TeamCardWidget(
-                      team: team,
-                      onDelete: () => _confirmDelete(team),
-                    );
-                  },
-                ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

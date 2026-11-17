@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:teamxperience/features/chat_button/widgets/chat_button_clearance.dart';
 import 'package:teamxperience/features/team_photo/logic/team_album.dart';
 import 'package:teamxperience/features/team_photo/widgets/album_strip.dart';
 import 'package:teamxperience/ui/components/game/game_filled_button.dart';
@@ -126,17 +127,19 @@ class FinishView extends StatelessWidget {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 10,
-                child: GameOutlineButton(label: 'Distribuie', icon: TablerIcons.share, onTap: onShare),
-              ),
-              const SizedBox(width: 8),
-              Expanded(flex: 13, child: GameFilledButton(label: 'Vezi clasamentul', onTap: onLeaderboard)),
-            ],
+        ChatButtonClearance.bar(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 10,
+                  child: GameOutlineButton(label: 'Distribuie', icon: TablerIcons.share, onTap: onShare),
+                ),
+                const SizedBox(width: 8),
+                Expanded(flex: 13, child: GameFilledButton(label: 'Vezi clasamentul', onTap: onLeaderboard)),
+              ],
+            ),
           ),
         ),
       ],

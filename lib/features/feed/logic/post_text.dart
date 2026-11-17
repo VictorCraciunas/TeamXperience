@@ -36,6 +36,9 @@ String newsPreview(Stire stire) {
   return text.replaceAll(RegExp(r'\s+'), ' ').trim();
 }
 
+/// The subject of a shared news item (the list and the news page use it).
+String newsShareSubject(Stire stire) => stire.title ?? 'Știre';
+
 String newsShareText(Stire stire) {
   final preview = newsPreview(stire);
   return [

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/enums/photo_approval_status.dart';
-import 'package:teamxperience/features/chat/widgets/image_message_bubble.dart';
+import 'package:teamxperience/features/chat/logic/chat_timeline.dart';
+import 'package:teamxperience/features/chat/widgets/chat_photo_bubble.dart';
 import 'package:teamxperience/features/chat/widgets/reject_photo_dialog.dart';
 import 'package:teamxperience/ui/theme/app_colors.dart';
 
@@ -55,11 +56,15 @@ void main() {
   testWidgets('a rejected photo in the chat shows its reason', (tester) async {
     await pumpUi(
       tester,
-      const ImageMessageBubble(
-        imageUrl: '',
-        isMe: false,
-        status: PhotoApprovalStatus.denied,
-        rejectReason: 'Nu se vede ceasul',
+      const ChatPhotoBubble(
+        entry: ChatPhotoEntry(
+          'p',
+          imageUrl: '',
+          mine: true,
+          line: 'Misiunea 3 · 10:53',
+          status: PhotoApprovalStatus.denied,
+          reason: 'Nu se vede ceasul',
+        ),
       ),
     );
     await tester.pump();

@@ -12,6 +12,7 @@ import 'package:teamxperience/features/admin/home/widgets/admin_quick_actions_pa
 import 'package:teamxperience/features/admin/home/widgets/admin_stats_panel.dart';
 import 'package:teamxperience/features/admin/home/widgets/admin_upcoming_panel.dart';
 import 'package:teamxperience/model/event.dart';
+import 'package:teamxperience/service/startup_permissions.dart';
 import 'package:teamxperience/state_management/events_state_management.dart';
 import 'package:teamxperience/ui/components/misc/clock_builder.dart';
 import 'package:teamxperience/ui/components/misc/fade_in_section.dart';
@@ -19,7 +20,11 @@ import 'package:teamxperience/ui/components/navigation/my_appbar.dart';
 import 'package:teamxperience/ui/ui.dart';
 
 class AdminHome extends StatefulWidget {
-  const AdminHome({super.key});
+  const AdminHome({super.key, this.askPermissions});
+
+  /// The first-run permission prompts; [StartupPermissions.shared] unless
+  /// replaced (tests).
+  final Future<void> Function()? askPermissions;
 
   @override
   State<AdminHome> createState() => _AdminHomeState();
@@ -34,8 +39,11 @@ class _AdminHomeState extends State<AdminHome> {
     super.initState();
     controller = AdminHomeController(context);
 
+    final askPermissions = widget.askPermissions ?? StartupPermissions.shared.askOnce;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.loadInitialData();
+      // The phone's own prompts, the first time someone signs in on it.
+      askPermissions();
     });
     // Keeps the live numbers fresh while an event runs.
     _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {

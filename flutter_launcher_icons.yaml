@@ -1,0 +1,14 @@
+# App icon. Regenerate with: dart run flutter_launcher_icons
+# Sources in assets/icon/: app_icon.png (full 1024 icon, navy background)
+# and app_icon_foreground.png (the same T, X and route on a transparent
+# background, scaled into the adaptive icon's safe zone).
+flutter_launcher_icons:
+  image_path: "assets/icon/app_icon.png"
+  android: true
+  min_sdk_android: 21
+  adaptive_icon_background: "#222F62"
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+  # The foreground PNG is already scaled into the safe zone; no extra inset.
+  adaptive_icon_foreground_inset: 0
+  ios: true
+  remove_alpha_ios: true

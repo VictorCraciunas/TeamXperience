@@ -92,6 +92,7 @@ class _LiveRoomPreviewState extends State<LiveRoomPreview> {
       status: boardStatusText(boardRows([team], missionCount: missions, now: now, eventOver: false).single, now),
       onCall: () {},
       onMessage: () {},
+      onMap: hasPin(team) ? () {} : null,
     );
   }
 

@@ -120,16 +120,13 @@ class _GeolocationPuzzleWidgetState extends State<GeolocationPuzzleWidget> with 
 
     await _positions?.cancel();
     if (!mounted) return;
-    _positions = _location.getPositionStream(distanceFilter: 2).listen(
+    // Poor readings are left out (LocationFilter), so the distance, the way
+    // and "inside the circle" follow the better fixes; the first one asked for
+    // at once still shows straight away.
+    _positions = _location.accuratePositions(distanceFilter: 2, withCurrentFix: true).listen(
           (position) => _onFix(position, target),
           onError: (Object _) => _onStreamError(),
         );
-    try {
-      final first = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
-      );
-      _onFix(first, target);
-    } catch (_) {}
   }
 
   void _onFix(Position position, LatLng target) {

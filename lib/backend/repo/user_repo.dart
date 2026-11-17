@@ -134,16 +134,14 @@ class UserRepo{
     }
   }
 
-  Future<void> updateFCMToken(String uid, String fcmToken) async {
-    try {
-      await _firestore.collection('users').doc(uid).update({
-        'fcmToken': fcmToken,
-      });
-      print('FCM token updated for user: $uid');
-    } catch (e) {
-      print('Error updating FCM token: $e');
-      throw e;
-    }
+  /// Deletes the push tokens older app versions left on the user's own doc
+  /// (`fcmToken`, `fcmTokens`), which every signed-in user can read. Writes
+  /// only when one of them is there.
+  Future<void> deleteLegacyTokens(String uid) async {
+    final doc = _firestore.collection('users').doc(uid);
+    final data = (await doc.get()).data();
+    if (data == null || !(data.containsKey('fcmToken') || data.containsKey('fcmTokens'))) return;
+    await doc.update({'fcmToken': FieldValue.delete(), 'fcmTokens': FieldValue.delete()});
   }
 
 }

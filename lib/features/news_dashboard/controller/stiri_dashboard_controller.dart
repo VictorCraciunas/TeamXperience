@@ -1,35 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../model/stire.dart';
+
 import '../../../backend/repo/news_category_repo.dart';
-import '../../../utils/period_utils.dart';
-import '../../../model/newsCategory.dart';
-import '../../../enums/stire_type.dart';
-import '../../../state_management/news_state_management.dart';
+import '../../../model/stire.dart';
+import '../logic/news_filters.dart';
 
-/// How adding a category went.
-enum AddCategoryStatus { added, empty, duplicate, failed }
-
-class AddCategoryResult {
-  const AddCategoryResult(this.status, [this.name = '']);
-
-  final AddCategoryStatus status;
-
-  /// The saved name when [status] is [AddCategoryStatus.added].
-  final String name;
-}
-
-/// How deleting a category went.
-enum DeleteCategoryStatus { deleted, inUse, notFound, failed }
-
-class DeleteCategoryResult {
-  const DeleteCategoryResult(this.status, [this.newsCount = 0]);
-
-  final DeleteCategoryStatus status;
-
-  /// How many news use the category when [status] is [DeleteCategoryStatus.inUse].
-  final int newsCount;
-}
-
+/// The Știri list, for players and organisers: the chosen type or category
+/// chip and the saved categories (added and deleted on the Categorii screen).
 class StiriDashboardController extends ChangeNotifier {
   StiriDashboardController({NewsCategoryRepo? categoryRepo})
     : _injectedCategoryRepo = categoryRepo;
@@ -38,218 +14,57 @@ class StiriDashboardController extends ChangeNotifier {
   late final NewsCategoryRepo _categoryRepo =
       _injectedCategoryRepo ?? NewsCategoryRepo();
 
-  List<Stire> _searchResults = [];
-  String _searchQuery = '';
+  NewsQuery _query = const NewsQuery();
+  List<String> _saved = const [];
+  bool _savedLoaded = false;
+  bool _disposed = false;
 
-  // Filter state
-  StireType? selectedStireType;
-  NewsCategory? selectedCategory;
-  DateTime? startDate;
-  DateTime? endDate;
+  NewsQuery get query => _query;
 
-  // Getters
-  String get searchQuery => _searchQuery;
+  /// The news the list shows.
+  List<Stire> shown(Iterable<Stire> news) => selectNews(news, _query);
 
-  bool get hasActiveFilters =>
-      selectedStireType != null ||
-      (selectedCategory != null && selectedCategory!.name.isNotEmpty) ||
-      startDate != null ||
-      endDate != null;
+  /// The type chips' counts, under every filter but the type.
+  NewsTypeCounts counts(Iterable<Stire> news) =>
+      countByType(selectNews(news, _query.copyWith(type: NewsTypeFilter.all)));
 
-  Map<String, dynamic> get currentFilters => {
-    'stireType': selectedStireType,
-    'category': selectedCategory,
-    'startDate': startDate,
-    'endDate': endDate,
-  };
+  /// Saved categories plus the ones [news] use.
+  List<String> categoriesFor(Iterable<Stire> news) => mergeCategoryNames(_saved, news);
 
-  /// All category names: the saved ones plus any used by [news], sorted and
-  /// without repeats (ignoring case). If loading fails, only those used by news.
-  Future<List<String>> categoryNames(Iterable<Stire> news) async {
-    final byLower = <String, String>{};
+  /// The player's chips: only categories that have news.
+  List<String> playerCategories(Iterable<Stire> news) =>
+      categoriesWithNews(categoriesFor(news), news);
 
-    void add(String? name) {
-      final clean = name?.trim() ?? '';
-      if (clean.isEmpty) return;
-      byLower.putIfAbsent(clean.toLowerCase(), () => clean);
-    }
+  void _set(NewsQuery query) {
+    _query = query;
+    _notify();
+  }
 
-    // News first, so a name keeps the spelling it is used with.
-    for (final stire in news) {
-      add(stire.category?.name);
-    }
+  void _notify() {
+    if (!_disposed) notifyListeners();
+  }
+
+  void setType(NewsTypeFilter type) => _set(_query.copyWith(type: type));
+
+  /// Null shows every category.
+  void setCategory(String? name) => _set(_query.copyWith(category: name));
+
+  /// Reads the saved categories (once, unless [force]). If that fails, only
+  /// the categories in use show.
+  Future<void> loadCategories({bool force = false}) async {
+    if (_savedLoaded && !force) return;
     try {
-      for (final category in await _categoryRepo.getAllCategories()) {
-        add(category.name);
-      }
+      _saved = [for (final c in await _categoryRepo.getAllCategories()) c.name];
+      _savedLoaded = true;
     } catch (_) {
-      // Keep what the news already gave us.
+      // Keep what we had; the news still give their own categories.
     }
-
-    return byLower.values.toList()
-      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    _notify();
   }
 
-  /// Saves a new category unless it is empty or already in [existing].
-  Future<AddCategoryResult> addCategory(
-    String rawName,
-    Iterable<String> existing,
-  ) async {
-    final name = rawName.trim();
-    if (name.isEmpty) return const AddCategoryResult(AddCategoryStatus.empty);
-
-    final lower = name.toLowerCase();
-    if (existing.any((e) => e.trim().toLowerCase() == lower)) {
-      return const AddCategoryResult(AddCategoryStatus.duplicate);
-    }
-
-    try {
-      final category = NewsCategory(name: name);
-      category.id = await _categoryRepo.getNewCategoryId();
-      await _categoryRepo.createCategory(category);
-      return AddCategoryResult(AddCategoryStatus.added, name);
-    } catch (_) {
-      return const AddCategoryResult(AddCategoryStatus.failed);
-    }
-  }
-
-  /// Deletes the saved category called [name], unless [news] still use it
-  /// (those news would bring it back, so it has to be changed there first).
-  Future<DeleteCategoryResult> deleteCategory(
-    String name,
-    Iterable<Stire> news,
-  ) async {
-    final lower = name.trim().toLowerCase();
-
-    final using =
-        news
-            .where(
-              (s) => (s.category?.name ?? '').trim().toLowerCase() == lower,
-            )
-            .length;
-    if (using > 0) {
-      return DeleteCategoryResult(DeleteCategoryStatus.inUse, using);
-    }
-
-    try {
-      final saved = await _categoryRepo.getAllCategories();
-      final match = saved.where(
-        (c) => c.name.trim().toLowerCase() == lower && c.id != null,
-      );
-      if (match.isEmpty) {
-        return const DeleteCategoryResult(DeleteCategoryStatus.notFound);
-      }
-      await _categoryRepo.deleteCategory(match.first.id!);
-      return const DeleteCategoryResult(DeleteCategoryStatus.deleted);
-    } catch (_) {
-      return const DeleteCategoryResult(DeleteCategoryStatus.failed);
-    }
-  }
-
-  /// Get filtered stiri from NewsList
-  List<Stire> getFilteredStiri(NewsList newsList) {
-    return newsList.stireList.where(_stireMatchesFilters).toList()
-      ..sort((a, b) {
-        if (a.publicationDate == null && b.publicationDate == null) return 0;
-        if (a.publicationDate == null) return 1;
-        if (b.publicationDate == null) return -1;
-        return b.publicationDate!.compareTo(a.publicationDate!);
-      });
-  }
-
-  /// Get displayed stiri (with search applied if active)
-  List<Stire> getDisplayedStiri(NewsList newsList) {
-    if (_searchQuery.isNotEmpty) {
-      return _searchResults;
-    }
-    return getFilteredStiri(newsList);
-  }
-
-  bool _stireMatchesFilters(Stire stire) {
-    // Filter by stire type
-    if (selectedStireType != null && stire.type != selectedStireType) {
-      return false;
-    }
-
-    // Filter by category
-    if (selectedCategory != null &&
-        selectedCategory!.name.isNotEmpty &&
-        stire.category?.name != selectedCategory!.name) {
-      return false;
-    }
-
-    // Filter by date range (the last day counts until its end)
-    if (!isWithinPeriod(stire.publicationDate, startDate, endDate)) {
-      return false;
-    }
-
-    return true;
-  }
-
-  void applyFilters() {
-    // Clear search when filters change
-    if (_searchQuery.isNotEmpty) {
-      _searchQuery = '';
-      _searchResults = [];
-    }
-    notifyListeners();
-  }
-
-  void searchStiri(String query, NewsList newsList) {
-    _searchQuery = query.trim();
-    if (_searchQuery.isEmpty) {
-      _searchResults = [];
-    } else {
-      final lowerQuery = _searchQuery.toLowerCase();
-      final allFilteredStiri = getFilteredStiri(newsList);
-      _searchResults =
-          allFilteredStiri.where((stire) {
-            final stireTitle = stire.title?.toLowerCase() ?? '';
-            final stireDescription = stire.description?.toLowerCase() ?? '';
-            return stireTitle.contains(lowerQuery) ||
-                stireDescription.contains(lowerQuery);
-          }).toList();
-    }
-    notifyListeners();
-  }
-
-  void clearSearch() {
-    _searchQuery = '';
-    _searchResults = [];
-    notifyListeners();
-  }
-
-  void updateFilters(Map<String, dynamic>? filterData) {
-    if (filterData != null) {
-      selectedStireType = filterData['stireType'];
-      selectedCategory = filterData['category'];
-      startDate = filterData['startDate'];
-      endDate = filterData['endDate'];
-      applyFilters();
-    }
-  }
-
-  void clearFilters() {
-    selectedStireType = null;
-    selectedCategory = null;
-    startDate = null;
-    endDate = null;
-    applyFilters();
-  }
-
-  void clearStireTypeFilter() {
-    selectedStireType = null;
-    applyFilters();
-  }
-
-  void clearCategoryFilter() {
-    selectedCategory = null;
-    applyFilters();
-  }
-
-  void clearDateFilter() {
-    startDate = null;
-    endDate = null;
-    applyFilters();
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 }

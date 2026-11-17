@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:teamxperience/ui/components/misc/app_svg_icon.dart';
+import 'package:teamxperience/features/feed/logic/post_text.dart';
+import 'package:teamxperience/service/share_service.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teamxperience/model/stire.dart';
@@ -10,9 +11,20 @@ import '../../constants/routes.dart';
 import '../../utils/calendar_helper.dart';
 import '../../utils/link_util.dart';
 import 'fullscreen_image_viewer.dart';
+import 'widgets/news_top_bar.dart';
+
+/// Opens the share sheet; [ShareService.shareText] in the app, a fake in tests.
+typedef ShareTextCall = void Function(
+  BuildContext context, {
+  required String subject,
+  required String text,
+});
 
 class NewsScreen extends StatefulWidget {
-  const NewsScreen({super.key});
+  const NewsScreen({super.key, this.share});
+
+  /// Defaults to [ShareService.shareText].
+  final ShareTextCall? share;
 
   @override
   State<NewsScreen> createState() => _NewsScreenState();
@@ -56,6 +68,15 @@ class _NewsScreenState extends State<NewsScreen> {
 
   final LinkUtil _linkUtil = LinkUtil();
 
+  /// Same subject and text as sharing from the news list.
+  void _share() {
+    final share = widget.share ?? ShareService().shareText;
+    share(context, subject: newsShareSubject(stire), text: newsShareText(stire));
+  }
+
+  Widget _topBar() =>
+      NewsTopBar(onBack: () => Navigator.pop(context), onShare: _share);
+
   List<String> _getAllImages(Stire stire) {
     List<String> allImages = [];
 
@@ -90,12 +111,17 @@ class _NewsScreenState extends State<NewsScreen> {
         height: 317,
         width: double.infinity,
         color: context.colors.inset,
-        child: Center(
-          child: Icon(
-            Icons.image_not_supported,
-            color: context.colors.muted,
-            size: 50,
-          ),
+        child: Stack(
+          children: [
+            Center(
+              child: Icon(
+                Icons.image_not_supported,
+                color: context.colors.muted,
+                size: 50,
+              ),
+            ),
+            _topBar(),
+          ],
         ),
       );
     }
@@ -166,48 +192,7 @@ class _NewsScreenState extends State<NewsScreen> {
             ),
           ),
 
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: context.colors.panel.withValues(alpha: .56),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: AppSvgIcon(
-                        'assets/images/back_icon.svg',
-                        width: 24,
-                        height: 24,
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: context.colors.panel.withValues(alpha: .56),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: AppSvgIcon(
-                        'assets/images/download.svg',
-                        width: 24,
-                        height: 24,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          _topBar(),
 
           // Dots indicator overlay - positioned at bottom
           if (images.length > 1)

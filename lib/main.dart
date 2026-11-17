@@ -13,6 +13,8 @@ import 'package:teamxperience/features/admin/create_news/screen/create_news_scre
 import 'package:teamxperience/features/admin/shell/screen/admin_shell.dart';
 import 'package:teamxperience/features/calendar/screen/calendar_screen.dart';
 import 'package:teamxperience/features/chat/screen/chat_screen.dart';
+import 'package:teamxperience/features/chat_button/controller/chat_route_watch.dart';
+import 'package:teamxperience/features/chat_button/widgets/chat_button_layer.dart';
 import 'package:teamxperience/features/enter_code/screen/enter_code.dart';
 import 'package:teamxperience/features/live_room/screen/live_board_screen.dart';
 import 'package:teamxperience/features/live_room/screen/live_map_screen.dart';
@@ -40,6 +42,7 @@ import 'package:teamxperience/state_management/news_state_management.dart';
 import 'package:teamxperience/state_management/user_provider.dart';
 import 'package:teamxperience/state_management/user_registered_events.dart';
 import 'package:teamxperience/service/FCMService.dart';
+import 'package:teamxperience/service/push/push_opener.dart';
 import 'package:teamxperience/ui/ui.dart';
 import 'package:teamxperience/features/shell/screen/user_shell.dart';
 import 'package:teamxperience/utils/auth_util.dart';
@@ -59,6 +62,7 @@ import 'firebase_options.dart';
 // Add these imports for your services and state management
 import 'package:teamxperience/service/event_service/event_service.dart';
 import 'package:teamxperience/service/team_service/team_service.dart';
+import 'package:teamxperience/ui/components/inputs/tap_outside_closes_keyboard.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -66,7 +70,12 @@ void main() async {
   FirebaseFirestore.instance.settings = const Settings(
     persistenceEnabled: true,
   );
-  await FCMService.initNotifications();
+  try {
+    await FCMService.initNotifications();
+  } catch (e) {
+    // Pushes not set up is no reason for the app not to start.
+    debugPrint('Could not set up notifications: $e');
+  }
   final themeController = ThemeController(SharedPrefsThemeModeStore());
   await themeController.load();
   runApp(MyApp(themeController: themeController));
@@ -132,10 +141,19 @@ class MyApp extends StatelessWidget {
       child: Consumer<ThemeController>(
         builder:
             (context, themeController, _) => MaterialApp(
+              // Tapped pushes open their page from here (PushOpener).
+              navigatorKey: PushOpener.navigatorKey,
               theme: AppTheme.light,
               darkTheme: AppTheme.dark,
               themeMode: themeController.mode,
               title: 'Treasure Hunt',
+              // Knows the page on top, for the player's floating chat button.
+              navigatorObservers: [ChatRouteWatch.shared],
+              // A tap outside a text field, or a drag, closes the keyboard.
+              // The player's floating chat button is drawn over every page.
+              builder: (context, app) => TapOutsideClosesKeyboard(
+                child: ChatButtonLayer(routes: ChatRouteWatch.shared, child: app ?? const SizedBox.shrink()),
+              ),
               initialRoute: Routes.redirect,
               routes: {
                 Routes.redirect:

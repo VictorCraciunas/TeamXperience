@@ -8,6 +8,8 @@ class AppUser {
   final String uid;
   final Role role;
   final List<String> registeredEventIds;
+  /// The push token older app versions kept on the user doc; read only (the
+  /// app now saves devices in `pushTokens` and deletes this at start).
   final String fcmToken;
 
   /// Experience points, written by the end-of-event function (step 7).
@@ -82,7 +84,8 @@ class AppUser {
       "uid": uid,
       "role": role.name,
       "registeredEventIds": registeredEventIds,
-      "fcmToken":fcmToken
+      // No push token: every signed-in user can read this document, so the
+      // devices live in `pushTokens/{token}` (see `PushTokenRepo`).
     };
   }
 

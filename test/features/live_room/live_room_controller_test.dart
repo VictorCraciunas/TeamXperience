@@ -14,10 +14,11 @@ Team _team(String name, {String phone = '', bool started = false}) =>
     Team(name: name, teamMembers: '', captainName: '', phoneNumber: phone, captainEmail: '', hasStarted: started);
 
 class _Room {
-  _Room({DateTime? start, bool stopped = false}) {
+  _Room({DateTime? start, bool stopped = false, String? focusTeam}) {
     original = Event(eventId: 'e', name: 'Harta', dateEvent: start ?? _now.subtract(const Duration(hours: 1)), isStopped: stopped);
     controller = LiveRoomController(
       event: original,
+      focusTeam: focusTeam,
       sendTimeout: const Duration(milliseconds: 20),
       eventStream: events.stream,
       teamStream: teams.stream,
@@ -362,6 +363,25 @@ void main() {
       expect(await room.controller.callCaptain(_team('A', phone: '0722')), CallResult.opened);
       room.phoneOpens = false;
       expect(await room.controller.callCaptain(_team('A', phone: '0722')), CallResult.failed);
+    });
+  });
+
+  group("the map's focus", () {
+    test('none unless the map was opened on a team', () {
+      expect(_Room().controller.focus, isNull);
+      expect(_Room(focusTeam: 'Lupii').controller.focus?.teamName, 'Lupii');
+    });
+
+    test('focusing a team notifies, and asking again is a new request', () {
+      final room = _Room();
+      var notified = 0;
+      room.controller.addListener(() => notified++);
+      room.controller.focusOn(_team('Lupii'));
+      final first = room.controller.focus;
+      expect(first?.teamName, 'Lupii');
+      room.controller.focusOn(_team('Lupii'));
+      expect(room.controller.focus, isNot(same(first)));
+      expect(notified, 2);
     });
   });
 

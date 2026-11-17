@@ -24,18 +24,17 @@ class SignUpService {
     );
     String normalizedEmail = userCredential.user!.email!.toLowerCase();
 
-    String? token = await FCMService.getFCMToken();
-
-    //save the user into database
+    //save the user into database (no push token: those go to pushTokens)
     AppUser appUser = AppUser(
         email: normalizedEmail,
         firstName: firstName,
         lastName: lastName,
         uid: userCredential.user!.uid,
-        fcmToken: token  ?? ""
+        fcmToken: ""
 
     );
     userRepo.saveUser(appUser);
+    await FCMService.saveTokenAsking(appUser.uid);
   }
 
   Future<void> signInGoogle() async {
@@ -47,17 +46,18 @@ class SignUpService {
     final lastName = profile?['family_name'];
 
     if (await userRepo.findByEmail(userCredential.user!.email!) == null) {
-      String? token = await FCMService.getFCMToken();
-
-      //save the user into database
+      //save the user into database (no push token: those go to pushTokens)
       AppUser appUser = AppUser(
           email: userCredential.user!.email!,
           firstName: firstName,
           lastName: lastName,
           uid: userCredential.user!.uid,
-          fcmToken: token  ?? ""
+          fcmToken: ""
       );
       userRepo.saveUser(appUser);
     }
+    // A new account or one signing in again from here: this device is saved.
+    final user = userCredential.user;
+    if (user != null) await FCMService.saveTokenAsking(user.uid);
   }
 }

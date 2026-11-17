@@ -23,6 +23,7 @@ class RegisterInput extends StatelessWidget {
     this.trailing,
     this.verticalPadding = 10,
     this.dimmed = false,
+    this.autofillHints,
   });
 
   final TextEditingController controller;
@@ -37,6 +38,9 @@ class RegisterInput extends StatelessWidget {
   final Widget? trailing;
   final double verticalPadding;
   final bool dimmed;
+
+  /// What the field holds for the phone's password manager ([AutofillHints]).
+  final Iterable<String>? autofillHints;
 
   static const double _textSize = 14;
 
@@ -59,6 +63,7 @@ class RegisterInput extends StatelessWidget {
       textInputAction: textInputAction,
       textCapitalization: textCapitalization,
       inputFormatters: inputFormatters,
+      autofillHints: autofillHints,
       cursorColor: colors.accent,
       style: TextStyle(fontSize: _textSize, height: 1.45, color: dimmed ? colors.muted : colors.text),
       decoration: InputDecoration(

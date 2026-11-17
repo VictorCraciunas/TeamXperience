@@ -105,6 +105,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
             child: Form(

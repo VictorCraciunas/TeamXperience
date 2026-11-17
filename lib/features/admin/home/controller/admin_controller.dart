@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:teamxperience/state_management/news_state_management.dart';
 
 import '../../../../backend/authentication/AuthenticationRepository.dart';
+import '../../../../utils/one_at_a_time.dart';
 import '../../../../backend/repo/teamRepo.dart';
 import '../../../../constants/routes.dart';
 import '../../../../model/event.dart';
@@ -14,6 +15,7 @@ import 'package:teamxperience/features/admin/create_event/start/open_create_even
 class AdminHomeController extends ChangeNotifier {
   final BuildContext context;
   final AuthenticationRepository _authRepo = AuthenticationRepository();
+  final OneAtATime _logout = OneAtATime();
   final TeamRepo _teamRepo = TeamRepo();
 
   // Event statistics (eventId -> {nrTeams, nrPerson})
@@ -24,16 +26,19 @@ class AdminHomeController extends ChangeNotifier {
 
   AdminHomeController(this.context);
 
-  void logout() {
-    context.read<EventList>().clear();
-    context.read<NewsList>().clear(); // Clear news as well
-    _authRepo.logout();
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      Routes.splash,
-      (Route<dynamic> route) => false,
-    );
-  }
+  /// Signs out, then opens the start: this phone comes off the account
+  /// first (3 s at most, offline). A second tap while it runs is ignored.
+  Future<void> logout() => _logout.run(() async {
+        context.read<EventList>().clear();
+        context.read<NewsList>().clear(); // Clear news as well
+        await _authRepo.logout();
+        if (!context.mounted) return;
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.splash,
+          (Route<dynamic> route) => false,
+        );
+      });
 
   void navigateToCreateEvent() {
     openCreateEventFlow(context);

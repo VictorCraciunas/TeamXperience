@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:teamxperience/features/chat_button/widgets/chat_button_clearance.dart';
 import 'package:teamxperience/features/event_details/logic/signup_bar_state.dart';
 import 'package:teamxperience/ui/components/buttons/bar_tone.dart';
 import 'package:teamxperience/ui/components/buttons/sticky_action_bar.dart';
@@ -18,7 +19,7 @@ class EventSignupBar extends StatelessWidget {
       SignupTone.accent => (BarTone.accent, TablerIcons.player_play),
       SignupTone.neutral => (BarTone.neutral, null),
     };
-    return StickyActionBar(
+    return ChatButtonClearance.bar(child: StickyActionBar(
       title: bar.title,
       detail: bar.detail,
       inlineDetail: bar.inlineDetail,
@@ -29,6 +30,6 @@ class EventSignupBar extends StatelessWidget {
       actionLabel: bar.actionLabel,
       actionIcon: bar.prominent ? TablerIcons.users_plus : null,
       onAction: () => onAction(bar.action),
-    );
+    ));
   }
 }
