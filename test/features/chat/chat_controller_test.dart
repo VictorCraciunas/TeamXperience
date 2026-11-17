@@ -27,7 +27,7 @@ Team _team({String phone = '0722 123', double lat = 0, bool started = false}) =>
 AppUser _user(Role role) => AppUser(email: 'a@x.ro', firstName: 'Ana', lastName: 'Pop', uid: 'u1', role: role, fcmToken: '');
 
 class _Rig {
-  _Rig({Role role = Role.ADMIN, Team? team, this.pick, this.upload}) {
+  _Rig({Role role = Role.ADMIN, Team? team, this.pick, this.upload, this.sendFails = false}) {
     controller = ChatController(
       eventId: 'e1',
       team: team ?? _team(),
@@ -36,7 +36,10 @@ class _Rig {
       eventStream: events.stream,
       messageStream: messages.stream,
       writeApproval: (key, status, {reason, url}) async => approvals.add((key, status, reason, url)),
-      sendText: (text) async => sent.add(text),
+      sendText: (text) async {
+        if (sendFails) throw StateError('permission-denied');
+        sent.add(text);
+      },
       pickPhoto: () async => pick?.call(),
       uploadPhoto: (file, path) async {
         paths.add(path);
@@ -54,6 +57,7 @@ class _Rig {
 
   final File? Function()? pick;
   final String? Function()? upload;
+  final bool sendFails;
   final teams = StreamController<Team>();
   final events = StreamController<Event>();
   final messages = StreamController<List<ChatMessageDoc>>();
@@ -98,6 +102,31 @@ void main() {
     await rig.controller.sendMessage();
     expect(rig.sent, ['Am ajuns']);
     expect(rig.controller.chatTextField.text, isEmpty);
+  });
+
+  test('says whether the text went: sent, blank or failed', () async {
+    final rig = _Rig(role: Role.USER);
+    rig.controller.chatTextField.text = ' ';
+    expect(await rig.controller.sendMessage(), ChatSendResult.blank);
+    rig.controller.chatTextField.text = 'Am ajuns';
+    expect(await rig.controller.sendMessage(), ChatSendResult.sent);
+  });
+
+  test('a refused send puts the text back in the field', () async {
+    final rig = _Rig(role: Role.USER, sendFails: true);
+    rig.controller.chatTextField.text = 'Am ajuns la fântână';
+    expect(await rig.controller.sendMessage(), ChatSendResult.failed);
+    expect(rig.controller.chatTextField.text, 'Am ajuns la fântână');
+    expect(rig.controller.chatTextField.selection.baseOffset, 'Am ajuns la fântână'.length);
+  });
+
+  test('a refused send keeps what was typed after it, below the text', () async {
+    final rig = _Rig(role: Role.USER, sendFails: true);
+    rig.controller.chatTextField.text = 'Prima';
+    final sending = rig.controller.sendMessage();
+    rig.controller.chatTextField.text = 'A doua';
+    expect(await sending, ChatSendResult.failed);
+    expect(rig.controller.chatTextField.text, 'Prima\nA doua');
   });
 
   group('photo button', () {

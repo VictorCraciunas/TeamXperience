@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamxperience/enums/event_status.dart';
+import 'package:teamxperience/enums/photo_approval_status.dart';
 import 'package:teamxperience/features/event_details/logic/event_menu_texts.dart';
 import 'package:teamxperience/model/event.dart';
 import 'package:teamxperience/model/team.dart';
@@ -16,7 +17,8 @@ Event _event({DateTime? start, bool stopped = false, EventStatus status = EventS
       status: status,
     );
 
-Team _team(String name, {int members = 0, String typed = '', String? unread}) => Team(
+Team _team(String name, {int members = 0, String typed = '', String? unread, Map<String, PhotoApprovalStatus>? photos}) =>
+    Team(
       name: name,
       teamMembers: typed,
       captainName: '',
@@ -24,6 +26,7 @@ Team _team(String name, {int members = 0, String typed = '', String? unread}) =>
       captainEmail: '',
       members: [for (var i = 0; i < members; i++) TeamMember.fromName('Jucător $i')],
       unreadText: unread,
+      photoApprovals: photos,
     );
 
 void main() {
@@ -78,8 +81,14 @@ void main() {
     expect(playersOf(const []), 0);
   });
 
-  test('unreadConversations counts teams with an unread message', () {
-    final teams = [_team('A', unread: 'Salut'), _team('B'), _team('C', unread: 'Gata')];
-    expect(unreadConversations(teams), 2);
+  test('unreadConversations counts teams with an unread message or a photo waiting', () {
+    final teams = [
+      _team('A', unread: 'Salut'),
+      _team('B'),
+      _team('C', unread: 'Gata', photos: {'1_0_0': PhotoApprovalStatus.pending}),
+      _team('D', photos: {'0_0_0': PhotoApprovalStatus.pending}),
+      _team('E', photos: {'0_0_0': PhotoApprovalStatus.approved}),
+    ];
+    expect(unreadConversations(teams), 3);
   });
 }

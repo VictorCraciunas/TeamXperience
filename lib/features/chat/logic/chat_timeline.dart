@@ -170,9 +170,11 @@ const _months = ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 
 
 /// "Astăzi", "Ieri", else "14 nov 2026".
 String chatDayLabel(DateTime date, DateTime now) {
-  final today = DateTime(now.year, now.month, now.day);
-  final day = DateTime(date.year, date.month, date.day);
-  final diff = today.difference(day).inHours ~/ 24;
+  // Calendar dates in UTC: every day is 24 hours there, so the 23-hour day
+  // when summer time starts does not count as the same day.
+  final today = DateTime.utc(now.year, now.month, now.day);
+  final day = DateTime.utc(date.year, date.month, date.day);
+  final diff = today.difference(day).inDays;
   if (diff == 0) return 'Astăzi';
   if (diff == 1) return 'Ieri';
   return '${date.day} ${_months[date.month - 1]} ${date.year}';

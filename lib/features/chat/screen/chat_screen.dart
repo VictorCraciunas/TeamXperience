@@ -60,6 +60,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _back() => Navigator.maybePop(context);
 
+  Future<void> _sendText(ChatController controller) async {
+    final result = await controller.sendMessage();
+    if (!mounted || result != ChatSendResult.failed) return;
+    MySnackBars.errorSnackBar(context, title: ChatController.sendFailedLine);
+  }
+
   Future<void> _sendPhoto(ChatController controller) async {
     final result = await controller.sendPhoto();
     if (!mounted || result != ChatPhotoResult.failed) return;
@@ -131,7 +137,7 @@ class _ChatScreenState extends State<ChatScreen> {
           composer: ChatComposer(
             controller: controller.chatTextField,
             hint: controller.isOrganiser ? 'Scrie echipei…' : 'Scrie organizatorului…',
-            onSend: controller.sendMessage,
+            onSend: () => _sendText(controller),
             onPhoto: () => _sendPhoto(controller),
             sendingPhoto: controller.sendingPhoto,
           ),

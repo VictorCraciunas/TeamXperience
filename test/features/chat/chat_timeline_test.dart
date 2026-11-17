@@ -189,4 +189,36 @@ void main() {
       expect(entry.reason, 'Nu se vede');
     });
   });
+
+  group('chatDayLabel', () {
+    test('today and yesterday by the calendar', () {
+      expect(chatDayLabel(DateTime(2026, 11, 14, 0, 5), _now), 'Astăzi');
+      expect(chatDayLabel(DateTime(2026, 11, 13, 23, 59), _now), 'Ieri');
+      expect(chatDayLabel(DateTime(2026, 11, 12, 23, 59), _now), '12 nov 2026');
+    });
+
+    // Romania moves to summer time at 03:00 on the last Sunday of March
+    // (29 March 2026): that Sunday has 23 hours, so on Monday counting hours
+    // put Sunday's messages under "Astăzi". Comparing calendar dates holds in
+    // any zone (in one without summer time these pass either way).
+    test('on the Monday after the 23-hour spring Sunday, Sunday is yesterday', () {
+      final monday = DateTime(2026, 3, 30, 9);
+      expect(chatDayLabel(DateTime(2026, 3, 29, 10), monday), 'Ieri');
+      expect(chatDayLabel(DateTime(2026, 3, 29, 0, 30), DateTime(2026, 3, 30, 0, 10)), 'Ieri');
+      expect(chatDayLabel(DateTime(2026, 3, 30, 1), monday), 'Astăzi');
+      expect(chatDayLabel(DateTime(2026, 3, 28, 22), monday), '28 mar 2026');
+      expect(chatDayLabel(DateTime(2026, 3, 28, 10), DateTime(2026, 3, 29, 9)), 'Ieri');
+    });
+
+    test('the 25-hour autumn day and the day after it', () {
+      final monday = DateTime(2026, 10, 26, 8);
+      expect(chatDayLabel(DateTime(2026, 10, 25, 23), monday), 'Ieri');
+      expect(chatDayLabel(DateTime(2026, 10, 24, 23), monday), '24 oct 2026');
+    });
+
+    test('across a month and a year', () {
+      expect(chatDayLabel(DateTime(2026, 2, 28, 20), DateTime(2026, 3, 1, 8)), 'Ieri');
+      expect(chatDayLabel(DateTime(2026, 12, 31, 20), DateTime(2027, 1, 1, 8)), 'Ieri');
+    });
+  });
 }
